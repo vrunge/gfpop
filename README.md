@@ -31,7 +31,7 @@ output:
 
 `gfpop` is an R package for penalized parametric changepoint detection using functional pruning dynamic programming. The successive means can be constrained using a graph structure with edge of type "up", "down", "std", "absInf" or "absSup". To each edge we can use an additional nonnegative parameter allowing us to force a minimal gap between two successive means. The user can also constraint the infered means to lie between some minimal and maximal values. Data is modelized by a quadratic cost with possible use of a robust loss, biweight and Huber. In a next version of this package, other parametric losses will be available (L1, Poisson, binomial). 
 
-The package gfpop is designed to segment univariate data <img src="https://latex.codecogs.com/svg.latex?\Large&space;y_{1:n} = \{y_1,...,y_n\}"/>  obeying to a graph structure on segment means. The changepoint vector
+The package gfpop is designed to segment univariate data <img src="https://latex.codecogs.com/svg.latex?\Large&space;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}"/> <img src="https://latex.codecogs.com/svg.latex?\Large&space;y_{1:n} = \{y_1,...,y_n\}"/>  obeying to a graph structure on segment means. The changepoint vector
 $\tau = (\tau_1 < \cdots < \tau_k) \in \mathbb{N}^k$ defines the segments $\{\tau_i,...,\tau_{i+1}-1\}$, $i = 0,...,k$ using notations $\tau_0 = 1$ and  $\tau_{k+1} = n+1$. With the set $S_n = \{\tau=(\tau_0,...,\tau_{k+1}) \in \mathbb{N}^{k+2} \,|\, 1 = \tau_0 < \tau_1 < \cdots < \tau_k < \tau_{k+1} = n+1\}\,,$ the nonconstrained minimal global cost is given by
 \begin{equation}
 \label{cost}
