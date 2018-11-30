@@ -42,32 +42,32 @@ We install the package from Github:
 library(gfpop)
 ```
 
-We simulate some univariate gaussian data ($n = 1000$ points) with changepoints $0.1, 0.3, 0.5, 0.8, 1$ and means $1, 2, 1, 3, 1$ with a variance equal to $1$.
+We simulate some univariate gaussian data (n = 1000 points) with changepoints 0.1, 0.3, 0.5, 0.8, 1 and means 1, 2, 1, 3, 1 with a variance equal to 1.
 ```{r}
 n <- 1000
 myData <- dataGenerator(n, c(0.1,0.3,0.5,0.8,1), c(1,2,1,3,1), 1)
 ```
 
-We then define the graph of constraints to use for the dynamic programming algorithm. A simple case is the up-down constraint with a penalty here equal to $2 \log(n)$.
+We then define the graph of constraints to use for the dynamic programming algorithm. A simple case is the up-down constraint with a penalty here equal to <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;2&space;\log(n)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;2&space;\log(n)" title="2 \log(n)" /></a>.
 ```{r}
 n <- 1000
 myGraph <- graph(penalty = 2*log(n), "updown")
 ```
 
-The gfpop function gives the result of the segmentation using $myData$ and $myGraph$ as parameters.
+The gfpop function gives the result of the segmentation using myData and myGraph as parameters.
 ```{r}
 gfpop(vectData = myData, mygraph = myGraph, type = "gauss")
 ```
 
-The vector `changepoints` gives the first index of each segment. It always begins with the element $1$.
+The vector `changepoints` gives the first index of each segment. It always begins with the element 1.
 
-The vector `states` contains the states in which lies each mean. The length of this vector is the same as the length of changepoint.
+The vector `states` contains the states in which lies each mean. The length of this vector is the same as the length of changepoints.
 
 The vector `forced` is a boolean vector. A forced element means that two consecutive means have been constrained by the parameter of the edge to be at least greater that the value of the parameter. This is the case for edges "up", "down" and "absSup". With "absInf" we constraint the absolute value of the difference of means to be less that the parameter.  
 
 The vector `means` contains the means of the successive segments. 
  
-The number `cost` is equal to $Q_n$, the overall cost of the segmented data. 
+The number `cost` is equal to <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;Q_n" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;Q_n" title="Q_n" /></a>, the overall cost of the segmented data. 
 
 
 <a id="se"></a>
@@ -76,7 +76,7 @@ The number `cost` is equal to $Q_n$, the overall cost of the segmented data.
 
 ### Robust loss and constrained starting and ending states
 
-We use a robust loss (biweight) in presence of outliers. We can also force the start and end state and a minimal gap between the means (here equal to $1$)
+We use a robust loss (biweight) in presence of outliers. We can also force the start and end state and a minimal gap between the means (here equal to 1)
 ```{r}
 n <- 1000
 mydata <- dataGenerator(n, c(0.1,0.3,0.5,0.8,1), c(0,1,0,1,0), 1) + 5*(rbinom(n, 1, 0.05)) - 5*(rbinom(n, 1, 0.05))
@@ -97,7 +97,6 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 ```
 
 
-
 ### absInf and absSup edges
 
 ```{r}
@@ -109,8 +108,6 @@ mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), c(
 gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
 ```
 
-
-
 ```{r}
 n <- 10000
 myGraph <- graph()
@@ -119,12 +116,5 @@ myGraph <- addEdge(myGraph, edge(0, 0,"absSup", beta, 1))
 mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), c(0, 1, 0, 2, 1, 2, 0, 1, 0, 1), 0.5)
 gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
 ```
-
-
-
-
-
-
-
 
 [Back to Top](#top)
