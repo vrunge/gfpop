@@ -25,6 +25,8 @@ output:
 
 <a id="intro"></a>
 
+<img src="https://latex.codecogs.com/svg.latex?\Large&space;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" title="\Large x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" />
+
 ## Introduction
 
 `gfpop` is an R package for penalized parametric changepoint detection using functional pruning dynamic programming. The successive means can be constrained using a graph structure with edge of type "up", "down", "std", "absInf" or "absSup". To each edge we can use an additional nonnegative parameter allowing us to force a minimal gap between two successive means. The user can also constraint the infered means to lie between some minimal and maximal values. Data is modelized by a quadratic cost with possible use of a robust loss, biweight and Huber. In a next version of this package, other parametric losses will be available (L1, Poisson, binomial). 
