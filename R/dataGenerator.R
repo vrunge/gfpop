@@ -10,13 +10,8 @@
 #' dataGenerator(100, c(0.3, 0.6, 1), c(1, 2, 3))
 dataGenerator <- function(n, changepoints, means, sigma = 1)
 {
-  vectData <- NULL
-  changepoints <- c(0, changepoints)
-  N <- length(changepoints)
-  for (j in 2:N)
-  {
-    len <- floor((changepoints[j] - changepoints[j - 1])*n)
-    vectData <- c(vectData, rnorm(len, means[j-1], sigma))
-  }
+ SegLength <- diff(c(0, floor(changepoints*n)))
+ vectData <- rep(means, SegLength) + rnorm(n, 0, sigma)
   return(vectData)
 }
+
