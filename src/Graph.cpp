@@ -140,15 +140,15 @@ Interval Graph::buildInterval(double argmin, int s1, int s2, bool& out) const
 
 void Graph::show() const
 {
-  std::cout<< termcolor::on_red << "GRAPH" << termcolor::reset << std::endl;
+  //std::cout<< termcolor::on_red << "GRAPH" << termcolor::reset << std::endl;
   for (int i = 0 ; i < edges.size() ; i++)
   {
     edges[i].show();
   }
-  std::cout<< "Start state : " << startState << std::endl;
-  std::cout<< "End state : " << endState << std::endl;
-  std::cout<< "nb states : " << nb_states() << std::endl;
-  std::cout<< "nb edges : " << nb_edges() << std::endl;
+  //std::cout<< "Start state : " << startState << std::endl;
+  //std::cout<< "End state : " << endState << std::endl;
+  //std::cout<< "nb states : " << nb_states() << std::endl;
+  //std::cout<< "nb edges : " << nb_edges() << std::endl;
 }
 
 // ### OPERATOR ### /// /// ### OPERATOR ### /// /// ### OPERATOR ### /// /// ### OPERATOR ### ///

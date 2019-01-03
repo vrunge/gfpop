@@ -32,8 +32,8 @@ void Robust::findRobustType()
 
 void Robust::show() const
 {
-  std::cout<< "ROBUST" << " -- robustType : " << robustType << std::endl;
-  std::cout<< "K : " << threshold << std::endl;
-  std::cout<< "a : " << slope << std::endl;
+  //std::cout<< "ROBUST" << " -- robustType : " << robustType << std::endl;
+  //std::cout<< "K : " << threshold << std::endl;
+  //std::cout<< "a : " << slope << std::endl;
 }
 

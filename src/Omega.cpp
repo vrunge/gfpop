@@ -556,7 +556,7 @@ void Omega::save_Q_ts_Q_edges(int t) const
     temp1 << i ;
     filenameQ_ts = fileQ_ts + temp1.str();
     filenameQ_ts += ".txt";
-    std::cout << filenameQ_ts << std::endl;
+    //std::cout << filenameQ_ts << std::endl;
 
     std::ofstream fichier1(filenameQ_ts.c_str(),std::ios::out | std::ios::trunc);
     fichier1.precision(9);
@@ -571,7 +571,7 @@ void Omega::save_Q_ts_Q_edges(int t) const
     temp2 << i;
     filenameQ_edges = fileQ_edges + temp2.str();
     filenameQ_edges += ".txt";
-    std::cout<< filenameQ_edges <<std::endl;
+    //std::cout<< filenameQ_edges <<std::endl;
 
     std::ofstream fichier2(filenameQ_edges.c_str(),std::ios::out | std::ios::trunc);
     fichier2.precision(9);
@@ -606,7 +606,7 @@ void Omega::save_Q_s_temp_Q_ts(int t) const
     temp1 << i ;
     filenameQ_s_temp = fileQ_s_temp + temp1.str();
     filenameQ_s_temp += ".txt";
-    std::cout << filenameQ_s_temp << std::endl;
+    //std::cout << filenameQ_s_temp << std::endl;
 
     std::ofstream fichier1(filenameQ_s_temp.c_str(),std::ios::out | std::ios::trunc);
     fichier1.precision(9);
@@ -621,7 +621,7 @@ void Omega::save_Q_s_temp_Q_ts(int t) const
     temp2 << i;
     filenameQ_tsNEW = fileQ_tsNEW + temp2.str();
     filenameQ_tsNEW += ".txt";
-    std::cout<< filenameQ_tsNEW <<std::endl;
+    //std::cout<< filenameQ_tsNEW <<std::endl;
 
     std::ofstream fichier2(filenameQ_tsNEW.c_str(),std::ios::out | std::ios::trunc);
 

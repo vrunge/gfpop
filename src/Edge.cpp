@@ -17,5 +17,5 @@ double Edge::getParameter() const {return(parameter);}
 
 void Edge::show() const
 {
-  std::cout << "beta: " << beta << " state1: " << state1 << " state2: " << state2 << " constraint: " << constraint << " parameter: " << parameter << std::endl;
+  //std::cout << "beta: " << beta << " state1: " << state1 << " state2: " << state2 << " constraint: " << constraint << " parameter: " << parameter << std::endl;
 }

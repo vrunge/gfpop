@@ -239,19 +239,19 @@ void CostGauss::addL1(Point const& pt, Robust const& robust, int slope)
 
 void CostGauss::show() const
 {
-  std::cout << "#GAUSS# #A# " << m_A << " #B# "<< m_B << " #C# " << constant;
-  std::cout << termcolor::on_magenta << " #MIN# "<< minimum() << termcolor::reset;
-  std::cout << termcolor::on_blue << " #ARGMIN# "<< arg_minimum() << termcolor::reset << std::endl;
+  //std::cout << "#GAUSS# #A# " << m_A << " #B# "<< m_B << " #C# " << constant;
+  //std::cout << termcolor::on_magenta << " #MIN# "<< minimum() << termcolor::reset;
+  //std::cout << termcolor::on_blue << " #ARGMIN# "<< arg_minimum() << termcolor::reset << std::endl;
 }
 
 
 void CostGauss::show(Interval const& inter) const
 {
-  std::cout << "#GAUSS# #A# " << m_A << " #B# "<< m_B << " #C# " << constant;
-  std::cout << termcolor::on_magenta << " #MIN# "<< minimum() << termcolor::reset;
-  double argmin = arg_minimum();
-  if(inter.isInside(argmin) == true){std::cout << termcolor::on_yellow << " #ARGMIN# "<< argmin << termcolor::reset << std::endl;}
-  else{std::cout << termcolor::on_blue << " #ARGMIN# "<< arg_minimum() << termcolor::reset << std::endl;}
+  //std::cout << "#GAUSS# #A# " << m_A << " #B# "<< m_B << " #C# " << constant;
+  //std::cout << termcolor::on_magenta << " #MIN# "<< minimum() << termcolor::reset;
+  //double argmin = arg_minimum();
+  //if(inter.isInside(argmin) == true){std::cout << termcolor::on_yellow << " #ARGMIN# "<< argmin << termcolor::reset << std::endl;}
+  //else{std::cout << termcolor::on_blue << " #ARGMIN# "<< arg_minimum() << termcolor::reset << std::endl;}
 }
 
 

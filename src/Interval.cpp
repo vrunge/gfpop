@@ -49,4 +49,7 @@ double Interval::internPoint() const
 
 
 
-void Interval::show() const {std::cout << "INTERVAL ## " << m_a << " -- " << m_b << std::endl;}
+void Interval::show() const
+{
+  //std::cout << "INTERVAL ## " << m_a << " -- " << m_b << std::endl;
+}

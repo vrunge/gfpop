@@ -72,7 +72,10 @@ void Piece::testEmptyInterval()
   Piece* tmp = this;
   while(tmp != NULL)
   {
-   if(tmp -> m_interval.isEmpty()){std::cout << "EMPTY INTERVAL"<< std::endl; exit(0);}
+   if(tmp -> m_interval.isEmpty())
+     {
+        //std::cout << "EMPTY INTERVAL"<< std::endl; exit(0);
+     }
     tmp = tmp -> nxt;
   }
 }
@@ -1372,14 +1375,14 @@ void Piece::show()
 {
   int i = 1;
 	Piece* tmp = this;
-  if(tmp == NULL){std::cout << termcolor::red << "#NULL EMPTY POINTER# "<< termcolor::reset << std::endl;}
+	//if(tmp == NULL){std::cout << termcolor::red << "#NULL EMPTY POINTER# "<< termcolor::reset << std::endl;}
 	while(tmp != NULL)
   {
-    std::cout << i << "#";
-    std::cout << tmp;
-    std::cout << termcolor::cyan << "#LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " <<  tmp -> m_info.getPosition() << " " << termcolor::reset;
-    std::cout << "#INTERVAL# "<< tmp -> m_interval.geta() << " -- " << tmp -> m_interval.getb()<< " ";
-    tmp -> m_cost.show(tmp -> m_interval);
+	  //std::cout << i << "#";
+	  //std::cout << tmp;
+	  //std::cout << termcolor::cyan << "#LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " <<  tmp -> m_info.getPosition() << " " << termcolor::reset;
+	  //std::cout << "#INTERVAL# "<< tmp -> m_interval.geta() << " -- " << tmp -> m_interval.getb()<< " ";
+	  //tmp -> m_cost.show(tmp -> m_interval);
     tmp = tmp -> nxt;
     i = i + 1;
   }
@@ -1389,14 +1392,14 @@ void Piece::show()
 void Piece::showOne()
 {
 	Piece* tmp = this;
-  if(tmp == NULL){std::cout << termcolor::red << "#NULL EMPTY POINTER# "<< termcolor::reset << std::endl;}
-	else
-  {
-    std::cout << tmp;
-    std::cout << termcolor::cyan << "#LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " <<  tmp -> m_info.getPosition() << " " << termcolor::reset;
-    std::cout << "#INTERVAL# "<< tmp -> m_interval.geta() << " -- " << tmp -> m_interval.getb()<< " ";
-    tmp -> m_cost.show(tmp -> m_interval);
-  }
+  //if(tmp == NULL){std::cout << termcolor::red << "#NULL EMPTY POINTER# "<< termcolor::reset << std::endl;}
+  //else
+  //{
+  //  std::cout << tmp;
+  //  std::cout << termcolor::cyan << "#LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " <<  tmp -> m_info.getPosition() << " " << termcolor::reset;
+  //  std::cout << "#INTERVAL# "<< tmp -> m_interval.geta() << " -- " << tmp -> m_interval.getb()<< " ";
+  //  tmp -> m_cost.show(tmp -> m_interval);
+  //}
 }
 
 
