@@ -77,25 +77,49 @@ For each path, the differences $\Delta m_i = m_{i+1} - m_i$ can be or not be con
 we present a basic use of the main functions of the `gfpop` package. More details about optional arguments are given in later sections.
 
 We install the package from Github:
-```{r}
+
+```r
 #devtools::install_github("vrunge/gfpop")
 library(gfpop)
 ```
 
 We simulate some univariate gaussian data (`n = 1000` points) with relative changepoint positions `0.1, 0.3, 0.5, 0.8, 1` and means `1, 2, 1, 3, 1` with a variance equal to `1`.
-```{r}
+
+```r
 n <- 1000
 myData <- dataGenerator(n, c(0.1,0.3,0.5,0.8,1), c(1,2,1,3,1), 1)
 ```
 
 We define the graph of constraints to use for the dynamic programming algorithm. A simple case is the up-down constraint with a penalty here equal to a classic `2 log(n)`.
-```{r}
+
+```r
 myGraph <- graph(penalty = 2*log(n), "updown")
 ```
 
 The gfpop function gives the result of the segmentation using `myData` and `myGraph` as parameters. We choose a gaussian cost.
-```{r}
+
+```r
 gfpop(vectData = myData, mygraph = myGraph, type = "gauss")
+```
+
+```
+## $changepoints
+## [1]  109  298  500  800 1000
+## 
+## $states
+## [1] 0 1 0 1 0
+## 
+## $forced
+## [1] 0 0 0 0
+## 
+## $means
+## [1] 1.0608797 1.9996130 1.0340044 3.0336784 0.9909662
+## 
+## $cost
+## [1] 1019.085
+## 
+## attr(,"class")
+## [1] "gfpop"
 ```
 
 The vector `changepoints` gives the last index of each segment. It always ends with the length of the vector `vectData`.
@@ -117,11 +141,32 @@ The number `cost` is equal to $Q_n(\mathcal{G})$, the overall cost of the segmen
 
 The isotonic regression infer a sequence of nondecreasing means. 
 
-```{r}
+
+```r
 n <- 1000
 mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1), c(0, 0.5, 1, 1.5, 2, 2.5, 3), 1)
 myGraphIso <- graph(penalty = 2*log(n), type = "isotonic")
 gfpop(vectData =  mydata, mygraph = myGraphIso, type = "gauss", K = 1, min = 0.5)
+```
+
+```
+## $changepoints
+## [1]  284  594 1000
+## 
+## $states
+## [1] 0 0 0
+## 
+## $forced
+## [1] 0 0
+## 
+## $means
+## [1] 0.6690761 1.7578968 2.8112646
+## 
+## $cost
+## [1] 543.2958
+## 
+## attr(,"class")
+## [1] "gfpop"
 ```
 
 
@@ -131,7 +176,8 @@ In this example, we use in `gfpop` function a robust biweight gaussian cost with
 ### Robust up-down with constrained starting and ending states
 
 We use a robust loss (biweight) in presence of outliers. We can also force the starting and ending state and a minimal gap between the means (here equal to `1`)
-```{r}
+
+```r
 n <- 1000
 mydata <- dataGenerator(n, c(0.1,0.3,0.5,0.8,1), c(0,1,0,1,0), 1) + 5*(rbinom(n, 1, 0.05)) - 5*(rbinom(n, 1, 0.05))
 
@@ -144,11 +190,76 @@ myGraph <- addStartEnd(myGraph, start = 0, end = 0)
 gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3.0)
 ```
 
+```
+## $changepoints
+## [1]  103  300  493  800 1000
+## 
+## $states
+## [1] 0 1 0 1 0
+## 
+## $forced
+## [1] 1 0 0 0
+## 
+## $means
+## [1] -0.03258525  0.96741475 -0.13062033  1.07001294 -0.02777633
+## 
+## $cost
+## [1] 1789.352
+## 
+## attr(,"class")
+## [1] "gfpop"
+```
+
 If we skip all these constraints, the result is the following
 
-```{r}
+
+```r
 myGraphStd <- graph(penalty = 2*log(n), type = "std")
 gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
+```
+
+```
+## $changepoints
+##  [1]    8   11   27   28   42   43   47   50   62   63  124  125  129  130
+## [15]  162  163  165  166  167  200  202  205  210  217  219  220  234  235
+## [29]  257  258  289  290  345  347  353  354  355  358  359  364  365  386
+## [43]  387  409  410  414  415  428  429  470  471  491  535  537  564  565
+## [57]  577  578  582  613  614  630  631  712  714  740  741  742  750  751
+## [71]  790  791  820  821  873  874  875  891  892  905  906  932  933  934
+## [85]  951  952  958  959  966  968  985  986 1000
+## 
+## $states
+## integer(0)
+## 
+## $forced
+## integer(0)
+## 
+## $means
+##  [1] -0.781500279  3.779854671 -0.327578891  5.557008418  0.109480486
+##  [6]  6.645229565 -0.305005416 -3.685530003  0.034889832 -5.418562484
+## [11]  0.578214349 -5.347844094  1.117297218 -5.355136650  1.372299465
+## [16]  7.546492405  1.231653406  6.805972386 -3.828533461  0.647762280
+## [21] -5.461701043  2.760017054 -0.584432372  3.286562306 -0.050683534
+## [26]  7.321523765  1.382605271 -4.527459248  0.969439366 -6.457723939
+## [31]  0.494168219  6.631519140  0.241201921  5.934222902 -0.626102695
+## [36] -5.569629080  4.271220503 -0.570818756 -6.429823833  0.512474326
+## [41] -6.534349622 -0.070012238 -5.369512378  0.006643091  5.948396198
+## [46]  0.099504702 -6.201517125 -0.226840617 -5.773408018 -0.066728528
+## [51] -5.343085725 -0.534562447  1.075167629  5.187292290  1.618081377
+## [56]  7.141281488  1.380197564 -4.183104832  3.976069595  1.219938431
+## [61]  8.326243540  1.357163505 -4.138448781  1.051710677 -3.567050780
+## [66]  1.267680060 -4.531871397  6.272091874  0.690479681 -5.276877360
+## [71]  1.015572088 -4.653126541  0.130520037  6.072058754 -0.053786559
+## [76] -5.032613903  6.529592065 -0.640117097  6.657996125 -0.587149300
+## [81] -6.420441808 -0.488898770  5.034746047 -5.178975019  0.022080004
+## [86]  5.489831968  0.152277147  6.085726098  0.152972942  4.981150804
+## [91] -0.114816419 -6.189479391  0.333670143
+## 
+## $cost
+## [1] 2960.465
+## 
+## attr(,"class")
+## [1] "gfpop"
 ```
 
 
@@ -156,7 +267,8 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 ### absInf and absSup edges
 
 With a unique "absInf" edge, the differences between the means are at most of size 1.  
-```{r}
+
+```r
 n <- 10000
 mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), c(0, 1, 0, 2, 1, 2, 0, 1, 0, 1), 0.5)
 myGraph <- graph()
@@ -165,14 +277,59 @@ myGraph <- addEdge(myGraph, edge(0, 0,"absInf", beta, 1))
 gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
 ```
 
+```
+## $changepoints
+##  [1]  1000  2000  2999  3000  4000  5000  6000  6001  7000  8001  8999
+## [12] 10000
+## 
+## $states
+##  [1] 0 0 0 0 0 0 0 0 0 0 0 0
+## 
+## $forced
+##  [1] 1 0 0 1 0 1 1 1 0 0 0
+## 
+## $means
+##  [1]  0.002876827  1.002876827  0.009253125  0.982244641  1.982244641
+##  [6]  0.997217686  1.997217686  0.997217686 -0.002782314  0.996845171
+## [11] -0.002054608  0.984199556
+## 
+## $cost
+## [1] 2680.238
+## 
+## attr(,"class")
+## [1] "gfpop"
+```
+
 With a unique "absSup" edge, the differences between the means are at least of size 1.  
-```{r}
+
+```r
 n <- 10000
 mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), c(0, 1, 0, 2, 1, 2, 0, 1, 0, 1), 0.5)
 myGraph <- graph()
 beta <- 2*log(n)
 myGraph <- addEdge(myGraph, edge(0, 0,"absSup", beta, 1))
 gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
+```
+
+```
+## $changepoints
+##  [1]  1001  2002  3000  4000  5000  6000  7002  8000  9000 10000
+## 
+## $states
+##  [1] 0 0 0 0 0 0 0 0 0 0
+## 
+## $forced
+## [1] 0 0 0 0 0 0 0 0 0
+## 
+## $means
+##  [1]  0.00864413  1.03313497  0.01021457  2.01073808  1.00198514
+##  [6]  2.01830073  0.01387377  1.01754926 -0.02043876  0.98441879
+## 
+## $cost
+## [1] 2615.079
+## 
+## attr(,"class")
+## [1] "gfpop"
 ```
 
 
@@ -184,24 +341,37 @@ Notice that some of the edges are forced, the vector `forced` contains non-zero 
 
 In the `gfpop` package, graphs are represented by a dataframe with 5 features. 
 
-```{r}
+
+```r
 emptyGraph <- graph()
 emptyGraph
+```
+
+```
+## [1] state1    state2    type      penalty   parameter
+## <0 rows> (or 0-length row.names)
 ```
 
 `state1` is the starting vertex of an edge, `state2` its ending vertex. `type` is one of the available edge type ("up", "down", "std", "absInf", "absSup"). `penalty` is a nonnegative parameter: the additional cost $\beta_i$ to consider when we move within the graph using this edge. `parameter` is annother nonnegative parameter, a characteristics of the edge, depending of its type.
 
 We add edges as follows
-```{r}
+
+```r
 emptyGraph <- addEdge(emptyGraph, edge(0, 0, "down", 3.1415, 1))
 emptyGraph
+```
+
+```
+##   state1 state2 type penalty parameter
+## 1      0      0 down  3.1415         1
 ```
 
 we can only add edges to this dataframe using the object `edge`. With the example `edge(0, 0, "down", 3.1415, 1)` we give the 5 aforementioned features.
 
 The graph can contain information on the starting and/or ending edge to use. 
 
-```{r}
+
+```r
 myGraph <- graph()
 beta <- 4*log(n)
 myGraph <- addEdge(myGraph, edge(1, 0,"down", beta, 1))
@@ -211,13 +381,28 @@ myGraph <- addStartEnd(myGraph, start = 0, end = 0)
 myGraph
 ```
 
+```
+##   state1 state2  type  penalty parameter
+## 1      1      0  down 36.84136         1
+## 2      0      0  down 36.84136         0
+## 3      0      1    up 36.84136         0
+## 4      0     NA start       NA        NA
+## 5      0     NA   end       NA        NA
+```
+
 
 Some graphs are often used: they are defined by default in the `graph` function. To use these graphs, we specify a string `type` equal to "std", "isotonic", "updown" or "infsup".
 For example,
 
-```{r}
+
+```r
 myGraphIso <- graph(penalty = 12, type = "isotonic")
 myGraphIso
+```
+
+```
+##   state1 state2 type penalty parameter
+## 1      0      0   up      12         0
 ```
 
 
