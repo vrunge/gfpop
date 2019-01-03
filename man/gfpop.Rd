@@ -26,7 +26,7 @@ gfpop(vectData = c(0), vectWeight = c(0), mygraph, type = "gauss",
 }
 \value{
 a gfpop object = (changepoints, states, forced, means).
-'changepoints' is the vector of changepoints (we give the first element of each segment).
+'changepoints' is the vector of changepoints (we give the last element of each segment).
 'states' is the vector giving the state of each segment
 'forced' is the vector specifying whether the constraints of the graph are active (=1) or not (=0)
 'means' is the vector of successive means of each segment
