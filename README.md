@@ -46,7 +46,7 @@ The User has the possibility to constraint the infered means to lie between some
 
 Data is modelized by a quadratic cost with possible use of a robust loss, biweight and Huber. In a next version of this package, other parametric costs will be available (L1, Poisson, binomial). 
 
-The package `gfpop` is designed to segment univariate data $y_{1:n} = \{y_1,...,y_n\}$ obeying to a graph structure on segment means. The changepoint vector
+The package `gfpop` is designed to segment univariate data <a href="https://www.codecogs.com/eqnedit.php?latex=y_{1:n}&space;=&space;\{y_1,...,y_n\}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?y_{1:n}&space;=&space;\{y_1,...,y_n\}" title="y_{1:n} = \{y_1,...,y_n\}" /></a> obeying to a graph structure on segment means. The changepoint vector
 $\tau = (\tau_0 < \cdots < \tau_{k+1}) \in \mathbb{N}^{k+2}$ defines the segments $\{\tau_i+1,...,\tau_{i+1}\}$, $i = 0,...,k$ with fixed $\tau_0 = 0$ and  $\tau_{k+1} = n$. We define the set $S_n = \{\hbox{changepoint vector } \tau \in \mathbb{N}^{k+2}\}\,,$ the nonconstrained minimal global cost is given by
 \begin{equation}
 \label{cost}
