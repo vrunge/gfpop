@@ -13,7 +13,7 @@
 #' @param min minimal bound for the infered means
 #' @param max maximal bound for the infered means
 #' @return a gfpop object = (changepoints, states, forced, means).
-#' 'changepoints' is the vector of changepoints (we give the first element of each segment).
+#' 'changepoints' is the vector of changepoints (we give the last element of each segment).
 #' 'states' is the vector giving the state of each segment
 #' 'forced' is the vector specifying whether the constraints of the graph are active (=1) or not (=0)
 #' 'means' is the vector of successive means of each segment
@@ -51,7 +51,7 @@ gfpop <- function(vectData = c(0), vectWeight = c(0), mygraph, type = "gauss", K
   if(type == "binomial"){res <- gfpopTransfert_Binomial(vectData, vectWeight, mygraph, K, a, min, max)}
 
   ###Response class gfpop###
-  response <- list(changepoints = c(1, rev(res$changepoints[-1]) + 1), states = rev(res$states), forced = rev(res$forced), means = rev(res$means), cost = res$cost)
+  response <- list(changepoints = c(rev(res$changepoints[-1]), length(vectData)), states = rev(res$states), forced = rev(res$forced), means = rev(res$means), cost = res$cost)
   attr(response, "class") <- "gfpop"
 
   return(response)
