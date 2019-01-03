@@ -43,7 +43,7 @@ class Piece
 
    //###################
 
-    double* Piece_min_argmin();
+    std::vector<double> Piece_min_argmin();
 
 
     double newBound(double newleftBound);
@@ -77,9 +77,9 @@ class Piece
     Piece* max_function(Piece* Q2, double M);
     Piece* pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double M);
 
-    double* get_min_argmin_label_state_position_final();
-    double* get_min_argmin_label_state_position(int i, Interval const& constrainedInter, bool out, bool& forced, bool isBoundConstrained);
-    double* get_min_argmin_label(double rightBound, bool& forced, bool isBoundConstrained);
+    std::vector<double> get_min_argmin_label_state_position_final();
+    std::vector<double> get_min_argmin_label_state_position(int i, Interval const& constrainedInter, bool out, bool& forced, bool isBoundConstrained);
+    std::vector<double> get_min_argmin_label(double rightBound, bool& forced, bool isBoundConstrained);
     //###################
 
     void save(std::ostream &flux);

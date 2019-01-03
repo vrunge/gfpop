@@ -38,8 +38,6 @@ Piece::~Piece()
 }
 
 
-
-
 //####### accessors #######////####### accessors #######////####### accessors #######//
 //####### accessors #######////####### accessors #######////####### accessors #######//
 
@@ -101,8 +99,6 @@ Piece* Piece::copy()
 
 
 
-
-
 Piece* Piece::copy(int& length)
 {
 	Piece* tmp = this;
@@ -113,6 +109,7 @@ Piece* Piece::copy(int& length)
       length = length + 1;
 			Qnew = new Piece(tmp);
 			Qnew -> nxt = tmp -> nxt -> copy(length);
+			//delete(tmp);
 		}
 	return(Qnew);
 }
@@ -135,6 +132,7 @@ Piece* Piece::copyIsotonic(double newLeftBound)
     {
       Qnew = new Piece(tmp);
       Qnew -> nxt = tmp -> nxt -> copyIsotonic(newLeftBound);
+      //delete(tmp);
     }
   }
 	return(Qnew);
@@ -194,6 +192,7 @@ void Piece::opposition()  /// cost <- - cost
     Q_tmp -> m_cost.opposition();
     Q_tmp  = Q_tmp -> nxt;
   }
+  //delete(Q_tmp);
 }
 
 
@@ -203,9 +202,11 @@ void Piece::opposition()  /// cost <- - cost
 //####### Piece_min_argmin #######////####### Piece_min_argmin #######////####### Piece_min_argmin #######//
 
 
-double* Piece::Piece_min_argmin()
+std::vector<double> Piece::Piece_min_argmin()
 {
-  double* response = new double[2];
+  std::vector<double> response(2,0); // = {0,0}
+  //response[0] = -1;
+  //response[1] = -1;
 
   double argmin = getCost().arg_minimum();
 
@@ -239,9 +240,9 @@ double* Piece::Piece_min_argmin()
 double Piece::newBound(double currentDataMin)
 {
 	Piece* tmp = this;
-  double* min_argmin;
   double newLeftBound = tmp -> m_interval.geta(); ///newLeftBound = new left bound to create
   double min_temp = tmp -> m_cost.point_eval(newLeftBound);
+  std::vector<double> min_argmin;
 
   while(tmp -> m_interval.getb() < currentDataMin)
   {
@@ -333,7 +334,7 @@ void Piece::addPoint(Point const& pt, Robust const& robust)
         {
           ///copying tmp in new_piece
           Piece* new_piece = new Piece(Q_tmp);
-          new_piece->nxt = Q_tmp -> nxt;
+          new_piece -> nxt = Q_tmp -> nxt;
               ///adding the cost to the rupt on the left
           Q_tmp -> m_cost += pt;
               ///changing interval bounds
@@ -341,6 +342,7 @@ void Piece::addPoint(Point const& pt, Robust const& robust)
           new_piece -> m_interval.seta(BK);
              ///changing pointers
           Q_tmp -> nxt = new_piece;
+          //delete(new_piece);
           break;
         }
 
@@ -356,11 +358,13 @@ void Piece::addPoint(Point const& pt, Robust const& robust)
           new_piece -> m_interval.seta(AK);
              ///changing pointers
           Q_tmp -> nxt = new_piece;
+          //delete(new_piece);
           break;
         }
       }
       Q_tmp = Q_tmp -> nxt;
     }
+
   }
 
 
@@ -490,25 +494,27 @@ Piece* Piece::edge_constraint(Edge const& edge, int newLabel, Bound const& bound
   //###############################################################
   if(edge_ctt == "absInf")
   {
-    Piece* pieceUP = operator_up(newLabel, parentStateLabel);
-    pieceUP = pieceUP -> shift_right(edge_parameter, M);
+    response = operator_up(newLabel, parentStateLabel);
+    response = response -> shift_right(edge_parameter, M);
 
     Piece* pieceDOWN = operator_down(newLabel, parentStateLabel);
     pieceDOWN = pieceDOWN -> shift_left(edge_parameter, m);
 
-    response = pieceUP -> max_function(pieceDOWN, M);
+    response = response -> max_function(pieceDOWN, M);
+    delete(pieceDOWN);
   }
 
   //###############################################################
   if(edge_ctt == "absSup")
   {
-    Piece* pieceUP = operator_up(newLabel, parentStateLabel);
-    pieceUP = pieceUP -> shift_left(edge_parameter, m);
+    response = operator_up(newLabel, parentStateLabel);
+    response = response -> shift_left(edge_parameter, m);
 
     Piece* pieceDOWN = operator_down(newLabel, parentStateLabel);
     pieceDOWN = pieceDOWN -> shift_right(edge_parameter, M);
 
-    response = pieceUP -> min_function(pieceDOWN, M);
+    response = response -> min_function(pieceDOWN, M);
+    delete(pieceDOWN);
   }
 
   ///############  adding the constant beta (= edge_beta) ############
@@ -800,10 +806,12 @@ Piece* Piece::operator_stdConstr(int newLabel, int parentStateLabel, Bound const
 Piece* Piece::operator_up(int newLabel, int parentStateLabel)
 {
   int length = 0;
-	Piece* Q_up = this -> copy(length);
+  Piece* Q_up;
+	Piece* Q_up_copy = this -> copy(length);
 	//std::cout << length << std::endl;
-  Q_up = Q_up -> reverse();
-  Q_up = Q_up -> operator_down(newLabel, parentStateLabel);
+	Q_up_copy = Q_up_copy -> reverse();
+  Q_up = Q_up_copy -> operator_down(newLabel, parentStateLabel);
+  delete(Q_up_copy);
   Q_up = Q_up -> reverse(length);
 	return(Q_up);
 }
@@ -827,6 +835,7 @@ Piece* Piece::operator_down(int newLabel, int parentStateLabel)
 
   Piece* Q_down = BUILD; ///response Piece
 
+  //std::cout << BUILD << std::endl;
   ///First Piece
   double bound = Q_tmp -> m_interval.geta();
   BUILD -> m_interval.seta(bound);
@@ -851,6 +860,8 @@ Piece* Piece::operator_down(int newLabel, int parentStateLabel)
     //////////////////////////////////////////////////////////////////////////////////////////
     if(decreasingInterval.isEmpty() == false){trackDown.setPosition(counter);}
     BUILD = BUILD -> pastePiece(Q_tmp, decreasingInterval, trackDown); ///add new Piece to BUILD
+
+    //std::cout << BUILD << std::endl;
     //////////////////////////////////////////////////////////////////////////////////////////
 
     bound = BUILD -> m_interval.getb(); ///new rightBound
@@ -867,6 +878,11 @@ Piece* Piece::operator_down(int newLabel, int parentStateLabel)
     counter = counter + 1;
   }
 
+  //std::cout << BUILD << std::endl;
+  //std::cout << BUILD -> nxt << std::endl;
+  BUILD = BUILD -> nxt; // =NULL
+  delete(BUILD);
+
   return(Q_down);
 }
 
@@ -878,8 +894,11 @@ Piece* Piece::operator_down(int newLabel, int parentStateLabel)
 
 Piece* Piece::pastePiece(const Piece* Q, Interval const& decrInter, Track const& newTrack)
 {
-
+  //std::cout << "pastePiece" << std::endl;
+  //std::cout << this << std::endl;
   Piece* BUILD = this;
+  //std::cout << BUILD << std::endl;
+
   /// decreasingInterval = (a,b)
   /// Q -> m_interval = (m_a,m_b)
 
@@ -924,6 +943,8 @@ Piece* Piece::pastePiece(const Piece* Q, Interval const& decrInter, Track const&
 
   }
 
+  //std::cout << BUILD << std::endl;
+
   return(BUILD);
 
 }
@@ -939,7 +960,6 @@ Piece* Piece::pastePiece(const Piece* Q, Interval const& decrInter, Track const&
 Piece* Piece::min_function(Piece* Q2, double M)
 {
   //"MOST OF THE TIME" : Q2 > Q1
-
 	Piece* Q1 = this;  /// first Piece to compare
 	Piece* Q12 = new Piece();
   Piece* response = Q12;
@@ -980,6 +1000,7 @@ Piece* Piece::min_function(Piece* Q2, double M)
   Q1 = Q1 -> nxt;
   }
 
+  delete(this);
 	return(response);
 }
 
@@ -993,10 +1014,11 @@ Piece* Piece::max_function(Piece* Q2, double M)
 
 	Q1 -> opposition();
 	Q2 -> opposition();
+
   Piece* Q12 = Q1 -> min_function(Q2, M);
 	Q12 -> opposition();
 
-	Q1 -> opposition();
+	///Q1 -> opposition(); Q1 already deleted
 	Q2 -> opposition();
 
 	return(Q12);
@@ -1172,15 +1194,16 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
 //####### min_argmin_label_state_position_final #######// //####### min_argmin_label_state_position_final #######// //####### min_argmin_label_state_position_final #######//
 ///We test all the Piece
 
-double* Piece::get_min_argmin_label_state_position_final()
+std::vector<double> Piece::get_min_argmin_label_state_position_final()
 {
-  double* response = new double[5];
+  std::vector<double> response(5,0);
   Piece* Q_tmp = this;
 
 ///INITIALIZATION
-  double* current_min_argmin = Q_tmp -> Piece_min_argmin();
+  std::vector<double> current_min_argmin = Q_tmp -> Piece_min_argmin();
   double global_min = current_min_argmin[0]; ///global minimum to find
   double global_argmin = current_min_argmin[1]; ///global argminimum to find
+
   int label = Q_tmp -> m_info.getLabel();
   int state = Q_tmp -> m_info.getState();
   int position = Q_tmp -> m_info.getPosition();
@@ -1190,7 +1213,7 @@ double* Piece::get_min_argmin_label_state_position_final()
 ///LOOP TESTS
   while(Q_tmp != NULL)
   {
-  current_min_argmin = Q_tmp -> Piece_min_argmin();
+    current_min_argmin = Q_tmp -> Piece_min_argmin();
     if(current_min_argmin[0] < global_min)
     {
       global_min = current_min_argmin[0];
@@ -1218,10 +1241,10 @@ double* Piece::get_min_argmin_label_state_position_final()
 ///We test only the piece at position i
 
 
-double* Piece::get_min_argmin_label_state_position(int i, Interval const& constrainedInter, bool out, bool& forced, bool isBoundConstrained)
+std::vector<double> Piece::get_min_argmin_label_state_position(int i, Interval const& constrainedInter, bool out, bool& forced, bool isBoundConstrained)
 {
-  double* response = new double[5];
-  double* min_argmin;
+  std::vector<double> response(5,0);
+  std::vector<double> min_argmin;
   Piece* Q_tmp = this;
 
   ///Go to the right Piece
@@ -1257,7 +1280,6 @@ double* Piece::get_min_argmin_label_state_position(int i, Interval const& constr
       else{response[1] = constrainedInter.getb();}
     }
   }
-
   return(response);
 }
 
@@ -1266,13 +1288,13 @@ double* Piece::get_min_argmin_label_state_position(int i, Interval const& constr
 //####### min_argmin_label #######// //####### min_argmin_label #######// //####### min_argmin_label #######//
 //####### min_argmin_label #######// //####### min_argmin_label #######// //####### min_argmin_label #######//
 
-double* Piece::get_min_argmin_label(double rightBound, bool& forced, bool isBoundConstrained)
+std::vector<double> Piece::get_min_argmin_label(double rightBound, bool& forced, bool isBoundConstrained)
 {
-  double* response = new double[3];
+  std::vector<double> response(3,0);
   Piece* Q_tmp = this;
 
 ///INITIALIZATION
-  double* current_min_argmin = Q_tmp -> Piece_min_argmin();
+  std::vector<double> current_min_argmin = Q_tmp -> Piece_min_argmin();
   double global_min = current_min_argmin[0]; ///global minimum to find
   double global_argmin = current_min_argmin[1]; ///global argminimum to find
   int label = Q_tmp -> m_info.getLabel();

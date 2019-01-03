@@ -13,7 +13,7 @@ Data::~Data()
   //std::cout << "Destructor called " << std::endl;
   if (vecPt != NULL)
   {
-    delete []vecPt;
+    delete [] vecPt;
   }
 }
 

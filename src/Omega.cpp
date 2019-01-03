@@ -45,10 +45,12 @@ Omega::~Omega()
 	for(int i = 0; i < Q_ts.size(); i++){for(unsigned char j = 0; j < p; j++){delete(Q_ts[i][j]);}delete [] Q_ts[i]; Q_ts[i] = NULL;}
 
   for(unsigned char i = 0; i < q; i++){if(Q_edges[i] != NULL){delete(Q_edges[i]);}}
-  delete [] Q_edges; Q_edges = NULL;
+  delete [] Q_edges;
+  Q_edges = NULL;
 
   for(unsigned char i = 0; i < p; i++){delete(Q_s_temp[i]);}
   delete [] Q_s_temp;
+  Q_s_temp = NULL;
 }
 
 //####### accessors #######////####### accessors #######////####### accessors #######//
@@ -162,6 +164,7 @@ void Omega::fpop1d_graph_isotonic(Data const& data)
     Q_t.push_back(Q_t.back() -> copyIsotonic(newLeftBound)); ///new element in Q_t => copy Q_t with the updated left bound
 
     delete(Q_up); /// reset the vector of Piece Q_edges[0]
+    Q_up = NULL;
     Q_up = Q_t.back() -> operator_down(t, -1); /// parentStateLabel = -1 (a unique state => "no state to consider")
     Q_up -> addConstant(m_graph.getEdge(0).getBeta()); ///add beta to Q_up
     if(m_graph.getEdge(0).getParameter() > 0){Q_up = Q_up -> shift_right(m_graph.getEdge(0).getParameter(), m_bound.getM());} ///if parameter > 0 => shift right
@@ -170,6 +173,10 @@ void Omega::fpop1d_graph_isotonic(Data const& data)
     Q_t.back() -> addPoint(myData[t], m_robust);
   }
   backtrackingIsotonic(Q_t);
+
+  for(unsigned int i = 0 ; i < Q_t.size(); i++){delete(Q_t[i]);}
+  delete [] currentMin;
+  delete(Q_up);
 }
 
 
@@ -197,6 +204,8 @@ void Omega::fpop1d_graph_std(Data const& data)
     for(unsigned int t = 0 ; t < data.getn(); t++) /// loop for all edges
     {
       Q_s_temp[0] -> addPoint(myData[t], m_robust);
+      delete(Q_edges[0]);
+      Q_edges[0] = NULL;
       Q_edges[0] = Q_s_temp[0] -> operator_stdConstr_min_argmin(t, lastlabel, argmini, m_bound); /// = one Piece constant at global min.
 
       temp_changepoints.push_back(lastlabel);
@@ -214,6 +223,8 @@ void Omega::fpop1d_graph_std(Data const& data)
     for(unsigned int t = 0 ; t < data.getn(); t++) /// loop for all edges
     {
       Q_s_temp[0] -> addPoint(myData[t], m_robust);
+      delete(Q_edges[0]);
+      Q_edges[0] = NULL;
       Q_edges[0] = Q_s_temp[0] -> operator_std_min_argmin(t, lastlabel, argmini, m_bound); /// = one Piece constant at global min.
 
       temp_changepoints.push_back(lastlabel);
@@ -221,7 +232,6 @@ void Omega::fpop1d_graph_std(Data const& data)
 
       Q_edges[0] -> getRefCost() += beta; /// add beta (the penalty)
       Q_s_temp[0] = Q_s_temp[0] -> min_function(Q_edges[0], m_bound.getM());
-
     }
   }
 
@@ -230,7 +240,7 @@ void Omega::fpop1d_graph_std(Data const& data)
   int position = temp_changepoints[length];
 
   ///Find globalCost
-  double* response = Q_s_temp[0] -> get_min_argmin_label_state_position_final();
+  std::vector<double> response = Q_s_temp[0] -> get_min_argmin_label_state_position_final();
 
   ///Fill Omega VARIABLES
   globalCost = response[0];
@@ -277,11 +287,8 @@ void Omega::fillQ_edges(int newLabel)
 	for (unsigned int i = 0 ; i < q ; i++) /// loop for all edges
 		{
       delete(Q_edges[i]);///DELETE Q_edges[i]
-      Q_edges[i] = new Piece;///Reallocate memory
-
 			Edge edge = m_graph.getEdge(i);
       s1 = edge.getState1();   /// starting state
-
       Q_edges[i] = Q_ts.back()[s1] -> edge_constraint(edge, newLabel, m_bound);
 		}
 }
@@ -298,8 +305,7 @@ void Omega::multiple_minimization()
   {
     isEmpty[i] = 1;
     delete(Q_s_temp[i]);
-    Q_s_temp[i] =  new Piece;
-  }///DELETE Q_s_temp[i] and Reallocate memory
+  }///DELETE Q_s_temp[i]
 
   ///Q_s_temp CREATION
   for (unsigned int i = 0 ; i < q ; i++) // loop for all edges
@@ -335,7 +341,9 @@ void Omega::multiple_minimization_cyclic()
   {
     Edge edge = m_graph.getEdge(i);
     s2 = edge.getState2(); /// ending state
-    Q_ts.back()[s2] = Q_ts.back()[s2] -> min_function(Q_edges[i]-> copy(), m_bound.getM()); ///Q_edges[i] -> copy()
+    Piece* Q_edgesCopy = Q_edges[i]-> copy();
+    Q_ts.back()[s2] = Q_ts.back()[s2] -> min_function(Q_edgesCopy, m_bound.getM()); ///Q_edges[i] -> copy()
+    delete(Q_edgesCopy);
   }
 }
 
@@ -357,8 +365,8 @@ void Omega::backtracking()
   ///
   /// malsp = Min_Argmin_Label_State_Position_Final
   ///
-  double* malsp = Q_ts.back()[0] -> get_min_argmin_label_state_position_final();
-  double* malsp_temp;
+  std::vector<double> malsp = Q_ts.back()[0] -> get_min_argmin_label_state_position_final();
+  std::vector<double> malsp_temp;
 
   ///
   ///FINAL STATE
@@ -417,6 +425,7 @@ void Omega::backtracking()
     constrainedInterval = m_graph.buildInterval(malsp[1], malsp[3], CurrentState, out); ///update out
     CurrentState = malsp[3];
     CurrentChgpt = malsp[2];
+
     malsp = Q_ts[malsp[2]][(int) malsp[3]] -> get_min_argmin_label_state_position((int) malsp[4], constrainedInterval, out, boolForced, m_bound.getIsConstrained()); ///update boolForced
     if(malsp[1] > m_bound.getM()){malsp[1] = m_bound.getM(); boolForced = true;}
     if(malsp[1] < m_bound.getm()){malsp[1] = m_bound.getm(); boolForced = true;}
@@ -454,11 +463,11 @@ void Omega::backtrackingIsotonic(std::vector<Piece*> const& Q_t)
   ///
   /// malsp = Min_Argmin_Label_State_Position_Final
   ///
-  double* malsp = Q_t.back() -> get_min_argmin_label_state_position_final();
+
+  std::vector<double> malsp = Q_t.back() -> get_min_argmin_label_state_position_final();
   globalCost = malsp[0];
 
   int CurrentChgpt = Q_t.size() - 1; /// data(1)....data(n). Last data index in each segment
-
 
   //std::cout << std::endl;
   //std::cout << "BACKTRACKING" << std::endl;
@@ -476,14 +485,13 @@ void Omega::backtrackingIsotonic(std::vector<Piece*> const& Q_t)
   changepoints.push_back(CurrentChgpt);
   states.push_back(m_graph.getEdge(0).getState1());
 
-
   /// BACKTRACK
   ///
   ///BEFORE FINAL STATE
   ///
   bool boolForced = false;
 
-  while(malsp[2] > 0)
+  while( malsp[2] > 0)
   {
     ///
     ///BACKTRACK
@@ -512,6 +520,8 @@ void Omega::backtrackingIsotonic(std::vector<Piece*> const& Q_t)
   }
 
   //std::cout<<"DONE"<<std::endl;
+  //for(unsigned int i = 0 ; i < Q_t.size(); i++){delete(Q_t[i]);}
+
 }
 
 
