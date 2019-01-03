@@ -4,6 +4,7 @@
 ### Vincent Runge
 #### LaMME, Evry University
 ### January 3, 2019
+[![Build Status](https://travis-ci.com/vrunge/gfpop.svg?branch=master)](https://travis-ci.com/vrunge/gfpop)
 
 > [Introduction](#intro)
 
