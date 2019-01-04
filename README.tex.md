@@ -376,9 +376,17 @@ myGraph
 ```
 
 
-Some graphs are often used: they are defined by default in the `graph` function. To use these graphs, we specify a string `type` equal to "std", "isotonic", "updown"<!-- 
-%\VignetteEngine{knitr::rmarkdown} 
-%\VignetteIndexEntry{An Introduction to gfpop}
---> 
+Some graphs are often used: they are defined by default in the `graph` function. To use these graphs, we specify a string `type` equal to "std", "isotonic", "updown" or "infsup".
+For example,
 
-<a id="top"></a>
+```r
+myGraphIso <- graph(penalty = 12, type = "isotonic")
+myGraphIso
+```
+
+```
+##   state1 state2 type penalty parameter
+## 1      0      0   up      12         0
+```
+
+[Back to Top](#top)
