@@ -100,19 +100,66 @@ gfpop(vectData = myData, mygraph = myGraph, type = "gauss")
 ```
 
 ```
-## <img src="/tex/41da34096b3c7afb0d4599274473d13d.svg?invert_in_darkmode&sanitize=true" align=middle width=237.2755407pt height=24.65753399999998pt/>states
+## changepoints
+## [1]   99  300  499  801 1000
+## 
+## states
 ## [1] 0 1 0 1 0
 ## 
-## <img src="/tex/a7e871b7f67ad6f9e09c103933ef8a33.svg?invert_in_darkmode&sanitize=true" align=middle width=99.2108205pt height=24.65753399999998pt/>means
+## forced
+## [1] 0 0 0 0
+## 
+## means
 ## [1] 1.0558257 1.9999308 0.9256767 2.8400284 1.0754584
 ## 
-## <img src="/tex/0f5fd2ae9da672a6b627fb8fdb143ec8.svg?invert_in_darkmode&sanitize=true" align=middle width=700.2747246pt height=243.1050303pt/>l<img src="/tex/c6d5a3719a746841b87f84bb5aec2f1e.svg?invert_in_darkmode&sanitize=true" align=middle width=77.83167314999999pt height=22.831056599999986pt/>m_{i+1} - m_i = l<img src="/tex/49ac986eb8b9102ba624f12c91948917.svg?invert_in_darkmode&sanitize=true" align=middle width=524.1109351499999pt height=85.29680939999997pt/>Q_n(\mathcal{G})<img src="/tex/4cc0a1f98c6b21fec9e281592abb8cd2.svg?invert_in_darkmode&sanitize=true" align=middle width=700.27445565pt height=315.6164385pt/>changepoints
+## cost
+## [1] 1022.826
+## 
+## attr(,"class")
+## [1] "gfpop"
+```
+
+The vector `changepoints` gives the last index of each segment. It always ends with the length of the vector `vectData`.
+
+The vector `states` contains the states (labels of the vertices) in which lies each mean. The length of this vector is the same as the length of `changepoint`.
+
+The vector `forced` is a boolean vector. A forced element means that two consecutive means have been forced to satisfy the constraint. For example, the "up" edge with parameter <img src="/tex/2f2322dff5bde89c37bcae4116fe20a8.svg?invert_in_darkmode&sanitize=true" align=middle width=5.2283516999999895pt height=22.831056599999986pt/> is forced if <img src="/tex/40da0c26af3ff48ec5e1122cbabcaadf.svg?invert_in_darkmode&sanitize=true" align=middle width=103.69287719999998pt height=22.831056599999986pt/>.
+
+The vector `means` contains the infered means of the successive segments. 
+ 
+The number `cost` is equal to <img src="/tex/e96673f14f7d2280cfd060ac442da0b9.svg?invert_in_darkmode&sanitize=true" align=middle width=45.482259899999995pt height=24.65753399999998pt/>, the overall cost of the segmented data. 
+
+
+<a id="se"></a>
+
+## Some examples
+
+### Isotonic regression
+
+The isotonic regression infer a sequence of nondecreasing means. 
+
+
+```r
+n <- 1000
+mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1), c(0, 0.5, 1, 1.5, 2, 2.5, 3), 1)
+myGraphIso <- graph(penalty = 2*log(n), type = "isotonic")
+gfpop(vectData =  mydata, mygraph = myGraphIso, type = "gauss", K = 1, min = 0.5)
+```
+
+```
+## changepoints
 ## [1]  388 1000
 ## 
-## <img src="/tex/871f192ca7ba60a2df1a2529efcc3cfb.svg?invert_in_darkmode&sanitize=true" align=middle width=77.4165216pt height=24.65753399999998pt/>forced
+## states
+## [1] 0 0
+## 
+## forced
 ## [1] 0
 ## 
-## <img src="/tex/36f6047b90a3afb8a3da85d14865a479.svg?invert_in_darkmode&sanitize=true" align=middle width=206.34020385pt height=24.65753399999998pt/>cost
+## means
+## [1] 0.6862598 2.6075454
+## 
+## cost
 ## [1] 543.9708
 ## 
 ## attr(,"class")
@@ -141,13 +188,35 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3.0)
 ```
 
 ```
-## <img src="/tex/92a5a24419e807b18aeb817b1fa25310.svg?invert_in_darkmode&sanitize=true" align=middle width=237.2755407pt height=24.65753399999998pt/>states
+## changepoints
+## [1]   96  296  499  800 1000
+## 
+## states
 ## [1] 0 1 0 1 0
 ## 
-## <img src="/tex/7907e6514b3a9970cd15d6bf08eaa737.svg?invert_in_darkmode&sanitize=true" align=middle width=99.2108205pt height=24.65753399999998pt/>means
+## forced
+## [1] 1 1 0 0
+## 
+## means
 ## [1] 0.02676352 1.02676352 0.02676352 1.04487913 0.03315755
 ## 
-## <img src="/tex/8e9171d011023eea075158d55aa3bd4c.svg?invert_in_darkmode&sanitize=true" align=middle width=700.2744144pt height=157.8082209pt/>changepoints
+## cost
+## [1] 1693.038
+## 
+## attr(,"class")
+## [1] "gfpop"
+```
+
+If we skip all these constraints, the result is the following
+
+
+```r
+myGraphStd <- graph(penalty = 2*log(n), type = "std")
+gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
+```
+
+```
+## changepoints
 ##  [1]    7    8   45   46   47  111  115  124  125  160  161  196  197  238
 ## [15]  240  276  277  323  325  353  354  403  404  410  412  413  429  431
 ## [29]  471  472  546  547  572  578  579  610  617  618  630  631  637  638
@@ -155,10 +224,31 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3.0)
 ## [57]  845  846  847  868  869  901  902  906  907  917  918  925  926  966
 ## [71]  967  970  971  988  989  999 1000
 ## 
-## <img src="/tex/5302af74602877fbff796cb1fbeb534c.svg?invert_in_darkmode&sanitize=true" align=middle width=117.70887644999999pt height=24.65753399999998pt/>forced
+## states
 ## integer(0)
 ## 
-## <img src="/tex/d8c0ac802f265212298dd44f53d37f97.svg?invert_in_darkmode&sanitize=true" align=middle width=887.674557pt height=323.83561649999996pt/>cost
+## forced
+## integer(0)
+## 
+## means
+##  [1]  0.69768051 -5.53193780  0.31695357  4.72653999 -5.90154987
+##  [6]  0.30975675 -2.88389969  0.85496284 -5.45610997  1.39929641
+## [11]  6.35099545  0.39234120  6.56617822  1.07896661  5.81871561
+## [16]  0.69303402  6.53711388  0.44927024 -5.12956104  0.44985886
+## [21]  6.00005852 -0.09368429 -6.37584630  0.80902356 -2.95471377
+## [26]  5.95729676  0.46455749 -4.93562798 -0.15742552  6.02181798
+## [31]  0.74583335 -4.91154159  1.36075918 -0.68933982  6.39606108
+## [36]  0.77420148  2.55435824 -4.73783174  0.78955191 -4.68323868
+## [41]  0.11769371 -5.17589034  1.18188118 -4.86235065  0.91935149
+## [46]  8.02470611  0.98058422 -5.18739572  1.73845283 -3.87242678
+## [51]  0.96364882 -4.94441510  0.41935307 -5.15931311  0.92966860
+## [56] -5.22961739 -0.26455069  3.74845190 -5.08222642  0.45272875
+## [61] -5.66669302  0.15689644  5.66973343 -0.02063657 -5.85447481
+## [66] -0.13222016 -6.10440237 -0.40144636 -6.25755882  0.33692976
+## [71] -5.67484518  1.41474975 -4.84795893  0.34275726  5.50909538
+## [76] -0.24354996  5.97040896
+## 
+## cost
 ## [1] 2614.77
 ## 
 ## attr(,"class")
@@ -181,21 +271,54 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
 ```
 
 ```
-## <img src="/tex/104e697616325e2c488756398ce77a3c.svg?invert_in_darkmode&sanitize=true" align=middle width=542.29952865pt height=24.65753399999998pt/>states
+## changepoints
+##  [1]  1000  2000  3000  3002  4000  5000  6000  6001  7000  8000  9004
+## [12] 10000
+## 
+## states
 ##  [1] 0 0 0 0 0 0 0 0 0 0 0 0
 ## 
-## <img src="/tex/0285cd7a7e29a0bd88d4e321647e1f30.svg?invert_in_darkmode&sanitize=true" align=middle width=156.74528594999998pt height=24.65753399999998pt/>means
+## forced
+##  [1] 1 1 1 0 0 1 1 0 0 0 1
+## 
+## means
 ##  [1] -0.003668723  0.996331277 -0.003668723  0.996331277  1.976058368
 ##  [6]  0.988025166  1.988025166  0.988025166  0.019482291  0.972585217
 ## [11] -0.013007627  0.986992373
 ## 
-## <img src="/tex/2b737b2d97ab588dea8d1afc8f023603.svg?invert_in_darkmode&sanitize=true" align=middle width=700.2744490499999pt height=236.7123297pt/>changepoints
+## cost
+## [1] 2724.789
+## 
+## attr(,"class")
+## [1] "gfpop"
+```
+
+With a unique "absSup" edge, the differences between the means are at least of size 1.  
+
+```r
+n <- 10000
+mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), c(0, 1, 0, 2, 1, 2, 0, 1, 0, 1), 0.5)
+myGraph <- graph()
+beta <- 2*log(n)
+myGraph <- addEdge(myGraph, edge(0, 0,"absSup", beta, 1))
+gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
+```
+
+```
+## changepoints
 ##  [1]  1000  2000  3000  4000  5000  6000  7000  8000  9000 10000
 ## 
-## <img src="/tex/a77ae5fc3a90f1592f9291112ce86eac.svg?invert_in_darkmode&sanitize=true" align=middle width=143.17019804999998pt height=24.65753399999998pt/>forced
+## states
+##  [1] 0 0 0 0 0 0 0 0 0 0
+## 
+## forced
 ## [1] 0 0 0 1 0 0 0 1 0
 ## 
-## <img src="/tex/c9b292922a75ae19f84566dead483cb5.svg?invert_in_darkmode&sanitize=true" align=middle width=848.35165305pt height=39.45205440000001pt/>cost
+## means
+##  [1]  0.006362090  1.025656394 -0.021843386  1.982795465  0.982795465
+##  [6]  2.022643032 -0.007576226  0.998581228 -0.001418772  1.005417897
+## 
+## cost
 ## [1] 2631.155
 ## 
 ## attr(,"class")
