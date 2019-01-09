@@ -80,7 +80,9 @@ bool Graph::AreVerticesCompatible() const //label of the vertices from 0 to S
     if(edges[i].getState2() > maxLabel){maxLabel = edges[i].getState2();}
   }
 
-  bool isAvertex[maxLabel + 1] = {false};
+  bool isAvertex[maxLabel + 1];
+  for(int i = 0; i < maxLabel + 1; i++){isAvertex[i] = false;}
+
   for (int i = 0 ; i < nbEdges ; i++)
   {
     isAvertex[edges[i].getState1()] = true;
