@@ -8,6 +8,11 @@
 #### LaMME, Evry University
 ### January 3, 2019
 
+<!-- 
+%\VignetteEngine{knitr::rmarkdown} 
+%\VignetteIndexEntry{An Introduction to gfpop}
+--> 
+
 > [Introduction](#intro)
 
 > [Quick Start](#qs)
