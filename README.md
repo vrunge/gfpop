@@ -5,7 +5,7 @@
 [![](https://img.shields.io/badge/docs-vignettes-blue.svg)](https://github.com/vrunge/gfpop)
 
 ### Vincent Runge
-#### LaMME, Evry University
+#### LaMME, Evry University, LaMME 
 ### January 9, 2019
 
 <!-- 
@@ -14,9 +14,13 @@
 --> 
 
 > [Introduction](#intro)
+
 > [Quick Start](#qs)
+
 > [Some examples](#se)
+
 > [Graph construction](#gc)
+
 <a id="intro"></a>
 
 ## Introduction
@@ -122,7 +126,7 @@ The vector `states` contains the states (labels of the vertices) in which lies e
 The vector `forced` is a boolean vector. A forced element means that two consecutive means have been forced to satisfy the constraint. For example, the "up" edge with parameter <img src="/tex/2f2322dff5bde89c37bcae4116fe20a8.svg?invert_in_darkmode&sanitize=true" align=middle width=5.2283516999999895pt height=22.831056599999986pt/> is forced if <img src="/tex/40da0c26af3ff48ec5e1122cbabcaadf.svg?invert_in_darkmode&sanitize=true" align=middle width=103.69287719999998pt height=22.831056599999986pt/>.
 
 The vector `means` contains the infered means of the successive segments. 
-
+ 
 The number `cost` is equal to <img src="/tex/e96673f14f7d2280cfd060ac442da0b9.svg?invert_in_darkmode&sanitize=true" align=middle width=45.482259899999995pt height=24.65753399999998pt/>, the overall cost of the segmented data. 
 
 
@@ -173,11 +177,13 @@ We use a robust loss (biweight) in presence of outliers. We can also force the s
 ```r
 n <- 1000
 mydata <- dataGenerator(n, c(0.1,0.3,0.5,0.8,1), c(0,1,0,1,0), 1) + 5*(rbinom(n, 1, 0.05)) - 5*(rbinom(n, 1, 0.05))
+
 myGraph <- graph()
 beta <- 2*log(n)
 myGraph <- addEdge(myGraph, edge(0, 1, "up", beta, 1))
 myGraph <- addEdge(myGraph, edge(1, 0, "down", beta, 1))
 myGraph <- addStartEnd(myGraph, start = 0, end = 0)
+
 gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3.0)
 ```
 
