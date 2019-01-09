@@ -19,6 +19,6 @@ Adding edge to a graph
 }
 \examples{
 myGraph <- graph()
-myGraph <- addEdge(myGraph, edge(1, 2, "up", 10))
-myGraph <- addEdge(myGraph, edge(2, 1, "down", 0))
+myGraph <- addEdge(myGraph, edge(0, 1, "up", 10))
+myGraph <- addEdge(myGraph, edge(1, 0, "down", 0))
 }
