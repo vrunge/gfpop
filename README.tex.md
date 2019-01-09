@@ -100,19 +100,19 @@ gfpop(vectData = myData, mygraph = myGraph, type = "gauss")
 ```
 
 ```
-## $changepoints
+## changepoints
 ## [1]   99  300  499  801 1000
 ## 
-## $states
+## states
 ## [1] 0 1 0 1 0
 ## 
-## $forced
+## forced
 ## [1] 0 0 0 0
 ## 
-## $means
+## means
 ## [1] 1.0558257 1.9999308 0.9256767 2.8400284 1.0754584
 ## 
-## $cost
+## cost
 ## [1] 1022.826
 ## 
 ## attr(,"class")
@@ -147,19 +147,19 @@ gfpop(vectData =  mydata, mygraph = myGraphIso, type = "gauss", K = 1, min = 0.5
 ```
 
 ```
-## $changepoints
+## changepoints
 ## [1]  388 1000
 ## 
-## $states
+## states
 ## [1] 0 0
 ## 
-## $forced
+## forced
 ## [1] 0
 ## 
-## $means
+## means
 ## [1] 0.6862598 2.6075454
 ## 
-## $cost
+## cost
 ## [1] 543.9708
 ## 
 ## attr(,"class")
@@ -188,19 +188,19 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3.0)
 ```
 
 ```
-## $changepoints
+## changepoints
 ## [1]   96  296  499  800 1000
 ## 
-## $states
+## states
 ## [1] 0 1 0 1 0
 ## 
-## $forced
+## forced
 ## [1] 1 1 0 0
 ## 
-## $means
+## means
 ## [1] 0.02676352 1.02676352 0.02676352 1.04487913 0.03315755
 ## 
-## $cost
+## cost
 ## [1] 1693.038
 ## 
 ## attr(,"class")
@@ -216,7 +216,7 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 ```
 
 ```
-## $changepoints
+## changepoints
 ##  [1]    7    8   45   46   47  111  115  124  125  160  161  196  197  238
 ## [15]  240  276  277  323  325  353  354  403  404  410  412  413  429  431
 ## [29]  471  472  546  547  572  578  579  610  617  618  630  631  637  638
@@ -224,13 +224,13 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 ## [57]  845  846  847  868  869  901  902  906  907  917  918  925  926  966
 ## [71]  967  970  971  988  989  999 1000
 ## 
-## $states
+## states
 ## integer(0)
 ## 
-## $forced
+## forced
 ## integer(0)
 ## 
-## $means
+## means
 ##  [1]  0.69768051 -5.53193780  0.31695357  4.72653999 -5.90154987
 ##  [6]  0.30975675 -2.88389969  0.85496284 -5.45610997  1.39929641
 ## [11]  6.35099545  0.39234120  6.56617822  1.07896661  5.81871561
@@ -248,7 +248,7 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 ## [71] -5.67484518  1.41474975 -4.84795893  0.34275726  5.50909538
 ## [76] -0.24354996  5.97040896
 ## 
-## $cost
+## cost
 ## [1] 2614.77
 ## 
 ## attr(,"class")
@@ -271,22 +271,22 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
 ```
 
 ```
-## $changepoints
+## changepoints
 ##  [1]  1000  2000  3000  3002  4000  5000  6000  6001  7000  8000  9004
 ## [12] 10000
 ## 
-## $states
+## states
 ##  [1] 0 0 0 0 0 0 0 0 0 0 0 0
 ## 
-## $forced
+## forced
 ##  [1] 1 1 1 0 0 1 1 0 0 0 1
 ## 
-## $means
+## means
 ##  [1] -0.003668723  0.996331277 -0.003668723  0.996331277  1.976058368
 ##  [6]  0.988025166  1.988025166  0.988025166  0.019482291  0.972585217
 ## [11] -0.013007627  0.986992373
 ## 
-## $cost
+## cost
 ## [1] 2724.789
 ## 
 ## attr(,"class")
@@ -305,20 +305,20 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
 ```
 
 ```
-## $changepoints
+## changepoints
 ##  [1]  1000  2000  3000  4000  5000  6000  7000  8000  9000 10000
 ## 
-## $states
+## states
 ##  [1] 0 0 0 0 0 0 0 0 0 0
 ## 
-## $forced
+## forced
 ## [1] 0 0 0 1 0 0 0 1 0
 ## 
-## $means
+## means
 ##  [1]  0.006362090  1.025656394 -0.021843386  1.982795465  0.982795465
 ##  [6]  2.022643032 -0.007576226  0.998581228 -0.001418772  1.005417897
 ## 
-## $cost
+## cost
 ## [1] 2631.155
 ## 
 ## attr(,"class")
