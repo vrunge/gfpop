@@ -5,7 +5,7 @@
 [![](https://img.shields.io/badge/docs-vignettes-blue.svg)](https://github.com/vrunge/gfpop)
 
 ### Vincent Runge
-#### LaMME, Evry University
+#### LaMME, Evry University, LaMME 
 ### January 9, 2019
 
 <!-- 
