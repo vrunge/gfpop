@@ -6,7 +6,7 @@
 
 ### Vincent Runge
 #### LaMME, Evry University
-### January 3, 2019
+### January 9, 2019
 
 <!-- 
 %\VignetteEngine{knitr::rmarkdown} 
@@ -48,13 +48,15 @@ where $\beta > 0$ is a penalty parameter and $\mathcal{C}(y_{u:v})$ is the minim
 
 With any cost, we have
 
-$$\mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}) = \min_{\theta}\mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}, \theta)\,,\quad \hbox{and} \quad m_i = \argmin_{\theta}\mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}, \theta)$$
+$$\mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}) = \min_{\theta}\mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}, \theta)\,,\quad \hbox{and} \quad m_i = \mathrm{argmin}_{\theta}\mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}, \theta)$$
 
 defining the infered mean of the i+1-th segment $\{\tau_i+1,...,\tau_{i+1}\}$.
 
 
 The graph $\mathcal{G}$ is defined by its vertices $V = \{1,...,v\} \subset \mathbb{N}$ and edges $E = \{e(i,j)\}$ where $i,j \in V$. Thus $\mathcal{G} = (V,E)$. The successive means $(m_1,...,m_{k+1})$ are constrainted to follow a feasible graph path $P = (e_1,...,e_k)$ with $e_i \in E$. Among all possible paths $P$, the path minimizing the cost is the result $Q_n(\mathcal{G})$ of our algorithm, that is, 
-$$Q_n(\mathcal{G}) = \argmin_{P \in \mathcal{G}} (Q_n(P))$$
+
+$$Q_n(\mathcal{G}) = \_{P \in \mathcal{G}} (Q_n(P))$$
+
 and for a given path $P = (e_1,...,e_k)$ we definie the path-constrained cost
 
 $$Q_n(P) = \min_{\tau \in S_n}\quad \min_{(\theta_0,\theta_1) \in e_1,..., (\theta_{k-1},\theta_k) \in e_k}\left[ \sum_{i=0}^{k}\lbrace \mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}, \theta_i) + \beta_{e_i} \rbrace \right] $$
@@ -98,19 +100,19 @@ gfpop(vectData = myData, mygraph = myGraph, type = "gauss")
 ```
 
 ```
-## changepoints
+## $changepoints
 ## [1]   99  300  499  801 1000
 ## 
-## states
+## $states
 ## [1] 0 1 0 1 0
 ## 
-## forced
+## $forced
 ## [1] 0 0 0 0
 ## 
-## means
+## $means
 ## [1] 1.0558257 1.9999308 0.9256767 2.8400284 1.0754584
 ## 
-## cost
+## $cost
 ## [1] 1022.826
 ## 
 ## attr(,"class")
@@ -119,7 +121,7 @@ gfpop(vectData = myData, mygraph = myGraph, type = "gauss")
 
 The vector `changepoints` gives the last index of each segment. It always ends with the length of the vector `vectData`.
 
-The vector `states` contains the states in which lies each mean. The length of this vector is the same as the length of `changepoint`.
+The vector `states` contains the states (labels of the vertices) in which lies each mean. The length of this vector is the same as the length of `changepoint`.
 
 The vector `forced` is a boolean vector. A forced element means that two consecutive means have been forced to satisfy the constraint. For example, the "up" edge with parameter $l$ is forced if $m_{i+1} - m_i = l$.
 
@@ -145,19 +147,19 @@ gfpop(vectData =  mydata, mygraph = myGraphIso, type = "gauss", K = 1, min = 0.5
 ```
 
 ```
-## changepoints
+## $changepoints
 ## [1]  388 1000
 ## 
-## states
+## $states
 ## [1] 0 0
 ## 
-## forced
+## $forced
 ## [1] 0
 ## 
-## means
+## $means
 ## [1] 0.6862598 2.6075454
 ## 
-## cost
+## $cost
 ## [1] 543.9708
 ## 
 ## attr(,"class")
@@ -186,19 +188,19 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3.0)
 ```
 
 ```
-## changepoints
+## $changepoints
 ## [1]   96  296  499  800 1000
 ## 
-## states
+## $states
 ## [1] 0 1 0 1 0
 ## 
-## forced
+## $forced
 ## [1] 1 1 0 0
 ## 
-## means
+## $means
 ## [1] 0.02676352 1.02676352 0.02676352 1.04487913 0.03315755
 ## 
-## cost
+## $cost
 ## [1] 1693.038
 ## 
 ## attr(,"class")
@@ -214,7 +216,7 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 ```
 
 ```
-## changepoints
+## $changepoints
 ##  [1]    7    8   45   46   47  111  115  124  125  160  161  196  197  238
 ## [15]  240  276  277  323  325  353  354  403  404  410  412  413  429  431
 ## [29]  471  472  546  547  572  578  579  610  617  618  630  631  637  638
@@ -222,13 +224,13 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 ## [57]  845  846  847  868  869  901  902  906  907  917  918  925  926  966
 ## [71]  967  970  971  988  989  999 1000
 ## 
-## states
+## $states
 ## integer(0)
 ## 
-## forced
+## $forced
 ## integer(0)
 ## 
-## means
+## $means
 ##  [1]  0.69768051 -5.53193780  0.31695357  4.72653999 -5.90154987
 ##  [6]  0.30975675 -2.88389969  0.85496284 -5.45610997  1.39929641
 ## [11]  6.35099545  0.39234120  6.56617822  1.07896661  5.81871561
@@ -246,7 +248,7 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 ## [71] -5.67484518  1.41474975 -4.84795893  0.34275726  5.50909538
 ## [76] -0.24354996  5.97040896
 ## 
-## cost
+## $cost
 ## [1] 2614.77
 ## 
 ## attr(,"class")
@@ -269,22 +271,22 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
 ```
 
 ```
-## changepoints
+## $changepoints
 ##  [1]  1000  2000  3000  3002  4000  5000  6000  6001  7000  8000  9004
 ## [12] 10000
 ## 
-## states
+## $states
 ##  [1] 0 0 0 0 0 0 0 0 0 0 0 0
 ## 
-## forced
+## $forced
 ##  [1] 1 1 1 0 0 1 1 0 0 0 1
 ## 
-## means
+## $means
 ##  [1] -0.003668723  0.996331277 -0.003668723  0.996331277  1.976058368
 ##  [6]  0.988025166  1.988025166  0.988025166  0.019482291  0.972585217
 ## [11] -0.013007627  0.986992373
 ## 
-## cost
+## $cost
 ## [1] 2724.789
 ## 
 ## attr(,"class")
@@ -303,20 +305,20 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
 ```
 
 ```
-## changepoints
+## $changepoints
 ##  [1]  1000  2000  3000  4000  5000  6000  7000  8000  9000 10000
 ## 
-## states
+## $states
 ##  [1] 0 0 0 0 0 0 0 0 0 0
 ## 
-## forced
+## $forced
 ## [1] 0 0 0 1 0 0 0 1 0
 ## 
-## means
+## $means
 ##  [1]  0.006362090  1.025656394 -0.021843386  1.982795465  0.982795465
 ##  [6]  2.022643032 -0.007576226  0.998581228 -0.001418772  1.005417897
 ## 
-## cost
+## $cost
 ## [1] 2631.155
 ## 
 ## attr(,"class")
