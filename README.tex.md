@@ -55,7 +55,7 @@ defining the infered mean of the i+1-th segment $\{\tau_i+1,...,\tau_{i+1}\}$.
 
 The graph $\mathcal{G}$ is defined by its vertices $V = \{1,...,v\} \subset \mathbb{N}$ and edges $E = \{e(i,j)\}$ where $i,j \in V$. Thus $\mathcal{G} = (V,E)$. The successive means $(m_1,...,m_{k+1})$ are constrainted to follow a feasible graph path $P = (e_1,...,e_k)$ with $e_i \in E$. Among all possible paths $P$, the path minimizing the cost is the result $Q_n(\mathcal{G})$ of our algorithm, that is, 
 
-$$Q_n(\mathcal{G}) = \_{P \in \mathcal{G}} (Q_n(P))$$
+$$Q_n(\mathcal{G}) = \mathrm{argmin}_{P \in \mathcal{G}} (Q_n(P))$$
 
 and for a given path $P = (e_1,...,e_k)$ we definie the path-constrained cost
 
