@@ -14,8 +14,8 @@ edge <- function(state1, state2, type, penalty, parameter = 0)
   ###STOP###
   if(state1%%1 != 0){stop('state1 is not an integer.')}
   if(state2%%1 != 0){stop('state1 is not an integer.')}
-  if(state1 < 0){stop('state1 must be nonnegative')}
-  if(state2 < 0){stop('state2 must be nonnegative')}
+  if(state1 < 0){stop('state1 must a nonnegative integer')}
+  if(state2 < 0){stop('state2 must a nonnegative integer')}
 
   if(type != "std" && type != "up" && type != "down" && type != "absInf" && type != "absSup")
     {stop('Argument not appropriate. Choose a type among the following: "std", "up", "down", "absInf", "absSup".')}
@@ -87,8 +87,8 @@ graph <- function(penalty = 0, type = "empty")
 #' @return the graph with the additional edge "edge"
 #' @examples
 #' myGraph <- graph()
-#' myGraph <- addEdge(myGraph, edge(0, 1, "up", 10))
-#' myGraph <- addEdge(myGraph, edge(1, 0, "down", 0))
+#' myGraph <- addEdge(myGraph, edge(1, 2, "up", 10))
+#' myGraph <- addEdge(myGraph, edge(2, 1, "down", 0))
 addEdge <- function(graph, edge)
 {
   if(!any(class(graph) == "graph")){stop('Your graph is not a graph...')}
@@ -113,9 +113,9 @@ addEdge <- function(graph, edge)
 #' @return the graph with these new constraints
 #' @examples
 #' myGraph <- graph()
-#' myGraph <- addEdge(myGraph, edge(0, 1, "up", 10))
-#' myGraph <- addEdge(myGraph, edge(1, 0, "down", 0))
-#' myGraph <- addStartEnd(myGraph, 0, 0)
+#' myGraph <- addEdge(myGraph, edge(1, 2, "up", 10))
+#' myGraph <- addEdge(myGraph, edge(2, 1, "down", 0))
+#' myGraph <- addStartEnd(myGraph, 1, 1)
 addStartEnd <- function(graph, start = - 1, end = - 1)
 {
   ###STOP###

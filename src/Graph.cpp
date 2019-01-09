@@ -70,6 +70,28 @@ bool Graph::isCyclic() const
 }
 
 
+bool Graph::AreVerticesCompatible() const //label of the vertices from 0 to S
+{
+  int maxLabel = 0;
+  int nbEdges = nb_edges();
+  for (int i = 0 ; i < nbEdges ; i++)
+  {
+    if(edges[i].getState1() > maxLabel){maxLabel = edges[i].getState1();}
+    if(edges[i].getState2() > maxLabel){maxLabel = edges[i].getState2();}
+  }
+
+  bool isAvertex[maxLabel + 1] = {false};
+  for (int i = 0 ; i < nbEdges ; i++)
+  {
+    isAvertex[edges[i].getState1()] = true;
+    isAvertex[edges[i].getState2()] = true;
+  }
+
+  int nb = 0;
+  int j = 0;
+  while((j <= maxLabel) && (isAvertex[j] == true)){nb = nb + 1; j = j + 1; }
+  return(nb == nb_states());
+}
 
 
 // ### getType ### /// /// ### getType ### /// /// ### getType ### /// /// ### getType ### ///
@@ -143,7 +165,7 @@ void Graph::show() const
   //std::cout<< termcolor::on_red << "GRAPH" << termcolor::reset << std::endl;
   for (int i = 0 ; i < edges.size() ; i++)
   {
-    edges[i].show();
+    //edges[i].show();
   }
   //std::cout<< "Start state : " << startState << std::endl;
   //std::cout<< "End state : " << endState << std::endl;

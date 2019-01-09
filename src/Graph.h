@@ -20,6 +20,7 @@ class Graph
     int getEndState() const;
 
     bool isCyclic() const;
+    bool AreVerticesCompatible() const;
     std::string getType() const;
 
     Interval buildInterval(double argmin, int s1, int s2, bool& out) const;
