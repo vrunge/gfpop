@@ -32,7 +32,7 @@ A nonnegative internal parameter can thus be associated to an edge (in "up" and 
 
 The User has the possibility to constraint the infered means to lie between some minimal and maximal values.
 
-Data is modelized by a quadratic cost with possible use of a robust loss, biweight and Huber. In a next version of this package, other parametric costs will be available (L1, Poisson, Binomial). 
+Data is modelized by a quadratic cost with possible use of a robust loss, biweight and Huber. In a next version of this package, other parametric costs will be available (L1, Poisson, binomial). 
 
 The package `gfpop` is designed to segment univariate data <img src="/tex/b704a970e46e8418f3ef56718438b122.svg?invert_in_darkmode&sanitize=true" align=middle width=126.38913869999998pt height=24.65753399999998pt/> obeying to a graph structure on segment means. The changepoint vector
 <img src="/tex/72b0e057a8a58ba5a30cbae5e8731343.svg?invert_in_darkmode&sanitize=true" align=middle width=209.11494284999998pt height=27.91243950000002pt/> defines the segments <img src="/tex/97a268c17395aace06ce389334ba5322.svg?invert_in_darkmode&sanitize=true" align=middle width=115.02097364999997pt height=24.65753399999998pt/>, <img src="/tex/59680c09e0e2d723d0bcf2005047b028.svg?invert_in_darkmode&sanitize=true" align=middle width=73.18587374999998pt height=22.831056599999986pt/> with fixed <img src="/tex/370a29c873e3d269a6111aa219085d0b.svg?invert_in_darkmode&sanitize=true" align=middle width=44.697406049999984pt height=21.18721440000001pt/> and  <img src="/tex/afdb85da7c3e7b7c3d226050994dbf5f.svg?invert_in_darkmode&sanitize=true" align=middle width=63.70246739999999pt height=14.15524440000002pt/>. We define the set <img src="/tex/8ec36d117f5c48fb6fe6fb0e54d9df29.svg?invert_in_darkmode&sanitize=true" align=middle width=271.57361054999996pt height=27.91243950000002pt/> the nonconstrained minimal global cost is given by
@@ -43,21 +43,22 @@ where <img src="/tex/99751e94989c68f9be0f6aa442bc80d5.svg?invert_in_darkmode&san
 
 With any cost, we have
 
-<p align="center"><img src="/tex/ca6a9827bab0d298f28a4c7a533691bc.svg?invert_in_darkmode&sanitize=true" align=middle width=547.45790385pt height=23.0593242pt/></p>
+<p align="center"><img src="/tex/af5e8a619c8820ed22ce6e8a74de3f39.svg?invert_in_darkmode&sanitize=true" align=middle width=497.18378985pt height=23.0593242pt/></p>
 
 defining the infered mean of the i+1-th segment <img src="/tex/97a268c17395aace06ce389334ba5322.svg?invert_in_darkmode&sanitize=true" align=middle width=115.02097364999997pt height=24.65753399999998pt/>.
 
+
 The graph <img src="/tex/68a463cbf8842017bbbab8ca879333c7.svg?invert_in_darkmode&sanitize=true" align=middle width=10.75346414999999pt height=22.465723500000017pt/> is defined by its vertices <img src="/tex/17723a15d7438a3eb1184f1afb7c5eb5.svg?invert_in_darkmode&sanitize=true" align=middle width=130.47537855pt height=24.65753399999998pt/> and edges <img src="/tex/ca2470eb23ef165907bddf445541668d.svg?invert_in_darkmode&sanitize=true" align=middle width=92.55732584999998pt height=24.65753399999998pt/> where <img src="/tex/73e18d026de1f20e9f779ef5f1e0eeb3.svg?invert_in_darkmode&sanitize=true" align=middle width=54.01270214999999pt height=22.465723500000017pt/>. Thus <img src="/tex/39af0bee918c59081f4ecf8c2a4cc8b8.svg?invert_in_darkmode&sanitize=true" align=middle width=76.34688434999998pt height=24.65753399999998pt/>. The successive means <img src="/tex/ba97fea5b98d1b95ef2bfdfbba39044b.svg?invert_in_darkmode&sanitize=true" align=middle width=102.06838785pt height=24.65753399999998pt/> are constrainted to follow a feasible graph path <img src="/tex/f88ef5828577ac5b460c213ad9f91505.svg?invert_in_darkmode&sanitize=true" align=middle width=106.62095399999998pt height=24.65753399999998pt/> with <img src="/tex/f656003fdf20f1bf1dc44afea451ff83.svg?invert_in_darkmode&sanitize=true" align=middle width=46.30026884999999pt height=22.465723500000017pt/>. Among all possible paths <img src="/tex/df5a289587a2f0247a5b97c1e8ac58ca.svg?invert_in_darkmode&sanitize=true" align=middle width=12.83677559999999pt height=22.465723500000017pt/>, the path minimizing the cost is the result <img src="/tex/e96673f14f7d2280cfd060ac442da0b9.svg?invert_in_darkmode&sanitize=true" align=middle width=45.482259899999995pt height=24.65753399999998pt/> of our algorithm, that is, 
-
-<p align="center"><img src="/tex/9653b6cc1b5bb51607ddfb3a1f13589b.svg?invert_in_darkmode&sanitize=true" align=middle width=206.416914pt height=17.46572685pt/></p>
-
+<p align="center"><img src="/tex/10eaa9a6bf892f295032c617031401ba.svg?invert_in_darkmode&sanitize=true" align=middle width=156.1428pt height=16.438356pt/></p>
 and for a given path <img src="/tex/f88ef5828577ac5b460c213ad9f91505.svg?invert_in_darkmode&sanitize=true" align=middle width=106.62095399999998pt height=24.65753399999998pt/> we definie the path-constrained cost
 
 <p align="center"><img src="/tex/f5104b69464610c67cf95e8ccccc404d.svg?invert_in_darkmode&sanitize=true" align=middle width=502.2140508pt height=49.315569599999996pt/></p>
 
 with <img src="/tex/a7b70cf2530bd437854a7672a5d27827.svg?invert_in_darkmode&sanitize=true" align=middle width=95.69340989999999pt height=24.65753399999998pt/> meaning that the two consecutive means have to satisfy the edge constraint. <img src="/tex/14eb94e11e4e7df75df5246a34c67891.svg?invert_in_darkmode&sanitize=true" align=middle width=19.92040709999999pt height=22.831056599999986pt/> is the penalty associated to edge <img src="/tex/b95c2b0aab2482e5bebd25332a4bbde0.svg?invert_in_darkmode&sanitize=true" align=middle width=12.30503669999999pt height=14.15524440000002pt/>. In many cases, we simply take <img src="/tex/c13ff1e7a1e99be22dd58e6f7ea398e7.svg?invert_in_darkmode&sanitize=true" align=middle width=53.647382249999986pt height=22.831056599999986pt/> for all <img src="/tex/77a3b857d53fb44e33b53e4c8b68351a.svg?invert_in_darkmode&sanitize=true" align=middle width=5.663225699999989pt height=21.68300969999999pt/>. The penalty <img src="/tex/8217ed3c32a785f0b5aad4055f432ad8.svg?invert_in_darkmode&sanitize=true" align=middle width=10.16555099999999pt height=22.831056599999986pt/> was a constant positive cost we have to pay when adding a new segment, that is when we move on an edge. Thus, we define this penalty within the edge and enable this penalty to be different for each edge.
 
+
 For each path, the differences <img src="/tex/d3a11478349f31da44cf7954e1f4f367.svg?invert_in_darkmode&sanitize=true" align=middle width=131.24719905pt height=22.465723500000017pt/> can be or not be constrained depending of the nature of the edge. For example, with an "up" edge with parameter <img src="/tex/b55131511b15b0ca60eee9efe6f939fc.svg?invert_in_darkmode&sanitize=true" align=middle width=35.36518424999999pt height=22.831056599999986pt/>, <img src="/tex/7221766392c47dfeaa41ac8d8f29b35c.svg?invert_in_darkmode&sanitize=true" align=middle width=60.75055139999999pt height=22.831056599999986pt/>,  with an "absInf" edge with parameter <img src="/tex/b55131511b15b0ca60eee9efe6f939fc.svg?invert_in_darkmode&sanitize=true" align=middle width=35.36518424999999pt height=22.831056599999986pt/>, <img src="/tex/d17a3fd6963758b83a8744679af4ddc0.svg?invert_in_darkmode&sanitize=true" align=middle width=69.88299779999998pt height=24.65753399999998pt/>, etc... 
+
 
 <a id="qs"></a>
 
@@ -93,7 +94,7 @@ gfpop(vectData = myData, mygraph = myGraph, type = "gauss")
 
 ```
 ## changepoints
-## [1]  100  294  499  800 1000
+## [1]   99  300  499  801 1000
 ## 
 ## states
 ## [1] 0 1 0 1 0
@@ -102,10 +103,10 @@ gfpop(vectData = myData, mygraph = myGraph, type = "gauss")
 ## [1] 0 0 0 0
 ## 
 ## means
-## [1] 0.9506133 1.9537043 0.9972742 3.0211795 0.9845028
+## [1] 1.0558257 1.9999308 0.9256767 2.8400284 1.0754584
 ## 
 ## cost
-## [1] 1007.106
+## [1] 1022.826
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -140,19 +141,19 @@ gfpop(vectData =  mydata, mygraph = myGraphIso, type = "gauss", K = 1, min = 0.5
 
 ```
 ## changepoints
-## [1]  301  608 1000
+## [1]  388 1000
 ## 
 ## states
-## [1] 0 0 0
-## 
-## forced
 ## [1] 0 0
 ## 
+## forced
+## [1] 0
+## 
 ## means
-## [1] 0.500000 1.787239 2.785360
+## [1] 0.6862598 2.6075454
 ## 
 ## cost
-## [1] 552.7358
+## [1] 543.9708
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -181,19 +182,19 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3.0)
 
 ```
 ## changepoints
-## [1]   99  299  502  797 1000
+## [1]   96  296  499  800 1000
 ## 
 ## states
 ## [1] 0 1 0 1 0
 ## 
 ## forced
-## [1] 1 1 1 0
+## [1] 1 1 0 0
 ## 
 ## means
-## [1]  0.04529466  1.04529466  0.04529466  1.04529466 -0.04628134
+## [1] 0.02676352 1.02676352 0.02676352 1.04487913 0.03315755
 ## 
 ## cost
-## [1] 1785.262
+## [1] 1693.038
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -209,13 +210,12 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 
 ```
 ## changepoints
-##  [1]   42   43   63   64   83   84  103  104  139  140  168  169  194  195
-## [15]  196  232  233  240  242  247  248  279  280  294  295  307  308  376
-## [29]  377  396  397  417  418  419  420  465  469  482  483  484  485  499
-## [43]  501  502  503  531  533  547  548  573  574  586  587  598  599  602
-## [57]  603  630  631  633  634  723  725  750  753  767  771  789  790  801
-## [71]  802  823  824  843  844  849  850  861  862  866  867  992  993  995
-## [85]  997 1000
+##  [1]    7    8   45   46   47  111  115  124  125  160  161  196  197  238
+## [15]  240  276  277  323  325  353  354  403  404  410  412  413  429  431
+## [29]  471  472  546  547  572  578  579  610  617  618  630  631  637  638
+## [43]  668  669  676  677  714  716  724  725  752  753  760  761  803  804
+## [57]  845  846  847  868  869  901  902  906  907  917  918  925  926  966
+## [71]  967  970  971  988  989  999 1000
 ## 
 ## states
 ## integer(0)
@@ -224,27 +224,25 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 ## integer(0)
 ## 
 ## means
-##  [1]  0.58235050  5.95973617  0.11040567 -5.54332269  0.01597223
-##  [6] -5.61655702  0.12396157  6.57021330  0.89009482  6.27698464
-## [11]  1.81590845 -4.96846612  0.46173272 -4.01582950  6.07309505
-## [16]  1.27510910 -5.23201631  2.00428563 -3.89357755  1.18392035
-## [21]  6.13702410  0.32436918  7.31728642  1.21933710  8.18060251
-## [26]  0.39171368  5.88250471  0.20508268  6.09000927 -0.14914062
-## [31]  6.36188853  0.06691261 -5.88077680  0.82939686 -5.83859468
-## [36]  0.24215220 -2.88861258  0.46322050 -5.37509130  5.99463190
-## [41] -6.94589881 -0.27494679  6.32749038  0.42509342 -6.09242332
-## [46]  1.91362165  5.49980317  0.24100133  6.29686995  1.08355394
-## [51]  6.55502695  0.77659393 -4.68638846  1.90402514 -5.28117369
-## [56]  0.84892591 -4.78662548  1.27959714 -5.01674930  0.39100256
-## [61]  6.42241827  0.88404398 -3.18646047  1.33360243 -3.08100662
-## [66]  0.87493475  3.98005805  0.99448371 -5.51246151  0.69887905
-## [71] -6.11159623  0.35774709  6.40251185 -0.21096416 -6.13049289
-## [76]  0.05862639 -7.23456763  0.74318809 -5.25649072 -0.28539193
-## [81] -6.58885517 -0.02340459  5.44173244 -1.54571630  3.37271520
-## [86] -4.34779099
+##  [1]  0.69768051 -5.53193780  0.31695357  4.72653999 -5.90154987
+##  [6]  0.30975675 -2.88389969  0.85496284 -5.45610997  1.39929641
+## [11]  6.35099545  0.39234120  6.56617822  1.07896661  5.81871561
+## [16]  0.69303402  6.53711388  0.44927024 -5.12956104  0.44985886
+## [21]  6.00005852 -0.09368429 -6.37584630  0.80902356 -2.95471377
+## [26]  5.95729676  0.46455749 -4.93562798 -0.15742552  6.02181798
+## [31]  0.74583335 -4.91154159  1.36075918 -0.68933982  6.39606108
+## [36]  0.77420148  2.55435824 -4.73783174  0.78955191 -4.68323868
+## [41]  0.11769371 -5.17589034  1.18188118 -4.86235065  0.91935149
+## [46]  8.02470611  0.98058422 -5.18739572  1.73845283 -3.87242678
+## [51]  0.96364882 -4.94441510  0.41935307 -5.15931311  0.92966860
+## [56] -5.22961739 -0.26455069  3.74845190 -5.08222642  0.45272875
+## [61] -5.66669302  0.15689644  5.66973343 -0.02063657 -5.85447481
+## [66] -0.13222016 -6.10440237 -0.40144636 -6.25755882  0.33692976
+## [71] -5.67484518  1.41474975 -4.84795893  0.34275726  5.50909538
+## [76] -0.24354996  5.97040896
 ## 
 ## cost
-## [1] 2921.03
+## [1] 2614.77
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -267,22 +265,22 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
 
 ```
 ## changepoints
-##  [1]  1000  2000  2998  3000  4002  5000  5999  6000  7003  8000  8999
+##  [1]  1000  2000  3000  3002  4000  5000  6000  6001  7000  8000  9004
 ## [12] 10000
 ## 
 ## states
 ##  [1] 0 0 0 0 0 0 0 0 0 0 0 0
 ## 
 ## forced
-##  [1] 1 1 0 1 0 1 1 1 1 0 0
+##  [1] 1 1 1 0 0 1 1 0 0 0 1
 ## 
 ## means
-##  [1]  2.884239e-03  1.002884e+00  2.884239e-03  9.990353e-01  1.999035e+00
-##  [6]  9.999281e-01  1.999928e+00  9.999281e-01 -7.188997e-05  9.999281e-01
-## [11]  1.059444e-02  9.807759e-01
+##  [1] -0.003668723  0.996331277 -0.003668723  0.996331277  1.976058368
+##  [6]  0.988025166  1.988025166  0.988025166  0.019482291  0.972585217
+## [11] -0.013007627  0.986992373
 ## 
 ## cost
-## [1] 2736.378
+## [1] 2724.789
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -301,20 +299,20 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
 
 ```
 ## changepoints
-##  [1]  1000  2000  3000  4001  5000  6000  7000  8000  9001 10000
+##  [1]  1000  2000  3000  4000  5000  6000  7000  8000  9000 10000
 ## 
 ## states
 ##  [1] 0 0 0 0 0 0 0 0 0 0
 ## 
 ## forced
-## [1] 0 1 0 0 1 0 1 0 0
+## [1] 0 0 0 1 0 0 0 1 0
 ## 
 ## means
-##  [1] -0.025268821  1.002791848  0.002791848  2.024821363  0.995529680
-##  [6]  1.995529680 -0.005607720  0.994392280 -0.022339504  1.020682552
+##  [1]  0.006362090  1.025656394 -0.021843386  1.982795465  0.982795465
+##  [6]  2.022643032 -0.007576226  0.998581228 -0.001418772  1.005417897
 ## 
 ## cost
-## [1] 2617.921
+## [1] 2631.155
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -379,17 +377,10 @@ myGraph
 ```
 
 
-Some graphs are often used: they are defined by default in the `graph` function. To use these graphs, we specify a string `type` equal to "std", "isotonic", "updown" or "infsup".
-For example,
+Some graphs are often used: they are defined by default in the `graph` function. To use these graphs, we specify a string `type` equal to "std", "isotonic", "updown"<!-- 
+%\VignetteEngine{knitr::rmarkdown} 
+%\VignetteIndexEntry{An Introduction to gfpop}
+--> 
 
-```r
-myGraphIso <- graph(penalty = 12, type = "isotonic")
-myGraphIso
-```
 
-```
-##   state1 state2 type penalty parameter
-## 1      0      0   up      12         0
-```
-
-[Back to Top](#top)
+<a id="top"></a>
