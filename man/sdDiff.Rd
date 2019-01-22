@@ -11,6 +11,9 @@ sdDiff(x, method = "HALL")
 
 \item{method}{Three available methods: "HALL", "MAD" and "SD"}
 }
+\value{
+a value equal to the estimated standard deviation
+}
 \description{
 Estimation of the standard deviation
 }
