@@ -15,3 +15,32 @@ dataGenerator <- function(n, changepoints, means, sigma = 1)
   return(vectData)
 }
 
+#' sdDiff
+#'
+#' @description Estimation of the standard deviation
+#' @param x vector of datapoint
+#' @param method Three available methods: "HALL", "MAD" and "SD"
+#' @examples
+#' data <- dataGenerator(100, c(0.3, 0.6, 1), c(1, 2, 3), 2)
+#' sdDiff(data)
+#'
+sdDiff <- function(x, method = 'HALL'){
+  if(method == "SD")
+  {
+    return(sd(diff(x)/sqrt(2)))
+  }
+  if(method == "MAD")
+  {
+    return(mad(diff(x)/sqrt(2)))
+  }
+  if(method == "HALL")
+  {
+    n = length(x)
+    wei <- c(0.1942, 0.2809, 0.3832, -0.8582)
+    mat <- wei %*% t(x)
+    mat[2, -n] = mat[2, -1]
+    mat[3, -c(n-1, n)] = mat[3, -c(1, 2)]
+    mat[4, -c(n-2, n-1, n)] = mat[4, -c(1, 2, 3)]
+    return(sqrt(sum(apply(mat[, -c(n-2, n-1, n)], 2, sum)^2) / (n-3)))
+  }
+}
