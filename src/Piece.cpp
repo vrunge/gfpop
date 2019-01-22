@@ -1035,41 +1035,41 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
 {
   Piece* BUILD = this;
 
-  ///INFORMATION
-  ///Interval interToPaste = interval on which we build BUILD
+  //// INFORMATION interToPaste
+  // Interval interToPaste = interval on which we build BUILD
+  // interToPaste : right BUILD -> min(right Q1, right Q2)
   Interval interToPaste;
   interToPaste.seta(BUILD -> m_interval.getb()); ///enter Piece BUILD :
   if(Bound_Q2_Minus_Q1 == -1){interToPaste.setb(Q2 -> m_interval.getb());}else{interToPaste.setb(Q1 -> m_interval.getb());}
 
-
-  ///INFORMATION
-  ///Interval interInversion
+  //// INFORMATION interRoots
+  // Interval interRoots (Q1 - Q2)
   Interval interRoots = (Q1 -> m_cost.minus(Q2 -> m_cost)).intervalInterRoots();
 
-  ///INFORMATION
-  ///int change = 0, 1 or 2 change-points
+  //// INFORMATION change
+  // int change = 0, 1 or 2 change-points
+  // if bounds of interRoots close to bounds of interToPaste > 1e-12
   int change = 0;
   if((interRoots.geta() > interToPaste.geta() + 1e-12)&&(interRoots.geta() + 1e-12 < interToPaste.getb())){change = change + 1;}
   if((interRoots.getb() > interToPaste.geta() + 1e-12)&&(interRoots.getb() + 1e-12 < interToPaste.getb())){change = change + 1;}
- //std::cout<<"change : "<<change<<std::endl;
 
-  ///CONSTRUCTION
-  ///CONSTRUCTION
-  double centerPoint;
-  int Q2_Minus_Q1;  ///Sign of Q2 - Q1
-
-  CostGauss testCost;
-  bool test;
-
-  ///Security steps
+  ///Security steps: length interRoots very small < 1e-4 DANGER DANGER DANGER DANGER if put to < 1e-12 ???
   if(interRoots.getb() - interRoots.geta() < 1e-4)
   {
     change = 0;
     interRoots.seta(INFINITY);
     interRoots.setb(INFINITY);
   }
-//std::cout<<"change2 : "<<change<<std::endl;
+  //std::cout << "change: " << change << std::endl;
 
+  //// CONSTRUCTION
+  // CONSTRUCTION
+  double centerPoint;
+  int Q2_Minus_Q1;  ///Sign of Q2 - Q1
+  CostGauss testCost;
+  bool test;
+
+  //std::cout << "change: " << change << std::endl;
 
   switch(change)
   {
@@ -1080,7 +1080,7 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
       centerPoint = interToPaste.internPoint();
       Q2_Minus_Q1 = (Q1 -> m_cost).sign_Q2_Minus_Q1(Q2 -> m_cost, centerPoint);
 
-      if (BUILD -> getInterval().isEmpty() == true)
+      if (BUILD -> getInterval().isEmpty() == true) /// IF BUILD interval = empty
       {
         //PROLONGATION
         BUILD -> m_interval.setb(interToPaste.getb());
@@ -1089,19 +1089,21 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
       }
       else
       {
+        ///SECURITY step
         testCost = BUILD -> getCost();
-        if(Q2_Minus_Q1 == -1){test = Q2 -> getCost().isEqual(testCost);}
         if(Q2_Minus_Q1 == 1){test = Q1 -> getCost().isEqual(testCost);}
+        if(Q2_Minus_Q1 == -1){test = Q2 -> getCost().isEqual(testCost);}
 
-        if (test)
+        if (test == true) ///no pb with the cost
         {
           //PROLONGATION
           BUILD -> m_interval.setb(interToPaste.getb());
           if(Q2_Minus_Q1 == 1){BUILD -> m_cost = Q1 -> m_cost; BUILD -> m_info = Q1 -> m_info;}
           if(Q2_Minus_Q1 == -1){BUILD -> m_cost = Q2 -> m_cost; BUILD -> m_info = Q2 -> m_info;}
         }
-        else
+        else ///pb with the cost -> we stop BUILD interval at interToPaste left -> we create a new piece
         {
+          //CONSTRUCTION newPiece
           BUILD -> m_interval.setb(interToPaste.geta());
           Piece* newPiece = new Piece();
           newPiece -> m_interval = interToPaste;
@@ -1111,26 +1113,34 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
           BUILD = newPiece;
         }
       }
-
     break;
     }
+
     /// IF WE ADD 1 PIECE
     case 1 :
     {
-      //PROLONGATION
+      //PROLONGATION theChangePoint
       double theChangePoint;
-
       if(interToPaste.geta() < interRoots.geta()){theChangePoint = interRoots.geta();}else{theChangePoint = interRoots.getb();}
-      BUILD -> m_interval.setb(theChangePoint);
 
-      //FIND the winner on the new piece
-      centerPoint = BUILD -> getInterval().internPoint();
+      //// FIND the winner on the new piece
+      // centerPoint = centre (left interToPaste, right theChangePoint)
+      centerPoint = Interval(interToPaste.geta(), theChangePoint).internPoint();
       Q2_Minus_Q1 = (Q1 -> m_cost).sign_Q2_Minus_Q1(Q2 -> m_cost, centerPoint);
 
       if(Q2_Minus_Q1 == 1){BUILD -> m_cost = Q1 -> m_cost; BUILD -> m_info = Q1 -> m_info;}
       if(Q2_Minus_Q1 == -1){BUILD -> m_cost = Q2 -> m_cost; BUILD -> m_info = Q2 -> m_info;}
 
-      //newpiece
+      BUILD -> m_interval.setb(theChangePoint);
+
+      //std::cout << centerPoint <<  " &&& " << theChangePoint<< std::endl;
+      //std::cout << "interRoots "; interRoots.show();
+      //std::cout << "interToPaste "; interToPaste.show();
+      //std::cout << "BUILD "; BUILD -> m_interval.show();
+      //std::cout << "Q1 "; Q1 -> m_interval.show();
+      //std::cout << "Q2 "; Q2 -> m_interval.show();
+
+      //CONSTRUCTION newPiece
       Piece* newPiece = new Piece();
       newPiece -> m_interval = Interval(theChangePoint, interToPaste.getb());
 
@@ -1141,25 +1151,25 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
       if(Q2_Minus_Q1 == -1){newPiece -> m_cost = Q2 -> m_cost; newPiece -> m_info = Q2 -> m_info;}
       BUILD -> nxt = newPiece;
       BUILD = newPiece;
+
       break;
     }
 
     /// IF WE ADD 2 PIECES
     case 2 :
     {
-      //PROLONGATION
-      BUILD -> m_interval.setb(interRoots.geta());
-
-      //FIND the winner on the newpiece1 (the central piece)
+      //PROLONGATION theChangePoint
+      //FIND the winner on the newpiece1 (the central piece defined on interval interRoots)
       centerPoint = interRoots.internPoint();
-      Q2_Minus_Q1 = -(Q1 -> m_cost).sign_Q2_Minus_Q1(Q2 -> m_cost, centerPoint);
+      Q2_Minus_Q1 = -(Q1 -> m_cost).sign_Q2_Minus_Q1(Q2 -> m_cost, centerPoint); ///INVERSION!!!
 
       if(Q2_Minus_Q1 == 1){BUILD -> m_cost = Q1 -> m_cost; BUILD -> m_info = Q1 -> m_info;}
       if(Q2_Minus_Q1 == -1){BUILD -> m_cost = Q2 -> m_cost; BUILD -> m_info = Q2 -> m_info;}
 
+      BUILD -> m_interval.setb(interRoots.geta());
 
-      //newpiece1
-      Q2_Minus_Q1 = -Q2_Minus_Q1;
+      //CONSTRUCTION newPiece1
+      Q2_Minus_Q1 = -Q2_Minus_Q1; ///INVERSION!!!
       Piece* newPiece1 = new Piece();
       newPiece1 -> m_interval = interRoots;
       if(Q2_Minus_Q1 == 1){newPiece1 -> m_cost = Q1 -> m_cost; newPiece1 -> m_info = Q1 -> m_info;}
@@ -1168,7 +1178,7 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
       BUILD = newPiece1;
 
       Q2_Minus_Q1 = -Q2_Minus_Q1;
-      //newpiece2
+      //CONSTRUCTION newPiece2
       Piece* newPiece2 = new Piece();
       newPiece2 -> m_interval = Interval(interRoots.getb(), interToPaste.getb());
       if(Q2_Minus_Q1 == 1){newPiece2 -> m_cost = Q1 -> m_cost; newPiece2 -> m_info = Q1 -> m_info;}
@@ -1179,7 +1189,8 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
     }
   }
 
-  ///Need of a last "OUT" Piece
+  //CONSTRUCTION outPiece
+  ///Need of a last "OUT" Piece if we have reached the end of the Piece Q1 or Piece Q2
   if((((Q2_Minus_Q1 == 1)&&(Bound_Q2_Minus_Q1 >= 0)) || ((Q2_Minus_Q1 == -1)&&(Bound_Q2_Minus_Q1 <= 0))) && (interToPaste.getb() != M))
   {
     Piece* outPiece = new Piece();
@@ -1315,6 +1326,7 @@ std::vector<double> Piece::get_min_argmin_label(double rightBound, bool& forced,
     global_argmin = rightBound;
     forced = true;
   }
+  //std::cout<< global_argmin << " --- " << label << std::endl;
 
 
   Q_tmp = Q_tmp -> nxt;
@@ -1333,7 +1345,7 @@ std::vector<double> Piece::get_min_argmin_label(double rightBound, bool& forced,
       {
         //std::cout<<"azazazazazazazazazazazazazazazazazazazazazazazazazazazazazazazazazazazazazaz"<<std::endl;
         //std::cout<< rightBound <<std::endl;
-        //std::cout<< global_argmin <<std::endl;
+        //std::cout<< "new" << global_argmin <<std::endl;
 
         global_min = Q_tmp -> getCost().point_eval(rightBound);
         global_argmin = rightBound;

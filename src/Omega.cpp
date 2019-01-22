@@ -159,7 +159,6 @@ void Omega::fpop1d_graph_isotonic(Data const& data)
   ///
   for(unsigned int t = 0 ; t < data.getn(); t++)
   {
-    //std::cout << Q_t.back() -> length() << std::endl;
 		newLeftBound = Q_t.back() -> newBound(currentMin[t]); /// left bound update = update partialArgmin (newLeftBound <= currentMin[t])
     Q_t.push_back(Q_t.back() -> copyIsotonic(newLeftBound)); ///new element in Q_t => copy Q_t with the updated left bound
 
@@ -171,6 +170,26 @@ void Omega::fpop1d_graph_isotonic(Data const& data)
 
     Q_t.back() = Q_t.back() -> min_function(Q_up, m_bound.getM()); /// minimum opertor : Q_up VS Q_t
     Q_t.back() -> addPoint(myData[t], m_robust);
+
+    /*std::ostringstream ttemp;  //temp as in temporary
+    ttemp << t;
+    std::string fileQup = "Rtxt/Qup_" + ttemp.str();
+    std::string fileQt = "Rtxt/Qt_" + ttemp.str();
+
+    fileQup = fileQup + ".txt";
+    fileQt = fileQt + ".txt";
+
+    std::ofstream fichier1(fileQup.c_str(),std::ios::out | std::ios::trunc);
+    fichier1.precision(9);
+    Piece* tmp1 = Q_up -> copy();
+    fichier1 >> tmp1;
+    fichier1.close();
+    std::ofstream fichier2(fileQt.c_str(),std::ios::out | std::ios::trunc);
+    fichier2.precision(9);
+    Piece* tmp2 = Q_t.back() -> copy();
+    fichier2 >> tmp2;
+    fichier2.close();*/
+
   }
   backtrackingIsotonic(Q_t);
 
@@ -466,6 +485,7 @@ void Omega::backtrackingIsotonic(std::vector<Piece*> const& Q_t)
 
   std::vector<double> malsp = Q_t.back() -> get_min_argmin_label_state_position_final();
   globalCost = malsp[0];
+  //std::cout<< "     min : " << malsp[0] << std::endl;
 
   int CurrentChgpt = Q_t.size() - 1; /// data(1)....data(n). Last data index in each segment
 
@@ -483,7 +503,8 @@ void Omega::backtrackingIsotonic(std::vector<Piece*> const& Q_t)
 
   means.push_back(malsp[1]);
   changepoints.push_back(CurrentChgpt);
-  states.push_back(m_graph.getEdge(0).getState1());
+  states.push_back(0); ///the only state is vertex state 0
+
 
   /// BACKTRACK
   ///
@@ -491,7 +512,7 @@ void Omega::backtrackingIsotonic(std::vector<Piece*> const& Q_t)
   ///
   bool boolForced = false;
 
-  while( malsp[2] > 0)
+  while( malsp[2] > 0)  ///while Label > 0
   {
     ///
     ///BACKTRACK
@@ -499,10 +520,14 @@ void Omega::backtrackingIsotonic(std::vector<Piece*> const& Q_t)
     boolForced = false;
     CurrentChgpt = malsp[2];
     malsp = Q_t[malsp[2]] -> get_min_argmin_label(malsp[1] - m_graph.getEdge(0).getParameter(), boolForced, m_bound.getIsConstrained());
+
+    //malsp = Q_t[malsp[2]] -> get_min_argmin_label(INFINITY, boolForced, m_bound.getIsConstrained());
     if(malsp[1] > m_bound.getM()){malsp[1] = m_bound.getM(); boolForced = true;}
     if(malsp[1] < m_bound.getm()){malsp[1] = m_bound.getm(); boolForced = true;}
 
-    //std::cout << std::endl;
+    //std::cout <<  malsp[1] << std::endl;
+    //std::cout<< "     min : " << malsp[0] << std::endl;
+
     //std::cout<< "CurrentChgpt : " << CurrentChgpt << std::endl;
     //Q_t[CurrentChgpt] -> show();
     ///
@@ -515,7 +540,7 @@ void Omega::backtrackingIsotonic(std::vector<Piece*> const& Q_t)
 
     means.push_back(malsp[1]);
     changepoints.push_back(CurrentChgpt);
-    states.push_back(m_graph.getEdge(0).getState1());
+    states.push_back(0);
     forced.push_back(boolForced);
   }
 
