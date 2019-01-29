@@ -75,7 +75,7 @@ with
 
 $$\mathcal{B} = \{\hbox{constraint function}\,\,  g : \mathbb{R}\times \mathbb{R} \mapsto \mathbb{R} \,,\, \hbox{penalty}\,\beta \ge 0 \}\,.$$
 
-An element $e(t) \in \mathcal{T}(t)$ is described by the elements $e(t) = (s_t,s_{t+1},g_{e(t)},\beta^{e(t)})$. The transition function $g_{e(t)}$ defines the kind of constraint we use in the transition from state $s_t$ to state $s_{t+1}$ and penalized by $\beta^{e(t)}$. Table \ref{constraintstable} summarizes all the possible constraints encoded into the \proglang{gfpop} package.\\
+An element $e(t) \in \mathcal{T}(t)$ is described by the elements $e(t) = (s_t,s_{t+1},g_{e(t)},\beta^{e(t)})$. The transition function $g_{e(t)}$ defines the kind of constraint we use in the transition from state $s_t$ to state $s_{t+1}$ and penalized by $\beta^{e(t)}$. The following able summarizes all the possible constraints encoded into the `gfpop` package.
 
 
 | constraints | $g_{e(t)} : \mathbb{R}\times \mathbb{R} \mapsto \mathbb{R}$, $c \in \mathbb{R}^+$ |
