@@ -110,7 +110,7 @@ and $P \subset \mathcal{T}^{n-1}$ being the set of valid paths of the graph. We 
 
 Notice that in most applications, the set of edges always contains edges of type $(i,i,g(\mu,\nu)=(\mu-\nu)^2,0)$ for all $i \in V$ as it corresponds to an absence of constraint on segment lengths. 
 
-The main algorithm of the package, the `gfpop` function, returns the changepoint vector $\tau^*$ defined as $\{i \in \{1,...,n\}\,,\, m_{i}\ne m_{i+1}\}$, with $(m_1,...,m_n)$ the argminimum of $(\mu_1,...,\mu_n)$ in (\ref{pathmin}) and $m_{n+1} = +\infty$.
+The main algorithm of the package, the `gfpop` function, returns the changepoint vector $\tau^*$ defined as $\{i \in \{1,...,n\}\,,\, m_{i}\ne m_{i+1}\}$, with $(m_1,...,m_n)$ the argminimum of $(\mu_1,...,\mu_n)$ and $m_{n+1} = +\infty$.
 
 <a id="qs"></a>
 
@@ -212,7 +212,7 @@ gfpop(vectData =  mydata, mygraph = myGraphIso, type = "gauss", K = 1, min = 0.5
 
 In this example, we use in `gfpop` function a robust biweight gaussian cost with `K = 1` and the `min` parameter in order to infer means greater than `0.5`.
 
-### Fixed number of changepoint
+### Fixed number of changepoints
 
 This algorithm is called segment neighborhood in the changepoint litterature. In this example, we fixed the number of segments at $3$ with an isotonic constraint.
 
@@ -426,7 +426,7 @@ emptyGraph
 ## <0 rows> (or 0-length row.names)
 ```
 
-`state1` is the starting vertex of an edge, `state2` its ending vertex. `type` is one of the available edge type ("null", up", "down", "std", "absInf", "absSup"). `penalty` is a nonnegative parameter: the additional cost $\beta_i$ to consider when we move within the graph using this edge. `parameter` is annother nonnegative parameter, a characteristics of the edge, depending of its type.
+`state1` is the starting vertex of an edge, `state2` its ending vertex. `type` is one of the available edge type ("null", up", "down", "std", "absInf", "absSup"). `penalty` is a nonnegative parameter: the additional cost $\beta$ to consider when we move within the graph using this edge. `parameter` is annother nonnegative parameter, a characteristics of the edge, depending of its type.
 
 We add edges as follows
 
