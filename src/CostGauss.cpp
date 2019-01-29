@@ -3,7 +3,7 @@
 #include"math.h"
 #include <iostream>
 #include<vector>
-#include"termcolor.h"
+//#include"termcolor.h"
 
 CostGauss::CostGauss(): m_A(0), m_B(0), constant(0){}
 

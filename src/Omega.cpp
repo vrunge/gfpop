@@ -3,7 +3,7 @@
 #include "CostGauss.h"
 
 #include "Piece.h"
-#include "termcolor.h"
+//#include "termcolor.h"
 
 #include<iostream>
 #include <iomanip> ///Set Precision scientific

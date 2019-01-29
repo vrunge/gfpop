@@ -1,6 +1,6 @@
 #include "Piece.h"
 
-#include "termcolor.h"
+//#include "termcolor.h"
 
 #include <math.h>
 #include <stdlib.h>
