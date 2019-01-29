@@ -1,18 +1,15 @@
----
-output:
-  html_document: default
-  pdf_document: default
-  word_document: default
----
+<a id="top"></a>
+
+# gfpop Vignette
+[![Build Status](https://travis-ci.com/vrunge/gfpop.svg?branch=master)](https://travis-ci.com/vrunge/gfpop)
+[![](https://img.shields.io/badge/docs-vignettes-blue.svg)](https://github.com/vrunge/gfpop)
 
 <!-- 
 %\VignetteEngine{knitr::rmarkdown} 
 %\VignetteIndexEntry{An Introduction to gfpop}
 --> 
 
-\DeclareMathOperator*{\argmin}{arg\,min}
 
-<a id="top"></a>
 
 # gfpop Vignette
 ### Vincent Runge
