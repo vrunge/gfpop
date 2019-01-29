@@ -1,6 +1,5 @@
 <a id="top"></a>
 
-# gfpop Vignette
 [![Build Status](https://travis-ci.com/vrunge/gfpop.svg?branch=master)](https://travis-ci.com/vrunge/gfpop)
 [![](https://img.shields.io/badge/docs-vignettes-blue.svg)](https://github.com/vrunge/gfpop)
 
