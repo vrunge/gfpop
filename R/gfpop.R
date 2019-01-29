@@ -45,10 +45,25 @@ gfpop <- function(vectData = c(0), vectWeight = c(0), mygraph, type = "gauss", K
   if(type == "binomial"){stop('binomial loss not yet available')}
 
 
+  ### BUILD an ordered Graph : myOrderedGraph ###
+  startend <- mygraph[is.na(mygraph[,2]),]
+  mygraph <-  mygraph[!is.na(mygraph[,2]),]
+  maxVertex <- max(mygraph[,c(1,2)])
+
+  myOrderedGraph <- graph()
+  for(i in 0:maxVertex)
+  {
+    selectRaw <- mygraph[mygraph[,2]==i, ]
+    ordre <- order(selectRaw[,4])
+    selectRaw <- selectRaw[ordre,]
+    myOrderedGraph <- rbind(myOrderedGraph, selectRaw)
+  }
+  myOrderedGraph <- rbind(myOrderedGraph, startend)
+
   ###CALL Rcpp functions###
-  if(type == "gauss"){res <- gfpopTransfert_Gauss(vectData, vectWeight, mygraph, K, a, min, max)}
-  if(type == "poisson"){res <- gfpopTransfert_Poisson(vectData, vectWeight, mygraph, K, a, min, max)}
-  if(type == "binomial"){res <- gfpopTransfert_Binomial(vectData, vectWeight, mygraph, K, a, min, max)}
+  if(type == "gauss"){res <- gfpopTransfert_Gauss(vectData, vectWeight, myOrderedGraph, K, a, min, max)}
+  if(type == "poisson"){res <- gfpopTransfert_Poisson(vectData, vectWeight, myOrderedGraph, K, a, min, max)}
+  if(type == "binomial"){res <- gfpopTransfert_Binomial(vectData, vectWeight, myOrderedGraph, K, a, min, max)}
 
   ###Response class gfpop###
   response <- list(changepoints = c(rev(res$changepoints[-1]), length(vectData)), states = rev(res$states), forced = rev(res$forced), means = rev(res$means), cost = res$cost)

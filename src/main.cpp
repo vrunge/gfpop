@@ -92,7 +92,6 @@ List gfpopTransfert_Gauss(NumericVector vectData, NumericVector vectWeight, Data
   /// FPOP 1D GRAPH ALGORITHM. Different call with respect to the complexity of the graph.
   if(graphType == "std"){omega.fpop1d_graph_std(data);}
   if(graphType == "isotonic"){omega.fpop1d_graph_isotonic(data);}
-  if(graphType == "cyclic"){omega.fpop1d_graph_cyclic(data);}
   if(graphType == "complex"){omega.fpop1d_graph_complex(data);}
 
   ///////////

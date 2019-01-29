@@ -66,7 +66,6 @@ int Piece::length()
 }
 
 
-
 void Piece::testEmptyInterval()
 {
   Piece* tmp = this;
@@ -100,8 +99,6 @@ Piece* Piece::copy()
 }
 
 
-
-
 Piece* Piece::copy(int& length)
 {
 	Piece* tmp = this;
@@ -116,8 +113,6 @@ Piece* Piece::copy(int& length)
 		}
 	return(Qnew);
 }
-
-
 
 
 Piece* Piece::copyIsotonic(double newLeftBound)
@@ -140,9 +135,6 @@ Piece* Piece::copyIsotonic(double newLeftBound)
   }
 	return(Qnew);
 }
-
-
-
 
 
 Piece* Piece::reverse()
@@ -199,11 +191,8 @@ void Piece::opposition()  /// cost <- - cost
 }
 
 
-
-
 //####### Piece_min_argmin #######////####### Piece_min_argmin #######////####### Piece_min_argmin #######//
 //####### Piece_min_argmin #######////####### Piece_min_argmin #######////####### Piece_min_argmin #######//
-
 
 std::vector<double> Piece::Piece_min_argmin()
 {
@@ -236,7 +225,6 @@ std::vector<double> Piece::Piece_min_argmin()
 }
 
 
-
 //####### newBound #######// //####### newBound #######// //####### newBound #######//
 //####### newBound #######// //####### newBound #######// //####### newBound #######//
 
@@ -260,7 +248,6 @@ double Piece::newBound(double currentDataMin)
 
 	return(newLeftBound);
 }
-
 
 
 //####### add something #######// //####### add something #######// //####### add something #######//
@@ -292,7 +279,6 @@ void Piece::addPoint(Point const& pt, Robust const& robust)
         Q_tmp = Q_tmp -> nxt;
       }
     }
-
 
 ///CASE BIWEIGHT
 ///CASE BIWEIGHT
@@ -369,7 +355,6 @@ void Piece::addPoint(Point const& pt, Robust const& robust)
     }
 
   }
-
 
 ///CASE Huber
 ///CASE Huber
@@ -460,13 +445,21 @@ Piece* Piece::edge_constraint(Edge const& edge, int newLabel, Bound const& bound
 	/// RETURN RESPONSE : first Piece address
 	Piece* response;  /// first Piece to return
 
-  /// EDGE PARAMETER
+  ///
+  /// EDGE PARAMETERS
+  ///
   std::string edge_ctt = edge.getConstraint();
   double edge_parameter = edge.getParameter();
   double edge_beta = edge.getBeta();
   int parentStateLabel = edge.getState1(); ///parentStateLabel = state to associate
   double m = bound.getm();
   double M = bound.getM();
+
+  //###############################################################
+  if(edge_ctt == "null")
+  {
+    response = this -> copy();
+  }
 
   //###############################################################
   if(edge_ctt == "std" && bound.getIsConstrained() == false)
@@ -618,8 +611,6 @@ Piece* Piece::shift_left(double parameter, double mini)
 //####### operator_functions #######// //####### operator_functions #######// //####### operator_functions #######//
 //####### operator_functions #######// //####### operator_functions #######// //####### operator_functions #######//
 //####### operator_functions #######// //####### operator_functions #######// //####### operator_functions #######//
-
-
 
 
 //####### operator_std_min_argmin #######// //####### operator_std_min_argmin #######// //####### operator_std_min_argmin #######//
@@ -1382,23 +1373,23 @@ void Piece::save(std::ostream &flux)
 }
 
 
-
 void Piece::show()
 {
-  int i = 1;
-	Piece* tmp = this;
-	//if(tmp == NULL){std::cout << termcolor::red << "#NULL EMPTY POINTER# "<< termcolor::reset << std::endl;}
-	while(tmp != NULL)
-  {
-	  //std::cout << i << "#";
-	  //std::cout << tmp;
-	  //std::cout << termcolor::cyan << "#LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " <<  tmp -> m_info.getPosition() << " " << termcolor::reset;
-	  //std::cout << "#INTERVAL# "<< tmp -> m_interval.geta() << " -- " << tmp -> m_interval.getb()<< " ";
-	  //tmp -> m_cost.show(tmp -> m_interval);
-    tmp = tmp -> nxt;
-    i = i + 1;
-  }
+  //int i = 1;
+  //Piece* tmp = this;
+  //if(tmp == NULL){std::cout << termcolor::red << "#NULL EMPTY POINTER# "<< termcolor::reset << std::endl;}
+  //while(tmp != NULL)
+  //{
+  //  std::cout << i << "#";
+  //  std::cout << tmp;
+  //  std::cout << termcolor::cyan << "#LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " << tmp -> m_info.getPosition() << " " << termcolor::reset;
+  //  std::cout << "#INTERVAL# "<< tmp -> m_interval.geta() << " -- " << tmp -> m_interval.getb() << " ";
+  //  tmp -> m_cost.show(tmp -> m_interval);
+  //  tmp = tmp -> nxt;
+  //  i = i + 1;
+  //}
 }
+
 
 
 void Piece::showOne()

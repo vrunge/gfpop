@@ -80,47 +80,24 @@ void Omega::fpop1d_graph_complex(Data const& data)
 	///
 	/// Initial functional cost (with startState constraint)
 	///
-	copyQt(); ///add a new row in Q_ts = copy the previous one
+	///add a new row in Q_ts = copy the previous one
+	Piece** Qt_new = new Piece*[p];
+	for (unsigned char i = 0; i < p ; i++){Qt_new[i] = Q_ts.back()[i] -> copy();}
+	Q_ts.push_back(Qt_new);
+
   addPointQ_t(myData[0]);
   int startState = m_graph.getStartState();
   if(startState != -1){for(unsigned char i = 0; i < p; i++){if(startState != i){Q_ts.back()[i] -> addConstant(INFINITY);}}}
 
   for(unsigned int t = 1; t < data.getn(); t++) /// loop for all edges
   {
-    copyQt(); ///add a new row in Q_ts = copy the previous one
     fillQ_edges(t); ///fillQ_edges. t = newLabel to consider
+    copyQt(); ///add a new row in Q_ts = copy the previous one
     multiple_minimization(); ///multiple_minimization
     addPointQ_t(myData[t]); ///Add new data point
   }
 	backtracking();
 }
-
-
-//####### cyclic #######////####### cyclic #######////####### cyclic #######//
-//####### cyclic #######////####### cyclic #######////####### cyclic #######//
-
-void Omega::fpop1d_graph_cyclic(Data const& data)
-{
-	Point* myData = data.getVecPt(); ///GET the data/// get the vector of Points = myData
-
-	///
-	/// Initial functional cost (with startState constraint)
-	///
-	copyQt(); ///add a new row in Q_ts = copy the previous one
-  addPointQ_t(myData[0]);
-  int startState = m_graph.getStartState();
-  if(startState != -1){for(unsigned char i = 0; i < p; i++){if(startState != i){Q_ts.back()[i] -> addConstant(INFINITY);}}}
-
-  for(unsigned int t = 1; t < data.getn(); t++) /// loop for all edges
-  {
-    copyQt(); ///add a new row in Q_ts = copy the previous one
-    fillQ_edges(t); ///fillQ_edges. t = newLabel to consider
-    multiple_minimization_cyclic(); ///multiple_minimization
-    addPointQ_t(myData[t]); ///Add new data point
-  }
-	backtracking();
-}
-
 
 
 //####### isotonic #######////####### isotonic #######////####### isotonic #######//
@@ -154,6 +131,13 @@ void Omega::fpop1d_graph_isotonic(Data const& data)
   }
   double newLeftBound = currentMin[0]; ///the minimal value in myData -> the value for the new left bound at each iteration
 
+
+  ///
+  /// ISOTONIC parameters
+  ///
+  double betaUp = m_graph.getEdge(1).getBeta();
+  double parameterUp = m_graph.getEdge(1).getParameter();
+
   ///
   /// add point in recursion
   ///
@@ -165,8 +149,8 @@ void Omega::fpop1d_graph_isotonic(Data const& data)
     delete(Q_up); /// reset the vector of Piece Q_edges[0]
     Q_up = NULL;
     Q_up = Q_t.back() -> operator_down(t, -1); /// parentStateLabel = -1 (a unique state => "no state to consider")
-    Q_up -> addConstant(m_graph.getEdge(0).getBeta()); ///add beta to Q_up
-    if(m_graph.getEdge(0).getParameter() > 0){Q_up = Q_up -> shift_right(m_graph.getEdge(0).getParameter(), m_bound.getM());} ///if parameter > 0 => shift right
+    Q_up -> addConstant(betaUp); ///add beta to Q_up
+    if(parameterUp > 0){Q_up = Q_up -> shift_right(parameterUp, m_bound.getM());} ///if parameter > 0 => shift right
 
     Q_t.back() = Q_t.back() -> min_function(Q_up, m_bound.getM()); /// minimum opertor : Q_up VS Q_t
     Q_t.back() -> addPoint(myData[t], m_robust);
@@ -199,16 +183,14 @@ void Omega::fpop1d_graph_isotonic(Data const& data)
 }
 
 
-//####### std #######////####### std #######////####### std #######//
-//####### std #######////####### std #######////####### std #######//
-
 
 //####### std #######////####### std #######////####### std #######//
 //####### std #######////####### std #######////####### std #######//
 
 void Omega::fpop1d_graph_std(Data const& data)
 {
-  double beta = m_graph.getEdge(0).getBeta();
+  double beta = m_graph.getEdge(1).getBeta();
+
   Point* myData = data.getVecPt(); ///GET the data///get the vector of Points = myData
 
   int lastlabel;
@@ -234,7 +216,6 @@ void Omega::fpop1d_graph_std(Data const& data)
       Q_s_temp[0] = Q_s_temp[0] -> min_function(Q_edges[0], m_bound.getM());
     }
   }
-
 
   ///bound constrainted = false
   if(m_bound.getIsConstrained() == false)
@@ -290,9 +271,9 @@ void Omega::fpop1d_graph_std(Data const& data)
 
 void Omega::copyQt()
 {
-	Piece** Qt = Q_ts.back();
+	//Piece** Qt = Q_ts.back();
 	Piece** Qt_new = new Piece*[p];
-	for (unsigned char i = 0; i < p ; i++){Qt_new[i] = Qt[i] -> copy();}
+	//for (unsigned char i = 0; i < p ; i++){Qt_new[i] = Qt[i] -> copy();}
 	Q_ts.push_back(Qt_new);
 }
 
@@ -304,12 +285,12 @@ void Omega::fillQ_edges(int newLabel)
 {
 	int s1;
 	for (unsigned int i = 0 ; i < q ; i++) /// loop for all edges
-		{
-      delete(Q_edges[i]);///DELETE Q_edges[i]
-			Edge edge = m_graph.getEdge(i);
-      s1 = edge.getState1();   /// starting state
-      Q_edges[i] = Q_ts.back()[s1] -> edge_constraint(edge, newLabel, m_bound);
-		}
+	{
+    delete(Q_edges[i]);///DELETE Q_edges[i]
+		Edge edge = m_graph.getEdge(i);
+    s1 = edge.getState1();   /// starting state
+    Q_edges[i] = Q_ts.back()[s1] -> edge_constraint(edge, newLabel, m_bound);
+	}
 }
 
 //##### multiple_minimization #####//////##### multiple_minimization #####//////##### multiple_minimization #####///
@@ -317,52 +298,21 @@ void Omega::fillQ_edges(int newLabel)
 
 void Omega::multiple_minimization()
 {
-  int s2;
-
-	double isEmpty[p];
-  for(unsigned int i = 0 ; i < p ; i++)
-  {
-    isEmpty[i] = 1;
-    delete(Q_s_temp[i]);
-  }///DELETE Q_s_temp[i]
-
-  ///Q_s_temp CREATION
-  for (unsigned int i = 0 ; i < q ; i++) // loop for all edges
-  {
-    Edge edge = m_graph.getEdge(i);
-    s2 = edge.getState2(); /// ending state
-    if(isEmpty[s2] == 0){Q_s_temp[s2] = Q_s_temp[s2] -> min_function(Q_edges[i], m_bound.getM());}
-   if(isEmpty[s2] == 1){Q_s_temp[s2] = Q_edges[i]  -> copy(); isEmpty[s2] = 0;} ///DANGER with no -> copy() (=> special destructor)
-    /// fill Q_s_temp with the starting edge in myParentState
-  }
-
+  int j = 0;
   ///Q_s_temp vs Q_ts minimization
-  for (unsigned int i = 0 ; i < p ; i++)
+  for (unsigned int i = 0 ; i < p; i++)
   {
-    Edge edge = m_graph.getEdge(i);
-    s2 = edge.getState2(); /// ending state
-    Q_ts.back()[i] = Q_ts.back()[i] -> min_function(Q_s_temp[i], m_bound.getM());
-  }
-}
+    //delete(Q_ts.back()[i]);
+    Q_ts.back()[i] = Q_edges[j] -> copy();
 
-
-
-//##### multiple_minimization_cyclic #####//////##### multiple_minimization_cyclic #####//////##### multiple_minimization_cyclic #####///
-//##### multiple_minimization_cyclic #####//////##### multiple_minimization_cyclic #####//////##### multiple_minimization_cyclic #####///
-
-
-void Omega::multiple_minimization_cyclic()
-{
-  int s2;
-
-  ///Q_s_temp vs Q_ts minimization
-  for (unsigned char i = 0 ; i < p ; i++)
-  {
-    Edge edge = m_graph.getEdge(i);
-    s2 = edge.getState2(); /// ending state
-    Piece* Q_edgesCopy = Q_edges[i]-> copy();
-    Q_ts.back()[s2] = Q_ts.back()[s2] -> min_function(Q_edgesCopy, m_bound.getM()); ///Q_edges[i] -> copy()
-    delete(Q_edgesCopy);
+    while((j + 1 < q) && (m_graph.getEdge(j + 1).getState2() == i))
+    {
+      //Piece* Q_edgesCopy = Q_edges[j + 1] -> copy();
+      Q_ts.back()[i] = Q_ts.back()[i] -> min_function(Q_edges[j + 1], m_bound.getM()); ///
+      //delete(Q_edgesCopy);
+      j = j + 1;
+    }
+    j = j + 1;
   }
 }
 

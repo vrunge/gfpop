@@ -17,8 +17,8 @@ Graph::Graph()
 
 void Graph::newEdge(Edge const& edge){edges.push_back(edge);}
 
-// ### nb_states ### ////// ### nb_states ### ////// ### nb_states ### ////// ### nb_states ### ///
-// ### nb_states ### ////// ### nb_states ### ////// ### nb_states ### ////// ### nb_states ### ///
+// ### nb_states ### /// /// ### nb_states ### /// /// ### nb_states ### /// /// ### nb_states ### ///
+// ### nb_states ### /// /// ### nb_states ### /// /// ### nb_states ### /// /// ### nb_states ### ///
 
 int Graph::nb_states() const
 {
@@ -39,8 +39,8 @@ int Graph::nb_states() const
 }
 
 
-// ### get ### ////// ### get ### ////// ### get ### ////// ### get ### ///
-// ### get ### ////// ### get ### ////// ### get ### ////// ### get ### ///
+// ### get ### /// /// ### get ### /// /// ### get ### ////// ### get ### ///
+// ### get ### /// /// ### get ### /// /// ### get ### ////// ### get ### ///
 
 int Graph::nb_edges() const {return(edges.size());}
 Edge Graph::getEdge(int i) const {return(edges[i]);}
@@ -48,26 +48,8 @@ int Graph::getStartState() const {return(startState);}
 int Graph::getEndState() const {return(endState);}
 
 
-// ### isCyclic ### ////// ### isCyclic ### ////// ### isCyclic ### ////// ### isCyclic ### ///
-// ### isCyclic ### ////// ### isCyclic ### ////// ### isCyclic ### ////// ### isCyclic ### ///
-
-bool Graph::isCyclic() const
-{
-  int nbEdges = nb_edges();
-  if(nbEdges == 1){return(false);}
-  if(nbEdges!= nb_states()){return(false);}
-  std::vector<int> state1(nbEdges, 0);
-  std::vector<int> state2(nbEdges, 0);
-
-  for (int i = 0 ; i < nbEdges ; i++)
-  {
-    if(state1[edges[i].getState1()] == 1){return(false);}
-    if(state2[edges[i].getState2()] == 1){return(false);}
-    state1[edges[i].getState1()] = 1;
-    state2[edges[i].getState2()] = 1;
-  }
-  return(true);
-}
+// ### AreVerticesCompatible ### /// /// ### AreVerticesCompatible ### /// /// ### AreVerticesCompatible ### ///
+// ### AreVerticesCompatible ### /// /// ### AreVerticesCompatible ### /// /// ### AreVerticesCompatible ### ///
 
 
 bool Graph::AreVerticesCompatible() const //label of the vertices from 0 to S
@@ -103,21 +85,19 @@ bool Graph::AreVerticesCompatible() const //label of the vertices from 0 to S
 std::string Graph::getType() const
 {
   std::string response = "complex";
-  if(edges.size() == 1)
+  if(edges.size() == 2)
   {
-    if(edges[0].getConstraint() == "up"){response = "isotonic";}
-    if(edges[0].getConstraint() == "std" && nb_states() == 1){response = "std";}
+    if(edges[0].getConstraint() == "null" && edges[1].getConstraint() == "up" && nb_states() == 1){response = "isotonic";}
+    if(edges[1].getConstraint() == "null" && edges[0].getConstraint() == "up" && nb_states() == 1){response = "isotonic";}
+    if(edges[0].getConstraint() == "null" && edges[1].getConstraint() == "std" && nb_states() == 1){response = "std";}
+    if(edges[1].getConstraint() == "null" && edges[0].getConstraint() == "std" && nb_states() == 1){response = "std";}
   }
-
-  if(isCyclic() == true){response = "cyclic";}
-
   return(response);
-
 }
 
 
-// ### buildInterval ### ////// ### buildInterval ### ////// ### buildInterval ### ////// ### buildInterval ### ///
-// ### buildInterval ### ////// ### buildInterval ### ////// ### buildInterval ### ////// ### buildInterval ### ///
+// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### ///
+// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### ///
 
 
 Interval Graph::buildInterval(double argmin, int s1, int s2, bool& out) const
@@ -167,7 +147,7 @@ void Graph::show() const
   //std::cout<< termcolor::on_red << "GRAPH" << termcolor::reset << std::endl;
   for (int i = 0 ; i < edges.size() ; i++)
   {
-    //edges[i].show();
+    // edges[i].show();
   }
   //std::cout<< "Start state : " << startState << std::endl;
   //std::cout<< "End state : " << endState << std::endl;

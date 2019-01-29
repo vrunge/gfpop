@@ -17,8 +17,8 @@ edge <- function(state1, state2, type, penalty, parameter = 0)
   if(state1 < 0){stop('state1 must a nonnegative integer')}
   if(state2 < 0){stop('state2 must a nonnegative integer')}
 
-  if(type != "std" && type != "up" && type != "down" && type != "absInf" && type != "absSup")
-    {stop('Argument not appropriate. Choose a type among the following: "std", "up", "down", "absInf", "absSup".')}
+  if(type != "null" && type != "std" && type != "up" && type != "down" && type != "absInf" && type != "absSup")
+    {stop('Argument not appropriate. Choose a type among the following: "null", "std", "up", "down", "absInf", "absSup".')}
 
   if(!is.double(penalty)){stop('penalty is not a double.')}
   if(!is.double(parameter)){stop('parameter is not an double.')}
@@ -59,20 +59,32 @@ graph <- function(penalty = 0, type = "empty")
   class(myNewGraph) <- c(class(myNewGraph), "graph")
 
   ###Usual graphs###
-  if(type == "std") {myNewGraph[1, ] <- edge(0, 0, "std", penalty, 0)}
+  if(type == "std")
+  {
+    myNewGraph[1, ] <- edge(0, 0, "null", 0, 0)
+    myNewGraph[2, ] <- edge(0, 0, "std", penalty, 0)
+  }
 
-  if(type == "isotonic"){myNewGraph[1, ] <- edge(0, 0, "up", penalty, 0)}
+  if(type == "isotonic")
+  {
+    myNewGraph[1, ] <- edge(0, 0, "null", 0, 0)
+    myNewGraph[2, ] <- edge(0, 0, "up", penalty, 0)
+  }
 
   if(type == "updown")
   {
-    myNewGraph[1, ] <- edge(0, 1, "up", penalty, 0)
-    myNewGraph[2, ] <- edge(1, 0, "down", penalty, 0)
+    myNewGraph[1, ] <- edge(0, 0, "null", 0, 0)
+    myNewGraph[2, ] <- edge(1, 1, "null", 0, 0)
+    myNewGraph[3, ] <- edge(0, 1, "up", penalty, 0)
+    myNewGraph[4, ] <- edge(1, 0, "down", penalty, 0)
   }
 
   if(type == "infsup")
   {
-    myNewGraph[1, ] <- edge(0, 1, "absInf", penalty, 0)
-    myNewGraph[2, ] <- edge(1, 0, "absSup", penalty, 0)
+    myNewGraph[1, ] <- edge(0, 0, "null", 0, 0)
+    myNewGraph[2, ] <- edge(1, 1, "null", 0, 0)
+    myNewGraph[3, ] <- edge(0, 1, "absSup", penalty, 0)
+    myNewGraph[4, ] <- edge(1, 0, "absInf", penalty, 0)
   }
   return(myNewGraph)
 }
@@ -87,8 +99,10 @@ graph <- function(penalty = 0, type = "empty")
 #' @return the graph with the additional edge "edge"
 #' @examples
 #' myGraph <- graph()
-#' myGraph <- addEdge(myGraph, edge(1, 2, "up", 10))
-#' myGraph <- addEdge(myGraph, edge(2, 1, "down", 0))
+#' myGraph <- addEdge(myGraph, edge(0, 1, "up", 10))
+#' myGraph <- addEdge(myGraph, edge(1, 0, "down", 0))
+#' myGraph <- addEdge(myGraph, edge(0, 0, "null", 0))
+#' myGraph <- addEdge(myGraph, edge(1, 1, "null", 0))
 addEdge <- function(graph, edge)
 {
   if(!any(class(graph) == "graph")){stop('Your graph is not a graph...')}
@@ -113,9 +127,9 @@ addEdge <- function(graph, edge)
 #' @return the graph with these new constraints
 #' @examples
 #' myGraph <- graph()
-#' myGraph <- addEdge(myGraph, edge(1, 2, "up", 10))
-#' myGraph <- addEdge(myGraph, edge(2, 1, "down", 0))
-#' myGraph <- addStartEnd(myGraph, 1, 1)
+#' myGraph <- addEdge(myGraph, edge(0, 1, "up", 10))
+#' myGraph <- addEdge(myGraph, edge(1, 0, "down", 0))
+#' myGraph <- addStartEnd(myGraph, 0, 0)
 addStartEnd <- function(graph, start = - 1, end = - 1)
 {
   ###STOP###

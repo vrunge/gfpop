@@ -20,11 +20,13 @@ dataGenerator <- function(n, changepoints, means, sigma = 1)
 #' @description Estimation of the standard deviation
 #' @param x vector of datapoint
 #' @param method Three available methods: "HALL", "MAD" and "SD"
+#' @return a value equal to the estimated standard deviation
 #' @examples
 #' data <- dataGenerator(100, c(0.3, 0.6, 1), c(1, 2, 3), 2)
 #' sdDiff(data)
 #'
-sdDiff <- function(x, method = 'HALL'){
+sdDiff <- function(x, method = 'HALL')
+{
   if(method == "SD")
   {
     return(sd(diff(x)/sqrt(2)))

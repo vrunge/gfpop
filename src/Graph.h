@@ -19,7 +19,6 @@ class Graph
     int getStartState() const;
     int getEndState() const;
 
-    bool isCyclic() const;
     bool AreVerticesCompatible() const;
     std::string getType() const;
 

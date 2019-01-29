@@ -27,14 +27,12 @@ class Omega
     double GetGlobalCost() const;
 
     void fpop1d_graph_complex(Data const& data);
-    void fpop1d_graph_cyclic(Data const& data);
     void fpop1d_graph_isotonic(Data const& data);
     void fpop1d_graph_std(Data const& data);
 
     void copyQt();
     void fillQ_edges(int newLabel);
     void multiple_minimization();
-    void multiple_minimization_cyclic();
     void addPointQ_t(Point pt);
 
     void backtracking();
