@@ -1,7 +1,5 @@
 #include "Piece.h"
 
-//#include "termcolor.h"
-
 #include <math.h>
 #include <stdlib.h>
 #include<iostream>
@@ -1377,12 +1375,12 @@ void Piece::show()
 {
   //int i = 1;
   //Piece* tmp = this;
-  //if(tmp == NULL){std::cout << termcolor::red << "#NULL EMPTY POINTER# "<< termcolor::reset << std::endl;}
+  //if(tmp == NULL){std::cout << "#NULL EMPTY POINTER# "<< std::endl;}
   //while(tmp != NULL)
   //{
   //  std::cout << i << "#";
   //  std::cout << tmp;
-  //  std::cout << termcolor::cyan << "#LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " << tmp -> m_info.getPosition() << " " << termcolor::reset;
+  //  std::cout << "#LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " << tmp -> m_info.getPosition() << " ";
   //  std::cout << "#INTERVAL# "<< tmp -> m_interval.geta() << " -- " << tmp -> m_interval.getb() << " ";
   //  tmp -> m_cost.show(tmp -> m_interval);
   //  tmp = tmp -> nxt;
@@ -1395,11 +1393,11 @@ void Piece::show()
 void Piece::showOne()
 {
 	Piece* tmp = this;
-  //if(tmp == NULL){std::cout << termcolor::red << "#NULL EMPTY POINTER# "<< termcolor::reset << std::endl;}
+  //if(tmp == NULL){std::cout << "#NULL EMPTY POINTER# " << std::endl;}
   //else
   //{
   //  std::cout << tmp;
-  //  std::cout << termcolor::cyan << "#LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " <<  tmp -> m_info.getPosition() << " " << termcolor::reset;
+  //  std::cout << "#LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " <<  tmp -> m_info.getPosition() << " ";
   //  std::cout << "#INTERVAL# "<< tmp -> m_interval.geta() << " -- " << tmp -> m_interval.getb()<< " ";
   //  tmp -> m_cost.show(tmp -> m_interval);
   //}

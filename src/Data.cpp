@@ -1,5 +1,4 @@
 #include "Data.h"
-//#include "termcolor.h"
 
 #include <string>
 #include <iostream>
@@ -83,20 +82,20 @@ Point* Data::getVecPt() const {return(vecPt);}
 
 void Data::show() const
 {
-  //std::cout << termcolor::red << "vector y" << termcolor::reset << std::endl;
+  //std::cout << "vector y" << std::endl;
 
   for (int i = 0 ; i < n ; i++)
   {
     //std::cout << vecPt[i].y << std::endl;
   }
 
-  //std::cout << termcolor::red << "vector w" << termcolor::reset << std::endl;
+  //std::cout << "vector w" << std::endl;
   for (int i = 0 ; i < n ; i++)
   {
     //std::cout << vecPt[i].w << std::endl;
   }
 
-  //std::cout << termcolor::red << "minimum : "<< m << termcolor::reset << std::endl;
-  //std::cout << termcolor::red << "maximum : "<< M << termcolor::reset << std::endl;
-  //std::cout << termcolor::red << "n : "<< n << termcolor::reset << std::endl;
+  //std::cout << "minimum : " << m << std::endl;
+  //std::cout << "maximum : " << M << std::endl;
+  //std::cout << "n : " << n << std::endl;
 }

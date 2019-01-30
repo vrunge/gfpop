@@ -1,7 +1,5 @@
 #include "Graph.h"
 
-//#include "termcolor.h"
-
 #include<iostream>
 #include<string>
 #include<vector>
@@ -144,7 +142,7 @@ Interval Graph::buildInterval(double argmin, int s1, int s2, bool& out) const
 
 void Graph::show() const
 {
-  //std::cout<< termcolor::on_red << "GRAPH" << termcolor::reset << std::endl;
+  //std::cout << "GRAPH" << std::endl;
   for (int i = 0 ; i < edges.size() ; i++)
   {
     // edges[i].show();
