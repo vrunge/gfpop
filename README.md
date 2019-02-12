@@ -70,7 +70,6 @@ with
 
 An element <img src="/tex/5808ad42fe58946d47eccfa1dc12fc3e.svg?invert_in_darkmode&sanitize=true" align=middle width=78.31948574999998pt height=24.65753399999998pt/> is described by the elements <img src="/tex/a0076764b98171f70edddddf925d32ab.svg?invert_in_darkmode&sanitize=true" align=middle width=189.22996124999997pt height=29.190975000000005pt/>. The transition function <img src="/tex/e16ea4600d976009912c7053126daad5.svg?invert_in_darkmode&sanitize=true" align=middle width=29.317325399999987pt height=14.15524440000002pt/> defines the kind of constraint we use in the transition from state <img src="/tex/1f1c28e0a1b1708c6889fb006c886784.svg?invert_in_darkmode&sanitize=true" align=middle width=12.67127234999999pt height=14.15524440000002pt/> to state <img src="/tex/b02dd36b8a10566f2a0ad9cbb2e74858.svg?invert_in_darkmode&sanitize=true" align=middle width=29.31519194999999pt height=14.15524440000002pt/> and penalized by <img src="/tex/8ffefdc6ce671e81194aa2df66aed0eb.svg?invert_in_darkmode&sanitize=true" align=middle width=31.64227604999999pt height=29.190975000000005pt/>. The next table summarizes all the possible constraints encoded into the `gfpop` package.
 
-
 | constraints | <img src="/tex/fb61bc5592a383b9b7bb157ba07377cc.svg?invert_in_darkmode&sanitize=true" align=middle width=125.1159426pt height=22.648391699999998pt/>, <img src="/tex/69e4724bb8055a140759e9aac47561fb.svg?invert_in_darkmode&sanitize=true" align=middle width=49.168495199999995pt height=26.17730939999998pt/> |
 |---------:|-----:|
 | no changepoint | <img src="/tex/3d1df3fcec1b16d211b0015ccd0aed45.svg?invert_in_darkmode&sanitize=true" align=middle width=216.88549905000002pt height=26.76175259999998pt/> |
@@ -80,7 +79,7 @@ An element <img src="/tex/5808ad42fe58946d47eccfa1dc12fc3e.svg?invert_in_darkmod
 | absInf | <img src="/tex/812e0170eb25ce3aa49ff182bce235ff.svg?invert_in_darkmode&sanitize=true" align=middle width=250.93986225pt height=24.65753399999998pt/> |
 | no constraint | <img src="/tex/641b7841d9bcb93149b51c149843c1ee.svg?invert_in_darkmode&sanitize=true" align=middle width=106.68764864999997pt height=24.65753399999998pt/> | 
 
-We can now write with <img src="/tex/4e6a93c1f807fa86474f40b37b73651e.svg?invert_in_darkmode&sanitize=true" align=middle width=64.18775384999998pt height=29.190975000000005pt/>,
+We can now write with <img src="/tex/4e6a93c1f807fa86474f40b37b73651e.svg?invert_in_darkmode&sanitize=true" align=middle width=64.18775384999998pt height=29.190975000000005pt/>:
 
 <p align="center"><img src="/tex/5ac0ab2e47b3596655878afae57c4ab0.svg?invert_in_darkmode&sanitize=true" align=middle width=507.52615484999995pt height=97.30109565pt/></p>
 
