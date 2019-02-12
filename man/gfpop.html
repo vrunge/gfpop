@@ -137,8 +137,8 @@ $(document).ready(function () {
 <h4>LaMME, Evry University</h4>
 </div>
 </div>
-<div id="january-3-2019" class="section level3">
-<h3>January 3, 2019</h3>
+<div id="january-29-2019" class="section level3">
+<h3>January 29, 2019</h3>
 <blockquote>
 <p><a href="#intro">Introduction</a></p>
 </blockquote>
@@ -155,27 +155,92 @@ $(document).ready(function () {
 </div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p><code>gfpop</code> is an R package for penalized parametric changepoint detection using functional pruning optimal partitioning (fpop) algorithm with additional constraints encoded in a graph (gfpop). Precisely, the successive infered means are constrained to follow edges of a graph (a path), with edges of type “up”, “down”, “std”, “absInf” or “absSup” with the following meaning:</p>
+<p><code>gfpop</code> is an <code>R</code> package developed to perform parametric changepoint detection in univariate time series constrained to a graph structure. The constraints are imposed to the sequence of infered means of consecutive segments and are related to the direction and/or the magnitude of the mean changes. Changepoint detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm. The user can specify some other constraints on the graph (starting and ending vertices) and constraint the range of means.</p>
+<p>For each data point, the algorithm updates a function and we go througth an edge. The edges of the graph can be of type “null”, up“,”down“,”std“,”absInf&quot; or “absSup” with the following meaning:</p>
 <ul>
+<li>“null” edge : there is no changepoint introduced. We stay on the same segment</li>
 <li>“up” edge : the next segment has a greater mean (we can also force the size of the gap to be greater than a minimal value)</li>
 <li>“down” edge : the next segment has a lower mean (wan also can force the size of the gap to be greater that a minimal value)</li>
 <li>“std” edge : no contraint, the next segment can have any mean</li>
 <li>“absSup” edge : the absolute value of the difference of two consecutive means is greater than a given parameter</li>
 <li>“absInf” edge : the absolute value of the difference of two consecutive means is lower than a given parameter</li>
 </ul>
-<p>A nonnegative internal parameter can thus be associated to an edge (in “up” and “down”) or is mandatory (“absSup” and “absInf”). More details on graph construction are given in the last <a href="#gc">section</a>. The graph definition can also include a starting and/or an ending vertex (or state) and each edge has its own <span class="math inline">\(\beta\)</span> penalty (see further).</p>
-<p>The User has the possibility to constraint the infered means to lie between some minimal and maximal values.</p>
-<p>Data is modelized by a quadratic cost with possible use of a robust loss, biweight and Huber. In a next version of this package, other parametric costs will be available (L1, Poisson, binomial).</p>
-<p>The package <code>gfpop</code> is designed to segment univariate data <span class="math inline">\(y_{1:n} = \{y_1,...,y_n\}\)</span> obeying to a graph structure on segment means. The changepoint vector <span class="math inline">\(\tau = (\tau_0 &lt; \cdots &lt; \tau_{k+1}) \in \mathbb{N}^{k+2}\)</span> defines the segments <span class="math inline">\(\{\tau_i+1,...,\tau_{i+1}\}\)</span>, <span class="math inline">\(i = 0,...,k\)</span> with fixed <span class="math inline">\(\tau_0 = 0\)</span> and <span class="math inline">\(\tau_{k+1} = n\)</span>. We define the set <span class="math inline">\(S_n = \{\hbox{changepoint vector } \tau \in \mathbb{N}^{k+2}\}\,,\)</span> the nonconstrained minimal global cost is given by</p>
-<p><span class="math display">\[Q_n = \min_{\tau \in S_n}\left[ \sum_{i=0}^{k}\lbrace \mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}) + \beta \rbrace \right] \,,\]</span></p>
-<p>where <span class="math inline">\(\beta &gt; 0\)</span> is a penalty parameter and <span class="math inline">\(\mathcal{C}(y_{u:v})\)</span> is the minimal cost over the segment <span class="math inline">\(\{u,...,v\}\)</span>. The penalty <span class="math inline">\(\beta\)</span> is an additional cost when introducing a new segment. The argmin of this quantity gives us a vector <span class="math inline">\(\tau^*\)</span> containing the last position of each segment (if we do not consider <span class="math inline">\(\tau_0 = 0\)</span>).</p>
-<p>With any cost, we have</p>
-<p><span class="math display">\[\DeclareMathOperator*{\operatorname*{arg\,min}}{arg\,min}\mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}) = \min_{\theta}\mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}, \theta)\,,\quad \hbox{and} \quad m_i = \operatorname*{arg\,min}_{\theta}\mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}, \theta)\]</span></p>
-<p>defining the infered mean of the i+1-th segment <span class="math inline">\(\{\tau_i+1,...,\tau_{i+1}\}\)</span>.</p>
-<p>The graph <span class="math inline">\(\mathcal{G}\)</span> is defined by its vertices <span class="math inline">\(V = \{1,...,v\} \subset \mathbb{N}\)</span> and edges <span class="math inline">\(E = \{e(i,j)\}\)</span> where <span class="math inline">\(i,j \in V\)</span>. Thus <span class="math inline">\(\mathcal{G} = (V,E)\)</span>. The successive means <span class="math inline">\((m_1,...,m_{k+1})\)</span> are constrainted to follow a feasible graph path <span class="math inline">\(P = (e_1,...,e_k)\)</span> with <span class="math inline">\(e_i \in E\)</span>. Among all possible paths <span class="math inline">\(P\)</span>, the path minimizing the cost is the result <span class="math inline">\(Q_n(\mathcal{G})\)</span> of our algorithm, that is, <span class="math display">\[\DeclareMathOperator*{\operatorname*{arg\,min}}{arg\,min} Q_n(\mathcal{G}) = \operatorname*{arg\,min}_{P \in \mathcal{G}} (Q_n(P))\]</span> and for a given path <span class="math inline">\(P = (e_1,...,e_k)\)</span> we definie the path-constrained cost</p>
-<p><span class="math display">\[Q_n(P) = \min_{\tau \in S_n}\quad \min_{(\theta_0,\theta_1) \in e_1,..., (\theta_{k-1},\theta_k) \in e_k}\left[ \sum_{i=0}^{k}\lbrace \mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}, \theta_i) + \beta_{e_i} \rbrace \right] \]</span></p>
-<p>with <span class="math inline">\((\theta_{i-1},\theta_i) \in e_i\)</span> meaning that the two consecutive means have to satisfy the edge constraint. <span class="math inline">\(\beta_{e_i}\)</span> is the penalty associated to edge <span class="math inline">\(e_i\)</span>. In many cases, we simply take <span class="math inline">\(\beta_{e_i} = \beta\)</span> for all <span class="math inline">\(i\)</span>. The penalty <span class="math inline">\(\beta\)</span> was a constant positive cost we have to pay when adding a new segment, that is when we move on an edge. Thus, we define this penalty within the edge and enable this penalty to be different for each edge.</p>
-<p>For each path, the differences <span class="math inline">\(\Delta m_i = m_{i+1} - m_i\)</span> can be or not be constrained depending of the nature of the edge. For example, with an “up” edge with parameter <span class="math inline">\(l &gt; 0\)</span>, <span class="math inline">\(\Delta m_i \ge l\)</span>, with an “absInf” edge with parameter <span class="math inline">\(l &gt; 0\)</span>, <span class="math inline">\(\Delta |m_i| \le l\)</span>, etc…</p>
+<p>A nonnegative internal parameter can thus be associated to an edge (in “up” and “down”) or is mandatory (“absSup” and “absInf”). The “null” edge refers to an absence of changepoint. If this edge is not present, we are able to constraint segment lengths. Our package includes the segment neighborhood algorithm for which the number of changepoints is fixed. More details on graph construction are given in the last <a href="#gc">section</a>.</p>
+<p>Data is modelized by a quadratic cost with possible use of a robust loss, biweight and Huber. In a next version of this package, other parametric costs will be available (L1, Poisson).</p>
+<p>The package <code>gfpop</code> is designed to segment univariate data <span class="math inline">\(y_{1:n} = \{y_1,...,y_n\}\)</span> obeying to a graph structure on segment means. The changepoint vector <span class="math inline">\(\overline{\tau} = (\tau_0 &lt; \cdots &lt; \tau_{k+1}) \in \mathbb{N}^{k+2}\)</span> defines the <span class="math inline">\(k+1\)</span> segments <span class="math inline">\(\{\tau_i+1,...,\tau_{i+1}\}\)</span>, <span class="math inline">\(i = 0,...,k\)</span> with fixed bounds <span class="math inline">\(\tau_0 = 0\)</span> and <span class="math inline">\(\tau_{k+1} = n\)</span>. We use the set <span class="math inline">\(S_n = \{\hbox{changepoint vector } \overline{\tau} \in \mathbb{N}^{k+2}\}\)</span> to define the nonconstrained minimal global cost given by</p>
+<p><span class="math display">\[Q_n = \min_{\overline{\tau} \in S_n}\left[ \sum_{i=0}^{k}\lbrace \mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}) + \beta \rbrace \right]\,,\]</span></p>
+<p>where <span class="math inline">\(\beta &gt; 0\)</span> is a penalty parameter and <span class="math inline">\(\mathcal{C}(y_{u:v})\)</span> is the minimal cost over the segment <span class="math inline">\(\{u,...,v\}\)</span>. The penalty <span class="math inline">\(\beta\)</span> is understood as an additional cost when introducing a new segment. The argminimum of this quantity gives a vector <span class="math inline">\(\tau^*\)</span> containing the last position of each segment (if we do not consider <span class="math inline">\(\tau_0 = 0\)</span>). The quantity <span class="math inline">\(Q_n\)</span> is the solution of the nonconstrained optimal partitioning method.</p>
+<p>In our setting, the cost <span class="math inline">\(\mathcal{C}\)</span> is the result of the minimization of a cost function with additive property:</p>
+<p><span class="math display">\[ \left\{
+\begin{array}{l}
+  \mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}) = \min_{\theta_i}\mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}, \theta_i) = \min_{\theta_i} \sum_{j = \tau_i+1}^{\tau_{i+1}}\gamma(y_j, \theta_i)\,,\\
+  m_i = \operatorname*{arg\,min}_{\theta_i}\mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}, \theta_i)\,,
+\end{array}
+\right.\]</span></p>
+<p>with the argminimum defining the infered mean <span class="math inline">\(m_i\)</span> of the i+1-th segment <span class="math inline">\(\{\tau_i+1,...,\tau_{i+1}\}\)</span> with <span class="math inline">\(i \in \{0,...,k\}\)</span>. Additivity of the cost (the <span class="math inline">\(\gamma\)</span> decomposition) is guaranteed as we will use costs deriving from a likelihood.</p>
+<p>More generally, we can associate a current mean <span class="math inline">\(\mu_i\)</span> to each data point <span class="math inline">\(y_i\)</span> and we write a cost on a segment <span class="math inline">\(\{u,...,v\}\)</span> as a result of a constaint minimization:</p>
+<p><span class="math display">\[\mathcal{C}(y_{u:v}) = \min_{\overset{(\mu_u,...,\mu_v)\in \mathbb{R}^{{v-u+1}}}{\mu_u = \cdots = \mu_v}}\sum_{j = u}^{v}\gamma(y_j, \mu_j)\,,\]</span></p>
+<p>so that we get another description of the objective function :</p>
+<p><span class="math display">\[Q_n = \min_{(\mu_1,...,\mu_n)\in \mathbb{R}^{n}\,,\,\mu_{n+1} = +\infty}\quad\sum_{i=1}^n\gamma(y_i,\mu_i) + \beta I(\mu_{i} \ne \mu_{i+1})\,,\]</span></p>
+<p>with <span class="math inline">\(I\)</span> the indicator function. This approach can be generalized to more complex constraints on consecutive means. We define a transition graph <span class="math inline">\(\mathsf{G} = (\mathcal{S}, \mathcal{T}(1),...,\mathcal{T}(n-1))\)</span> as a set of states <span class="math inline">\(\mathcal{S} = \{0,...,S\} \subset \mathbb{N}\)</span> and transition sets <span class="math inline">\(\mathcal{T}(t)\)</span> constraining the adding of data <span class="math inline">\(y_{t+1}\)</span>:</p>
+<p><span class="math display">\[\mathcal{T}(t) \subset \mathcal{S} \times \mathcal{S} \times \mathcal{B}\,,\]</span></p>
+<p>with</p>
+<p><span class="math display">\[\mathcal{B} = \{\hbox{constraint function}\,\,  g : \mathbb{R}\times \mathbb{R} \mapsto \mathbb{R} \,,\, \hbox{penalty}\,\beta \ge 0 \}\,.\]</span></p>
+<p>An element <span class="math inline">\(e(t) \in \mathcal{T}(t)\)</span> is described by the elements <span class="math inline">\(e(t) = (s_t,s_{t+1},g_{e(t)},\beta^{e(t)})\)</span>. The transition function <span class="math inline">\(g_{e(t)}\)</span> defines the kind of constraint we use in the transition from state <span class="math inline">\(s_t\)</span> to state <span class="math inline">\(s_{t+1}\)</span> and penalized by <span class="math inline">\(\beta^{e(t)}\)</span>. Table  summarizes all the possible constraints encoded into the  package.\</p>
+<table style="width:25%;">
+<colgroup>
+<col width="15%"></col>
+<col width="9%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">constraints</th>
+<th align="right"><span class="math inline">\(g_{e(t)} : \mathbb{R}\times \mathbb{R} \mapsto \mathbb{R}\)</span>, <span class="math inline">\(c \in \mathbb{R}^+\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">no changepoint</td>
+<td align="right"><span class="math inline">\(g(\mu_{t},\mu_{t+1}) = (\mu_{t} - \mu_{t+1})^2 \le 0\)</span></td>
+</tr>
+<tr class="even">
+<td align="right">up</td>
+<td align="right"><span class="math inline">\(g(\mu_{t},\mu_{t+1}) = \mu_{t} - \mu_{t+1} + c \le 0\)</span></td>
+</tr>
+<tr class="odd">
+<td align="right">down</td>
+<td align="right"><span class="math inline">\(g(\mu_{t},\mu_{t+1}) = -\mu_{t} + \mu_{t+1} + c \le 0\)</span></td>
+</tr>
+<tr class="even">
+<td align="right">absSup</td>
+<td align="right"><span class="math inline">\(g(\mu_{t},\mu_{t+1}) = -\ell_1(\mu_{t} - \mu_{t+1}) + c \le 0\)</span></td>
+</tr>
+<tr class="odd">
+<td align="right">absInf</td>
+<td align="right"><span class="math inline">\(g(\mu_{t},\mu_{t+1}) = \ell_1(\mu_{t} - \mu_{t+1}) - c \le 0\)</span></td>
+</tr>
+<tr class="even">
+<td align="right">no constraint</td>
+<td align="right"><span class="math inline">\(g(\mu_{t},\mu_{t+1}) = 0\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>We can now write with <span class="math inline">\(\beta^{e(1)} = 0\)</span>,</p>
+<p><span class="math display">\[ \begin{aligned}
+        Q_n(\mathsf{G}) = &amp;\min_{(\mu_1,...,\mu_n)\,\in\, \mathbb{R}^{n}} \sum_{i=1}^n\gamma(y_i,\mu_i) + \beta^{e(i)}\,,\\
+        &amp;\hbox{subject to} \,\, e(i) = (s_{i},s_{i+1},g_{e(i)},\beta^{e(i)}) \,\in\,  \mathcal{T}(i)\,,\, i = 1,...,n-1\,,\\
+        &amp;\quad\quad\quad\quad\quad(s_1,...,s_n) \in \mathcal{S}^n\,.\\
+      \end{aligned}\]</span></p>
+<p>In the <code>gfpop</code> package, the transition set <span class="math inline">\(\mathcal{T}(t)\)</span> is not time dependent. In this case, we define the graph <span class="math inline">\(\mathcal{G}= (V,E)\)</span> by the label of its vertices <span class="math inline">\(V = \{0,...,S\} \subset \mathbb{N}\)</span> and its set of oriented edges <span class="math inline">\(E \subset V \times V \times \mathcal{B}\)</span> with <span class="math inline">\(e = (i,j,b) \in E\)</span> defining an edge going from vertex <span class="math inline">\(i\)</span> to vertex <span class="math inline">\(j\)</span> with constraint option <span class="math inline">\(b\)</span>. We get</p>
+<p><span class="math display">\[Q_n(\mathcal{G}) = \min_{(e(1),...,e(n-1)) \,\in \, P} Q_n(e(1),...,e(n-1))\,,\]</span></p>
+<p>with</p>
+<p><span class="math display">\[\begin{aligned}
+       Q_n(e(1),...,e(n-1)) = &amp;\min_{(\mu_1,...,\mu_n)\,\in\, \mathbb{R}^{n}} \sum_{i=1}^n\gamma(y_i,\mu_i) + \beta^{e(i)}\,,\\
+        &amp;\hbox{subject to} \,\, g_{e(1)}(\mu_1,\mu_2)\le 0,...,g_{e(n-1)}(\mu_{n-1},\mu_n)\le 0\,,\\
+      \end{aligned}\]</span></p>
+<p>and <span class="math inline">\(P \subset \mathcal{T}^{n-1}\)</span> being the set of valid paths of the graph. We say that <span class="math inline">\((e(1),...,e(n-1))\)</span> is a valid path if <span class="math inline">\(e(1) = (s_1,s_2,b_2) \in E\)</span>, <span class="math inline">\(e(2) = (s_2,s_3,b_3) \in E\)</span>,…, <span class="math inline">\(e(n-1) = (s_{n-1},s_n,b_n) \in E\)</span>.</p>
+<p>Notice that in most applications, the set of edges always contains edges of type <span class="math inline">\((i,i,g(\mu,\nu)=(\mu-\nu)^2,0)\)</span> for all <span class="math inline">\(i \in V\)</span> as it corresponds to an absence of constraint on segment lengths.</p>
+<p>The main algorithm of the package, the <code>gfpop</code> function, returns the changepoint vector <span class="math inline">\(\tau^*\)</span> defined as <span class="math inline">\(\{i \in \{1,...,n\}\,,\, m_{i}\ne m_{i+1}\}\)</span>, with <span class="math inline">\((m_1,...,m_n)\)</span> the argminimum of <span class="math inline">\((\mu_1,...,\mu_n)\)</span> in () and <span class="math inline">\(m_{n+1} = +\infty\)</span>.</p>
 <p><a id="qs"></a></p>
 </div>
 <div id="quick-start" class="section level2">
@@ -192,7 +257,7 @@ myData &lt;- dataGenerator(n, c(0.1,0.3,0.5,0.8,1), c(1,2,1,3,1), 1)</code></pre
 <p>The gfpop function gives the result of the segmentation using <code>myData</code> and <code>myGraph</code> as parameters. We choose a gaussian cost.</p>
 <pre class="r"><code>gfpop(vectData = myData, mygraph = myGraph, type = &quot;gauss&quot;)</code></pre>
 <pre><code>## $changepoints
-## [1]  100  306  500  800 1000
+## [1]  100  307  500  800 1000
 ## 
 ## $states
 ## [1] 0 1 0 1 0
@@ -201,16 +266,16 @@ myData &lt;- dataGenerator(n, c(0.1,0.3,0.5,0.8,1), c(1,2,1,3,1), 1)</code></pre
 ## [1] 0 0 0 0
 ## 
 ## $means
-## [1] 0.8352510 1.8594669 0.9985041 3.1173119 1.0359549
+## [1] 0.9446559 2.1193253 0.9238506 3.0122168 1.0099776
 ## 
 ## $cost
-## [1] 1099.566
+## [1] 1087.651
 ## 
 ## attr(,&quot;class&quot;)
 ## [1] &quot;gfpop&quot;</code></pre>
 <p>The vector <code>changepoints</code> gives the last index of each segment. It always ends with the length of the vector <code>vectData</code>.</p>
 <p>The vector <code>states</code> contains the states in which lies each mean. The length of this vector is the same as the length of <code>changepoint</code>.</p>
-<p>The vector <code>forced</code> is a boolean vector. A forced element means that two consecutive means have been forced to satisfy the constraint. For example, the “up” edge with parameter <span class="math inline">\(l\)</span> is forced if <span class="math inline">\(m_{i+1} - m_i = l\)</span>.</p>
+<p>The vector <code>forced</code> is a boolean vector. A forced element means that two consecutive means have been forced to satisfy the constraint. For example, the “up” edge with parameter <span class="math inline">\(c\)</span> is forced if <span class="math inline">\(m_{i+1} - m_i = c\)</span>.</p>
 <p>The vector <code>means</code> contains the infered means of the successive segments.</p>
 <p>The number <code>cost</code> is equal to <span class="math inline">\(Q_n(\mathcal{G})\)</span>, the overall cost of the segmented data.</p>
 <p><a id="se"></a></p>
@@ -225,7 +290,7 @@ mydata &lt;- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1), c(0, 0.5, 1, 1
 myGraphIso &lt;- graph(penalty = 2*log(n), type = &quot;isotonic&quot;)
 gfpop(vectData =  mydata, mygraph = myGraphIso, type = &quot;gauss&quot;, K = 1, min = 0.5)</code></pre>
 <pre><code>## $changepoints
-## [1]  300  759 1000
+## [1]  268  597 1000
 ## 
 ## $states
 ## [1] 0 0 0
@@ -234,14 +299,47 @@ gfpop(vectData =  mydata, mygraph = myGraphIso, type = &quot;gauss&quot;, K = 1,
 ## [1] 0 0
 ## 
 ## $means
-## [1] 0.500000 2.042639 2.858832
+## [1] 0.5013372 1.7280654 2.8869759
 ## 
 ## $cost
-## [1] 570.8365
+## [1] 526.5189
 ## 
 ## attr(,&quot;class&quot;)
 ## [1] &quot;gfpop&quot;</code></pre>
 <p>In this example, we use in <code>gfpop</code> function a robust biweight gaussian cost with <code>K = 1</code> and the <code>min</code> parameter in order to infer means greater than <code>0.5</code>.</p>
+</div>
+<div id="fixed-number-of-changepoint" class="section level3">
+<h3>Fixed number of changepoint</h3>
+<p>This algorithm is called segment neighborhood in the changepoint litterature. In this example, we fixed the number of segments at <span class="math inline">\(3\)</span> with an isotonic constraint.</p>
+<pre class="r"><code>n &lt;- 1000
+mydata &lt;- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1), c(0, 0.5, 1, 1.5, 2, 2.5, 3), 1)
+myGraph &lt;- graph()
+beta &lt;- 0
+myGraph &lt;- addEdge(myGraph, edge(0, 1,&quot;up&quot;, beta, 0))
+myGraph &lt;- addEdge(myGraph, edge(1, 2, &quot;up&quot;, beta, 0))
+myGraph &lt;- addEdge(myGraph, edge(0, 0, &quot;null&quot;, 0, 0))
+myGraph &lt;- addEdge(myGraph, edge(1, 1, &quot;null&quot;, 0, 0))
+myGraph &lt;- addEdge(myGraph, edge(2, 2, &quot;null&quot;, 0, 0))
+myGraph &lt;- addStartEnd(myGraph, start = 0, end = 2)
+
+gfpop(vectData =  mydata, mygraph = myGraph, type = &quot;gauss&quot;)</code></pre>
+<pre><code>## $changepoints
+## [1]  222  571 1000
+## 
+## $states
+## [1] 0 1 2
+## 
+## $forced
+## [1] 0 0
+## 
+## $means
+## [1] 0.3054649 1.6235040 2.6469858
+## 
+## $cost
+## [1] 1070.647
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;gfpop&quot;</code></pre>
 </div>
 <div id="robust-up-down-with-constrained-starting-and-ending-states" class="section level3">
 <h3>Robust up-down with constrained starting and ending states</h3>
@@ -253,23 +351,25 @@ myGraph &lt;- graph()
 beta &lt;- 2*log(n)
 myGraph &lt;- addEdge(myGraph, edge(0, 1, &quot;up&quot;, beta, 1))
 myGraph &lt;- addEdge(myGraph, edge(1, 0, &quot;down&quot;, beta, 1))
+myGraph &lt;- addEdge(myGraph, edge(0, 0, &quot;null&quot;, 0, 0))
+myGraph &lt;- addEdge(myGraph, edge(1, 1, &quot;null&quot;, 0, 0))
 myGraph &lt;- addStartEnd(myGraph, start = 0, end = 0)
 
 gfpop(vectData =  mydata, mygraph = myGraph, type = &quot;gauss&quot;, K = 3.0)</code></pre>
 <pre><code>## $changepoints
-## [1]   96  309  499  811 1000
+## [1]  100  298  500  809 1000
 ## 
 ## $states
 ## [1] 0 1 0 1 0
 ## 
 ## $forced
-## [1] 1 0 0 0
+## [1] 0 0 0 1
 ## 
 ## $means
-## [1]  0.02557879  1.02557879 -0.17740305  1.08631038 -0.14274721
+## [1]  0.02459245  1.05272565 -0.13245338  0.91348781 -0.08651219
 ## 
 ## $cost
-## [1] 1795.743
+## [1] 1885.569
 ## 
 ## attr(,&quot;class&quot;)
 ## [1] &quot;gfpop&quot;</code></pre>
@@ -277,13 +377,14 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = &quot;gauss&quot;, K = 3.0)<
 <pre class="r"><code>myGraphStd &lt;- graph(penalty = 2*log(n), type = &quot;std&quot;)
 gfpop(vectData =  mydata, mygraph = myGraphStd, type = &quot;gauss&quot;)</code></pre>
 <pre><code>## $changepoints
-##  [1]   23   26   81   82   83   84   98   99  136  137  139  163  164  167
-## [15]  168  247  248  249  253  254  264  266  277  278  290  291  314  315
-## [29]  323  325  326  335  336  369  370  389  390  402  403  408  409  429
-## [43]  430  458  459  461  462  505  506  513  514  573  574  581  582  585
-## [57]  586  587  641  642  643  677  678  690  691  725  726  739  740  752
-## [71]  753  763  765  788  789  816  817  818  831  833  847  848  859  860
-## [85]  865  866  868  869  919  920  947  948  962  964  984  985 1000
+##   [1]    4    5   12   13   33   34   38   39   40   65   66   74  103  104
+##  [15]  135  136  148  150  183  184  205  206  250  251  256  257  261  262
+##  [29]  291  292  299  301  302  337  338  339  362  363  364  407  408  413
+##  [43]  414  419  421  429  430  496  499  520  521  526  528  533  535  539
+##  [57]  540  582  583  594  596  605  606  620  621  626  627  632  633  646
+##  [71]  648  651  652  682  686  689  690  720  721  733  735  754  755  757
+##  [85]  768  770  771  853  854  859  860  887  890  901  902  906  907  917
+##  [99]  918  928  930  943  955 1000
 ## 
 ## $states
 ## integer(0)
@@ -292,29 +393,30 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = &quot;gauss&quot;)</code>
 ## integer(0)
 ## 
 ## $means
-##  [1]  0.71265677  4.08879035 -0.13602208 -6.41113318  0.36421259
-##  [6] -5.81263201  0.44491968 -5.99883072  1.07452296  7.18049956
-## [11] -1.89178639  1.05281994  8.45803402  0.28132897 -4.38686461
-## [16]  0.89253939 -4.47954291  7.07972739  1.22501637 -4.71545195
-## [21]  0.97830297 -4.90997069  0.87498903  7.43422867  0.12000989
-## [26]  5.86644005  0.86361977 -5.83117833  0.09505480 -4.05117862
-## [31]  5.88751639 -0.72657475 -5.28879390  0.21139002 -5.82732050
-## [36] -0.31842655  6.66385046 -0.30115669  5.85449584  0.58054585
-## [41] -6.28594526 -0.16921461 -5.86040845 -0.06849929 -5.76791081
-## [46]  0.74792205 -5.49485821 -0.18349356 -4.76660997  2.31465356
-## [51] -4.16980896  1.01287574 -4.39170587  1.32693611  8.44361599
-## [56]  1.24271710  7.64005287 -4.16195432  1.34610185  6.59398707
-## [61] -4.27082208  1.13206321 -4.32799926  1.55054518  7.40981286
-## [66]  0.92399504  7.51052886  1.13451169  7.30398245  1.39269472
-## [71] -4.88902007  1.08127159 -2.84663050  1.42678922 -3.86770471
-## [76]  0.74516337 -5.40448147  6.09524255  0.24104704  5.10720482
-## [81] -0.50024921  5.48994223 -0.37618758  6.19270161  0.12406383
-## [86] -7.77905437  0.01076461  5.62158292  0.01806951  6.10019194
-## [91] -0.19270398  5.20881346 -0.10459218  3.00375083 -1.08191834
-## [96] -6.08408029  0.09333642
+##   [1]  0.87337453 -5.33671784 -0.61014585  5.07725908 -0.23213843
+##   [6]  6.58483371 -0.66484535  5.67154374 -4.98708353  0.26220276
+##  [11]  5.65814366 -0.95736366  0.69832343 -5.23102731  1.04531567
+##  [16] -4.83344931  0.96967341 -3.76865881  0.50105229 -5.21578535
+##  [21]  1.16925923 -5.59267904  1.33478351  7.29750852  0.49784691
+##  [26]  6.50238015 -0.33323294 -4.69595022  1.04304839  6.91478360
+##  [31]  0.84619730 -2.73406634  4.43027749 -0.31536647  4.14853145
+##  [36] -5.41648354  0.59728132  4.56117086 -6.74028620 -0.33246759
+##  [41] -5.70043210  1.03465439 -5.89025575  0.39359625  5.46692696
+##  [46] -0.79882510  7.86675467 -0.13512797 -4.32739443  1.07281352
+##  [51] -5.09189728  1.04131866  5.41580348 -0.37077798  7.00065884
+##  [56]  1.11129785 -5.02441945  0.89756245  6.43356581  0.75943103
+##  [61] -3.51168065  0.60799147 -5.11414857  0.74824004 -5.21645443
+##  [66]  0.90392361  6.88881891  0.56879985  6.65916781  1.29520227
+##  [71] -5.09097228  2.64014974 -5.37786854  0.86511850 -2.52208465
+##  [76]  1.09187868  6.06383094  0.56898670  6.70039001  0.48673299
+##  [81]  5.61325795  0.41293046 -4.06052147  5.90739749  0.77482616
+##  [86]  4.21819332 -4.32481678  0.49694271 -6.38266467 -0.29918622
+##  [91] -5.53354833 -0.17710786  3.29771968 -0.19584636  6.67261623
+##  [96] -0.60879803  6.55546090 -0.01761854 -5.51748708 -0.80999544
+## [101] -4.35859709  0.92027378 -1.38001032  0.38776234
 ## 
 ## $cost
-## [1] 3006.54
+## [1] 3056.195
 ## 
 ## attr(,&quot;class&quot;)
 ## [1] &quot;gfpop&quot;</code></pre>
@@ -327,24 +429,25 @@ mydata &lt;- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
 myGraph &lt;- graph()
 beta &lt;- 2*log(n)
 myGraph &lt;- addEdge(myGraph, edge(0, 0,&quot;absInf&quot;, beta, 1))
+myGraph &lt;- addEdge(myGraph, edge(0, 0,&quot;null&quot;, 0, 0))
 gfpop(vectData =  mydata, mygraph = myGraph, type = &quot;gauss&quot;, K = 3)</code></pre>
 <pre><code>## $changepoints
-##  [1]  1000  2000  3000  3001  4000  4998  5999  6000  7000  8000  9000
+##  [1]  1000  2000  3000  3002  4000  4998  6000  6001  7000  8004  9000
 ## [12] 10000
 ## 
 ## $states
 ##  [1] 0 0 0 0 0 0 0 0 0 0 0 0
 ## 
 ## $forced
-##  [1] 1 0 1 0 0 0 1 1 0 0 0
+##  [1] 0 1 1 0 0 0 1 0 0 1 1
 ## 
 ## $means
-##  [1] -0.018068448  0.981931552 -0.016155263  0.983844737  1.978185277
-##  [6]  1.020428975  2.007207344  1.007207344  0.007207344  0.991910883
-## [11] -0.002861374  0.974917695
+##  [1]  0.0048586983  1.0000246857  0.0000246857  1.0000246857  1.9927861221
+##  [6]  1.0241350850  1.9976745646  0.9976745646  0.0097573113  0.9921765011
+## [11] -0.0078234989  0.9921765011
 ## 
 ## $cost
-## [1] 2747.355
+## [1] 2726.445
 ## 
 ## attr(,&quot;class&quot;)
 ## [1] &quot;gfpop&quot;</code></pre>
@@ -354,22 +457,23 @@ mydata &lt;- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
 myGraph &lt;- graph()
 beta &lt;- 2*log(n)
 myGraph &lt;- addEdge(myGraph, edge(0, 0,&quot;absSup&quot;, beta, 1))
+myGraph &lt;- addEdge(myGraph, edge(0, 0,&quot;null&quot;, 0, 0))
 gfpop(vectData =  mydata, mygraph = myGraph, type = &quot;gauss&quot;, K = 3)</code></pre>
 <pre><code>## $changepoints
-##  [1]  1000  2000  3000  3998  5000  6000  7000  7999  9000 10000
+##  [1]  1000  2000  3000  3999  5000  6000  7000  8001  9000 10000
 ## 
 ## $states
 ##  [1] 0 0 0 0 0 0 0 0 0 0
 ## 
 ## $forced
-## [1] 0 0 0 1 1 0 0 0 0
+## [1] 0 0 0 1 0 0 0 0 0
 ## 
 ## $means
-##  [1]  0.000644270  1.006386090 -0.006156598  1.995468991  0.995468991
-##  [6]  1.995468991 -0.005696507  1.008909758  0.003194686  1.005331236
+##  [1] -1.324268e-02  9.891695e-01 -1.147411e-02  1.998265e+00  9.982653e-01
+##  [6]  1.999154e+00 -2.050665e-05  1.025460e+00 -2.364073e-03  1.000047e+00
 ## 
 ## $cost
-## [1] 2654.138
+## [1] 2677.019
 ## 
 ## attr(,&quot;class&quot;)
 ## [1] &quot;gfpop&quot;</code></pre>
@@ -384,7 +488,7 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = &quot;gauss&quot;, K = 3)</c
 emptyGraph</code></pre>
 <pre><code>## [1] state1    state2    type      penalty   parameter
 ## &lt;0 rows&gt; (or 0-length row.names)</code></pre>
-<p><code>state1</code> is the starting vertex of an edge, <code>state2</code> its ending vertex. <code>type</code> is one of the available edge type (“up”, “down”, “std”, “absInf”, “absSup”). <code>penalty</code> is a nonnegative parameter: the additional cost <span class="math inline">\(\beta_i\)</span> to consider when we move within the graph using this edge. <code>parameter</code> is annother nonnegative parameter, a characteristics of the edge, depending of its type.</p>
+<p><code>state1</code> is the starting vertex of an edge, <code>state2</code> its ending vertex. <code>type</code> is one of the available edge type (“null”, up“,”down“,”std“,”absInf“,”absSup“). <code>penalty</code> is a nonnegative parameter: the additional cost <span class="math inline">\(\beta_i\)</span> to consider when we move within the graph using this edge. <code>parameter</code> is annother nonnegative parameter, a characteristics of the edge, depending of its type.</p>
 <p>We add edges as follows</p>
 <pre class="r"><code>emptyGraph &lt;- addEdge(emptyGraph, edge(0, 0, &quot;down&quot;, 3.1415, 1))
 emptyGraph</code></pre>
@@ -393,23 +497,28 @@ emptyGraph</code></pre>
 <p>we can only add edges to this dataframe using the object <code>edge</code>. With the example <code>edge(0, 0, &quot;down&quot;, 3.1415, 1)</code> we give the 5 aforementioned features.</p>
 <p>The graph can contain information on the starting and/or ending edge to use.</p>
 <pre class="r"><code>myGraph &lt;- graph()
-beta &lt;- 4*log(n)
-myGraph &lt;- addEdge(myGraph, edge(1, 0,&quot;down&quot;, beta, 1))
+beta &lt;- 2 * log(n)
+myGraph &lt;- addEdge(myGraph, edge(0, 0, &quot;null&quot;, 0, 0))
+myGraph &lt;- addEdge(myGraph, edge(1, 1, &quot;null&quot;, 0, 0))
+myGraph &lt;- addEdge(myGraph, edge(0, 1, &quot;up&quot;, beta, 1))
 myGraph &lt;- addEdge(myGraph, edge(0, 0, &quot;down&quot;, beta, 0))
-myGraph &lt;- addEdge(myGraph, edge(0, 1, &quot;up&quot;, beta, 0))
+myGraph &lt;- addEdge(myGraph, edge(1, 0, &quot;down&quot;, beta, 0))
 myGraph &lt;- addStartEnd(myGraph, start = 0, end = 0)
 myGraph</code></pre>
 <pre><code>##   state1 state2  type  penalty parameter
-## 1      1      0  down 36.84136         1
-## 2      0      0  down 36.84136         0
-## 3      0      1    up 36.84136         0
-## 4      0     NA start       NA        NA
-## 5      0     NA   end       NA        NA</code></pre>
+## 1      0      0  null  0.00000         0
+## 2      1      1  null  0.00000         0
+## 3      0      1    up 18.42068         1
+## 4      0      0  down 18.42068         0
+## 5      1      0  down 18.42068         0
+## 6      0     NA start       NA        NA
+## 7      0     NA   end       NA        NA</code></pre>
 <p>Some graphs are often used: they are defined by default in the <code>graph</code> function. To use these graphs, we specify a string <code>type</code> equal to “std”, “isotonic”, “updown” or “infsup”. For example,</p>
 <pre class="r"><code>myGraphIso &lt;- graph(penalty = 12, type = &quot;isotonic&quot;)
 myGraphIso</code></pre>
 <pre><code>##   state1 state2 type penalty parameter
-## 1      0      0   up      12         0</code></pre>
+## 1      0      0 null       0         0
+## 2      0      0   up      12         0</code></pre>
 <p><a href="#top">Back to Top</a></p>
 </div>
 </div>

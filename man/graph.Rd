@@ -4,9 +4,11 @@
 \alias{graph}
 \title{Graph generation}
 \usage{
-graph(penalty = 0, type = "empty")
+graph(..., penalty = 0, type = "empty")
 }
 \arguments{
+\item{...}{This is a list of edges definied by functions edge and StartEnd}
+
 \item{penalty}{a nonnegative number equals to the common penalty to use for all edges}
 
 \item{type}{a string equal to "std", "isotonic", "updown", "infsup". to build a predefined classic graph}
@@ -18,6 +20,6 @@ a dataframe with edges in rows (columns are named "state1", "state2", "type", "p
 Graph creation
 }
 \examples{
-myGraph <- graph(penalty = 10, "updown")
-myEmptyGraph <- graph()
+UpDownGraph <- graph(penalty = 10, type = "updown")
+MyGraph <- graph(edge(0,0), edge(1,1), edge(0,1,"up",10), edge(1,0,"down",0), StartEnd(0,0))
 }

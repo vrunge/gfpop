@@ -4,24 +4,24 @@
 \alias{edge}
 \title{Edge generation}
 \usage{
-edge(state1, state2, type, penalty, parameter = 0)
+edge(state1, state2, type = "null", penalty = 0, parameter = 0)
 }
 \arguments{
 \item{state1}{a nonnegative integer defining the starting state of the edge}
 
 \item{state2}{a nonnegative integer defining the ending state of the edge}
 
-\item{type}{a string equals to "std", "up", "down", "absInf" or "absSup"}
+\item{type}{a string equal to "null", "std", "up", "down", "absInf" or "absSup"}
 
-\item{penalty}{a nonnegative number. The penalization of this change of state}
+\item{penalty}{a nonnegative number. The penality associated to this state transition}
 
 \item{parameter}{a nonnegative number to constraint the size of the gap in the change of state}
 }
 \value{
-a list (with the additional "edge" class) with five components equal to the five parameters
+a dataframe with five components equal to the five parameters
 }
 \description{
-Edge creation
+Edge creation for graph
 }
 \examples{
 edge(0, 1, "up", 10, 1)

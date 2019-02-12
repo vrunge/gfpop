@@ -1,6 +1,6 @@
 useDynLib(gfpop, .registration = TRUE)
 
-export(dataGenerator, sdDiff, edge, graph, addEdge, addStartEnd, gfpop)
+export(gfpop, edge, StartEnd, graph, dataGenerator, sdDiff)
 
 importFrom(Rcpp, evalCpp)
 importFrom("stats", "rnorm", "mad", "sd")

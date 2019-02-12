@@ -20,7 +20,7 @@
 
 gfpop <- function(vectData = c(0), vectWeight = c(0), mygraph, type = "gauss", K = Inf, a = 0, min = -Inf, max = Inf)
 {
-  ###STOP###
+  ### STOP ###
     if(!any(class(mygraph) == "graph")){stop('Your graph is not a graph...')}
     if(type != "gauss" && type != "poisson" && type != "binomial")
     {stop('Arugment "type" not appropriate. Choose among "gauss", "poisson", "binomial"')}
