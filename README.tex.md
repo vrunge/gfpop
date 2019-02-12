@@ -75,7 +75,6 @@ $$\mathcal{B} = \{\hbox{constraint function}\,\,  g : \mathbb{R}\times \mathbb{R
 
 An element $e(t) \in \mathcal{T}(t)$ is described by the elements $e(t) = (s_t,s_{t+1},g_{e(t)},\beta^{e(t)})$. The transition function $g_{e(t)}$ defines the kind of constraint we use in the transition from state $s_t$ to state $s_{t+1}$ and penalized by $\beta^{e(t)}$. The next table summarizes all the possible constraints encoded into the `gfpop` package.
 
-
 | constraints | $g_{e(t)} : \mathbb{R}\times \mathbb{R} \mapsto \mathbb{R}$, $c \in \mathbb{R}^+$ |
 |---------:|-----:|
 | no changepoint | $g(\mu_{t},\mu_{t+1}) = (\mu_{t} - \mu_{t+1})^2 \le 0$ |
@@ -85,7 +84,7 @@ An element $e(t) \in \mathcal{T}(t)$ is described by the elements $e(t) = (s_t,s
 | absInf | $g(\mu_{t},\mu_{t+1}) = \ell_1(\mu_{t} - \mu_{t+1}) - c \le 0$ |
 | no constraint | $g(\mu_{t},\mu_{t+1}) = 0$ | 
 
-We can now write with $\beta^{e(1)} = 0$,
+We can now write with $\beta^{e(1)} = 0$:
 
 $$ \begin{aligned}
         Q_n(\mathsf{G}) = &\min_{(\mu_1,...,\mu_n)\,\in\, \mathbb{R}^{n}} \sum_{i=1}^n\gamma(y_i,\mu_i) + \beta^{e(i)}\,,\\
