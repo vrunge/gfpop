@@ -46,3 +46,13 @@ sdDiff <- function(x, method = 'HALL')
     return(sqrt(sum(apply(mat[, -c(n-2, n-1, n)], 2, sum)^2) / (n-3)))
   }
 }
+
+
+# unvisible function for the user
+getDerivativePenalty <- function(D, n, c1 = 2, c2 = 5)
+{
+  return(c1*log(n) - c1*(log(D) + 1) + c2)
+}
+
+
+
