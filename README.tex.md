@@ -11,7 +11,7 @@
 # gfpop Vignette
 ### Vincent Runge
 #### LaMME, Evry University
-### February 12, 2019
+### February 20, 2019
 
 > [Introduction](#intro)
 
@@ -27,7 +27,7 @@
 
 `gfpop` is an `R` package developed to perform parametric changepoint detection in univariate time series constrained to a graph structure. The constraints are imposed to the sequence of infered means of consecutive segments and are related to the direction and/or the magnitude of the mean changes. Changepoint detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm.  The user can specify some other constraints on the graph (starting and ending vertices) and constraint the range of means. 
 
-For each data point, the algorithm updates a function (a functional cost) and we go througth an edge. The edges of the graph can be of type "null", up", "down", "std", "absInf" or "absSup" with the following meaning:
+For each data point, the algorithm updates a function (a functional cost) and we go through an edge. The edges of the graph can be of type "null", up", "down", "std", "absInf" or "absSup" with the following meaning:
 
 - "null" edge : there is no changepoint introduced. We stay on the same segment
 - "up" edge : the next segment has a greater mean (we can also force the size of the gap to be greater than a minimal value)
@@ -36,7 +36,7 @@ For each data point, the algorithm updates a function (a functional cost) and we
 - "absSup" edge : the absolute value of the difference of two consecutive means is greater than a given parameter
 - "absInf" edge : the absolute value of the difference of two consecutive means is lower than a given parameter
 
-A nonnegative internal parameter can thus be associated to an edge (in "up" and "down") or is mandatory ("absSup" and "absInf"). The "null" edge refers to an absence of changepoint. If this edge is not present, we are able to constraint segment lengths. Our package includes the segment neighborhood algorithm for which the number of changepoints is fixed. More details on graph construction are given in the last [section](#gc).
+A nonnegative internal parameter can thus be associated to an edge (in "up" and "down") or is mandatory ("absSup" and "absInf"). The "null" edge refers to an absence of changepoint. This edge can be used between different states to constraint segment lengths. Our package includes the segment neighborhood algorithm for which the number of changepoints is fixed. More details on graph construction are given in the last [section](#gc).
 
 Data is modelized by a quadratic cost with possible use of a robust loss, biweight and Huber. In a next version of this package, other parametric costs will be available (L1, Poisson). 
 
@@ -57,7 +57,7 @@ $$ \left\{
 
 with the argminimum defining the infered mean $m_i$ of the i+1-th segment $\{\tau_i+1,...,\tau_{i+1}\}$ with $i \in \{0,...,k\}$. Additivity of the cost (the $\gamma$ decomposition) is guaranteed as we will use costs deriving from a likelihood. 
 
-More generally, we can associate a current mean $\mu_i$ to each data point $y_i$ and we write a cost on a segment $\{u,...,v\}$ as a result of a constaint minimization:
+More generally, we can associate a current mean $\mu_i$ to each data point $y_i$ and we write a cost on a segment $\{u,...,v\}$ as a result of a constrained minimization:
 
 $$\mathcal{C}(y_{u:v}) = \min_{\overset{(\mu_u,...,\mu_v)\in \mathbb{R}^{{v-u+1}}}{\mu_u = \cdots = \mu_v}}\sum_{j = u}^{v}\gamma(y_j, \mu_j)\,,$$
 
@@ -65,49 +65,42 @@ so that we get another description of the objective function :
 
 $$Q_n = \min_{(\mu_1,...,\mu_n)\in \mathbb{R}^{n}\,,\,\mu_{n+1} = +\infty}\quad\sum_{i=1}^n\gamma(y_i,\mu_i) + \beta I(\mu_{i} \ne \mu_{i+1})\,,$$
 
-with $I$ the indicator function. This approach can be generalized to more complex constraints on consecutive means. We define a transition graph $\mathsf{G} = (\mathcal{S}, \mathcal{T}(1),...,\mathcal{T}(n-1))$ as a set of states $\mathcal{S} =  \{0,...,S\} \subset \mathbb{N}$ and transition sets $\mathcal{T}(t)$ constraining the adding of data $y_{t+1}$:
+with $I \in \{0,1\}$ the indicator function. This approach can be generalized to more complex constraints on consecutive means using a graph structure. We define the transition graph $\mathcal{G}_n$ as a directed acyclic graph with the following properties:
 
-$$\mathcal{T}(t) \subset \mathcal{S} \times \mathcal{S} \times \mathcal{B}\,,$$
+1. Vertices are indexed by time and state. $v = (t,s)$ for vertex $v$ with time $t$ and state $s$. The states are elements of the set $\mathcal{S} =  \{0,...,S\} \subset \mathbb{N}$;
 
-with
+2. All the vertices have time $t$ in $\{1,...,n\}$ except for the unique starting vertex $v_0= (0,\emptyset)$ and the unique ending vertex $v_{n+1} = (n+1,\emptyset)$, where $\emptyset$ denotes an undefinite state;
 
-$$\mathcal{B} = \{\hbox{constraint function}\,\,  g : \mathbb{R}\times \mathbb{R} \mapsto \mathbb{R} \,,\, \hbox{penalty}\,\beta \ge 0 \}\,.$$
+3. Edges are transitions between "time-consecutive" vertices of type $v = (t,s)$ and $v' = (t+1,s')$ which gives us the edge $e = (t,s,s')$ for $t \in \{0,...,n\}$;
 
-An element $e(t) \in \mathcal{T}(t)$ is described by the elements $e(t) = (s_t,s_{t+1},g_{e(t)},\beta^{e(t)})$. The transition function $g_{e(t)}$ defines the kind of constraint we use in the transition from state $s_t$ to state $s_{t+1}$ and penalized by $\beta^{e(t)}$. The next table summarizes all the possible constraints encoded into the `gfpop` package.
+4. Each edge $e$ is associated to a function $I_e : \mathbb{R}\times \mathbb{R} \mapsto \{0,1\}$ constraining consecutive means $\mu_t$ and $\mu_{t+1}$ by the indicator function $(\mu_t, \mu_{t+1}) \mapsto I_e(\mu_t, \mu_{t+1})$ (for example $I_e(\mu_t, \mu_{t+1}) = I(\mu_t \le \mu_{t+1})$) and a penalty $\beta_e \ge 0$.
 
-| constraints | $g_{e(t)} : \mathbb{R}\times \mathbb{R} \mapsto \mathbb{R}$, $c \in \mathbb{R}^+$ |
+The next table summarizes all the possible constraints encoded into the `gfpop` package.
+
+
+| constraints | $I_e : \mathbb{R}\times \mathbb{R} \mapsto \mathbb{R}$, $c \in \mathbb{R}^+$ |
 |---------:|-----:|
-| no changepoint | $g(\mu_{t},\mu_{t+1}) = (\mu_{t} - \mu_{t+1})^2 \le 0$ |
-| up | $g(\mu_{t},\mu_{t+1}) = \mu_{t} - \mu_{t+1}  + c \le 0$ |
-| down | $g(\mu_{t},\mu_{t+1}) = -\mu_{t} + \mu_{t+1} + c \le 0$ |
-| absSup | $g(\mu_{t},\mu_{t+1}) = -\ell_1(\mu_{t} - \mu_{t+1}) + c \le 0$ |
-| absInf | $g(\mu_{t},\mu_{t+1}) = \ell_1(\mu_{t} - \mu_{t+1}) - c \le 0$ |
-| no constraint | $g(\mu_{t},\mu_{t+1}) = 0$ | 
+| no changepoint | $I_e(\mu_{t},\mu_{t+1}) =  I(\mu_t = \mu_{t+1})$ |
+| up | $I_e(\mu_{t},\mu_{t+1}) = I(\mu_{t}  + c \le \mu_{t+1})$ |
+| down | $I_e(\mu_{t},\mu_{t+1}) = I(\mu_{t+1} + c \le \mu_{t})$ |
+| absSup | $I_e(\mu_{t},\mu_{t+1}) = I(c \le \ell_1(\mu_{t} - \mu_{t+1}))$ |
+| absInf | $I_e(\mu_{t},\mu_{t+1}) = I(\ell_1(\mu_{t} - \mu_{t+1}) \le  c )$ |
+| no constraint | $I_e(\mu_{t},\mu_{t+1}) =  I(\mu_t \ne \mu_{t+1})$ | 
 
-We can now write with $\beta^{e(1)} = 0$:
 
-$$ \begin{aligned}
-        Q_n(\mathsf{G}) = &\min_{(\mu_1,...,\mu_n)\,\in\, \mathbb{R}^{n}} \sum_{i=1}^n\gamma(y_i,\mu_i) + \beta^{e(i)}\,,\\
-        &\hbox{subject to} \,\, e(i) = (s_{i},s_{i+1},g_{e(i)},\beta^{e(i)}) \,\in\,  \mathcal{T}(i)\,,\, i = 1,...,n-1\,,\\
-        &\quad\quad\quad\quad\quad(s_1,...,s_n) \in \mathcal{S}^n\,.\\
-      \end{aligned}$$
+We define a path $p \in \mathcal{G}_n$ of the graph as a collection of $n+2$ vertices $(v_0,...,v_{n+1})$ with $v_0 = (0,\emptyset)$ and $v_{n+1} = (n+1,\emptyset)$ and $v_t = (t,s_t)$ for $t \in \{1,...,n\}$ and $s_t \in \mathcal{S}$. Morever, the path is made of $n+1$ edges denoted $e_0,...,e_n$ with $\beta_{e_n} = 0$. A vector $\mu \in \mathbb{R}^n$ verifies the path $p$ if for all $t \in \{1,...,n-1\}$, we have $I_{e_t}(\mu_t,\mu_{t+1}) = 1$ (valid constraint). We write $p(\mu)$ to say that the vector $\mu$ verifies the path $p$. The formulation of our graph-constrained problem is then the following:
 
-In the `gfpop` package, the transition set $\mathcal{T}(t)$ is not time dependent. In this case, we define the graph $\mathcal{G}= (V,E)$  by the label of its vertices $V = \{0,...,S\} \subset \mathbb{N}$ and its set of oriented edges $E \subset V \times V \times \mathcal{B}$ with $e = (i,j,b) \in E$ defining an edge going from vertex $i$ to vertex $j$ with constraint option $b$. We get
+$$
+Q_n(\mathcal{G}_n)  = \underset{\underset{\mu \in \mathbb{R}^n\,,\,p(\mu)}{p \in \mathcal{G}_n} }{\min} 
+\left\{\sum_{t=1}^n (\gamma(y_t, \mu_t) + \beta_{e_t}) \right\}\,.
+$$
 
-$$Q_n(\mathcal{G}) = \min_{(e(1),...,e(n-1)) \,\in \, P} Q_n(e(1),...,e(n-1))\,,$$
 
-with 
+In the `gfpop` package, the edges $(t,s,s')$ for $t\in\{1,...,n\}$ are not time-dependent. In this case, we redefine a graph $\mathcal{G}= (V,E)$  by the label of its vertices $V = \{0,...,S\} \subset \mathbb{N}$ and its set of oriented edges $E \subset V \times V$ with $e = (s,s') \in E$ defining an edge going from vertex $s$ to vertex $s'$ with indicator function $I_e$ and penalty $\beta_e$. 
 
-$$\begin{aligned}
-       Q_n(e(1),...,e(n-1)) = &\min_{(\mu_1,...,\mu_n)\,\in\, \mathbb{R}^{n}} \sum_{i=1}^n\gamma(y_i,\mu_i) + \beta^{e(i)}\,,\\
-        &\hbox{subject to} \,\, g_{e(1)}(\mu_1,\mu_2)\le 0,...,g_{e(n-1)}(\mu_{n-1},\mu_n)\le 0\,,\\
-      \end{aligned}$$
+In most applications, the set of edges always contains edges of type $(s,s)$ for all $s \in V$ with indicator function $I_e(\mu,\nu)= I(\mu \ne \nu)$ as it corresponds to an absence of constraint on segment lengths. 
 
-and $P \subset \mathcal{T}^{n-1}$ being the set of valid paths of the graph. We say that $(e(1),...,e(n-1))$ is a valid path if $e(1) = (s_1,s_2,b_2) \in E$, $e(2) = (s_2,s_3,b_3) \in E$,..., $e(n-1) = (s_{n-1},s_n,b_n) \in E$. 
-
-Notice that in most applications, the set of edges always contains edges of type $(i,i,g(\mu,\nu)=(\mu-\nu)^2,0)$ for all $i \in V$ as it corresponds to an absence of constraint on segment lengths. 
-
-The main algorithm of the package, the `gfpop` function, returns the changepoint vector $\tau^*$ defined as $\{i \in \{1,...,n\}\,,\, m_{i}\ne m_{i+1}\}$, with $(m_1,...,m_n)$ the argminimum of $(\mu_1,...,\mu_n)$ in (\ref{pathmin}) and $m_{n+1} = +\infty$.
+The main algorithm of the package, the `gfpop` function, returns the changepoint vector $\tau^*$ defined as $\{i \in \{1,...,n\}\,,\, m_{i}\ne m_{i+1}\}$, with $(m_1,...,m_n)$ the argminimum of $(\mu_1,...,\mu_n)$ in $Q_n(\mathcal{G}_n)$ and $m_{n+1} = +\infty$. we also give the possibility to restrict the set of valid paths by imposing a starting and/or an ending vertex and contraint the range of infered means, replacing $\mu \in \mathbb{R}^n$ by $\mu \in [A,B]$ in the definition of $Q_n(\mathcal{G}_n)$.
 
 <a id="qs"></a>
 
@@ -143,7 +136,7 @@ gfpop(vectData = myData, mygraph = myGraph, type = "gauss")
 
 ```
 ## changepoints
-## [1]   99  297  499  800 1000
+## [1]  103  301  504  800 1000
 ## 
 ## states
 ## [1] 0 1 0 1 0
@@ -152,10 +145,10 @@ gfpop(vectData = myData, mygraph = myGraph, type = "gauss")
 ## [1] 0 0 0 0
 ## 
 ## means
-## [1] 1.0650869 1.8684511 1.0259865 2.9270324 0.9496593
+## [1] 1.0510341 2.0324955 0.9894555 2.9390439 1.1213021
 ## 
 ## cost
-## [1] 1019.035
+## [1] 1003.595
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -190,7 +183,7 @@ gfpop(vectData =  mydata, mygraph = myGraphIso, type = "gauss", K = 1, min = 0.5
 
 ```
 ## changepoints
-## [1]  265  631 1000
+## [1]  286  622 1000
 ## 
 ## states
 ## [1] 0 0 0
@@ -199,10 +192,10 @@ gfpop(vectData =  mydata, mygraph = myGraphIso, type = "gauss", K = 1, min = 0.5
 ## [1] 0 0
 ## 
 ## means
-## [1] 0.5784406 1.8310620 2.8318946
+## [1] 0.500000 1.949243 2.839941
 ## 
 ## cost
-## [1] 558.5639
+## [1] 546.5847
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -233,7 +226,7 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss")
 
 ```
 ## changepoints
-## [1]  310  598 1000
+## [1]  319  572 1000
 ## 
 ## states
 ## [1] 0 1 2
@@ -242,10 +235,10 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss")
 ## [1] 0 0
 ## 
 ## means
-## [1] 0.5751951 1.9122182 2.7714585
+## [1] 0.5484494 1.7347737 2.7097749
 ## 
 ## cost
-## [1] 1044.012
+## [1] 1040.883
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -271,19 +264,19 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3.0)
 
 ```
 ## changepoints
-## [1]  100  301  499  801 1000
+## [1]  100  303  509  802 1000
 ## 
 ## states
 ## [1] 0 1 0 1 0
 ## 
 ## forced
-## [1] 0 1 1 1
+## [1] 1 1 0 0
 ## 
 ## means
-## [1] -0.020445803  1.005671299  0.005671299  1.005671299  0.005671299
+## [1] -0.02179054  0.97820946 -0.02179054  1.04794919 -0.08340491
 ## 
 ## cost
-## [1] 1682.712
+## [1] 1735.151
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -299,12 +292,11 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 
 ```
 ## changepoints
-##  [1]   21   23   97   99  106  107  141  142  155  163  232  233  256  257
-## [15]  275  276  302  328  329  335  336  357  359  376  378  415  417  436
-## [29]  437  439  440  454  455  466  468  475  476  495  575  576  600  601
-## [43]  637  638  640  652  653  656  678  679  699  700  704  705  722  723
-## [57]  772  773  816  817  837  838  848  849  884  885  897  898  910  911
-## [71]  927  928  955  956  976  978 1000
+##  [1]   15   16   97   99  176  177  191  192  193  206  207  231  232  239
+## [15]  240  243  244  253  254  291  292  303  313  314  337  341  353  354
+## [29]  382  383  400  401  422  423  436  438  501  502  553  559  560  567
+## [43]  576  577  607  608  633  634  665  666  685  686  713  714  761  762
+## [57]  774  775  802  833  834  836  855  857  910  914  974  975 1000
 ## 
 ## states
 ## integer(0)
@@ -313,25 +305,23 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 ## integer(0)
 ## 
 ## means
-##  [1]  0.09873115  4.94538108 -0.21120105  4.65625822 -0.10170336
-##  [6]  5.83321838  0.90796020  6.08943800  1.52535958 -0.79002691
-## [11]  1.30475604 -4.43363499  0.62085096  6.50884903  0.07011057
-## [16] -4.75174680  1.49162818 -0.06602547  6.38626713 -0.13656276
-## [21] -5.78789674  0.44165409  4.90406487 -0.18061782  4.26859521
-## [26]  0.12739412 -3.57065360  0.37928916 -6.09466806  0.81488414
-## [31]  6.00238006 -0.28038759 -5.34866153  0.19560736 -5.79483355
-## [36]  0.36324673  7.16890556 -0.79830500  0.87777630  8.75377741
-## [41]  0.89756371  6.39482389  0.89699980  6.04750407 -2.09338077
-## [46]  0.98210818  7.41435046 -1.72985615  1.14023489 -4.34650909
-## [51]  0.66996740  7.00009784  0.99674998 -4.26132055  1.83879844
-## [56] -4.67199801  0.92038512  6.76533602  0.72784755  5.95366396
-## [61] -0.08841687 -7.30110575 -1.47311058  6.36958619  0.12023277
-## [66]  6.06849071 -0.15727125 -5.37553470  0.15948676 -6.18460334
-## [71]  0.24085583  5.59690456  0.29680640  6.16760320  0.03726494
-## [76] -5.24146273  0.22270988
+##  [1]  0.35516059  7.31539702  0.14105579 -2.94273330  0.94784112
+##  [6]  7.47034210  0.03027980  6.44775993 -3.56469578  1.12363695
+## [11]  6.79551386  0.58513289  5.88494768  0.08772338 -4.59107925
+## [16]  2.25543420  6.59442166  0.95170787 -5.05427726  0.90129719
+## [21]  6.44712402  1.15188801 -0.65090828 -5.35417484  0.15556922
+## [26] -3.08864520  0.30447161 -6.30623891 -0.24484582  6.33510727
+## [31] -0.22640480  5.22219708  0.14319821  5.33118850 -0.80120905
+## [36] -4.51670060  0.06083162  5.68602427  0.79619509 -1.66803663
+## [41]  5.39348658  0.71371503  3.22587516 -3.32261711  1.14748334
+## [46] -4.30720760  1.12006466  6.56211080  0.94195841 -4.32791321
+## [51]  0.28925888  6.78461467  1.81052567 -4.27711226  1.41438988
+## [56]  6.55629102  0.46431458  6.86045040  1.60554148 -0.71720586
+## [61] -4.79349869  2.95168993 -0.20751388  3.77722757 -0.15332081
+## [66]  3.22710032 -0.31051196 -6.14093927  0.49413508
 ## 
 ## cost
-## [1] 2535.273
+## [1] 2699.994
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -354,22 +344,22 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
 
 ```
 ## changepoints
-##  [1]  1000  2000  2999  3000  3999  5000  5999  6000  7000  8000  9002
+##  [1]   999  1999  3000  3001  4003  5000  5999  6000  7000  8000  9001
 ## [12] 10000
 ## 
 ## states
 ##  [1] 0 0 0 0 0 0 0 0 0 0 0 0
 ## 
 ## forced
-##  [1] 1 1 0 1 0 0 1 0 0 1 1
+##  [1] 1 0 1 0 0 0 1 1 1 0 1
 ## 
 ## means
-##  [1] 0.003789602 1.003789602 0.003789602 0.966838501 1.966838501
-##  [6] 1.006270788 1.985594336 0.985594336 0.013125062 1.004047568
-## [11] 0.004047568 1.004047568
+##  [1] -0.0155661567  0.9844338433 -0.0067182663  0.9932817337  1.9829459867
+##  [6]  1.0239684275  1.9966187678  0.9966187678 -0.0033812322  0.9966187678
+## [11]  0.0007690086  1.0007690086
 ## 
 ## cost
-## [1] 2773.911
+## [1] 2651.255
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -390,20 +380,20 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
 
 ```
 ## changepoints
-##  [1]  1000  2000  3000  4000  5000  6000  7000  8001  9000 10000
+##  [1]  1000  1997  3000  4000  5000  6000  7000  7999  9000 10000
 ## 
 ## states
 ##  [1] 0 0 0 0 0 0 0 0 0 0
 ## 
 ## forced
-## [1] 1 0 0 1 1 0 0 0 0
+## [1] 0 1 0 0 1 0 0 0 1
 ## 
 ## means
-##  [1]  0.004403595  1.004403595  0.003365208  2.004021179  1.004021179
-##  [6]  2.004021179 -0.035620112  1.013568656 -0.004159283  1.010229487
+##  [1] -0.0007571859  1.0132097237  0.0132097237  1.9970387390  0.9901447187
+##  [6]  1.9901447187 -0.0014977899  1.0032445639  0.0002328453  1.0002328453
 ## 
 ## cost
-## [1] 2667.884
+## [1] 2619.784
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -492,3 +482,4 @@ myGraphIso
 
 
 [Back to Top](#top)
+
