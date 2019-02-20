@@ -11,7 +11,7 @@
 # gfpop Vignette
 ### Vincent Runge
 #### LaMME, Evry University
-### February 19, 2019
+### February 20, 2019
 
 > [Introduction](#intro)
 
