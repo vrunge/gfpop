@@ -92,28 +92,28 @@ graph <- function(..., penalty = 0, type = "empty")
 
     if(type == "std")
     {
-      myNewGraph[1, ] <- edge(0, 0, "null", 0, 0)
+      myNewGraph[1, ] <- edge(0, 0, "null")
       myNewGraph[2, ] <- edge(0, 0, "std", penalty, 0)
     }
 
     if(type == "isotonic")
     {
-      myNewGraph[1, ] <- edge(0, 0, "null", 0, 0)
+      myNewGraph[1, ] <- edge(0, 0, "null")
       myNewGraph[2, ] <- edge(0, 0, "up", penalty, 0)
     }
 
     if(type == "updown")
     {
-      myNewGraph[1, ] <- edge(0, 0, "null", 0, 0)
-      myNewGraph[2, ] <- edge(1, 1, "null", 0, 0)
+      myNewGraph[1, ] <- edge(0, 0, "null")
+      myNewGraph[2, ] <- edge(1, 1, "null")
       myNewGraph[3, ] <- edge(0, 1, "up", penalty, 0)
       myNewGraph[4, ] <- edge(1, 0, "down", penalty, 0)
     }
 
     if(type == "infsup")
     {
-      myNewGraph[1, ] <- edge(0, 0, "null", 0, 0)
-      myNewGraph[2, ] <- edge(1, 1, "null", 0, 0)
+      myNewGraph[1, ] <- edge(0, 0, "null")
+      myNewGraph[2, ] <- edge(1, 1, "null")
       myNewGraph[3, ] <- edge(0, 1, "absSup", penalty, 0)
       myNewGraph[4, ] <- edge(1, 0, "absInf", penalty, 0)
     }
