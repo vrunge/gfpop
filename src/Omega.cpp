@@ -14,6 +14,7 @@
 #include <fstream> ///write in a file
 #include<sstream> ///for conversion int to string : function ostringstream
 
+#include <algorithm>
 
 //####### constructor #######////####### constructor #######////####### constructor #######//
 //####### constructor #######////####### constructor #######////####### constructor #######//
@@ -85,8 +86,8 @@ void Omega::fpop1d_graph_complex(Data const& data)
 	Q_ts.push_back(Qt_new);
 
   addPointQ_t(myData[0]);
-  int startState = m_graph.getStartState();
-  if(startState != -1){for(unsigned char i = 0; i < p; i++){if(startState != i){Q_ts.back()[i] -> addConstant(INFINITY);}}}
+  std::vector<int> startState = m_graph.getStartState();
+  if(startState.size() != 0){for(int i = 0; i < p; i++){if(std::find(startState.begin(), startState.end(), i) == startState.end()){Q_ts.back()[i] -> addConstant(INFINITY);}}}
 
   for(unsigned int t = 1; t < data.getn(); t++) /// loop for all edges
   {
@@ -341,9 +342,9 @@ void Omega::backtracking()
   ///
   int CurrentState = 0; ///Current state
   int CurrentChgpt = Q_ts.size() - 1; /// data(1)....data(n). Last data index in each segment
-  int endState = m_graph.getEndState();
+  std::vector<int> endState = m_graph.getEndState();
 
-  if(endState == -1)
+  if(endState.size() == 0)
   {
     for (int j = 1 ; j < p ; j++) ///for all states
     {
@@ -351,7 +352,14 @@ void Omega::backtracking()
       if(malsp_temp[0] < malsp[0]){CurrentState = j; malsp[0] = malsp_temp[0];}
     }
   }
-  else{CurrentState = endState;}
+  else
+  {
+    for (int j = 0 ; j < endState.size() ; j++) ///for all states
+    {
+      malsp_temp = Q_ts.back()[endState[j]] -> get_min_argmin_label_state_position_final();
+      if(malsp_temp[0] < malsp[0]){CurrentState = endState[j]; malsp[0] = malsp_temp[0];}
+    }
+  }
 
   malsp = Q_ts.back()[CurrentState] -> get_min_argmin_label_state_position_final();
   globalCost = malsp[0];
@@ -382,6 +390,9 @@ void Omega::backtracking()
 
   bool out = false;
   bool boolForced = false;
+  double decay = 1;
+  double correction = 1;
+
 
   while(malsp[2] > 0) ///while Label > 0
   {
@@ -390,11 +401,15 @@ void Omega::backtracking()
     ///
     out = false;
     boolForced = false;
-    constrainedInterval = m_graph.buildInterval(malsp[1], malsp[3], CurrentState, out); ///update out
+    decay = m_graph.stateDecay(CurrentState);
+    if(decay != 1){correction = std::pow(decay, means.back() - malsp[2] + 1);}
+
+    constrainedInterval = m_graph.buildInterval(malsp[1]*correction, malsp[3], CurrentState, out); ///update out
     CurrentState = malsp[3];
     CurrentChgpt = malsp[2];
 
     malsp = Q_ts[malsp[2]][(int) malsp[3]] -> get_min_argmin_label_state_position((int) malsp[4], constrainedInterval, out, boolForced, m_bound.getIsConstrained()); ///update boolForced
+
     if(malsp[1] > m_bound.getM()){malsp[1] = m_bound.getM(); boolForced = true;}
     if(malsp[1] < m_bound.getm()){malsp[1] = m_bound.getm(); boolForced = true;}
 

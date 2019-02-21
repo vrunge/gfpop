@@ -65,6 +65,7 @@ class Piece
       Piece* operator_std_min_argmin(int newLabel, int& labelmin, double& argmini, Bound const& bound);
       Piece* operator_stdConstr_min_argmin(int newLabel, int& labelmin, double& argmini, Bound const& bound);
 
+      void operator_decay(double gamma, Bound bound);
       Piece* operator_std(int newLabel, int parentStateLabel, Bound const& bound);
       Piece* operator_stdConstr(int newLabel, int parentStateLabel, Bound const& bound);
       Piece* operator_up(int newLabel, int edgeLabel);

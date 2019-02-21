@@ -457,6 +457,7 @@ Piece* Piece::edge_constraint(Edge const& edge, int newLabel, Bound const& bound
   if(edge_ctt == "null")
   {
     response = this -> copy();
+    if(edge_parameter < 1){response -> operator_decay(edge_parameter, bound);}
   }
 
   //###############################################################
@@ -703,6 +704,25 @@ Piece* Piece::operator_stdConstr_min_argmin(int newLabel, int& labelmin, double&
   Q_std -> m_info.setTrack(newLabel, -1, -1); ///set Track
 
 	return(Q_std);
+
+}
+
+
+
+
+//####### operator decay #######// //####### operator decay #######// //####### operator decay #######//
+//####### operator decay #######// //####### operator decay #######// //####### operator decay #######//
+
+
+void Piece::operator_decay(double gamma, Bound bound)
+{
+  Piece* Q_tmp = this;
+  while(Q_tmp != NULL)
+  {
+    Q_tmp -> getRefCost().rescaling(gamma);
+    Q_tmp -> m_interval.rescaling(gamma, bound);
+    Q_tmp = Q_tmp -> nxt;
+  }
 
 }
 

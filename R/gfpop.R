@@ -52,6 +52,9 @@ gfpop <- function(vectData = c(0), vectWeight = c(0), mygraph, type = "gauss", K
   maxVertex <- max(mygraph[,c(1,2)])
 
   myOrderedGraph <- graph()
+  selectNullDecay <- mygraph[, 3] == "null"
+
+  mygraph[selectNullDecay, 4] <- -1 #for ordering
   for(i in 0:maxVertex)
   {
     selectRaw <- mygraph[mygraph[,2]==i, ]
@@ -59,7 +62,10 @@ gfpop <- function(vectData = c(0), vectWeight = c(0), mygraph, type = "gauss", K
     selectRaw <- selectRaw[ordre,]
     myOrderedGraph <- rbind(myOrderedGraph, selectRaw)
   }
+
   myOrderedGraph <- rbind(myOrderedGraph, startend)
+  selectNullDecay <- myOrderedGraph[, 3] == "null"
+  myOrderedGraph[selectNullDecay, 4] <- 0 #for ordering
 
   ###CALL Rcpp functions###
   if(type == "gauss"){res <- gfpopTransfert_Gauss(vectData, vectWeight, myOrderedGraph, K, a, min, max)}

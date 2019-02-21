@@ -9,7 +9,7 @@
 #' @return a dataframe with five components equal to the five parameters
 #' @examples
 #' edge(0, 1, "up", 10, 1)
-edge <- function(state1, state2, type = "null", penalty = 0, parameter = 0)
+edge <- function(state1, state2, type = "null", penalty = 0, parameter = 1)
 {
   ###STOP###
   if(state1%%1 != 0){stop('state1 is not an integer.')}

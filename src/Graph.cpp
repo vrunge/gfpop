@@ -9,8 +9,6 @@
 
 Graph::Graph()
 {
-  startState = -1; ///undefined start state
-  endState = -1; ///undefined end state
 }
 
 void Graph::newEdge(Edge const& edge){edges.push_back(edge);}
@@ -42,8 +40,8 @@ int Graph::nb_states() const
 
 int Graph::nb_edges() const {return(edges.size());}
 Edge Graph::getEdge(int i) const {return(edges[i]);}
-int Graph::getStartState() const {return(startState);}
-int Graph::getEndState() const {return(endState);}
+std::vector<int> Graph::getStartState() const {return(startState);}
+std::vector<int> Graph::getEndState() const {return(endState);}
 
 
 // ### AreVerticesCompatible ### /// /// ### AreVerticesCompatible ### /// /// ### AreVerticesCompatible ### ///
@@ -85,11 +83,9 @@ std::string Graph::getType() const
   std::string response = "complex";
   if(edges.size() == 2)
   {
-    if(edges[0].getConstraint() == "null" && edges[1].getConstraint() == "up" && nb_states() == 1){response = "isotonic";}
-    if(edges[1].getConstraint() == "null" && edges[0].getConstraint() == "up" && nb_states() == 1){response = "isotonic";}
-    if(edges[0].getConstraint() == "null" && edges[1].getConstraint() == "std" && nb_states() == 1){response = "std";}
-    if(edges[1].getConstraint() == "null" && edges[0].getConstraint() == "std" && nb_states() == 1){response = "std";}
-  }
+    if(edges[0].getConstraint() == "null" && edges[1].getConstraint() == "up" && nb_states() == 1 && edges[0].getParameter() == 1){response = "isotonic";}
+    if(edges[0].getConstraint() == "null" && edges[1].getConstraint() == "std" && nb_states() == 1 && edges[0].getParameter() == 1){response = "std";}
+   }
   return(response);
 }
 
@@ -102,7 +98,7 @@ Interval Graph::buildInterval(double argmin, int s1, int s2, bool& out) const
 {
   Interval response = Interval(-INFINITY, INFINITY);
 
-  /// FIND edge
+  /// FIND edge. If there are 2 edges (s1,s2) we get the second one (which is not of "null" or "decay" type). (cf ordering in gfpop R function)
   Edge myedge;
   for (int i = 0 ; i < edges.size() ; i++)
   {
@@ -136,6 +132,22 @@ Interval Graph::buildInterval(double argmin, int s1, int s2, bool& out) const
 }
 
 
+
+// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### ///
+// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### ///
+
+
+double Graph::stateDecay(int s) const
+{
+  double response =  1;
+  for (int i = edges.size()-1 ; i > -1; i--)
+  {
+    if((edges[i].getState1() == s) && (edges[i].getState2() == s)){response = edges[i].getParameter();}
+  }
+
+  return(response);
+}
+
 // ### show ### /// /// ### show ### /// /// ### show ### /// /// ### show ### ///
 // ### show ### /// /// ### show ### /// /// ### show ### /// /// ### show ### ///
 
@@ -145,10 +157,20 @@ void Graph::show() const
   //std::cout << "GRAPH" << std::endl;
   for (int i = 0 ; i < edges.size() ; i++)
   {
-    // edges[i].show();
+    //edges[i].show();
   }
-  //std::cout<< "Start state : " << startState << std::endl;
-  //std::cout<< "End state : " << endState << std::endl;
+  //std::cout<< "Start state : ";
+  for (int i = 0 ; i < startState.size() ; i++)
+  {
+    //std::cout<< startState[i] << " ";
+  }
+  //std::cout << std::endl;
+  //std::cout<< "End state : ";
+  for (int i = 0 ; i < endState.size() ; i++)
+  {
+    //std::cout<< endState[i] << " ";
+  }
+  //std::cout << std::endl;
   //std::cout<< "nb states : " << nb_states() << std::endl;
   //std::cout<< "nb edges : " << nb_edges() << std::endl;
 }
@@ -158,7 +180,7 @@ void Graph::show() const
 
 void Graph::operator<<(Edge const& newEdge)
 {
-  if(newEdge.getConstraint() == "start"){startState = newEdge.getState1();}
-  if(newEdge.getConstraint() == "end"){endState = newEdge.getState1();}
+  if(newEdge.getConstraint() == "start"){startState.push_back(newEdge.getState1());}
+  if(newEdge.getConstraint() == "end"){endState.push_back(newEdge.getState1());}
   if((newEdge.getConstraint() != "start") && (newEdge.getConstraint() != "end")){edges.push_back(newEdge);}
 }

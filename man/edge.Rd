@@ -4,7 +4,7 @@
 \alias{edge}
 \title{Edge generation}
 \usage{
-edge(state1, state2, type = "null", penalty = 0, parameter = 0)
+edge(state1, state2, type = "null", penalty = 0, parameter = 1)
 }
 \arguments{
 \item{state1}{a nonnegative integer defining the starting state of the edge}

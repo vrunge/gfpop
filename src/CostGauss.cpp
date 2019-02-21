@@ -218,6 +218,16 @@ bool CostGauss::isEqual(CostGauss const& mycost) const
   return(res);
 }
 
+//####### rescaling #######////####### rescaling #######////####### rescaling #######//
+//####### rescaling #######////####### rescaling #######////####### rescaling #######//
+
+void CostGauss::rescaling(double gamma)
+{
+  m_A = m_A/(gamma*gamma);
+  m_B = m_B/gamma;
+}
+
+
 
 //####### addL1 #######////####### addL1 #######////####### addL1 #######//
 //####### addL1 #######////####### addL1 #######////####### addL1 #######//

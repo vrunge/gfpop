@@ -43,6 +43,7 @@ class CostGauss
     bool isEqual(CostGauss const& mycost) const;
 
     void addL1(Point const& pt, Robust const& robust, int slope);
+    void rescaling(double gamma);
 
     void show() const;
     void show(Interval const& inter) const;

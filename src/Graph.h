@@ -16,13 +16,14 @@ class Graph
     int nb_states() const;
     int nb_edges() const;
     Edge getEdge(int i) const;
-    int getStartState() const;
-    int getEndState() const;
+    std::vector<int> getStartState() const;
+    std::vector<int> getEndState() const;
 
     bool AreVerticesCompatible() const;
     std::string getType() const;
 
     Interval buildInterval(double argmin, int s1, int s2, bool& out) const;
+    double stateDecay(int s) const;
 
     void show() const;
 
@@ -31,8 +32,8 @@ class Graph
 
   private:
     std::vector<Edge> edges; ///vector edges
-    int startState;
-    int endState;
+    std::vector<int> startState;
+    std::vector<int> endState;
 };
 
 #endif // GRAPH_H

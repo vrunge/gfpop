@@ -71,7 +71,7 @@ List gfpopTransfert_Gauss(NumericVector vectData, NumericVector vectWeight, Data
 
   Robust robust = Robust(K, a);
   robust.findRobustType();
-  //robust.show();
+  robust.show();
 
   // END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT
   // END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT
