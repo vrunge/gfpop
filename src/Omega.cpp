@@ -483,7 +483,7 @@ void Omega::backtrackingIsotonic(std::vector<Piece*> const& Q_t)
     ///
     boolForced = false;
     CurrentChgpt = malsp[2];
-    malsp = Q_t[malsp[2]] -> get_min_argmin_label(malsp[1] - m_graph.getEdge(0).getParameter(), boolForced, m_bound.getIsConstrained());
+    malsp = Q_t[malsp[2]] -> get_min_argmin_label(malsp[1] - m_graph.getEdge(1).getParameter(), boolForced, m_bound.getIsConstrained());
 
     //malsp = Q_t[malsp[2]] -> get_min_argmin_label(INFINITY, boolForced, m_bound.getIsConstrained());
     if(malsp[1] > m_bound.getM()){malsp[1] = m_bound.getM(); boolForced = true;}
