@@ -34,12 +34,12 @@ edge <- function(state1, state2, type = "null", penalty = 0, parameter = 1)
 
 ###############################################
 
-#' Constraint starting and ending states to a graph
+#' Constraint the starting and ending states of a graph
 #'
-#' @description Adding constraints on the starting and ending states to a graph
-#' @param start a vector of nonnegative integer. The starting vertices in the changepoint inference
-#' @param end a vector of nonnegative integer. The ending vertices in the changepoint inference
-#' @return a dataframe with five components (as for edge) with only state1 and type = start or end defined.
+#' @description Adding constraints on the starting and ending states of a graph
+#' @param start a vector of nonnegative integers. The starting vertices in the changepoint inference
+#' @param end a vector of nonnegative integers. The ending vertices in the changepoint inference
+#' @return a dataframe with five components (as for edge) with only `state1`` and `type` = start or end defined.
 #' @examples
 #' StartEnd(start = 0, end = c(1,2))
 
