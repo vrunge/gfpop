@@ -37,26 +37,34 @@ edge <- function(state1, state2, type = "null", penalty = 0, parameter = 1)
 #' Constraint starting and ending states to a graph
 #'
 #' @description Adding constraints on the starting and ending states to a graph
-#' @param start a nonnegative integer. The first vertex in the changepoint inference
-#' @param end a nonnegative integer. The end vertex in the changepoint inference
+#' @param start a vector of nonnegative integer. The starting vertices in the changepoint inference
+#' @param end a vector of nonnegative integer. The ending vertices in the changepoint inference
 #' @return a dataframe with five components (as for edge) with only state1 and type = start or end defined.
 #' @examples
-#' StartEnd(start = 0, end = 1)
+#' StartEnd(start = 0, end = c(1,2))
 
-StartEnd <- function(start = -1, end = -1)
+StartEnd <- function(start = NULL, end = NULL)
 {
-  if(start%%1 != 0){stop('start is not an integer.')}
-  if(end%%1 != 0){stop('end is not an integer.')}
-  if(start < -1){stop('start must be a nonnegative integer')}
-  if(end < -1){stop('end must be a nonnegative integer')}
-
-  df1 <- data.frame(start, NA, "start", NA, NA, stringsAsFactors = FALSE)
-  df2 <- data.frame(end, NA, "end", NA, NA, stringsAsFactors = FALSE)
-  colnames(df1) <- c("state1", "state2", "type", "penalty", "parameter")
-  colnames(df2) <- c("state1", "state2", "type", "penalty", "parameter")
-  df <- NULL
-  if(start != -1){df <- df1}
-  if(end != -1){df <- rbind(df,df2)}
+  df <- data.frame(numeric(), numeric(0), character(), numeric(0), numeric(0), stringsAsFactors = FALSE)
+  colnames(df) <- c("state1", "state2", "type", "penalty", "parameter")
+  if(length(start) != 0)
+  {
+    for(i in 1:length(start))
+    {
+      if(start[i]%%1 != 0){stop('The vector start ontains a non-integer element')}
+      if(start[i] < 0){stop('The vector start contains a negative integer')}
+      df[i,] <- list(start[i], NA, "start", NA, NA)
+    }
+  }
+  if(length(end) != 0)
+  {
+    for(i in 1:length(end))
+    {
+      if(end[i]%%1 != 0){stop('The vector end contains a non-integer element')}
+      if(end[i] < 0){stop('The vector end contains a negative integer')}
+      df[i + length(start),] <- list(end[i], NA, "end", NA, NA)
+    }
+  }
   return(df)
 }
 
