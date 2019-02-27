@@ -64,6 +64,10 @@ std::vector< int > Omega::GetForced() const{return(forced);}
 int Omega::GetN() const{return(Q_ts.size());}
 double Omega::GetGlobalCost() const{return(globalCost);}
 
+void Omega::test(Data const& data)
+{
+}
+
 
 //####### fpop1d_graph #######// //####### fpop1d_graph #######// //####### fpop1d_graph #######//
 //####### fpop1d_graph #######// //####### fpop1d_graph #######// //####### fpop1d_graph #######//

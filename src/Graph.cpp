@@ -85,6 +85,7 @@ std::string Graph::getType() const
   {
     if(edges[0].getConstraint() == "null" && edges[1].getConstraint() == "up" && nb_states() == 1 && edges[0].getParameter() == 1){response = "isotonic";}
     if(edges[0].getConstraint() == "null" && edges[1].getConstraint() == "std" && nb_states() == 1 && edges[0].getParameter() == 1){response = "std";}
+    if(edges[0].getConstraint() == "null" && edges[1].getConstraint() == "null" && nb_states() == 1 && edges[0].getParameter() == 1){response = "test";} /// TEST FUNCTION COMPTUTATIONAL TIME
    }
   return(response);
 }

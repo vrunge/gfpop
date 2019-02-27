@@ -30,6 +30,8 @@ class Omega
     void fpop1d_graph_isotonic(Data const& data);
     void fpop1d_graph_std(Data const& data);
 
+    void test(Data const& data);
+
     void copyQt();
     void fillQ_edges(int newLabel);
     void multiple_minimization();
