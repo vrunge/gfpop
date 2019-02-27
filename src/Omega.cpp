@@ -66,8 +66,7 @@ double Omega::GetGlobalCost() const{return(globalCost);}
 
 void Omega::test(Data const& data)
 {
-  Q_edges = new Piece*[data.getn()];
-  for(unsigned char i = 0 ; i < p ; i++){Q_edges[i] = new Piece(Track(), Interval());}
+ 
 }
 
 
