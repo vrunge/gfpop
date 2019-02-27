@@ -66,7 +66,11 @@ double Omega::GetGlobalCost() const{return(globalCost);}
 
 void Omega::test(Data const& data)
 {
- 
+  for(unsigned int t = 1; t < data.getn(); t++) /// loop for all edges
+  {
+    Piece** Qt_new = new Piece*[p];
+    Q_ts.push_back(Qt_new);
+  }
 }
 
 
