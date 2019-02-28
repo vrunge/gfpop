@@ -160,7 +160,7 @@ itergfpop <- function(vectData = c(0), vectWeight = c(0), mygraph, type = "gauss
     #UPDATE GRAPH !!!
 
     ###CALL Rcpp functions###
-    res <- gfpopTransfert_Gauss(vectData, vectWeight, myOrderedGraph, K, a, min, max)
+    res <- gfpopTransfer(vectData, vectWeight, myOrderedGraph, K, a, min, max)
 
     beta_old <- beta
 
