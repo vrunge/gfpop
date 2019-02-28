@@ -11,7 +11,7 @@
 # gfpop Vignette
 ### Vincent Runge
 #### LaMME, Evry University
-### February 21, 2019
+### February 28, 2019
 
 > [Introduction](#intro)
 
@@ -107,6 +107,17 @@ We install the package from Github:
 library(gfpop)
 ```
 
+```
+## 
+## Attaching package: 'gfpop'
+```
+
+```
+## The following objects are masked from 'package:gfpop2':
+## 
+##     dataGenerator, edge, graph, sdDiff, StartEnd
+```
+
 We simulate some univariate gaussian data (`n = 1000` points) with relative changepoint positions `0.1, 0.3, 0.5, 0.8, 1` and means `1, 2, 1, 3, 1` with a variance equal to `1`.
 
 ```r
@@ -128,7 +139,7 @@ gfpop(vectData = myData, mygraph = myGraph, type = "gauss")
 
 ```
 ## changepoints
-## [1]  101  305  501  800 1000
+## [1]  100  299  500  800 1000
 ## 
 ## states
 ## [1] 0 1 0 1 0
@@ -137,10 +148,10 @@ gfpop(vectData = myData, mygraph = myGraph, type = "gauss")
 ## [1] 0 0 0 0
 ## 
 ## means
-## [1] 0.9412859 1.9042115 1.0064542 2.9324436 1.0024089
+## [1] 1.0398897 2.0548877 0.9677736 2.9771042 1.0342072
 ## 
 ## cost
-## [1] 1080.428
+## [1] 1088.998
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -175,7 +186,7 @@ gfpop(vectData =  mydata, mygraph = myGraphIso, type = "gauss", K = 1, min = 0)
 
 ```
 ## changepoints
-## [1]  293  594 1000
+## [1]  298  613 1000
 ## 
 ## states
 ## [1] 0 0 0
@@ -184,10 +195,10 @@ gfpop(vectData =  mydata, mygraph = myGraphIso, type = "gauss", K = 1, min = 0)
 ## [1] 0 0
 ## 
 ## means
-## [1] 0.5339437 1.8341719 2.7824167
+## [1] 0.5804419 1.9590530 2.8751642
 ## 
 ## cost
-## [1] 561.8481
+## [1] 523.0448
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -206,8 +217,8 @@ n <- 1000
 mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1), c(0, 0.5, 1, 1.5, 2, 2.5, 3), 1)
 beta <- 0
 myGraph <- graph(
-  edge(0, 1,"up", beta, 0),
-  edge(1, 2, "up", beta, 0),
+  edge(0, 1,"up", beta),
+  edge(1, 2, "up", beta),
   edge(0, 0, "null"),
   edge(1, 1, "null"),
   edge(2, 2, "null"),
@@ -218,7 +229,7 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss")
 
 ```
 ## changepoints
-## [1]  194  413 1000
+## [1]  267  607 1000
 ## 
 ## states
 ## [1] 0 1 2
@@ -227,10 +238,10 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss")
 ## [1] 0 0
 ## 
 ## means
-## [1] 0.1924616 1.3769578 2.5875370
+## [1] 0.4898983 1.7644320 2.8329232
 ## 
 ## cost
-## [1] 1034.578
+## [1] 1055.787
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -246,8 +257,8 @@ n <- 1000
 mydata <- dataGenerator(n, c(0.1,0.3,0.5,0.8,1), c(0,1,0,1,0), 1) + 5*(rbinom(n, 1, 0.05)) - 5*(rbinom(n, 1, 0.05))
 beta <- 2*log(n)
 myGraph <- graph(
-  edge(0, 1, "up", beta, 1),
-  edge(1, 0, "down", beta, 1),
+  edge(0, 1, "up", beta, gap = 1),
+  edge(1, 0, "down", beta, gap = 1),
   edge(0, 0, "null"),
   edge(1, 1, "null"),
   StartEnd(start = 0, end = 0))
@@ -256,19 +267,19 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3.0)
 
 ```
 ## changepoints
-## [1]   96  295  489  802 1000
+## [1]   97  299  500  793 1000
 ## 
 ## states
 ## [1] 0 1 0 1 0
 ## 
 ## forced
-## [1] 0 0 0 0
+## [1] 1 0 1 0
 ## 
 ## means
-## [1] -0.08351631  1.04045198 -0.15651782  0.93319389 -0.11748538
+## [1]  0.07184646  1.07184646  0.06240383  1.06240383 -0.02733504
 ## 
 ## cost
-## [1] 1740.751
+## [1] 1855.191
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -284,12 +295,12 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 
 ```
 ## changepoints
-##  [1]    5    6   24   27   29   30   41   42   96  144  145  171  173  176
-## [15]  178  205  206  236  238  262  263  289  291  309  312  320  321  370
-## [29]  371  411  416  443  445  446  451  452  487  488  508  509  520  521
-## [43]  529  530  531  541  542  584  585  586  628  629  687  689  690  722
-## [57]  723  729  731  800  807  808  834  835  856  857  858  894  895  935
-## [71]  936  939  940  941  943  968  969 1000
+##  [1]   21   22   23   24  101  118  119  127  128  151  152  154  155  159
+## [15]  161  169  170  221  224  253  254  290  291  302  303  314  316  319
+## [29]  339  340  354  356  378  380  424  425  440  441  494  495  523  525
+## [43]  558  559  573  574  576  587  589  652  653  659  660  672  673  693
+## [57]  694  713  714  728  729  730  744  745  751  754  763  765  787  788
+## [71]  793  828  829  856  857  881  882  965  966  983  984  985  986 1000
 ## 
 ## states
 ## integer(0)
@@ -298,25 +309,26 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 ## integer(0)
 ## 
 ## means
-##  [1] -0.06013445  7.11421933 -0.59869423  3.62388914 -0.41207528
-##  [6]  6.48511471 -0.20776566 -5.92732191 -0.03661876  1.34082032
-## [11]  6.86803702  0.93634094  4.70619384 -0.08778119  5.57030161
-## [16]  1.30777679 -4.88591074  0.99432297  5.67969496  0.75588296
-## [21]  6.57865137  1.03417121 -3.51513212  0.23617510 -3.82238332
-## [26]  0.33942023 -6.32922241 -0.03165873  5.97623876 -0.33528805
-## [31]  2.30657546 -0.45914429 -4.14007789  4.63979848 -0.23235047
-## [36]  5.75254104  0.04376510  5.66081320  0.99441630 -4.65957926
-## [41]  1.04924942 -5.86571587  1.09354768  7.20938416 -4.30372472
-## [46]  1.78287878 -4.38531646  1.15980381  6.50141769 -4.64412405
-## [51]  0.91219510 -5.59853085  0.88897307 -3.86200315  4.65701787
-## [56]  0.45249591  6.07602562  1.18201496  5.76491831  0.84653415
-## [61] -1.21518778 -6.50467305 -0.22839960 -6.40144962 -0.10881665
-## [66]  7.04677615 -4.71194613 -0.18989655  6.11902886  0.12685642
-## [71]  6.17752706 -0.05709973 -4.70792489  5.29613535 -3.05890514
-## [76]  0.01279152  6.29002388 -0.15696088
+##  [1]  0.06769517 -5.50102947  0.79691169 -6.16215327  0.11315955
+##  [6]  1.41385775 -4.89402085  1.84919578  6.63283081  0.73900245
+## [11] -5.25778811  1.32759821 -4.85394086  1.22338165 -4.42072139
+## [16]  0.07821522  6.73130941  0.94932906 -1.95747091  1.27297118
+## [21] -4.71473745  1.20023396 -5.06790818  1.94471637  5.97329919
+## [26] -0.97193863  3.77453738 -2.57105634  0.45474986 -6.35124554
+## [31]  0.48013636  4.90124148  0.11779104 -5.20628261  0.61272962
+## [36] -5.12320692  0.40331806  4.87585559 -0.24884694  6.35962342
+## [41]  0.58340583  4.82531403  0.46763359  7.27650004  0.73962874
+## [46]  6.81345948 -1.64811181  1.33903708  6.14817937  0.97164350
+## [51] -5.06795612  0.78904739  6.80063142  0.31698918  6.86922297
+## [56]  1.01200134  6.94063049  0.60642732 -4.75668719  1.93685526
+## [61]  5.94373818 -3.16223255  1.59629244  7.11789142  2.28420595
+## [66] -2.98642635  1.48752444  5.09094524  1.20033490 -4.64654536
+## [71]  1.69977042 -0.08108605 -5.66413529  0.10025719  6.09247477
+## [76]  0.13223191  5.68555420 -0.22790836 -5.63895812  0.19269466
+## [81]  6.33835014 -0.60790815  6.95736250 -0.07219581
 ## 
 ## cost
-## [1] 2652.346
+## [1] 2996.055
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -332,27 +344,27 @@ n <- 10000
 mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), c(0, 1, 0, 2, 1, 2, 0, 1, 0, 1), 0.5)
 beta <- 2*log(n)
 myGraph <- graph(
-  edge(0, 0,"absSup", beta, 1),
+  edge(0, 0,"absSup", beta, gap = 1),
   edge(0, 0,"null"))
 gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
 ```
 
 ```
 ## changepoints
-##  [1]  1000  2000  3000  4000  5000  6000  7005  7999  9000 10000
+##  [1]  1000  1997  3000  4000  4999  6000  6995  8000  9000 10000
 ## 
 ## states
 ##  [1] 0 0 0 0 0 0 0 0 0 0
 ## 
 ## forced
-## [1] 0 0 0 0 1 0 1 0 1
+## [1] 0 0 0 0 0 0 1 0 0
 ## 
 ## means
-##  [1]  0.0110928807  1.0327701200 -0.0024735656  2.0088922942  0.9866282085
-##  [6]  1.9866282085 -0.0001655706  0.9998344294 -0.0040009817  0.9959990183
+##  [1] -1.979279e-02  1.013197e+00  4.166539e-03  1.998449e+00  9.707397e-01
+##  [6]  1.997130e+00  3.710429e-05  1.000037e+00 -1.691713e-02  1.028223e+00
 ## 
 ## cost
-## [1] 2732.468
+## [1] 2667.117
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -371,8 +383,8 @@ n <- 1000
 mydata <- dataGenerator(n, c(0.2, 0.5, 0.8, 1), c(5, 10, 15, 20), 1, gamma = 0.966)
 beta <- 2*log(n)
 myGraphDecay <- graph(
-  edge(0, 0, "up", beta, 0),
-  edge(0, 0, "null", 0, 0.966)
+  edge(0, 0, "up", beta),
+  edge(0, 0, "null", 0, decay = 0.966)
   )
 g <- gfpop(vectData =  mydata, mygraph = myGraphDecay, type = "gauss", min = 0)
 g
@@ -389,10 +401,10 @@ g
 ## [1] 0 0 0
 ## 
 ## means
-## [1] 0.0048666904 0.0003157411 0.0004712629 0.0198766992
+## [1] 0.0049073122 0.0003113153 0.0004682635 0.0197665863
 ## 
 ## cost
-## [1] 1078.436
+## [1] 1059.672
 ## 
 ## attr(,"class")
 ## [1] "gfpop"
@@ -411,7 +423,7 @@ par(new = TRUE)
 plot(signal, type ='l', col = 4, ylim = ylimits, lwd = 3)
 ```
 
-![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11-1.png)
+![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-22-1.png)
 
 
 <a id="gc"></a>
@@ -431,13 +443,13 @@ emptyGraph
 ## <0 rows> (or 0-length row.names)
 ```
 
-`state1` is the starting vertex of an edge, `state2` its ending vertex. `type` is one of the available edge type ("null", up", "down", "std", "absInf", "absSup"). `penalty` is a nonnegative parameter: the additional cost <img src="/tex/3d13090ef3ed1448f3c4dc166d06ab4d.svg?invert_in_darkmode&sanitize=true" align=middle width=13.948864049999989pt height=22.831056599999986pt/> to consider when we move within the graph using this edge. `parameter` is annother nonnegative parameter, a characteristics of the edge, depending of its type.
+`state1` is the starting vertex of an edge, `state2` its ending vertex. `type` is one of the available edge type ("null", up", "down", "std", "absInf", "absSup"). `penalty` is a nonnegative parameter: the additional cost <img src="/tex/3d13090ef3ed1448f3c4dc166d06ab4d.svg?invert_in_darkmode&sanitize=true" align=middle width=13.948864049999989pt height=22.831056599999986pt/> to consider when we move within the graph using this edge. `parameter` is annother nonnegative parameter, a characteristics of the edge, depending of its type (it is a decay (it type is "null" and a gap otherwise).
 
-We add edges as follows
+We add edges into a graph as follows
 
 ```r
 myGraph <- graph(
-  edge(0, 0, "down", 3.1415, 1),
+  edge(0, 0, "down", 3.1415, gap = 1),
   edge(0, 0))
 myGraph
 ```
@@ -458,9 +470,9 @@ beta <- 2 * log(n)
 myGraph <- graph(
   edge(0, 0, "null"),
   edge(1, 1, "null"),
-  edge(0, 1, "up", beta, 1),
-  edge(0, 0, "down", beta, 0),
-  edge(1, 0, "down", beta, 0),
+  edge(0, 1, "up", beta, gap = 1),
+  edge(0, 0, "down", beta),
+  edge(1, 0, "down", beta),
   StartEnd(start = 0, end = 0))
 myGraph
 ```
