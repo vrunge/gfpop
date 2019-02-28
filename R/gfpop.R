@@ -68,9 +68,7 @@ gfpop <- function(vectData = c(0), vectWeight = c(0), mygraph, type = "gauss", K
   myOrderedGraph[selectNullDecay, 4] <- 0 #for ordering
 
   ###CALL Rcpp functions###
-  if(type == "gauss"){res <- gfpopTransfert_Gauss(vectData, vectWeight, myOrderedGraph, K, a, min, max)}
-  if(type == "poisson"){res <- gfpopTransfert_Poisson(vectData, vectWeight, myOrderedGraph, K, a, min, max)}
-  if(type == "binomial"){res <- gfpopTransfert_Binomial(vectData, vectWeight, myOrderedGraph, K, a, min, max)}
+  res <- gfpopTransfer(vectData, vectWeight, myOrderedGraph, type, K, a, min, max)
 
   ###Response class gfpop###
   response <- list(changepoints = c(rev(res$changepoints[-1]), length(vectData)), states = rev(res$states), forced = rev(res$forced), means = rev(res$means), cost = res$cost)
@@ -162,9 +160,7 @@ itergfpop <- function(vectData = c(0), vectWeight = c(0), mygraph, type = "gauss
     #UPDATE GRAPH !!!
 
     ###CALL Rcpp functions###
-    if(type == "gauss"){res <- gfpopTransfert_Gauss(vectData, vectWeight, myOrderedGraph, K, a, min, max)}
-    if(type == "poisson"){res <- gfpopTransfert_Poisson(vectData, vectWeight, myOrderedGraph, K, a, min, max)}
-    if(type == "binomial"){res <- gfpopTransfert_Binomial(vectData, vectWeight, myOrderedGraph, K, a, min, max)}
+    res <- gfpopTransfert_Gauss(vectData, vectWeight, myOrderedGraph, K, a, min, max)
 
     beta_old <- beta
 

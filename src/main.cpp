@@ -15,7 +15,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List gfpopTransfert_Gauss(NumericVector vectData, NumericVector vectWeight, DataFrame mygraph, double K, double a, double min, double max)
+List gfpopTransfer(NumericVector vectData, NumericVector vectWeight, DataFrame mygraph, std::string type, double K, double a, double min, double max)
 {
   // BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT
   // BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT
@@ -111,33 +111,3 @@ List gfpopTransfert_Gauss(NumericVector vectData, NumericVector vectWeight, Data
 }
 
 
-
-
-// [[Rcpp::export]]
-List gfpopTransfert_Poisson(NumericVector vectData, NumericVector vectWeight, DataFrame mygraph, double K, double a, double min, double max)
-{
-  double b = 0;
-  List res = List::create(
-    _["changepoints"] = b,
-    _["states"] = b,
-    _["forced"] = b,
-    _["means"] = b
-  );
-
-  return res;
-}
-
-
-// [[Rcpp::export]]
-List gfpopTransfert_Binomial(NumericVector vectData, NumericVector vectWeight, DataFrame mygraph, double K, double a, double min, double max)
-{
-  double b = 0;
-  List res = List::create(
-    _["changepoints"] = b,
-    _["states"] = b,
-    _["forced"] = b,
-    _["means"] = b
-  );
-
-  return res;
-}
