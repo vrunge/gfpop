@@ -64,16 +64,6 @@ std::vector< int > Omega::GetForced() const{return(forced);}
 int Omega::GetN() const{return(Q_ts.size());}
 double Omega::GetGlobalCost() const{return(globalCost);}
 
-void Omega::test(Data const& data)
-{
-  for(unsigned int t = 1; t < data.getn(); t++) /// loop for all edges
-  {
-    Piece** Qt_new = new Piece*[p];
-    for(unsigned char i = 0 ; i < p ; i++){Qt_new[i] = new Piece(Track(), Interval());}
-    Q_ts.push_back(Qt_new);
-  }
-}
-
 
 //####### fpop1d_graph #######// //####### fpop1d_graph #######// //####### fpop1d_graph #######//
 //####### fpop1d_graph #######// //####### fpop1d_graph #######// //####### fpop1d_graph #######//

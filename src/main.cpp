@@ -93,7 +93,6 @@ List gfpopTransfert_Gauss(NumericVector vectData, NumericVector vectWeight, Data
   if(graphType == "std"){omega.fpop1d_graph_std(data);}
   if(graphType == "isotonic"){omega.fpop1d_graph_isotonic(data);}
   if(graphType == "complex"){omega.fpop1d_graph_complex(data);}
-  if(graphType == "test"){omega.test(data);}
 
   ///////////
   /////////// RETURN
