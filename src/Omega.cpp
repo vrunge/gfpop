@@ -65,6 +65,57 @@ int Omega::GetN() const{return(Q_ts.size());}
 double Omega::GetGlobalCost() const{return(globalCost);}
 
 
+
+//####### pava #######////####### pava #######////####### pava #######//
+//####### pava #######////####### pava #######////####### pava #######//
+
+
+
+void Omega::pava(Data const& data)
+{
+  Point* myData = data.getVecPt(); ///GET the data/// get the vector of Points = myData
+
+  std::vector<double> CW; //current weights
+
+  means.push_back(myData[0].y);
+  CW.push_back(myData[0].w);
+  changepoints.push_back(1);
+
+  for(unsigned int t = 1; t < data.getn(); t++) /// loop for all edges
+  {
+    if(means.back() < myData[t].y)
+    {
+      // Begin a new segment
+      means.push_back(myData[t].y);
+      CW.push_back(myData[t].w);
+      changepoints.push_back(t+1);
+    }
+    else
+    {
+      // Update last element
+      means[means.size()-1] = (CW[CW.size()-1] * means[means.size()-1] + myData[t].w * myData[t].y)/(CW[CW.size()-1] + myData[t].w);
+      CW[CW.size()-1] = CW[CW.size()-1] + myData[t].w;
+      changepoints[changepoints.size()-1] = changepoints[changepoints.size()-1] + 1;
+
+      while((means.size() > 1) && (means[means.size()-2] > means[means.size()-1]))
+      {
+        means[means.size()-2] = (CW[CW.size()-1] * means[means.size()-1] + CW[CW.size()-2] * means[means.size()-2])/(CW[CW.size()-1] + CW[CW.size()-2]);
+        CW[CW.size()-2] = CW[CW.size()-2] + CW[CW.size()-1];
+        changepoints[changepoints.size()-2] = changepoints[changepoints.size()-1];
+
+        means.pop_back();
+        CW.pop_back();
+        changepoints.pop_back();
+      }
+    }
+  }
+
+  std::reverse(changepoints.begin(), changepoints.end());
+  std::reverse(means.begin(), means.end());
+
+}
+
+
 //####### fpop1d_graph #######// //####### fpop1d_graph #######// //####### fpop1d_graph #######//
 //####### fpop1d_graph #######// //####### fpop1d_graph #######// //####### fpop1d_graph #######//
 //####### fpop1d_graph #######// //####### fpop1d_graph #######// //####### fpop1d_graph #######//

@@ -26,6 +26,8 @@ class Omega
     int GetN() const;
     double GetGlobalCost() const;
 
+    void pava(Data const& data);
+
     void fpop1d_graph_complex(Data const& data);
     void fpop1d_graph_isotonic(Data const& data);
     void fpop1d_graph_std(Data const& data);
