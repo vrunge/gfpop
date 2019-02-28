@@ -81,7 +81,7 @@ void Omega::pava(Data const& data)
   CW.push_back(myData[0].w);
   changepoints.push_back(1);
 
-  for(unsigned int t = 1; t < data.getn(); t++) /// loop for all edges
+  for(unsigned int t = 1; t < data.getn(); t++)
   {
     if(means.back() < myData[t].y)
     {
@@ -108,6 +108,16 @@ void Omega::pava(Data const& data)
         changepoints.pop_back();
       }
     }
+  }
+
+
+  for(unsigned int i = 0; i < changepoints[0]; i++)
+    {globalCost = globalCost +  myData[i].w*(means[0] - myData[i].y)*(means[0] - myData[i].y);}
+
+  for(unsigned int j = 1; j < changepoints.size(); j++)
+  {
+    for(unsigned int i = changepoints[j-1]; i < changepoints[j]; i++)
+    {globalCost = globalCost +  myData[i].w*(means[j] - myData[i].y)*(means[j] - myData[i].y);}
   }
 
   std::reverse(changepoints.begin(), changepoints.end());
