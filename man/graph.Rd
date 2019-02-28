@@ -21,5 +21,5 @@ Graph creation
 }
 \examples{
 UpDownGraph <- graph(penalty = 10, type = "updown")
-MyGraph <- graph(edge(0,0), edge(1,1), edge(0,1,"up",10), edge(1,0,"down",0), StartEnd(0,0))
+MyGraph <- graph(edge(0,0), edge(1,1), edge(0,1,"up",10,gap=0.5), edge(1,0,"down"), StartEnd(0,0))
 }

@@ -5,11 +5,12 @@
 #' @param state2 a nonnegative integer defining the ending state of the edge
 #' @param type a string equal to "null", "std", "up", "down", "absInf" or "absSup"
 #' @param penalty a nonnegative number. The penality associated to this state transition
-#' @param parameter a nonnegative number to constraint the size of the gap in the change of state
+#' @param decay a nonnegative number to give the strength of the exponential decay into the segment
+#' @param gap a nonnegative number to constraint the size of the gap in the change of state
 #' @return a dataframe with five components equal to the five parameters
 #' @examples
-#' edge(0, 1, "up", 10, 1)
-edge <- function(state1, state2, type = "null", penalty = 0, parameter = 1)
+#' edge(0, 1, "up", 10, gap = 1)
+edge <- function(state1, state2, type = "null", penalty = 0, decay = 1, gap = 0)
 {
   ###STOP###
   if(state1%%1 != 0){stop('state1 is not an integer.')}
@@ -21,10 +22,14 @@ edge <- function(state1, state2, type = "null", penalty = 0, parameter = 1)
     {stop('Argument not appropriate. Choose a type among the following: "null", "std", "up", "down", "absInf", "absSup".')}
 
   if(!is.double(penalty)){stop('penalty is not a double.')}
-  if(!is.double(parameter)){stop('parameter is not a double.')}
+  if(!is.double(decay)){stop('decay is not a double.')}
+  if(!is.double(gap)){stop('gap is not a double.')}
 
   if(penalty < 0){stop('penalty must be nonnegative')}
-  if(parameter < 0){stop('parameter must be nonnegative')}
+  if(decay < 0){stop('decay must be nonnegative')}
+  if(gap < 0){stop('gap must be nonnegative')}
+
+  if(type == "null"){parameter <- decay}else{parameter <- gap}
 
   ###response = a dataframe with a unique row
   df <- data.frame(state1, state2, type, penalty, parameter, stringsAsFactors = FALSE)
@@ -80,7 +85,7 @@ StartEnd <- function(start = NULL, end = NULL)
 #' @return a dataframe with edges in rows (columns are named "state1", "state2", "type", "penalty", "parameter") with additional "graph" class.
 #' @examples
 #' UpDownGraph <- graph(penalty = 10, type = "updown")
-#' MyGraph <- graph(edge(0,0), edge(1,1), edge(0,1,"up",10), edge(1,0,"down",0), StartEnd(0,0))
+#' MyGraph <- graph(edge(0,0), edge(1,1), edge(0,1,"up",10,gap=0.5), edge(1,0,"down"), StartEnd(0,0))
 
 graph <- function(..., penalty = 0, type = "empty")
 {

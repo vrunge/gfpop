@@ -4,7 +4,8 @@
 \alias{edge}
 \title{Edge generation}
 \usage{
-edge(state1, state2, type = "null", penalty = 0, parameter = 1)
+edge(state1, state2, type = "null", penalty = 0, decay = 1,
+  gap = 0)
 }
 \arguments{
 \item{state1}{a nonnegative integer defining the starting state of the edge}
@@ -15,7 +16,9 @@ edge(state1, state2, type = "null", penalty = 0, parameter = 1)
 
 \item{penalty}{a nonnegative number. The penality associated to this state transition}
 
-\item{parameter}{a nonnegative number to constraint the size of the gap in the change of state}
+\item{decay}{a nonnegative number to give the strength of the exponential decay into the segment}
+
+\item{gap}{a nonnegative number to constraint the size of the gap in the change of state}
 }
 \value{
 a dataframe with five components equal to the five parameters
@@ -24,5 +27,5 @@ a dataframe with five components equal to the five parameters
 Edge creation for graph
 }
 \examples{
-edge(0, 1, "up", 10, 1)
+edge(0, 1, "up", 10, gap = 1)
 }
