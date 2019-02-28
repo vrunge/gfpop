@@ -69,7 +69,7 @@ gfpop <- function(vectData = c(0), vectWeight = c(0), mygraph, type = "gauss", K
 
   ###CALL Rcpp functions###
   res <- gfpopTransfer(vectData, vectWeight, myOrderedGraph, type, K, a, min, max)
-  
+
   ###Response class gfpop###
   response <- list(changepoints = c(rev(res$changepoints[-1]), length(vectData)), states = rev(res$states), forced = rev(res$forced), means = rev(res$means), cost = res$cost)
   attr(response, "class") <- "gfpop"
@@ -161,7 +161,7 @@ itergfpop <- function(vectData = c(0), vectWeight = c(0), mygraph, type = "gauss
 
     ###CALL Rcpp functions###
     res <- gfpopTransfer(vectData, vectWeight, myOrderedGraph, type, K, a, min, max)
-  
+
     beta_old <- beta
 
     myOrderedGraph[,4] <- myOrderedGraph[,4] / beta
