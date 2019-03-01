@@ -7,7 +7,6 @@
 #include<iostream>
 #include <iomanip> ///Set Precision scientific
 
-#include<vector>
 #include<typeinfo>
 #include <stdlib.h>
 
