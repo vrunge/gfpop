@@ -107,17 +107,6 @@ We install the package from Github:
 library(gfpop)
 ```
 
-```
-## 
-## Attaching package: 'gfpop'
-```
-
-```
-## The following objects are masked from 'package:gfpop2':
-## 
-##     dataGenerator, edge, graph, sdDiff, StartEnd
-```
-
 We simulate some univariate gaussian data (`n = 1000` points) with relative changepoint positions `0.1, 0.3, 0.5, 0.8, 1` and means `1, 2, 1, 3, 1` with a variance equal to `1`.
 
 ```r
