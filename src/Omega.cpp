@@ -41,13 +41,18 @@ Omega::Omega(Graph graph, Bound bound, Robust robust) : m_graph(graph), m_bound(
 
 Omega::~Omega()
 {
-	for(int i = 0; i < Q_ts.size(); i++){for(unsigned char j = 0; j < p; j++){delete(Q_ts[i][j]);}delete [] Q_ts[i]; Q_ts[i] = NULL;}
 
-  for(unsigned char i = 0; i < q; i++){if(Q_edges[i] != NULL){delete(Q_edges[i]);}}
+  for(int i = 0; i < Q_ts.size(); i++)
+  {
+    //for(unsigned char j = 0; j < p; j++){delete(Q_ts[i][j]);}
+    delete [] Q_ts[i]; Q_ts[i] = NULL;
+  }
+
+  //for(unsigned char i = 0; i < q; i++){if(Q_edges[i] != NULL){delete(Q_edges[i]);}}
   delete [] Q_edges;
   Q_edges = NULL;
 
-  for(unsigned char i = 0; i < p; i++){delete(Q_s_temp[i]);}
+  //for(unsigned char i = 0; i < p; i++){delete(Q_s_temp[i]);}
   delete [] Q_s_temp;
   Q_s_temp = NULL;
 }
