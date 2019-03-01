@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // gfpopTransfer
 List gfpopTransfer(NumericVector vectData, NumericVector vectWeight, DataFrame mygraph, std::string type, double K, double a, double min, double max);
-RcppExport SEXP _gfpop2_gfpopTransfer(SEXP vectDataSEXP, SEXP vectWeightSEXP, SEXP mygraphSEXP, SEXP typeSEXP, SEXP KSEXP, SEXP aSEXP, SEXP minSEXP, SEXP maxSEXP) {
+RcppExport SEXP _gfpop_gfpopTransfer(SEXP vectDataSEXP, SEXP vectWeightSEXP, SEXP mygraphSEXP, SEXP typeSEXP, SEXP KSEXP, SEXP aSEXP, SEXP minSEXP, SEXP maxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -25,11 +25,11 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_gfpop2_gfpopTransfer", (DL_FUNC) &_gfpop2_gfpopTransfer, 8},
+    {"_gfpop_gfpopTransfer", (DL_FUNC) &_gfpop_gfpopTransfer, 8},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_gfpop2(DllInfo *dll) {
+RcppExport void R_init_gfpop(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }
