@@ -18,8 +18,13 @@ edge <- function(state1, state2, type = "null", penalty = 0, decay = 1, gap = 0)
   if(state1 < 0){stop('state1 must be a nonnegative integer')}
   if(state2 < 0){stop('state2 must be a nonnegative integer')}
 
+  if(type == "null" && (state1 != state2))
+    {stop('You can not build a null edge between two different states".')}
+
   if(type != "null" && type != "std" && type != "up" && type != "down" && type != "absInf" && type != "absSup")
     {stop('Argument not appropriate. Choose a type among the following: "null", "std", "up", "down", "absInf", "absSup".')}
+
+
 
   if(!is.double(penalty)){stop('penalty is not a double.')}
   if(!is.double(decay)){stop('decay is not a double.')}
