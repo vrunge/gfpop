@@ -10,7 +10,7 @@
 #' @return a dataframe with five components equal to the five parameters
 #' @examples
 #' edge(0, 1, "up", 10, gap = 1)
-edge <- function(state1, state2, type = "null", penalty = 0, decay = 1, gap = 0)
+edge <- function(state1, state2, type = "null", penalty = 0, decay = 1, gap = 0, mean = 0)
 {
   ###STOP###
   if(state1%%1 != 0){stop('state1 is not an integer.')}
@@ -21,10 +21,8 @@ edge <- function(state1, state2, type = "null", penalty = 0, decay = 1, gap = 0)
   if(type == "null" && (state1 != state2))
     {stop('You can not build a null edge between two different states".')}
 
-  if(type != "null" && type != "std" && type != "up" && type != "down" && type != "absInf" && type != "absSup")
-    {stop('Argument not appropriate. Choose a type among the following: "null", "std", "up", "down", "absInf", "absSup".')}
-
-
+  if(type != "oneMean" && type != "null" && type != "std" && type != "up" && type != "down" && type != "absInf" && type != "absSup")
+    {stop('Argument not appropriate. Choose a type among the following: "null", "std", "up", "down", "absInf", "absSup", "oneMean".')}
 
   if(!is.double(penalty)){stop('penalty is not a double.')}
   if(!is.double(decay)){stop('decay is not a double.')}
@@ -35,6 +33,7 @@ edge <- function(state1, state2, type = "null", penalty = 0, decay = 1, gap = 0)
   if(gap < 0){stop('gap must be nonnegative')}
 
   if(type == "null"){parameter <- decay}else{parameter <- gap}
+  if(type == "oneMean"){parameter <- mean}
 
   ###response = a dataframe with a unique row
   df <- data.frame(state1, state2, type, penalty, parameter, stringsAsFactors = FALSE)
