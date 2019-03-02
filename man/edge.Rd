@@ -5,7 +5,7 @@
 \title{Edge generation}
 \usage{
 edge(state1, state2, type = "null", penalty = 0, decay = 1,
-  gap = 0)
+  gap = 0, mean = 0)
 }
 \arguments{
 \item{state1}{a nonnegative integer defining the starting state of the edge}
@@ -19,6 +19,8 @@ edge(state1, state2, type = "null", penalty = 0, decay = 1,
 \item{decay}{a nonnegative number to give the strength of the exponential decay into the segment}
 
 \item{gap}{a nonnegative number to constraint the size of the gap in the change of state}
+
+\item{mean}{the mean of the onMean vertex}
 }
 \value{
 a dataframe with five components equal to the five parameters

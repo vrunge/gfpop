@@ -1,7 +1,5 @@
 #include "Omega.h"
-
 #include "CostGauss.h"
-
 #include "Piece.h"
 
 #include<iostream>
@@ -25,14 +23,11 @@ Omega::Omega(Graph graph, Bound bound, Robust robust) : m_graph(graph), m_bound(
   double mini = m_bound.getm();
   double maxi = m_bound.getM();
 
-	Piece **initRow = new Piece*[p];
-  for(unsigned char i = 0 ; i < p ; i++){initRow[i] = new Piece(Track(), Interval(mini, maxi), CostGauss());}
-	Q_ts.push_back(initRow); ///push into Q_ts as the first element (first element of the vector Q_ts)
-
+  Q_ts = NULL;
 	Q_edges = new Piece*[q];
-	for(unsigned char i = 0 ; i < q ; i++){Q_edges[i] = new Piece(Track(), Interval(mini, maxi), CostGauss());} ///because we use delete Q_edges in loops
+	for(unsigned char i = 0 ; i < q ; i++){Q_edges[i] = new Piece(Track(), Interval(mini, maxi), CostGauss());}
 	Q_s_temp = new Piece*[p];
-  for(unsigned char i = 0 ; i < p ; i++){Q_s_temp[i] = new Piece(Track(), Interval(mini, maxi), CostGauss());} ///because we use delete Q_s_temp in loops
+  for(unsigned char i = 0 ; i < p ; i++){Q_s_temp[i] = new Piece(Track(), Interval(mini, maxi), CostGauss());}
 }
 
 
@@ -41,18 +36,9 @@ Omega::Omega(Graph graph, Bound bound, Robust robust) : m_graph(graph), m_bound(
 
 Omega::~Omega()
 {
-
-  for(int i = 0; i < Q_ts.size(); i++)
-  {
-    //for(unsigned char j = 0; j < p; j++){delete(Q_ts[i][j]);}
-    delete [] Q_ts[i]; Q_ts[i] = NULL;
-  }
-
-  //for(unsigned char i = 0; i < q; i++){if(Q_edges[i] != NULL){delete(Q_edges[i]);}}
+  if(Q_ts != NULL){for(int i = 0; i < (n + 1); i++){delete [] Q_ts[i]; Q_ts[i] = NULL;}}
   delete [] Q_edges;
   Q_edges = NULL;
-
-  //for(unsigned char i = 0; i < p; i++){delete(Q_s_temp[i]);}
   delete [] Q_s_temp;
   Q_s_temp = NULL;
 }
@@ -65,14 +51,13 @@ std::vector< double > Omega::GetMeans() const{return(means);}
 std::vector< int > Omega::GetStates() const{return(states);}
 std::vector< int > Omega::GetForced() const{return(forced);}
 
-int Omega::GetN() const{return(Q_ts.size());}
+int Omega::GetN() const{return(n);}
 double Omega::GetGlobalCost() const{return(globalCost);}
 
 
 
 //####### pava #######////####### pava #######////####### pava #######//
 //####### pava #######////####### pava #######////####### pava #######//
-
 
 
 void Omega::pava(Data const& data)
@@ -141,27 +126,27 @@ void Omega::pava(Data const& data)
 void Omega::fpop1d_graph_complex(Data const& data)
 {
 	Point* myData = data.getVecPt(); ///GET the data/// get the vector of Points = myData
+  n = data.getn();
 
 	///
-	/// Initial functional cost (with startState constraint)
+	/// Initialize Q_ts Piece***
 	///
-	///add a new row in Q_ts = copy the previous one
-	Piece** Qt_new = new Piece*[p];
-	for (unsigned char i = 0; i < p ; i++){Qt_new[i] = Q_ts.back()[i] -> copy();}
-	Q_ts.push_back(Qt_new);
+	Q_ts = new Piece**[n + 1];
+	for(unsigned int i = 0 ; i < (n + 1) ; i++){Q_ts[i] = new Piece*[p];}
 
-  addPointQ_t(myData[0]);
+	/// Initialize first functional cost. Interval / add first point / constraint by starting vertices
+	for (unsigned char i = 0; i < p ; i++){Q_ts[1][i] = Q_s_temp[0] -> copy();}
+	addPointQ_t(myData[0], 0);
   std::vector<int> startState = m_graph.getStartState();
-  if(startState.size() != 0){for(int i = 0; i < p; i++){if(std::find(startState.begin(), startState.end(), i) == startState.end()){Q_ts.back()[i] -> addConstant(INFINITY);}}}
+  if(startState.size() != 0){for(int i = 0; i < p; i++){if(std::find(startState.begin(), startState.end(), i) == startState.end()){Q_ts[1][i] -> addConstant(INFINITY);}}}
 
-  for(unsigned int t = 1; t < data.getn(); t++) /// loop for all edges
+  for(unsigned int t = 1; t < n; t++) /// loop for all data point (except the first one)
   {
     fillQ_edges(t); ///fillQ_edges. t = newLabel to consider
-    copyQt(); ///add a new row in Q_ts = copy the previous one
-    multiple_minimization(); ///multiple_minimization
-    addPointQ_t(myData[t]); ///Add new data point
+    multiple_minimization(t); ///multiple_minimization
+    addPointQ_t(myData[t], t); ///Add new data point
   }
-	backtracking();
+  backtracking();
 }
 
 
@@ -331,50 +316,35 @@ void Omega::fpop1d_graph_std(Data const& data)
 //##### SUBFUNCTIONS #####/// ///##### SUBFUNCTIONS #####/// ///##### SUBFUNCTIONS #####///
 //##### SUBFUNCTIONS #####/// ///##### SUBFUNCTIONS #####/// ///##### SUBFUNCTIONS #####///
 
-//##### copyQt #####//////##### copyQt #####//////##### copyQt #####///
-//##### copyQt #####//////##### copyQt #####//////##### copyQt #####///
-
-void Omega::copyQt()
-{
-	//Piece** Qt = Q_ts.back();
-	Piece** Qt_new = new Piece*[p];
-	//for (unsigned char i = 0; i < p ; i++){Qt_new[i] = Qt[i] -> copy();}
-	Q_ts.push_back(Qt_new);
-}
-
-
 //##### fillQ_edges #####//////##### fillQ_edges #####//////##### fillQ_edges #####///
 //##### fillQ_edges #####//////##### fillQ_edges #####//////##### fillQ_edges #####///
 
 void Omega::fillQ_edges(int newLabel)
 {
-	int s1;
+	int s1; /// starting state
 	for (unsigned int i = 0 ; i < q ; i++) /// loop for all edges
 	{
-    delete(Q_edges[i]);///DELETE Q_edges[i]
+    delete(Q_edges[i]); /// DELETE Q_edges[i]
 		Edge edge = m_graph.getEdge(i);
-    s1 = edge.getState1();   /// starting state
-    Q_edges[i] = Q_ts.back()[s1] -> edge_constraint(edge, newLabel, m_bound);
+    s1 = edge.getState1(); /// starting state
+    Q_edges[i] = Q_ts[newLabel][s1] -> edge_constraint(edge, newLabel, m_bound);
 	}
 }
 
 //##### multiple_minimization #####//////##### multiple_minimization #####//////##### multiple_minimization #####///
 //##### multiple_minimization #####//////##### multiple_minimization #####//////##### multiple_minimization #####///
 
-void Omega::multiple_minimization()
+void Omega::multiple_minimization(int t)
 {
   int j = 0;
-  ///Q_s_temp vs Q_ts minimization
+  /// Q_s_temp vs Q_ts minimization
   for (unsigned int i = 0 ; i < p; i++)
   {
-    //delete(Q_ts.back()[i]);
-    Q_ts.back()[i] = Q_edges[j] -> copy();
-
+    //copy pointers in Q_ts[t + 1][i] from Q_edges
+    Q_ts[t + 1][i] = Q_edges[j] -> copy();
     while((j + 1 < q) && (m_graph.getEdge(j + 1).getState2() == i))
     {
-      //Piece* Q_edgesCopy = Q_edges[j + 1] -> copy();
-      Q_ts.back()[i] = Q_ts.back()[i] -> min_function(Q_edges[j + 1], m_bound.getM()); ///
-      //delete(Q_edgesCopy);
+      Q_ts[t + 1][i] = Q_ts[t + 1][i] -> min_function(Q_edges[j + 1], m_bound.getM()); ///
       j = j + 1;
     }
     j = j + 1;
@@ -384,9 +354,9 @@ void Omega::multiple_minimization()
 //##### addPointQ_t #####//////##### addPointQ_t #####//////##### addPointQ_t #####///
 //##### addPointQ_t #####//////##### addPointQ_t #####//////##### addPointQ_t #####///
 
-void Omega::addPointQ_t(Point pt)
+void Omega::addPointQ_t(Point pt, int t)
 {
-	for (unsigned char i = 0; i < p; i++){Q_ts.back()[i] -> addPoint(pt, m_robust);}
+	for(unsigned char i = 0; i < p; i++){Q_ts[t + 1][i] -> addPoint(pt, m_robust);}
 }
 
 
@@ -399,21 +369,21 @@ void Omega::backtracking()
   ///
   /// malsp = Min_Argmin_Label_State_Position_Final
   ///
-  std::vector<double> malsp = Q_ts.back()[0] -> get_min_argmin_label_state_position_final();
+  std::vector<double> malsp = Q_ts[n][0] -> get_min_argmin_label_state_position_final();
   std::vector<double> malsp_temp;
 
   ///
   ///FINAL STATE
   ///
   int CurrentState = 0; ///Current state
-  int CurrentChgpt = Q_ts.size() - 1; /// data(1)....data(n). Last data index in each segment
+  int CurrentChgpt = n; /// data(1)....data(n). Last data index in each segment
   std::vector<int> endState = m_graph.getEndState();
 
   if(endState.size() == 0)
   {
     for (int j = 1 ; j < p ; j++) ///for all states
     {
-      malsp_temp = Q_ts.back()[j] -> get_min_argmin_label_state_position_final();
+      malsp_temp = Q_ts[n][j] -> get_min_argmin_label_state_position_final();
       if(malsp_temp[0] < malsp[0]){CurrentState = j; malsp[0] = malsp_temp[0];}
     }
   }
@@ -421,27 +391,13 @@ void Omega::backtracking()
   {
     for (int j = 0 ; j < endState.size() ; j++) ///for all states
     {
-      malsp_temp = Q_ts.back()[endState[j]] -> get_min_argmin_label_state_position_final();
+      malsp_temp = Q_ts[n][endState[j]] -> get_min_argmin_label_state_position_final();
       if(malsp_temp[0] < malsp[0]){CurrentState = endState[j]; malsp[0] = malsp_temp[0];}
     }
   }
 
-  malsp = Q_ts.back()[CurrentState] -> get_min_argmin_label_state_position_final();
+  malsp = Q_ts[n][CurrentState] -> get_min_argmin_label_state_position_final();
   globalCost = malsp[0];
-
-  //std::cout << std::endl;
-  //std::cout << "BACKTRACKING" << std::endl;
-  //std::cout<< "CurrentChgpt : "<< CurrentChgpt << " -- " << "CurrentState : "<< CurrentState << std::endl;
-  //Q_ts.back()[CurrentState] -> show(); ///Q_ts LABEL,STATE
-  ///
-  ///SHOW AND SAVE DATA
-  ///
-  //std::cout << "Analysis" << std::endl;
-  //std::cout<< "     lab : "<< malsp[2] << std::endl;
-  //std::cout<< "     state : "<< malsp[3] << std::endl;
-  //std::cout<< "     position : " << malsp[4] << std::endl;
-  //std::cout<< "     min : " << malsp[0] << std::endl;
-  //std::cout<< "     arg : "<< malsp[1] << std::endl;
 
   means.push_back(malsp[1]);
   changepoints.push_back(CurrentChgpt);
@@ -473,24 +429,10 @@ void Omega::backtracking()
     CurrentState = malsp[3];
     CurrentChgpt = malsp[2];
 
-    malsp = Q_ts[malsp[2]][(int) malsp[3]] -> get_min_argmin_label_state_position((int) malsp[4], constrainedInterval, out, boolForced, m_bound.getIsConstrained()); ///update boolForced
+    malsp = Q_ts[(int) malsp[2]][(int) malsp[3]] -> get_min_argmin_label_state_position((int) malsp[4], constrainedInterval, out, boolForced, m_bound.getIsConstrained()); ///update boolForced
 
     if(malsp[1] > m_bound.getM()){malsp[1] = m_bound.getM(); boolForced = true;}
     if(malsp[1] < m_bound.getm()){malsp[1] = m_bound.getm(); boolForced = true;}
-
-    //std::cout << std::endl;
-    //std::cout<< "CurrentChgpt : " << CurrentChgpt << " -- " << "CurrentState : " << CurrentState << std::endl;
-    //Q_ts[CurrentChgpt][CurrentState] -> show();
-    //constrainedInterval.show();
-    ///
-    ///SHOW AND SAVE DATA
-    ///
-    //std::cout << "Analysis" << std::endl;
-    //std::cout<< "     lab : " << malsp[2] << std::endl;
-    //std::cout<< "     state : " << malsp[3] << std::endl;
-    //std::cout<< "     position : " << malsp[4] << std::endl;
-    //std::cout<< "     min : " << malsp[0] << std::endl;
-    //std::cout<< "     arg : " << malsp[1] << std::endl;
 
     means.push_back(malsp[1]);
     changepoints.push_back(CurrentChgpt);
@@ -518,18 +460,6 @@ void Omega::backtrackingIsotonic(std::vector<Piece*> const& Q_t)
 
   int CurrentChgpt = Q_t.size() - 1; /// data(1)....data(n). Last data index in each segment
 
-  //std::cout << std::endl;
-  //std::cout << "BACKTRACKING" << std::endl;
-  //std::cout<< "CurrentChgpt : "<< CurrentChgpt << std::endl;
-  //Q_t.back() -> show(); ///Q_ts LABEL,STATE
-  ///
-  ///SHOW AND SAVE DATA
-  ///
-  //std::cout << "Analysis" << std::endl;
-  //std::cout<< "     lab : "<< malsp[2] << std::endl;
-  //std::cout<< "     min : " << malsp[0] << std::endl;
-  //std::cout<< "     arg : "<< malsp[1] << std::endl;
-
   means.push_back(malsp[1]);
   changepoints.push_back(CurrentChgpt);
   states.push_back(0); ///the only state is vertex state 0
@@ -550,32 +480,14 @@ void Omega::backtrackingIsotonic(std::vector<Piece*> const& Q_t)
     CurrentChgpt = malsp[2];
     malsp = Q_t[malsp[2]] -> get_min_argmin_label(malsp[1] - m_graph.getEdge(1).getParameter(), boolForced, m_bound.getIsConstrained());
 
-    //malsp = Q_t[malsp[2]] -> get_min_argmin_label(INFINITY, boolForced, m_bound.getIsConstrained());
     if(malsp[1] > m_bound.getM()){malsp[1] = m_bound.getM(); boolForced = true;}
     if(malsp[1] < m_bound.getm()){malsp[1] = m_bound.getm(); boolForced = true;}
-
-    //std::cout <<  malsp[1] << std::endl;
-    //std::cout<< "     min : " << malsp[0] << std::endl;
-
-    //std::cout<< "CurrentChgpt : " << CurrentChgpt << std::endl;
-    //Q_t[CurrentChgpt] -> show();
-    ///
-    ///SHOW AND SAVE DATA
-    ///
-    //std::cout << "Analysis" << std::endl;
-    //std::cout<< "     lab : " << malsp[2] << std::endl;
-    //std::cout<< "     min : " << malsp[0] << std::endl;
-    //std::cout<< "     arg : " << malsp[1] << std::endl;
 
     means.push_back(malsp[1]);
     changepoints.push_back(CurrentChgpt);
     states.push_back(0);
     forced.push_back(boolForced);
   }
-
-  //std::cout<<"DONE"<<std::endl;
-  //for(unsigned int i = 0 ; i < Q_t.size(); i++){delete(Q_t[i]);}
-
 }
 
 
@@ -614,7 +526,7 @@ void Omega::save_Q_ts_Q_edges(int t) const
 
     std::ofstream fichier1(filenameQ_ts.c_str(),std::ios::out | std::ios::trunc);
     fichier1.precision(9);
-    Piece* tmp1 = Q_ts.back()[s1] -> copy();
+    Piece* tmp1 = Q_ts[t][s1] -> copy();
     fichier1 >> tmp1;
     fichier1.close();
 
@@ -680,7 +592,7 @@ void Omega::save_Q_s_temp_Q_ts(int t) const
     std::ofstream fichier2(filenameQ_tsNEW.c_str(),std::ios::out | std::ios::trunc);
 
     fichier2.precision(9);
-    Piece* tmp2 = Q_ts.back()[i];
+    Piece* tmp2 = Q_ts[t][i];
     tmp2 -> save(fichier2);
 
     fichier2.close();

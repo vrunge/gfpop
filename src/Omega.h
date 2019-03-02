@@ -34,10 +34,9 @@ class Omega
     void fpop1d_graph_isotonic(Data const& data);
     void fpop1d_graph_std(Data const& data);
 
-    void copyQt();
     void fillQ_edges(int newLabel);
-    void multiple_minimization();
-    void addPointQ_t(Point pt);
+    void multiple_minimization(int t);
+    void addPointQ_t(Point pt, int t);
 
     void backtracking();
     void backtrackingIsotonic(std::vector<Piece*> const& Q_t);
@@ -51,10 +50,11 @@ class Omega
     Bound m_bound; ///min and max of the theta interval. + bool isConstrained = false if all data in [m,M]
     Robust m_robust; ///parameter K and a to define robust loss of type Huber, biweight, L1
 
+    int n; //size of the data
     int p;   ///number of states in the graph = number of columns in the matrix Q_ts
     int q; ///number of edges in the graph = number of elements in the object Q_edges
 
-    std::vector< Piece** > Q_ts;  ///cost function Q with respect to position t and state s (size t x p), t = vector size.
+    Piece*** Q_ts;  ///cost function Q with respect to position t and state s (size t x p), t = vector size.
     Piece** Q_edges; /// transformed cost by the operators for each edge (size 1 x q)
     Piece** Q_s_temp; /// cost to compare to Q_ts last element of the vector (size 1 x p)
 

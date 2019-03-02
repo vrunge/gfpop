@@ -7,6 +7,7 @@
 #' @param penalty a nonnegative number. The penality associated to this state transition
 #' @param decay a nonnegative number to give the strength of the exponential decay into the segment
 #' @param gap a nonnegative number to constraint the size of the gap in the change of state
+#' @param mean the mean of the onMean vertex
 #' @return a dataframe with five components equal to the five parameters
 #' @examples
 #' edge(0, 1, "up", 10, gap = 1)
@@ -20,6 +21,9 @@ edge <- function(state1, state2, type = "null", penalty = 0, decay = 1, gap = 0,
 
   if(type == "null" && (state1 != state2))
     {stop('You can not build a null edge between two different states".')}
+
+  if(type == "oneMean" && (state1 != state2))
+  {stop('You can not build a oneMean edge between two different states".')}
 
   if(type != "oneMean" && type != "null" && type != "std" && type != "up" && type != "down" && type != "absInf" && type != "absSup")
     {stop('Argument not appropriate. Choose a type among the following: "null", "std", "up", "down", "absInf", "absSup", "oneMean".')}
