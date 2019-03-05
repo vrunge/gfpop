@@ -97,6 +97,7 @@ Piece* Piece::copy()
 }
 
 
+/*
 Piece* Piece::copy(int& length)
 {
 	Piece* tmp = this;
@@ -111,6 +112,30 @@ Piece* Piece::copy(int& length)
 		}
 	return(Qnew);
 }
+*/
+
+Piece* Piece::copy(int& length)
+{
+  Piece* tmp = this;
+  Piece* firstElement = new Piece(tmp);
+  length = 1;
+
+  Piece* copyPiece = firstElement;
+
+  tmp = tmp -> nxt;
+
+  while(tmp != NULL)
+  {
+    length = length + 1;
+    copyPiece -> nxt = new Piece(tmp);
+    copyPiece = copyPiece -> nxt;
+    tmp = tmp -> nxt;
+  }
+
+  return(firstElement);
+}
+
+
 
 
 Piece* Piece::copyIsotonic(double newLeftBound)
