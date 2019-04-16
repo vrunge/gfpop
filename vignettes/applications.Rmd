@@ -1,0 +1,249 @@
+---
+title: "Applications of GFPOP"
+author: "Toby Dylan Hocking"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Three argument syntax}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Nine-state model for QRS complex detection in electrocardiogram (ECG) data
+
+```{r ecg, fig.width=10}
+data(ECG, package="gfpop")
+
+myGraph <- gfpop::graph(
+  gfpop::edge(0, 1, "down", 80000000, gap=0),
+  gfpop::edge(1, 2, "up",   0,        gap=2000),
+  gfpop::edge(2, 3, "down", 0,        gap=5000),
+  gfpop::edge(3, 4, "up",   0,        gap=2000),
+  gfpop::edge(4, 5, "up",   0,        gap=1000),
+  gfpop::edge(5, 6, "up",   0,        gap=0),
+  gfpop::edge(6, 7, "down", 0,        gap=0),
+  gfpop::edge(7, 8, "down", 0,        gap=0),
+  gfpop::edge(8, 0, "up",   0,        gap=0),
+  gfpop::edge(0:8, 0:8, "null", 0,    gap=0))
+
+fit <- gfpop::gfpop(vectData = ECG$data$millivolts, mygraph = myGraph, type = "gauss")
+
+library(data.table)
+end.i <- fit$changepoints
+start.i <- c(1, end.i[-length(end.i)]+1)
+segments.dt <- with(ECG$data, data.table(
+  timeStart=time[start.i],
+  timeEnd=time[end.i],
+  state=fit$states,
+  mean=fit$means))
+
+segments.dt[, letter := c("beforeQ", "Q", "R", "S", "S1", "S2", "peak", "afterPeak", "foo")[state+1] ]
+mean.dt <- segments.dt[, data.table(
+  time=as.numeric(rbind(timeStart-0.5, timeEnd+0.5)),
+  mean=as.numeric(rbind(mean, mean)))]
+
+m <- function(x){
+  factor(x, c("previous", "changepoint"), c(
+    "Previous model", "Proposed model"))
+}
+model.dt <- rbind(
+  segments.dt[, data.table(
+    model=m("changepoint"),
+    time=ifelse(letter=="Q", timeEnd, (timeStart+timeEnd)/2),
+    millivolts=mean,
+    letter)],
+  data.table(
+    model=m("previous"),
+    ECG$PanTompkins)
+)[letter %in% c("Q", "R", "S")]
+
+samples.per.second <- 250
+truth.dt <- segments.dt[letter=="R", list(time=(timeStart+timeEnd)/2)]
+library(ggplot2)
+gg <- ggplot()+
+  geom_vline(aes(
+    xintercept=time/samples.per.second),
+    color="red",
+    data=truth.dt)+
+  geom_text(aes(
+    x, y, hjust=hjust, label="True R"),
+    color="red",
+    size=3,
+    data=data.table(
+      x=208.5, y=6500, hjust=1, label="True R", model=m("changepoint")))+
+  theme_bw()+
+  theme(panel.margin=grid::unit(0, "lines"))+
+  facet_grid(model ~ .)+
+  geom_line(aes(
+    time/samples.per.second, millivolts),
+    color="grey50",
+    data=ECG$data)+
+  geom_line(aes(
+    time/samples.per.second, mean),
+    data=data.table(model=m("changepoint"), mean.dt),
+    color="blue")+
+  geom_label(aes(
+    time/samples.per.second, millivolts,
+    label=letter),
+    color="blue",
+    size=3,
+    label.padding=grid::unit(0.1, "lines"),
+    alpha=0.6,
+    data=model.dt)+
+  coord_cartesian(xlim=c(52000, 52900)/samples.per.second, expand=FALSE)+
+  xlab("Time (seconds)")+
+  ylab("Electrocardiogram activity (mV)")
+##png("figure-ecg.png", 7, 2.5, res=300, units="in")
+print(gg)
+##dev.off()
+
+```
+
+
+## Multi-modal regression for neuro spike train data set 
+
+
+```{r, neuro, fig.width=10}
+
+library(data.table)
+data(neuroSpike, package="gfpop")
+fps <- 100
+seconds.between.data <- 1/fps
+sec.w <- seconds.between.data/3
+myGraph <- gfpop::graph(
+  gfpop::edge(0, 0, "down", 0),
+  gfpop::edge(1, 1, "up",   0),
+  gfpop::edge(0, 1, "up",   5),
+  gfpop::edge(1, 0, "down", 0),
+  gfpop::edge(0:1, 0:1, "null"))
+
+fit <- gfpop::gfpop(
+  vectData = neuroSpike$calcium, mygraph = myGraph, type = "gauss")
+
+end.i <- fit$changepoints
+start.i <- c(1, end.i[-length(end.i)]+1)
+res.dt <- with(neuroSpike, data.table(
+  start.seconds=seconds[start.i],
+  end.seconds=seconds[end.i],
+  state=fit$states,
+  mean=fit$means))
+res.dt[, Multimodal := ifelse(mean<0.1, 0, mean) ]
+over.dt <- res.dt[neuroSpike, on=list(
+  start.seconds <= seconds, end.seconds >= seconds)]
+tall.dt <- melt(
+  over.dt,
+  measure.vars=c("Multimodal", "AR1"),
+  variable.name="model")
+tall.dt[, change.after := c(diff(value), NA)]
+tall.dt[, seconds.after := c(start.seconds[-1], NA)]
+tall.dt[, spike.i := cumsum(change.after < 0)]
+tall.dt[, thresh := ifelse(model=="Multimodal", 0, 0)]
+m <- function(model){
+  factor(
+    model,
+    c("AR1", "Multimodal"),
+    c("Previous model:
+AR1 changepoint
+Jewell et al 2017", "Proposed model:
+changepoint with
+graph constraints"))
+}
+tall.dt[, model.fac := m(model)]
+spike.dt <- tall.dt[0 < change.after & thresh < value, list(
+  start.seconds=min(start.seconds),
+  end.seconds=max(start.seconds)
+), by=list(spike.i, model.fac)]
+spike.dt[, mid.seconds := (start.seconds+end.seconds)/2]
+
+library(ggplot2)
+lab <- function(xmin, xmax){
+  data.table(xmin, xmax, label="oneSpike", annotation="1change", problem=1)
+}
+label.dt <- rbind(
+  lab(166.5, 166.75),
+  lab(169.7, 169.9))
+ann.colors <- c(oneSpike="#ffafaf")
+xmin <- 166
+xmax <- 171
+spike.dt[, problem := 1]
+models.dt <- spike.dt[, list(
+  models=.N
+  ), by=list(model.fac, problem)]
+err.list <- penaltyLearning::labelError(
+  models.dt, label.dt, spike.dt,
+  change.var="mid.seconds",
+  problem.var="problem",
+  label.vars=c("xmin", "xmax"),
+  model.vars="model.fac")
+type.colors <- c(
+  data="grey50",
+  model="blue")
+show.spikes <- spike.dt[xmin < mid.seconds & mid.seconds < xmax]
+show.data <- neuroSpike[xmin < seconds & seconds < xmax]
+spike.y <- -1.5
+gg.out <- ggplot()+
+  theme_bw()+
+  theme(panel.margin=grid::unit(0, "lines"))+
+  facet_grid(model.fac ~ .)+
+  penaltyLearning::geom_tallrect(aes(
+    xmin=xmin, xmax=xmax, fill=label),
+    color=NA,
+    data=label.dt)+
+  penaltyLearning::geom_tallrect(aes(
+    xmin=xmin, xmax=xmax, linetype=status),
+    fill=NA,
+    color="black",
+    data=err.list$label.errors)+
+  scale_linetype_manual(
+    "error type",
+    limits=c("correct", 
+             "false negative",
+             "false positive"),
+    values=c(correct=0,
+             "false negative"=3,
+             "false positive"=1))+
+  geom_point(aes(
+    seconds, calcium, color=type),
+    shape=1,
+    data=data.table(type="data", show.data))+
+  geom_line(aes(
+    start.seconds, value, color=type),
+    data=data.table(
+      type="model",
+      tall.dt[xmin < start.seconds & start.seconds < xmax]),
+    size=0.5)+
+  geom_point(aes(
+    mid.seconds, spike.y, color=type),
+    shape=1,
+    data=data.table(type="model", show.spikes))+
+  scale_y_continuous(
+    "Fluorescence intensity
+(Measure of neural activity)",
+    breaks=seq(0, 10, by=2),
+    limits=c(-2, 10)
+  )+
+  scale_x_continuous("Time (seconds)")+
+  guides(color="none")+
+  scale_color_manual(values=type.colors)+
+  geom_text(aes(
+    x,y,label=label, color=type, hjust=hjust),
+    size=3,
+    data=data.table(model.fac=m("AR1"), rbind(
+      data.table(
+        hjust=0, x=167, y=2, label="Noisy activity data", type="data"),
+      data.table(
+        hjust=1, x=169.5, y=5, label="Mean model", type="model"),
+      data.table(
+        hjust=1, x=169.4, y=spike.y, label="Predicted spikes", type="model"))))
+##png("figure-AR1-multimodal.png", 7, 2.5, units="in", res=300)
+print(gg.out)
+##dev.off()
+
+```
