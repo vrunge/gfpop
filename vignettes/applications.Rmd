@@ -21,23 +21,23 @@ knitr::opts_chunk$set(
 ```{r ecg, fig.width=10}
 data(ECG, package="gfpop")
 
-myGraph <- gfpop::graph(
-  gfpop::edge(0, 1, "down", 80000000, gap=0),
-  gfpop::edge(1, 2, "up",   0,        gap=2000),
-  gfpop::edge(2, 3, "down", 0,        gap=5000),
-  gfpop::edge(3, 4, "up",   0,        gap=2000),
-  gfpop::edge(4, 5, "up",   0,        gap=1000),
-  gfpop::edge(5, 6, "up",   0,        gap=0),
-  gfpop::edge(6, 7, "down", 0,        gap=0),
-  gfpop::edge(7, 8, "down", 0,        gap=0),
-  gfpop::edge(8, 0, "up",   0,        gap=0),
-  gfpop::edge(0:8, 0:8, "null", 0,    gap=0))
+ecg.graph <- gfpop::graph(
+  gfpop::edge("beforeQ",   "Q", "down", 80000000, gap=0),
+  gfpop::edge("Q",         "R", "up",   0,        gap=2000),
+  gfpop::edge("R",         "S", "down", 0,        gap=5000),
+  gfpop::edge("S",         "S1", "up",   0,        gap=2000),
+  gfpop::edge("S1",        "S2", "up",   0,        gap=1000),
+  gfpop::edge("S2",        "peak", "up",   0,        gap=0),
+  gfpop::edge("peak",      "afterPeak", "down", 0,        gap=0),
+  gfpop::edge("afterPeak", "last", "down", 0,        gap=0),
+  gfpop::edge("last",      "beforeQ", "up",   0,        gap=0),
+  all.null=TRUE)
 
-fit <- gfpop::gfpop(vectData = ECG$data$millivolts, mygraph = myGraph, type = "gauss")
+fit <- gfpop::gfpop(vectData = ECG$data$millivolts, mygraph = ecg.graph, type = "gauss")
 
 library(data.table)
-if(interactive()){#tikz code for myGraph:
-  cat(tikz.tex <- data.table(myGraph)[type != "null", paste(c("
+if(interactive()){#tikz code for ecg graph:
+  cat(tikz.tex <- data.table(ecg.graph)[type != "null", paste(c("
 \\begin{tikzpicture}[->,>=latex,shorten >=1pt,auto,node distance=1.7cm,
       thick,main node/.style={circle,draw}]
 ", sprintf(
@@ -70,7 +70,7 @@ segments.dt <- with(ECG$data, data.table(
   state=fit$states,
   mean=fit$means))
 
-segments.dt[, letter := c("beforeQ", "Q", "R", "S", "S1", "S2", "peak", "afterPeak", "foo")[state+1] ]
+segments.dt[, letter := state.chr]
 mean.dt <- segments.dt[, data.table(
   time=as.numeric(rbind(timeStart-0.5, timeEnd+0.5)),
   mean=as.numeric(rbind(mean, mean)))]
@@ -143,15 +143,15 @@ data(neuroSpike, package="gfpop")
 fps <- 100
 seconds.between.data <- 1/fps
 sec.w <- seconds.between.data/3
-myGraph <- gfpop::graph(
-  gfpop::edge(0, 0, "down", 0),
-  gfpop::edge(1, 1, "up",   0),
-  gfpop::edge(0, 1, "up",   5),
-  gfpop::edge(1, 0, "down", 0),
-  gfpop::edge(0:1, 0:1, "null"))
+multimodal.graph <- gfpop::graph(
+  gfpop::edge("goingDown", "goingDown", "down", 0),
+  gfpop::edge("goingUp",   "goingUp", "up",   0),
+  gfpop::edge("goingDown", "goingUp", "up",   5),
+  gfpop::edge("goingUp",   "goingDown", "down", 0),
+  all.null=TRUE)
 
 fit <- gfpop::gfpop(
-  vectData = neuroSpike$calcium, mygraph = myGraph, type = "gauss")
+  vectData = neuroSpike$calcium, mygraph = multimodal.graph, type = "gauss")
 
 end.i <- fit$changepoints
 start.i <- c(1, end.i[-length(end.i)]+1)
