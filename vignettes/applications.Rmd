@@ -36,6 +36,32 @@ myGraph <- gfpop::graph(
 fit <- gfpop::gfpop(vectData = ECG$data$millivolts, mygraph = myGraph, type = "gauss")
 
 library(data.table)
+if(interactive()){#tikz code for myGraph:
+  cat(tikz.tex <- data.table(myGraph)[type != "null", paste(c("
+\\begin{tikzpicture}[->,>=latex,shorten >=1pt,auto,node distance=1.7cm,
+      thick,main node/.style={circle,draw}]
+", sprintf(
+  "\\node[main node] (%s) %s {%s};\n",
+  state1,
+  ifelse(state1==0, "", paste0("[right of=", state1-1, "]")),
+  state1), "
+\\path[every node/.style={font=\\sffamily\\small}]
+", sprintf(
+  "(%s) edge [bend left%s] node [above] {%s} node [below] {\\scriptsize %s} (%s)\n",
+  state1, ifelse(
+    state2<state1, ", looseness=0.4", ""),
+  sprintf(
+    "$%s, %s$",
+    ifelse(
+      penalty==0, 0, "\\lambda"),
+    ifelse(
+      type=="up", "\\uparrow", "\\downarrow")),
+  ifelse(parameter==0, "", parameter),
+  state2), ";
+\\end{tikzpicture}
+"), sep="\n")])
+}
+
 end.i <- fit$changepoints
 start.i <- c(1, end.i[-length(end.i)]+1)
 segments.dt <- with(ECG$data, data.table(
