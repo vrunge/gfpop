@@ -70,6 +70,7 @@ segments.dt <- with(ECG$data, data.table(
   state=fit$states,
   mean=fit$means))
 
+## what is this?
 segments.dt[, letter := c("beforeQ", "Q", "R", "S", "S1", "S2", "peak", "afterPeak", "foo")[state+1] ]
 mean.dt <- segments.dt[, data.table(
   time=as.numeric(rbind(timeStart-0.5, timeEnd+0.5)),
