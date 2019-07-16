@@ -87,7 +87,7 @@ sdDiff <- function(x, method = 'HALL')
 
 
 ###############################################
-# unvisible function for the user
+# invisible function for the user
 getDerivativePenalty <- function(D, n, c1 = 2, c2 = 5)
 {
   return(c1*log(n) - c1*(log(D) + 1) + c2)
