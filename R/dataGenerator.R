@@ -59,12 +59,12 @@ dataGenerator <- function(n, changepoints, parameters, type = "gauss", sigma = 1
 #' @param method Three available methods: "HALL", "MAD" and "SD"
 #' @return a value equal to the estimated standard deviation
 #' @examples
-#' data <- dataGenerator(100, c(0.3, 0.6, 1), c(1, 2, 3), 2)
+#' data <- dataGenerator(100, c(0.3, 0.6, 1), c(1, 2, 3), sigma = 2)
 #' sdDiff(data)
 #'
 sdDiff <- function(x, method = 'HALL')
 {
-  if(is.numeric(x) == FALSE || length(x) < 2){stop('x is not a numeric vector of length > 1')}
+  #if(is.numeric(x) == FALSE || length(x) < 2){stop('x is not a numeric vector of length > 1')}
   if(method == "HALL")
   {
     n = length(x)

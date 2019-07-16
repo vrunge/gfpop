@@ -3,4 +3,7 @@ useDynLib(gfpop, .registration = TRUE)
 export(gfpop, itergfpop, edge, StartEnd, graph, dataGenerator, sdDiff)
 
 importFrom(Rcpp, evalCpp)
-importFrom("stats", "rnorm", "mad", "sd")
+importFrom("stats", "rnorm", "rexp", "rpois", "mad", "sd")
+importFrom("graphics", "plot", "segments")
+
+
