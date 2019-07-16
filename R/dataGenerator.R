@@ -27,6 +27,8 @@ dataGenerator <- function(n, changepoints, parameters, type = "gauss", sigma = 1
   ### ###
 
   SegLength <- diff(c(0, floor(changepoints*n)))
+  vectData <- NULL
+
   if(type == "gauss")
   {
     if(gamma != 1)
@@ -92,4 +94,3 @@ getDerivativePenalty <- function(D, n, c1 = 2, c2 = 5)
 {
   return(c1*log(n) - c1*(log(D) + 1) + c2)
 }
-
