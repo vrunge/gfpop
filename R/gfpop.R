@@ -41,37 +41,21 @@ gfpop <- function(vectData = c(0), vectWeight = c(0), mygraph, type = "gauss", K
       if(length(vectData) != length(vectWeight)){stop('vectData and vectWeight have different size')}
       if(!all(vectWeight>0)){stop('vectWeight has non strictly positive components')}
     }
-
   if(type == "poisson"){stop('poisson loss not yet available')}
   if(type == "binomial"){stop('binomial loss not yet available')}
 
+  ### GRAPH ANALYSIS ###
+  mynewgraph <- graphAnalysis(mygraph)
+  newGraph <- mynewgraph$graph
+  vertices <- mynewgraph$vertices
 
-  ### BUILD an ordered Graph : myOrderedGraph ###
-  startend <- mygraph[is.na(mygraph[,2]),]
-  mygraph <-  mygraph[!is.na(mygraph[,2]),]
-  maxVertex <- max(mygraph[,c(1,2)])
-
-  myOrderedGraph <- graph()
-  selectNullDecay <- mygraph[, 3] == "null"
-
-  mygraph[selectNullDecay, 4] <- -1 #for ordering
-  for(i in 0:maxVertex)
-  {
-    selectRaw <- mygraph[mygraph[,2]==i, ]
-    ordre <- order(selectRaw[,4])
-    selectRaw <- selectRaw[ordre,]
-    myOrderedGraph <- rbind(myOrderedGraph, selectRaw)
-  }
-
-  myOrderedGraph <- rbind(myOrderedGraph, startend)
-  selectNullDecay <- myOrderedGraph[, 3] == "null"
-  myOrderedGraph[selectNullDecay, 4] <- 0 #for ordering
+  print(newGraph)
 
   ###CALL Rcpp functions###
-  res <- gfpopTransfer(vectData, vectWeight, myOrderedGraph, type, K, a, min, max)
+  res <- gfpopTransfer(vectData, vectWeight, newGraph, type, K, a, min, max)
 
   ###Response class gfpop###
-  response <- list(changepoints = c(rev(res$changepoints[-1]), length(vectData)), states = rev(res$states), forced = rev(res$forced), means = rev(res$means), cost = res$cost)
+  response <- list(changepoints = c(rev(res$changepoints[-1]), length(vectData)), states = vertices[rev(res$states)+1], forced = rev(res$forced), parameters = rev(res$means), globalCost = res$cost)
   attr(response, "class") <- "gfpop"
 
   return(response)

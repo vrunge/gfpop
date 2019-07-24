@@ -51,7 +51,7 @@ List gfpopTransfer(NumericVector vectData, NumericVector vectWeight, DataFrame m
 
   std::string graphType = graph.getType();
   //Rcout << "graphType : " << graphType << std::endl;
-  //graph.show();
+  graph.show();
   if(graph.AreVerticesCompatible() == false){Rcout << "The vertices must be labeled by integers from 0 to S (an integer)" << std::endl; return(0);}
 
   ///////////

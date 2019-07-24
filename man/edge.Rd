@@ -5,7 +5,8 @@
 \title{Edge generation}
 \usage{
 edge(state1, state2, type = "null", penalty = 0, decay = 1,
-  gap = 0, mean = 0)
+  gap = 0, oneValue = NULL, K = Inf, a = NA, min = -Inf,
+  max = Inf)
 }
 \arguments{
 \item{state1}{a nonnegative integer defining the starting state of the edge}
@@ -20,7 +21,15 @@ edge(state1, state2, type = "null", penalty = 0, decay = 1,
 
 \item{gap}{a nonnegative number to constraint the size of the gap in the change of state}
 
-\item{mean}{the mean of the onMean vertex}
+\item{oneValue}{the value of the oneValue edge}
+
+\item{K}{a positive number. Threshold for the Biweight robust loss}
+
+\item{a}{a positive number. Slope for the Huber robust loss}
+
+\item{min}{minimal value for the infered parameter}
+
+\item{max}{maximal value for the infered parameter}
 }
 \value{
 a dataframe with five components equal to the five parameters
@@ -29,5 +38,5 @@ a dataframe with five components equal to the five parameters
 Edge creation for graph
 }
 \examples{
-edge(0, 1, "up", 10, gap = 1)
+edge("D", "U", "up", penalty = 10, gap = 1)
 }
