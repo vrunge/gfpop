@@ -45,7 +45,10 @@ gfpop <- function(vectData = c(0), vectWeight = c(0), mygraph, type = "gauss", K
   if(type == "binomial"){stop('binomial loss not yet available')}
 
   ### GRAPH ANALYSIS ###
-  mynewgraph <- graphAnalysis(mygraph)
+  mynewgraph <- graphReorder(mygraph)
+  explore(mynewgraph) ### test if the graph can be used
+  ### ### ### ### ### ###
+
   newGraph <- mynewgraph$graph
   vertices <- mynewgraph$vertices
 

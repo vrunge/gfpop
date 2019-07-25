@@ -10,14 +10,14 @@ graph(
     Node(state = "mu0", min = 0, max = 0))
 
 
-explore(graphAnalysis(mygraph))
+explore(graphReorder(mygraph))
 
 
 
 
 ######### ERROR
 
-mygraph <- graphAnalysis(
+mygraph <- graphReorder(
   graph(
     Edge(1,1),
     Edge(0,1, decay = 0.5),
@@ -30,7 +30,7 @@ explore(mygraph)
 
 
 
-mygraph <- graphAnalysis(
+mygraph <- graphReorder(
   graph(
     Edge(0,1, decay = 0.5),
     Edge(1,2),
@@ -42,7 +42,7 @@ explore(mygraph)
 
 
 
-mygraph <- graphAnalysis(
+mygraph <- graphReorder(
   graph(
     Edge(0,0),
     Edge(0,1, decay = 0.5),
@@ -54,7 +54,7 @@ explore(mygraph)
 
 ######### OK
 
-mygraph <- graphAnalysis(
+mygraph <- graphReorder(
   graph(
     Edge(0,1, type = "up", gap = 0.5),
     Edge(1,0, type ="down", gap = 0.5),

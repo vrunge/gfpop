@@ -164,7 +164,7 @@ graph <- function(..., penalty = 0, type = "empty", gap = 0)
 ###############################################
 # invisible function for the user
 
-graphAnalysis <- function(mygraph)
+graphReorder <- function(mygraph)
 {
   ### BUILD an ordered Graph : myOrderedGraph ###
   ##separate startend from vertices

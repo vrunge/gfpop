@@ -1,7 +1,7 @@
 useDynLib(gfpop, .registration = TRUE)
 
 export(gfpop)
-export(Edge, StartEnd, Node, graph, graphAnalysis, explore)
+export(Edge, StartEnd, Node, graph, graphReorder, explore)
 export(dataGenerator, sdDiff)
 
 importFrom(Rcpp, evalCpp)
