@@ -112,7 +112,7 @@ Node <- function(state = NULL, min = -Inf, max = Inf)
 #' UpDownGraph <- graph(penalty = 10, type = "updown")
 #' MyGraph <- graph(Edge(0,0), Edge(1,1), Edge(0,1,"up",10,gap=0.5), Edge(1,0,"down"), StartEnd(0,0), Node(0,0,1), Node(1,0,1))
 
-graph <- function(..., penalty = 0, type = "empty")
+graph <- function(..., penalty = 0, type = "empty", gap = 0)
 {
   myNewGraph <- rbind(...)
 
@@ -122,22 +122,22 @@ graph <- function(..., penalty = 0, type = "empty")
     if(!is.double(penalty)){stop('penalty is not a double.')}
     if(penalty < 0){stop('penalty must be nonnegative')}
 
-    if(type != "empty" && type != "std" && type != "isotonic" && type != "updown")
-      {stop('Arugment "type" not appropriate. Choose among "std", "isotonic", "updown"')}
+    if(type != "empty" && type != "std" && type != "isotonic" && type != "updown" && type != "relevant")
+      {stop('Arugment "type" not appropriate. Choose among "std", "isotonic", "updown", "relevant"')}
 
     myNewGraph <- data.frame(character(), character(), character(), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), stringsAsFactors = FALSE)
     names(myNewGraph) <- c("state1", "state2", "type", "penalty", "parameter", "K", "a", "min", "max")
 
     if(type == "std")
     {
-      myNewGraph[1, ] <- Edge("S", "S", "null")
-      myNewGraph[2, ] <- Edge("S", "S", "std", penalty)
+      myNewGraph[1, ] <- Edge("Std", "Std", "null")
+      myNewGraph[2, ] <- Edge("Std", "Std", "std", penalty)
     }
 
     if(type == "isotonic")
     {
-      myNewGraph[1, ] <- Edge("S", "S", "null")
-      myNewGraph[2, ] <- Edge("S", "S", "up", penalty)
+      myNewGraph[1, ] <- Edge("Iso", "Iso", "null")
+      myNewGraph[2, ] <- Edge("Iso", "Iso", "up", penalty)
     }
 
     if(type == "updown")
@@ -146,6 +146,12 @@ graph <- function(..., penalty = 0, type = "empty")
       myNewGraph[2, ] <- Edge("U", "U", "null")
       myNewGraph[3, ] <- Edge("D", "U", "up", penalty)
       myNewGraph[4, ] <- Edge("U", "D", "down", penalty)
+    }
+
+    if(type == "relevant")
+    {
+      myNewGraph[1, ] <- Edge("Std", "Std", "null")
+      myNewGraph[2, ] <- Edge("Std", "Std", "abs", penalty, gap = gap)
     }
   }
   class(myNewGraph) <- c("data.frame", "graph")

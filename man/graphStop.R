@@ -1,3 +1,20 @@
+
+
+
+graph(
+    Edge(state1 = "mu0",state2 = "mu0", penalty = 0, K = 3),
+    Edge(state1 = "mu0",state2 = "Coll", penalty = 10, type = "std"),
+    Edge(state1 = "Coll",state2 = "Coll", penalty = 0),
+    Edge(state1 = "Coll",state2 = "mu0", penalty = 0, type = "std", K = 3),
+    StartEnd(start = "mu0", end = c("mu0", "Coll")),
+    Node(state = "mu0", min = 0, max = 0))
+
+
+explore(graphAnalysis(mygraph))
+
+
+
+
 ######### ERROR
 
 mygraph <- graphAnalysis(
