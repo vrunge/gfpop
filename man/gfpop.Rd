@@ -4,17 +4,16 @@
 \alias{gfpop}
 \title{Graph-constrained functional pruning optimal partitioning}
 \usage{
-gfpop(vectData = c(0), vectWeight = c(0), mygraph, type = "gauss",
-  K = Inf, a = 0, min = -Inf, max = Inf)
+gfpop(data = c(0), mygraph, type = "mean", weights = c(0))
 }
 \arguments{
-\item{vectData}{vector of data to segment}
-
-\item{vectWeight}{vector of weights (positive numbers) same size as vectData}
-
 \item{mygraph}{dataframe of class graph to constraint the changepoint dynamic programming algorithm}
 
 \item{type}{a string defining the type of cost to use. "gauss", "poisson" or "binomial"}
+
+\item{vectData}{vector of data to segment}
+
+\item{vectWeight}{vector of weights (positive numbers) same size as vectData}
 
 \item{K}{a positive number. Threshold for the Biweight robust loss}
 

@@ -19,46 +19,33 @@
 #' 'means' is the vector of successive means of each segment
 #' 'cost' is a number equal to the global cost of the graph-constrained segmentation
 
-gfpop <- function(vectData = c(0), vectWeight = c(0), mygraph, type = "gauss", K = Inf, a = 0, min = -Inf, max = Inf)
+gfpop <- function(data = c(0), mygraph, type = "mean", weights = c(0))
 {
   ### STOP ###
-    if(!any(class(mygraph) == "graph")){stop('Your graph is not a graph...')}
-    if(type != "gauss" && type != "poisson" && type != "binomial")
-    {stop('Arugment "type" not appropriate. Choose among "gauss", "poisson", "binomial"')}
+  if(!any(class(mygraph) == "graph")){stop('Your graph is not a graph created with the graph function in gfpop package...')}
 
-    if(!is.double(K)){stop('K is not a double.')}
-    if(K <= 0){stop('K must be positive (= Inf if not robust loss)')}
+  if(type != "mean" && type != "variance" && type != "exp" && type != "poisson" && type != "negbin")
+      {stop('Argument "type" not appropriate. Choose among "mean", "variance", "exp", "poisson" or "negbin"')}
 
-    if(!is.double(K)){stop('a is not a double.')}
-    if(a < 0){stop('a must be nonnegative')}
-
-    if(!is.double(min)){stop('min is not an double.')}
-    if(!is.double(max)){stop('max is not an double.')}
-    if(max <= min){stop('max is less than min...')}
-
-    if(length(vectWeight) > 1)
+  ### if we have weights
+    if(length(weights) > 1)
     {
-      if(length(vectData) != length(vectWeight)){stop('vectData and vectWeight have different size')}
-      if(!all(vectWeight>0)){stop('vectWeight has non strictly positive components')}
+      if(length(data) != length(weights)){stop('data vector and weights vector have different size')}
+      if(!all(weights>0)){stop('weights vector has non strictly positive components')}
     }
-  if(type == "poisson"){stop('poisson loss not yet available')}
-  if(type == "binomial"){stop('binomial loss not yet available')}
 
   ### GRAPH ANALYSIS ###
   mynewgraph <- graphReorder(mygraph)
   explore(mynewgraph) ### test if the graph can be used
-  ### ### ### ### ### ###
-
   newGraph <- mynewgraph$graph
   vertices <- mynewgraph$vertices
-
-  print(newGraph)
+  ### ### ### ### ### ###
 
   ###CALL Rcpp functions###
-  res <- gfpopTransfer(vectData, vectWeight, newGraph, type, K, a, min, max)
+  res <- gfpopTransfer(data, newGraph, type, weights)
 
   ###Response class gfpop###
-  response <- list(changepoints = c(rev(res$changepoints[-1]), length(vectData)), states = vertices[rev(res$states)+1], forced = rev(res$forced), parameters = rev(res$means), globalCost = res$cost)
+  response <- list(changepoints = c(rev(res$changepoints[-1]), length(data)), states = vertices[rev(res$states)+1], forced = rev(res$forced), parameters = rev(res$param), globalCost = res$cost)
   attr(response, "class") <- "gfpop"
 
   return(response)

@@ -15,13 +15,12 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List gfpopTransfer(NumericVector vectData, NumericVector vectWeight, DataFrame mygraph, std::string type, double K, double a, double min, double max)
+List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, NumericVector vectWeight)
 {
   // BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT
   // BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT
 
   // BEGIN TRANSFERT INTO C++ OBJETS
-  // DATA (vectDATA, vectWeight, fileData) + GRAPH(mygraph) + ROBUST(K, a) + BOUND(min, max)
 
   ///////////
   /////////// DATA LOADING
@@ -61,15 +60,13 @@ List gfpopTransfer(NumericVector vectData, NumericVector vectWeight, DataFrame m
   double m = data.getm();
   double M = data.getM();
   bool isConstr = false;
-  if(m < min){m = min; isConstr = true;}
-  if(max < M){M = max; isConstr = true;}
   Bound bound = Bound(m, M, isConstr);
 
   ///////////
   /////////// ROBUST : K and a parameter. Defining deferent robust loss. Biweight, Huber, L1
   ///////////
 
-  Robust robust = Robust(K, a);
+  Robust robust = Robust(1000,1000);
   robust.findRobustType();
   robust.show();
 
@@ -103,7 +100,7 @@ List gfpopTransfer(NumericVector vectData, NumericVector vectWeight, DataFrame m
     _["changepoints"] = omega.GetChangepoints(),
     _["states"] = omega.GetStates(),
     _["forced"] = omega.GetForced(),
-    _["means"] = omega.GetMeans(),
+    _["param"] = omega.GetMeans(),
     _["cost"] = omega.GetGlobalCost()
   );
 
