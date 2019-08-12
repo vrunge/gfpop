@@ -4,7 +4,7 @@ context("edge")
 
 test_that("edge is vectorized", {
   expect_silent({
-    edges <- gfpop::edge(0:1, 0:1, "null")
+    edges <- gfpop::Edge(0:1, 0:1, "null")
   })
   expect_identical(edges$state1, 0:1)
   expect_identical(edges$state2, 0:1)
