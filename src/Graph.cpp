@@ -185,3 +185,5 @@ void Graph::operator<<(Edge const& newEdge)
   if(newEdge.getConstraint() == "end"){endState.push_back(newEdge.getState1());}
   if((newEdge.getConstraint() != "start") && (newEdge.getConstraint() != "end")){edges.push_back(newEdge);}
 }
+
+

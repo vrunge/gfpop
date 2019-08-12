@@ -15,10 +15,10 @@ sdDiff(x, method = "HALL")
 a value equal to the estimated standard deviation
 }
 \description{
-Estimation of the standard deviation
+Three methods to estimate the standard deviation in a time series for change-in-mean problem
 }
 \examples{
-data <- dataGenerator(100, c(0.3, 0.6, 1), c(1, 2, 3), 2)
+data <- dataGenerator(100, c(0.3, 0.6, 1), c(1, 2, 3), sigma = 2)
 sdDiff(data)
 
 }

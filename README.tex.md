@@ -8,6 +8,9 @@
 %\VignetteIndexEntry{An Introduction to gfpop}
 --> 
 
+DANGER : code broken in August in preparation for big update!
+
+
 # gfpop Vignette
 ### Vincent Runge
 #### LaMME, Evry University

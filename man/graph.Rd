@@ -4,7 +4,7 @@
 \alias{graph}
 \title{Graph generation}
 \usage{
-graph(..., penalty = 0, type = "empty")
+graph(..., penalty = 0, type = "empty", gap = 0)
 }
 \arguments{
 \item{...}{This is a list of edges definied by functions edge and StartEnd}
@@ -17,9 +17,9 @@ graph(..., penalty = 0, type = "empty")
 a dataframe with edges in rows (columns are named "state1", "state2", "type", "penalty", "parameter") with additional "graph" class.
 }
 \description{
-Graph creation
+Graph creation using component function Edge, StartEnd, Node
 }
 \examples{
 UpDownGraph <- graph(penalty = 10, type = "updown")
-MyGraph <- graph(edge(0,0), edge(1,1), edge(0,1,"up",10,gap=0.5), edge(1,0,"down"), StartEnd(0,0))
+MyGraph <- graph(Edge(0,0), Edge(1,1), Edge(0,1,"up",10,gap=0.5), Edge(1,0,"down"), StartEnd(0,0), Node(0,0,1), Node(1,0,1))
 }
