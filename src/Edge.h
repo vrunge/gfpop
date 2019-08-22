@@ -8,13 +8,17 @@ class Edge
 {
   public:
     Edge();
-    Edge(double b, unsigned int s1 = 0, unsigned int s2 = 0, Rcpp::String cstt = "std", double param = 0);
+    Edge(double b, unsigned int s1 = 0, unsigned int s2 = 0, Rcpp::String cstt = "std", double param = 0, double K = INFINITY, double a = INFINITY, double mini = -INFINITY, double maxi = INFINITY);
 
     double getBeta() const;
     unsigned int getState1() const;
     unsigned int getState2() const;
     std::string getConstraint() const;
     double getParameter() const;
+    double getKK() const;
+    double getAA() const;
+    double getMinn() const;
+    double getMaxx() const;
 
     void show() const;
 
@@ -24,6 +28,10 @@ class Edge
     unsigned int state2;
     std::string constraint;
     double parameter;
+    double KK;
+    double aa;
+    double minn;
+    double maxx;
 };
 
 #endif // EDGE_H
