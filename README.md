@@ -502,12 +502,22 @@ myGraphIso
 
 <a id="gfpop"></a>
 
-## More on the main gfpop function
+## More on the main gfpop function with C++ structure
+
 
 
 <a id="suppl"></a>
 
 ## Supplementary R functions
+
+### Data generator function
+
+dataGenerator
+
+### Standard deviation estimation
+
+sdDiff
+
 
 
 [Back to Top](#top)
