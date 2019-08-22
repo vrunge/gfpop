@@ -500,6 +500,18 @@ myGraphIso
 ## 2    Iso    Iso   up      12         0 Inf Inf  NA  NA
 ```
 
+
+The function `Node` can be used to restrict the range of value for parameter associated to a node.
+For example the following graph is an isotonic graph with inferred parameters between 0 et 1 only.
+
+```r
+myGraph <- graph(
+  Edge(0, 0, "down", 3.1415),
+  Edge(0, 0),
+  Node(0, min = 0, max = 1)
+  )
+myGraph
+```
 <a id="gfpop"></a>
 
 ## More on the main gfpop function and its C++ structure
