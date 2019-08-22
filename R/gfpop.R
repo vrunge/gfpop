@@ -45,7 +45,7 @@ gfpop <- function(data = c(0), mygraph, type = "mean", weights = c(0))
   res <- gfpopTransfer(data, newGraph, type, weights)
 
   ###Response class gfpop###
-  response <- list(change-points = c(rev(res$changepoints[-1]), length(data)), states = vertices[rev(res$states)+1], forced = rev(res$forced), parameters = rev(res$param), globalCost = res$cost)
+  response <- list(changepoints = c(rev(res$changepoints[-1]), length(data)), states = vertices[rev(res$states)+1], forced = rev(res$forced), parameters = rev(res$param), globalCost = res$cost)
   attr(response, "class") <- "gfpop"
 
   return(response)
