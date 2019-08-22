@@ -14,7 +14,7 @@ DANGER : code broken in August in preparation for big update!
 # gfpop Vignette
 ### Vincent Runge
 #### LaMME, Evry University
-### February 28, 2019
+### August 22, 2019 (version 2)
 
 > [Change-point problem description](#intro)
 
@@ -33,9 +33,16 @@ DANGER : code broken in August in preparation for big update!
 
 ## Change-point problem description
 
-`gfpop` is an `R` package developed to perform parametric change-point detection in univariate time series constrained to a graph structure. The constraints are imposed to the sequence of infered means of consecutive segments and are related to the direction and/or the magnitude of the mean changes. Change-point detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm.  The user can specify some other constraints on the graph (starting and ending nodes) and constraint the range of parameters (means most of the time) to use at each node. 
+`gfpop` is an `R` package developed to complete parametric change-point detection in univariate time series constrained to a graph structure. The constraints are imposed to the sequence of inferred parameters (a mean parameter most of the time) of consecutive segments and related to the direction and/or the magnitude of the mean changes. Change-point detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm. 
 
-For each data point, the algorithm updates a function (a functional cost) and we go through an edge. The edges of the graph can be of type "null", "std",  "up", "down" or "abs" with the following meaning:
+The user chooses a global type of change-point problem to solve (change in "mean", "variance", "exp", "poisson" or "negbin" distribution).
+
+The algorithm of our package is designed to consider a large variety of constraints. These constraints are modelled by a graph. At each time <img src="/tex/4f4f4e395762a3af4575de74c019ebb5.svg?invert_in_darkmode&sanitize=true" align=middle width=5.936097749999991pt height=20.221802699999984pt/> a number of states is possible, these states are the nodes of the graph. Possible transitions between states at time <img src="/tex/4f4f4e395762a3af4575de74c019ebb5.svg?invert_in_darkmode&sanitize=true" align=middle width=5.936097749999991pt height=20.221802699999984pt/> and <img src="/tex/628783099380408a32610228991619a8.svg?invert_in_darkmode&sanitize=true" align=middle width=34.24649744999999pt height=21.18721440000001pt/> are represented by the edges of the graph. Each edge is associated to <img src="/tex/5dc642f297e291cfdde8982599601d7e.svg?invert_in_darkmode&sanitize=true" align=middle width=8.219209349999991pt height=21.18721440000001pt/> elements: a constraint
+(for example <img src="/tex/d0b08429a8092571e5683ca898c7e0a0.svg?invert_in_darkmode&sanitize=true" align=middle width=69.12487889999998pt height=20.908638300000003pt/>), a penalty (possibly null) and a loss function.
+
+In addition to the edges and nodes of the graph, the user can specify some other constraints on the graph as the starting and ending nodes and constrain the range of parameters (means, most of the time) to use at each node.
+
+The edges of the graph can be of type "null", "std",  "up", "down" or "abs" with the following meaning:
 
 - "null" edge : there is no change-point introduced. We stay on the same segment. "null" corresponds to the constraint <img src="/tex/7a973d7d4f51344eadbf9e25b2c18d88.svg?invert_in_darkmode&sanitize=true" align=middle width=65.97801374999999pt height=22.465723500000017pt/>. The value does not change (or exponential decay if <img src="/tex/3622f66f0df4e0212870fbe5f45e395b.svg?invert_in_darkmode&sanitize=true" align=middle width=70.8501783pt height=21.18721440000001pt/>);
 - "std" edge : no contraint, the next segment can have any mean;
@@ -44,11 +51,11 @@ For each data point, the algorithm updates a function (a functional cost) and we
 - "abs" edge : the absolute value of the difference of two consecutive means is greater than a given parameter.
 
 
-A nonnegative internal parameter can thus be associated to an edge (in "up", "down" and "abs). The "null" edge refers to an absence of change-point. This edge can be used between different states to constraint segment lengths. Our package includes the segment neighborhood algorithm for which the number of change-points is fixed. More details on graph construction are given in the last [section](#gc).
+A nonnegative internal parameter can thus be associated to an edge (in "up", "down" and "abs""). The "null" edge refers to an absence of change-point. This edge can be used between different states to constraint segment lengths. Our package includes the segment neighborhood algorithm for which the number of change-points is fixed. More details on graph construction are given in the last [section](#gc).
 
-Data is modelized by a quadratic cost with possible use of a robust loss, biweight and Huber. In a next version of this package, other parametric costs will be available (L1, Poisson). 
+Data is modelized by a cost with possible use of a robust loss, biweight and Huber, in all the decomposition (Gauss, Poisson, Binomial).
 
-The package `gfpop` is designed to segment univariate data <img src="/tex/b704a970e46e8418f3ef56718438b122.svg?invert_in_darkmode&sanitize=true" align=middle width=126.38913869999998pt height=24.65753399999998pt/> obeying to a graph structure on segment means. The change-point vector <img src="/tex/ed535ca37308856c5f0c6d85b4d4c676.svg?invert_in_darkmode&sanitize=true" align=middle width=209.11492305pt height=27.91243950000002pt/> defines the <img src="/tex/33359de825e43daa97171e27f6558ae9.svg?invert_in_darkmode&sanitize=true" align=middle width=37.38576269999999pt height=22.831056599999986pt/> segments <img src="/tex/97a268c17395aace06ce389334ba5322.svg?invert_in_darkmode&sanitize=true" align=middle width=115.02097364999997pt height=24.65753399999998pt/>, <img src="/tex/59680c09e0e2d723d0bcf2005047b028.svg?invert_in_darkmode&sanitize=true" align=middle width=73.18587374999998pt height=22.831056599999986pt/> with fixed bounds <img src="/tex/370a29c873e3d269a6111aa219085d0b.svg?invert_in_darkmode&sanitize=true" align=middle width=44.697406049999984pt height=21.18721440000001pt/> and  <img src="/tex/afdb85da7c3e7b7c3d226050994dbf5f.svg?invert_in_darkmode&sanitize=true" align=middle width=63.70246739999999pt height=14.15524440000002pt/>. We use the set <img src="/tex/29114c2b5ea7646dfac0072f71dd3b99.svg?invert_in_darkmode&sanitize=true" align=middle width=264.26770754999995pt height=27.91243950000002pt/> to define the nonconstrained minimal global cost given by
+The package `gfpop` is designed to segment univariate data <img src="/tex/b704a970e46e8418f3ef56718438b122.svg?invert_in_darkmode&sanitize=true" align=middle width=126.38913869999998pt height=24.65753399999998pt/> obeying to a graph structure on segment means/parameters. The change-point vector <img src="/tex/ed535ca37308856c5f0c6d85b4d4c676.svg?invert_in_darkmode&sanitize=true" align=middle width=209.11492305pt height=27.91243950000002pt/> defines the <img src="/tex/33359de825e43daa97171e27f6558ae9.svg?invert_in_darkmode&sanitize=true" align=middle width=37.38576269999999pt height=22.831056599999986pt/> segments <img src="/tex/97a268c17395aace06ce389334ba5322.svg?invert_in_darkmode&sanitize=true" align=middle width=115.02097364999997pt height=24.65753399999998pt/>, <img src="/tex/59680c09e0e2d723d0bcf2005047b028.svg?invert_in_darkmode&sanitize=true" align=middle width=73.18587374999998pt height=22.831056599999986pt/> with fixed bounds <img src="/tex/370a29c873e3d269a6111aa219085d0b.svg?invert_in_darkmode&sanitize=true" align=middle width=44.697406049999984pt height=21.18721440000001pt/> and  <img src="/tex/afdb85da7c3e7b7c3d226050994dbf5f.svg?invert_in_darkmode&sanitize=true" align=middle width=63.70246739999999pt height=14.15524440000002pt/>. We use the set <img src="/tex/29114c2b5ea7646dfac0072f71dd3b99.svg?invert_in_darkmode&sanitize=true" align=middle width=264.26770754999995pt height=27.91243950000002pt/> to define the nonconstrained minimal global cost given by
 
 <p align="center"><img src="/tex/55e63ede9d3bc1ac8c64fa74af425a24.svg?invert_in_darkmode&sanitize=true" align=middle width=277.1488236pt height=49.315569599999996pt/></p>
 
