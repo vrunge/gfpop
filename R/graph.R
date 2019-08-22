@@ -7,7 +7,6 @@
 #' @param penalty a nonnegative number. The penality associated to this state transition
 #' @param decay a nonnegative number to give the strength of the exponential decay into the segment
 #' @param gap a nonnegative number to constraint the size of the gap in the change of state
-#' @param oneValue the value of the oneValue edge
 #' @param K a positive number. Threshold for the Biweight robust loss
 #' @param a a positive number. Slope for the Huber robust loss
 #' @return a one-row dataframe with 9 variables

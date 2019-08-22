@@ -4,8 +4,8 @@
 \alias{Edge}
 \title{Edge generation}
 \usage{
-Edge(state1, state2, type = "null", penalty = 0, decay = 1,
-  gap = 0, K = Inf, a = Inf)
+Edge(state1, state2, type = "null", penalty = 0, decay = 1, gap = 0,
+  K = Inf, a = Inf)
 }
 \arguments{
 \item{state1}{a string defining the starting state of the edge}
@@ -23,8 +23,6 @@ Edge(state1, state2, type = "null", penalty = 0, decay = 1,
 \item{K}{a positive number. Threshold for the Biweight robust loss}
 
 \item{a}{a positive number. Slope for the Huber robust loss}
-
-\item{oneValue}{the value of the oneValue edge}
 }
 \value{
 a one-row dataframe with 9 variables
