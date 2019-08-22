@@ -28,22 +28,22 @@ DANGER : code broken in August in preparation for big update!
 
 ## Introduction
 
-`gfpop` is an `R` package developed to perform parametric changepoint detection in univariate time series constrained to a graph structure. The constraints are imposed to the sequence of infered means of consecutive segments and are related to the direction and/or the magnitude of the mean changes. Changepoint detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm.  The user can specify some other constraints on the graph (starting and ending vertices) and constraint the range of means. 
+`gfpop` is an `R` package developed to perform parametric change-point detection in univariate time series constrained to a graph structure. The constraints are imposed to the sequence of infered means of consecutive segments and are related to the direction and/or the magnitude of the mean changes. Change-point detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm.  The user can specify some other constraints on the graph (starting and ending vertices) and constraint the range of means. 
 
-For each data point, the algorithm updates a function (a functional cost) and we go through an edge. The edges of the graph can be of type "null", up", "down", "std", "absInf" or "absSup" with the following meaning:
+For each data point, the algorithm updates a function (a functional cost) and we go through an edge. The edges of the graph can be of type "null", "std",  "up", "down" or "abs" with the following meaning:
 
-- "null" edge : there is no changepoint introduced. We stay on the same segment (if its parameter < 1 there is an exponetional decay with gamma = parameter)
-- "up" edge : the next segment has a greater mean (we can also force the size of the gap to be greater than a minimal value)
-- "down" edge : the next segment has a lower mean (wan also can force the size of the gap to be greater that a minimal value)
-- "std" edge : no contraint, the next segment can have any mean
-- "absSup" edge : the absolute value of the difference of two consecutive means is greater than a given parameter
-- "absInf" edge : the absolute value of the difference of two consecutive means is lower than a given parameter
+- "null" edge : there is no change-point introduced. We stay on the same segment. "null" corresponds to the constraint $I_{\mu_t = \alpha\mu_{t+1}}$. The value does not change (or exponential decay if $0 < \alpha < 1$);
+- "std" edge : no contraint, the next segment can have any mean;
+- "up" edge : the next segment has a greater mean (we can also force the size of the gap to be greater than a minimal value). "up" corresponds to the constraint $I_{\mu_t \leq \mu_{t+1}}$;
+- "down" edge : the next segment has a lower mean (wan also can force the size of the gap to be greater that a minimal value). "down" corresponds to the constraint $I_{\mu_t \geq \mu_{t+1}}$;
+- "abs" edge : the absolute value of the difference of two consecutive means is greater than a given parameter.
 
-A nonnegative internal parameter can thus be associated to an edge (in "up" and "down") or is mandatory ("absSup" and "absInf"). The "null" edge refers to an absence of changepoint. This edge can be used between different states to constraint segment lengths. Our package includes the segment neighborhood algorithm for which the number of changepoints is fixed. More details on graph construction are given in the last [section](#gc).
+
+A nonnegative internal parameter can thus be associated to an edge (in "up", "down" and "abs). The "null" edge refers to an absence of change-point. This edge can be used between different states to constraint segment lengths. Our package includes the segment neighborhood algorithm for which the number of change-points is fixed. More details on graph construction are given in the last [section](#gc).
 
 Data is modelized by a quadratic cost with possible use of a robust loss, biweight and Huber. In a next version of this package, other parametric costs will be available (L1, Poisson). 
 
-The package `gfpop` is designed to segment univariate data $y_{1:n} = \{y_1,...,y_n\}$ obeying to a graph structure on segment means. The changepoint vector $\overline{\tau} = (\tau_0 < \cdots < \tau_{k+1}) \in \mathbb{N}^{k+2}$ defines the $k+1$ segments $\{\tau_i+1,...,\tau_{i+1}\}$, $i = 0,...,k$ with fixed bounds $\tau_0 = 0$ and  $\tau_{k+1} = n$. We use the set $S_n = \{\hbox{changepoint vector } \overline{\tau} \in \mathbb{N}^{k+2}\}$ to define the nonconstrained minimal global cost given by
+The package `gfpop` is designed to segment univariate data $y_{1:n} = \{y_1,...,y_n\}$ obeying to a graph structure on segment means. The change-point vector $\overline{\tau} = (\tau_0 < \cdots < \tau_{k+1}) \in \mathbb{N}^{k+2}$ defines the $k+1$ segments $\{\tau_i+1,...,\tau_{i+1}\}$, $i = 0,...,k$ with fixed bounds $\tau_0 = 0$ and  $\tau_{k+1} = n$. We use the set $S_n = \{\hbox{change-point vector } \overline{\tau} \in \mathbb{N}^{k+2}\}$ to define the nonconstrained minimal global cost given by
 
 $$Q_n = \min_{\overline{\tau} \in S_n}\left[ \sum_{i=0}^{k}\lbrace \mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}) + \beta \rbrace \right]\,,$$
 
@@ -83,7 +83,7 @@ The next table summarizes all the possible constraints encoded into the `gfpop` 
 
 | constraints | $I_e : \mathbb{R}\times \mathbb{R} \mapsto \mathbb{R}$, $c \in \mathbb{R}^+$ |
 |---------:|-----:|
-| no changepoint | $I_e(\mu_{t},\mu_{t+1}) =  I(\mu_t = \mu_{t+1})$ |
+| no change-point | $I_e(\mu_{t},\mu_{t+1}) =  I(\mu_t = \mu_{t+1})$ |
 | up | $I_e(\mu_{t},\mu_{t+1}) = I(\mu_{t}  + c \le \mu_{t+1})$ |
 | down | $I_e(\mu_{t},\mu_{t+1}) = I(\mu_{t+1} + c \le \mu_{t})$ |
 | absSup | $I_e(\mu_{t},\mu_{t+1}) = I(c \le \ell_1(\mu_{t} - \mu_{t+1}))$ |
@@ -103,7 +103,7 @@ In the `gfpop` package, the edges $(t,s,s')$ for $t\in\{1,...,n\}$ are not time-
 
 In most applications, the set of edges always contains edges of type $(s,s)$ for all $s \in V$ with indicator function $I_e(\mu,\nu)= I(\mu \ne \nu)$ as it corresponds to an absence of constraint on segment lengths. 
 
-The main algorithm of the package, the `gfpop` function, returns the changepoint vector $\tau^*$ defined as $\{i \in \{1,...,n\}\,,\, m_{i}\ne m_{i+1}\}$, with $(m_1,...,m_n)$ the argminimum of $(\mu_1,...,\mu_n)$ in $Q_n(\mathcal{G}_n)$ and $m_{n+1} = +\infty$. we also give the possibility to restrict the set of valid paths by imposing a starting and/or an ending vertex and contraint the range of infered means, replacing $\mu \in \mathbb{R}^n$ by $\mu \in [A,B]$ in the definition of $Q_n(\mathcal{G}_n)$.
+The main algorithm of the package, the `gfpop` function, returns the change-point vector $\tau^*$ defined as $\{i \in \{1,...,n\}\,,\, m_{i}\ne m_{i+1}\}$, with $(m_1,...,m_n)$ the argminimum of $(\mu_1,...,\mu_n)$ in $Q_n(\mathcal{G}_n)$ and $m_{n+1} = +\infty$. we also give the possibility to restrict the set of valid paths by imposing a starting and/or an ending vertex and contraint the range of infered means, replacing $\mu \in \mathbb{R}^n$ by $\mu \in [A,B]$ in the definition of $Q_n(\mathcal{G}_n)$.
 
 <a id="qs"></a>
 
@@ -118,7 +118,7 @@ We install the package from Github:
 library(gfpop)
 ```
 
-We simulate some univariate gaussian data (`n = 1000` points) with relative changepoint positions `0.1, 0.3, 0.5, 0.8, 1` and means `1, 2, 1, 3, 1` with a variance equal to `1`.
+We simulate some univariate gaussian data (`n = 1000` points) with relative change-point positions `0.1, 0.3, 0.5, 0.8, 1` and means `1, 2, 1, 3, 1` with a variance equal to `1`.
 
 ```r
 n <- 1000
@@ -138,7 +138,7 @@ gfpop(vectData = myData, mygraph = myGraph, type = "gauss")
 ```
 
 ```
-## changepoints
+## change-points
 ## [1]  100  299  500  800 1000
 ## 
 ## states
@@ -157,9 +157,9 @@ gfpop(vectData = myData, mygraph = myGraph, type = "gauss")
 ## [1] "gfpop"
 ```
 
-The vector `changepoints` gives the last index of each segment. It always ends with the length of the vector `vectData`.
+The vector `change-points` gives the last index of each segment. It always ends with the length of the vector `vectData`.
 
-The vector `states` contains the states in which lies each mean. The length of this vector is the same as the length of `changepoint`.
+The vector `states` contains the states in which lies each mean. The length of this vector is the same as the length of `change-point`.
 
 The vector `forced` is a boolean vector. A forced element means that two consecutive means have been forced to satisfy the constraint. For example, the "up" edge with parameter $c$ is forced if $m_{i+1} - m_i = c$.
 
@@ -185,7 +185,7 @@ gfpop(vectData =  mydata, mygraph = myGraphIso, type = "gauss", K = 1, min = 0)
 ```
 
 ```
-## changepoints
+## change-points
 ## [1]  298  613 1000
 ## 
 ## states
@@ -207,9 +207,9 @@ gfpop(vectData =  mydata, mygraph = myGraphIso, type = "gauss", K = 1, min = 0)
 
 In this example, we use in `gfpop` function a robust biweight gaussian cost with `K = 1` and the `min` parameter in order to infer means greater than `0.5`.
 
-### Fixed number of changepoints
+### Fixed number of change-points
 
-This algorithm is called segment neighborhood in the changepoint litterature. In this example, we fixed the number of segments at $3$ with an isotonic constraint. The graph contains two "up" edges with no cycling.
+This algorithm is called segment neighborhood in the change-point litterature. In this example, we fixed the number of segments at $3$ with an isotonic constraint. The graph contains two "up" edges with no cycling.
 
 
 ```r
@@ -228,7 +228,7 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss")
 ```
 
 ```
-## changepoints
+## change-points
 ## [1]  267  607 1000
 ## 
 ## states
@@ -266,7 +266,7 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3.0)
 ```
 
 ```
-## changepoints
+## change-points
 ## [1]   97  299  500  793 1000
 ## 
 ## states
@@ -294,7 +294,7 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 ```
 
 ```
-## changepoints
+## change-points
 ##  [1]   21   22   23   24  101  118  119  127  128  151  152  154  155  159
 ## [15]  161  169  170  221  224  253  254  290  291  302  303  314  316  319
 ## [29]  339  340  354  356  378  380  424  425  440  441  494  495  523  525
@@ -350,7 +350,7 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
 ```
 
 ```
-## changepoints
+## change-points
 ##  [1]  1000  1997  3000  4000  4999  6000  6995  8000  9000 10000
 ## 
 ## states
@@ -391,7 +391,7 @@ g
 ```
 
 ```
-## changepoints
+## change-points
 ## [1]  200  500  800 1000
 ## 
 ## states
@@ -414,7 +414,7 @@ and we plot the result
 
 ```r
 gamma <- 0.966
-len <- diff(c(0, g$changepoints))
+len <- diff(c(0, g$change-points))
 signal <- NULL
 for(i in length(len):1)
   {signal <- c(signal, g$means[i]*c(1, cumprod(rep(1/gamma,len[i]-1))))}

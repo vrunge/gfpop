@@ -30,14 +30,14 @@ DANGER : code broken in August in preparation for big update!
 
 `gfpop` is an `R` package developed to perform parametric changepoint detection in univariate time series constrained to a graph structure. The constraints are imposed to the sequence of infered means of consecutive segments and are related to the direction and/or the magnitude of the mean changes. Changepoint detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm.  The user can specify some other constraints on the graph (starting and ending vertices) and constraint the range of means. 
 
-For each data point, the algorithm updates a function (a functional cost) and we go through an edge. The edges of the graph can be of type "null", up", "down", "std", "absInf" or "absSup" with the following meaning:
+For each data point, the algorithm updates a function (a functional cost) and we go through an edge. The edges of the graph can be of type "null", "std",  "up", "down" or "abs" with the following meaning:
 
-- "null" edge : there is no changepoint introduced. We stay on the same segment (if its parameter < 1 there is an exponetional decay with gamma = parameter)
-- "up" edge : the next segment has a greater mean (we can also force the size of the gap to be greater than a minimal value)
-- "down" edge : the next segment has a lower mean (wan also can force the size of the gap to be greater that a minimal value)
-- "std" edge : no contraint, the next segment can have any mean
-- "absSup" edge : the absolute value of the difference of two consecutive means is greater than a given parameter
-- "absInf" edge : the absolute value of the difference of two consecutive means is lower than a given parameter
+- "null" edge : there is no change-point introduced. We stay on the same segment. "null" corresponds to the constraint $I_{\mu_t = \alpha\mu_{t+1}}$. The value does not change (or exponential decay if $0 < \alpha < 1$);
+- "std" edge : no contraint, the next segment can have any mean;
+- "up" edge : the next segment has a greater mean (we can also force the size of the gap to be greater than a minimal value). "up" corresponds to the constraint $I_{\mu_t \leq \mu_{t+1}}$;
+- "down" edge : the next segment has a lower mean (wan also can force the size of the gap to be greater that a minimal value). "down" corresponds to the constraint $I_{\mu_t \geq \mu_{t+1}}$;
+- "abs" edge : the absolute value of the difference of two consecutive means is greater than a given parameter.
+
 
 A nonnegative internal parameter can thus be associated to an edge (in "up" and "down") or is mandatory ("absSup" and "absInf"). The "null" edge refers to an absence of changepoint. This edge can be used between different states to constraint segment lengths. Our package includes the segment neighborhood algorithm for which the number of changepoints is fixed. More details on graph construction are given in the last [section](#gc).
 
