@@ -14,7 +14,9 @@
 #' Edge("D", "U", "up", penalty = 10, gap = 1)
 Edge <- function(state1, state2, type = "null", penalty = 0, decay = 1, gap = 0, K = Inf, a = Inf)
 {
-  ###STOP###
+  ############
+  ### STOP ###
+  ############
   if(type != "null" && type != "std" && type != "up" && type != "down" && type != "abs")
   {stop('Argument not appropriate. Choose a type among the following: "null", "std", "up", "down", "abs".')}
 
@@ -45,9 +47,9 @@ Edge <- function(state1, state2, type = "null", penalty = 0, decay = 1, gap = 0,
 
 #' Start and End nodes for the graph
 #'
-#' @description Adding constraints on the beginning and ending states of a graph
-#' @param start a vector of states. The beginning vertices in the changepoint inference
-#' @param end a vector of states. The ending vertices in the changepoint inference
+#' @description Defininf the beginning and ending states of a graph
+#' @param start a vector of states. The beginning nodes for the changepoint inference
+#' @param end a vector of states. The ending nodes for the changepoint inference
 #' @return dataframe with 9 variables with only `state1` and `type` = start or end defined.
 #' @examples
 #' StartEnd(start = "A", end = c("A","B"))
@@ -76,26 +78,28 @@ StartEnd <- function(start = NULL, end = NULL)
 
 #' Node Values
 #'
-#' @description Constraint the rabge of values to consider for a node
+#' @description Constraint the range of values to consider at a node
 #' @param state a string defining the state to constrain
-#' @param min minimal value for the infered parameter
-#' @param max maximal value for the infered parameter
+#' @param min minimal value for the inferred parameter
+#' @param max maximal value for the inferred parameter
 #' @return a dataframe with 9 variables with only `state1`, `min` and `max` defined.
 #' @examples
 #' Node(state = "S", min = 0, max = 2)
 
 Node <- function(state = NULL, min = -Inf, max = Inf)
 {
+  ############
+  ### STOP ###
+  ############
   if(!is.double(min)){stop('max is not a double.')}
   if(!is.double(max)){stop('min is not a double.')}
   if(min > max){stop('min is greater than max')}
+
   df <- data.frame(character(), character(), character(), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), stringsAsFactors = FALSE)
   colnames(df) <- c("state1", "state2", "type", "penalty", "parameter", "K", "a", "min", "max")
   df [1,] <- data.frame(state, NA, "node", NA, NA, NA, NA, min, max, stringsAsFactors = FALSE)
   return(df)
 }
-
-
 
 
 ###############################################
@@ -111,16 +115,21 @@ Node <- function(state = NULL, min = -Inf, max = Inf)
 #' UpDownGraph <- graph(penalty = 10, type = "updown")
 #' MyGraph <- graph(Edge(0,0), Edge(1,1), Edge(0,1,"up",10,gap=0.5), Edge(1,0,"down"), StartEnd(0,0), Node(0,0,1), Node(1,0,1))
 
-graph <- function(..., penalty = 0, type = "empty", gap = 0)
+graph <- function(..., type = "empty", penalty = 0, decay = 1, gap = 0)
 {
   myNewGraph <- rbind(...)
 
   if(is.null(myNewGraph) == TRUE)
   {
-    ###STOP###
+    ############
+    ### STOP ###
+    ############
     if(!is.double(penalty)){stop('penalty is not a double.')}
     if(penalty < 0){stop('penalty must be nonnegative')}
-
+    if(!is.double(decay)){stop('decay is not a double.')}
+    if(!is.double(gap)){stop('gap is not a double.')}
+    if(decay < 0){stop('decay must be nonnegative')}
+    if(gap < 0){stop('gap must be nonnegative')}
     if(type != "empty" && type != "std" && type != "isotonic" && type != "updown" && type != "relevant")
       {stop('Arugment "type" not appropriate. Choose among "std", "isotonic", "updown", "relevant"')}
 
@@ -129,27 +138,27 @@ graph <- function(..., penalty = 0, type = "empty", gap = 0)
 
     if(type == "std")
     {
-      myNewGraph[1, ] <- Edge("Std", "Std", "null")
+      myNewGraph[1, ] <- Edge("Std", "Std", "null", decay = decay)
       myNewGraph[2, ] <- Edge("Std", "Std", "std", penalty)
     }
 
     if(type == "isotonic")
     {
-      myNewGraph[1, ] <- Edge("Iso", "Iso", "null")
-      myNewGraph[2, ] <- Edge("Iso", "Iso", "up", penalty)
+      myNewGraph[1, ] <- Edge("Iso", "Iso", "null", decay = decay)
+      myNewGraph[2, ] <- Edge("Iso", "Iso", "up", penalty, gap = gap)
     }
 
     if(type == "updown")
     {
-      myNewGraph[1, ] <- Edge("D", "D", "null")
-      myNewGraph[2, ] <- Edge("U", "U", "null")
-      myNewGraph[3, ] <- Edge("D", "U", "up", penalty)
-      myNewGraph[4, ] <- Edge("U", "D", "down", penalty)
+      myNewGraph[1, ] <- Edge("Dw", "Dw", "null", decay = decay)
+      myNewGraph[2, ] <- Edge("Up", "Up", "null", decay = decay)
+      myNewGraph[3, ] <- Edge("Dw", "Up", "up", penalty, gap = gap)
+      myNewGraph[4, ] <- Edge("Up", "Dw", "down", penalty, gap = gap)
     }
 
     if(type == "relevant")
     {
-      myNewGraph[1, ] <- Edge("Std", "Std", "null")
+      myNewGraph[1, ] <- Edge("Std", "Std", "null", decay = decay)
       myNewGraph[2, ] <- Edge("Std", "Std", "abs", penalty, gap = gap)
     }
   }
@@ -158,10 +167,11 @@ graph <- function(..., penalty = 0, type = "empty", gap = 0)
 }
 
 
-
-
+###############################################
+###############################################
 ###############################################
 # invisible function for the user
+#Order the graph and create integer state values
 
 graphReorder <- function(mygraph)
 {
@@ -210,7 +220,7 @@ graphReorder <- function(mygraph)
 
 ###############################################
 # invisible function for the user
-# to use after graphAnalysis
+# to use after graphAnalysis and test whether the graph can be used in the gfpop function
 
 explore <- function(mygraph)
 {

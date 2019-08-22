@@ -19,7 +19,7 @@ void Graph::newEdge(Edge const& edge){edges.push_back(edge);}
 int Graph::nb_states() const
 {
   std::vector<int> temp;
-  for (int i = 0 ; i < edges.size() ; i++)
+  for (unsigned int i = 0 ; i < edges.size() ; i++)
   {
     temp.push_back(edges[i].getState1());
     temp.push_back(edges[i].getState2());
@@ -27,7 +27,7 @@ int Graph::nb_states() const
   sort(temp.begin(), temp.end());
 
   int res = 1;
-  for(int j = 0; j < temp.size() - 1 ; j++)
+  for(unsigned int j = 0; j < temp.size() - 1 ; j++)
   {
     if(temp[j] != temp[j + 1]){res = res + 1;}
   }
@@ -51,8 +51,8 @@ std::vector<int> Graph::getEndState() const {return(endState);}
 bool Graph::AreVerticesCompatible() const //label of the vertices from 0 to S
 {
   int maxLabel = 0;
-  int nbEdges = nb_edges();
-  for (int i = 0 ; i < nbEdges ; i++)
+  unsigned int nbEdges = nb_edges();
+  for (unsigned int i = 0 ; i < nbEdges ; i++)
   {
     if(edges[i].getState1() > maxLabel){maxLabel = edges[i].getState1();}
     if(edges[i].getState2() > maxLabel){maxLabel = edges[i].getState2();}
@@ -101,7 +101,7 @@ Interval Graph::buildInterval(double argmin, int s1, int s2, bool& out) const
 
   /// FIND edge. If there are 2 edges (s1,s2) we get the second one (which is not of "null" or "decay" type). (cf ordering in gfpop R function)
   Edge myedge;
-  for (int i = 0 ; i < edges.size() ; i++)
+  for (unsigned int i = 0 ; i < edges.size() ; i++)
   {
     if((edges[i].getState1() == s1) && (edges[i].getState2() == s2)){myedge = edges[i];}
   }
@@ -156,18 +156,18 @@ double Graph::stateDecay(int s) const
 void Graph::show() const
 {
   //std::cout << "GRAPH" << std::endl;
-  for (int i = 0 ; i < edges.size() ; i++)
+  for (unsigned int i = 0 ; i < edges.size() ; i++)
   {
     //edges[i].show();
   }
   //std::cout<< "Start state : ";
-  for (int i = 0 ; i < startState.size() ; i++)
+  for (unsigned int i = 0 ; i < startState.size() ; i++)
   {
     //std::cout<< startState[i] << " ";
   }
   //std::cout << std::endl;
   //std::cout<< "End state : ";
-  for (int i = 0 ; i < endState.size() ; i++)
+  for (unsigned int i = 0 ; i < endState.size() ; i++)
   {
     //std::cout<< endState[i] << " ";
   }
