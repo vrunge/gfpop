@@ -16,13 +16,18 @@ DANGER : code broken in August in preparation for big update!
 #### LaMME, Evry University
 ### February 28, 2019
 
-> [Introduction](#intro)
+> [Problem desctription](#intro)
 
 > [Quick Start](#qs)
 
 > [Some examples](#se)
 
 > [Graph construction](#gc)
+
+> [More on the main gfpop function](#gfpop)
+
+> [Supplementary R functions](#suppl)
+
 
 <a id="intro"></a>
 
@@ -495,6 +500,16 @@ myGraphIso
 ## 1      0      0 null       0         1
 ## 2      0      0   up      12         0
 ```
+
+
+<a id="gfpop"></a>
+
+## More on the main gfpop function
+
+
+<a id="suppl"></a>
+
+## Supplementary R functions
 
 
 [Back to Top](#top)

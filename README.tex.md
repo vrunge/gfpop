@@ -16,7 +16,7 @@ DANGER : code broken in August in preparation for big update!
 #### LaMME, Evry University
 ### February 28, 2019
 
-> [Introduction](#intro)
+> [Problem desctription](#intro)
 
 > [Quick Start](#qs)
 
@@ -24,9 +24,14 @@ DANGER : code broken in August in preparation for big update!
 
 > [Graph construction](#gc)
 
+> [More on the main gfpop function](#gfpop)
+
+> [Supplementary R functions](#suppl)
+
+
 <a id="intro"></a>
 
-## Introduction
+## Problem description
 
 `gfpop` is an `R` package developed to perform parametric change-point detection in univariate time series constrained to a graph structure. The constraints are imposed to the sequence of infered means of consecutive segments and are related to the direction and/or the magnitude of the mean changes. Change-point detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm.  The user can specify some other constraints on the graph (starting and ending vertices) and constraint the range of means. 
 
@@ -505,6 +510,15 @@ myGraphIso
 ## 1      0      0 null       0         1
 ## 2      0      0   up      12         0
 ```
+
+<a id="gfpop"></a>
+
+## More on the main gfpop function
+
+
+<a id="suppl"></a>
+
+## Supplementary R functions
 
 
 [Back to Top](#top)
