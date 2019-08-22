@@ -3,10 +3,10 @@
 #' @description Edge creation for graph
 #' @param state1 a string defining the starting state of the edge
 #' @param state2 a string defining the ending state of the edge
-#' @param type a string equal to "null", "std", "up", "down", "absInf" or "absSup"
+#' @param type a string equal to "null", "std", "up", "down" or "abs"
 #' @param penalty a nonnegative number. The penality associated to this state transition
 #' @param decay a nonnegative number to give the strength of the exponential decay into the segment
-#' @param gap a nonnegative number to constraint the size of the gap in the change of state
+#' @param gap a nonnegative number to constrain the size of the gap in the change of state
 #' @param K a positive number. Threshold for the Biweight robust loss
 #' @param a a positive number. Slope for the Huber robust loss
 #' @return a one-row dataframe with 9 variables
@@ -47,7 +47,7 @@ Edge <- function(state1, state2, type = "null", penalty = 0, decay = 1, gap = 0,
 
 #' Start and End nodes for the graph
 #'
-#' @description Defininf the beginning and ending states of a graph
+#' @description Defining the beginning and ending states of a graph
 #' @param start a vector of states. The beginning nodes for the changepoint inference
 #' @param end a vector of states. The ending nodes for the changepoint inference
 #' @return dataframe with 9 variables with only `state1` and `type` = start or end defined.
@@ -78,7 +78,7 @@ StartEnd <- function(start = NULL, end = NULL)
 
 #' Node Values
 #'
-#' @description Constraint the range of values to consider at a node
+#' @description Constrain the range of values to consider at a node
 #' @param state a string defining the state to constrain
 #' @param min minimal value for the inferred parameter
 #' @param max maximal value for the inferred parameter
@@ -106,14 +106,17 @@ Node <- function(state = NULL, min = -Inf, max = Inf)
 
 #' Graph generation
 #'
-#' @description Graph creation using component function Edge, StartEnd, Node
-#' @param ... This is a list of edges definied by functions edge and StartEnd
-#' @param penalty a nonnegative number equals to the common penalty to use for all edges
+#' @description Graph creation using component functions "Edge", "StartEnd" and "Node"
+#' @param ... This is a list of edges definied by functions "Edge", "StartEnd" and "Node"
 #' @param type a string equal to "std", "isotonic", "updown", "infsup". to build a predefined classic graph
-#' @return a dataframe with edges in rows (columns are named "state1", "state2", "type", "penalty", "parameter") with additional "graph" class.
+#' @param penalty a nonnegative number equals to the common penalty to use for all edges
+#' @param decay a nonnegative number to give the strength of the exponential decay into the segment
+#' @param gap a nonnegative number to constrain the size of the gap in the change of state
+#' @return a dataframe with 9 variables (columns are named "state1", "state2", "type", "penalty", "parameter", "K", "a", "min", "max") with additional "graph" class.
 #' @examples
-#' UpDownGraph <- graph(penalty = 10, type = "updown")
-#' MyGraph <- graph(Edge(0,0), Edge(1,1), Edge(0,1,"up",10,gap=0.5), Edge(1,0,"down"), StartEnd(0,0), Node(0,0,1), Node(1,0,1))
+#' UpDownGraph <- graph(type = "updown", penalty = 10, gap = 1.3)
+#' MyGraph <- graph(Edge(0,0), Edge(1,1), Edge(0,1,"up",10,gap=0.5),
+#' Edge(1,0,"down"), StartEnd(0,0), Node(0,0,1), Node(1,0,1))
 
 graph <- function(..., type = "empty", penalty = 0, decay = 1, gap = 0)
 {

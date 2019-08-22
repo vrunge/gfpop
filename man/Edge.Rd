@@ -12,13 +12,13 @@ Edge(state1, state2, type = "null", penalty = 0, decay = 1, gap = 0,
 
 \item{state2}{a string defining the ending state of the edge}
 
-\item{type}{a string equal to "null", "std", "up", "down", "absInf" or "absSup"}
+\item{type}{a string equal to "null", "std", "up", "down" or "abs"}
 
 \item{penalty}{a nonnegative number. The penality associated to this state transition}
 
 \item{decay}{a nonnegative number to give the strength of the exponential decay into the segment}
 
-\item{gap}{a nonnegative number to constraint the size of the gap in the change of state}
+\item{gap}{a nonnegative number to constrain the size of the gap in the change of state}
 
 \item{K}{a positive number. Threshold for the Biweight robust loss}
 

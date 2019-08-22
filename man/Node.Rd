@@ -9,15 +9,15 @@ Node(state = NULL, min = -Inf, max = Inf)
 \arguments{
 \item{state}{a string defining the state to constrain}
 
-\item{min}{minimal value for the infered parameter}
+\item{min}{minimal value for the inferred parameter}
 
-\item{max}{maximal value for the infered parameter}
+\item{max}{maximal value for the inferred parameter}
 }
 \value{
 a dataframe with 9 variables with only `state1`, `min` and `max` defined.
 }
 \description{
-Constraint the rabge of values to consider for a node
+Constrain the range of values to consider at a node
 }
 \examples{
 Node(state = "S", min = 0, max = 2)

@@ -7,15 +7,15 @@
 StartEnd(start = NULL, end = NULL)
 }
 \arguments{
-\item{start}{a vector of states. The beginning vertices in the changepoint inference}
+\item{start}{a vector of states. The beginning nodes for the changepoint inference}
 
-\item{end}{a vector of states. The ending vertices in the changepoint inference}
+\item{end}{a vector of states. The ending nodes for the changepoint inference}
 }
 \value{
 dataframe with 9 variables with only `state1` and `type` = start or end defined.
 }
 \description{
-Adding constraints on the beginning and ending states of a graph
+Defining the beginning and ending states of a graph
 }
 \examples{
 StartEnd(start = "A", end = c("A","B"))
