@@ -133,7 +133,7 @@ We simulate some univariate gaussian data (`n = 1000` points) with relative chan
 
 ```r
 n <- 1000
-myData <- dataGenerator(n, c(0.1,0.3,0.5,0.8,1), c(1,2,1,3,1), 1)
+myData <- dataGenerator(n, c(0.1,0.3,0.5,0.8,1), c(1,2,1,3,1), sigma = 1)
 ```
 
 We define the graph of constraints to use for the dynamic programming algorithm. A simple case is the up-down constraint with a penalty here equal to a classic `2 log(n)`.
@@ -145,7 +145,7 @@ myGraph <- graph(penalty = 2*log(n), type = "updown")
 The gfpop function gives the result of the segmentation using `myData` and `myGraph` as parameters. We choose a gaussian cost.
 
 ```r
-gfpop(vectData = myData, mygraph = myGraph, type = "gauss")
+gfpop(data = myData, mygraph = myGraph, type = "gauss")
 ```
 
 ```
@@ -158,10 +158,10 @@ gfpop(vectData = myData, mygraph = myGraph, type = "gauss")
 ## forced
 ## [1] 0 0 0 0
 ## 
-## means
+## parameters
 ## [1] 1.0398897 2.0548877 0.9677736 2.9771042 1.0342072
 ## 
-## cost
+## globalCost
 ## [1] 1088.998
 ## 
 ## attr(,"class")
@@ -174,9 +174,9 @@ The vector `states` contains the states in which lies each mean. The length of t
 
 The vector `forced` is a boolean vector. A forced element means that two consecutive means have been forced to satisfy the constraint. For example, the "up" edge with parameter $c$ is forced if $m_{i+1} - m_i = c$.
 
-The vector `means` contains the infered means of the successive segments. 
+The vector `parameters` contains the inferred means/parameters of the successive segments. 
  
-The number `cost` is equal to $Q_n(\mathcal{G})$, the overall cost of the segmented data. 
+The number `globalCost` is equal to $Q_n(\mathcal{G})$, the overall cost of the segmented data. 
 
 
 <a id="se"></a>
@@ -190,9 +190,9 @@ The isotonic regression infers a sequence of nondecreasing means.
 
 ```r
 n <- 1000
-mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1), c(0, 0.5, 1, 1.5, 2, 2.5, 3), 1)
+mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1), c(0, 0.5, 1, 1.5, 2, 2.5, 3), sigma = 1)
 myGraphIso <- graph(penalty = 2*log(n), type = "isotonic")
-gfpop(vectData =  mydata, mygraph = myGraphIso, type = "gauss", K = 1, min = 0)
+gfpop(data =  mydata, mygraph = myGraphIso, type = "gauss")
 ```
 
 ```
@@ -205,10 +205,10 @@ gfpop(vectData =  mydata, mygraph = myGraphIso, type = "gauss", K = 1, min = 0)
 ## forced
 ## [1] 0 0
 ## 
-## means
+## parameters
 ## [1] 0.5804419 1.9590530 2.8751642
 ## 
-## cost
+## globalCost
 ## [1] 523.0448
 ## 
 ## attr(,"class")
@@ -225,17 +225,17 @@ This algorithm is called segment neighborhood in the change-point litterature. I
 
 ```r
 n <- 1000
-mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1), c(0, 0.5, 1, 1.5, 2, 2.5, 3), 1)
+mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1), c(0, 0.5, 1, 1.5, 2, 2.5, 3), sigma = 1)
 beta <- 0
 myGraph <- graph(
-  edge(0, 1,"up", beta),
-  edge(1, 2, "up", beta),
-  edge(0, 0, "null"),
-  edge(1, 1, "null"),
-  edge(2, 2, "null"),
+  Edge(0, 1,"up", beta),
+  Edge(1, 2, "up", beta),
+  Edge(0, 0, "null"),
+  Edge(1, 1, "null"),
+  Edge(2, 2, "null"),
   StartEnd(start = 0, end = 2))
 
-gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss")
+gfpop(data =  mydata, mygraph = myGraph, type = "gauss")
 ```
 
 ```
@@ -248,10 +248,10 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss")
 ## forced
 ## [1] 0 0
 ## 
-## means
+## parameters
 ## [1] 0.4898983 1.7644320 2.8329232
 ## 
-## cost
+## globalCost
 ## [1] 1055.787
 ## 
 ## attr(,"class")
@@ -265,15 +265,15 @@ In presence of outliers we need a robust loss (biweight). We can also force the 
 
 ```r
 n <- 1000
-mydata <- dataGenerator(n, c(0.1,0.3,0.5,0.8,1), c(0,1,0,1,0), 1) + 5*(rbinom(n, 1, 0.05)) - 5*(rbinom(n, 1, 0.05))
+mydata <- dataGenerator(n, c(0.1,0.3,0.5,0.8,1), c(0,1,0,1,0), sigma = 1) + 5*(rbinom(n, 1, 0.05)) - 5*(rbinom(n, 1, 0.05))
 beta <- 2*log(n)
 myGraph <- graph(
-  edge(0, 1, "up", beta, gap = 1),
-  edge(1, 0, "down", beta, gap = 1),
-  edge(0, 0, "null"),
-  edge(1, 1, "null"),
+  Edge(0, 1, "up", beta, gap = 1, K = 3),
+  Edge(1, 0, "down", beta, gap = 1, K = 3),
+  Edge(0, 0, "null"),
+  Edge(1, 1, "null"),
   StartEnd(start = 0, end = 0))
-gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3.0)
+gfpop(data =  mydata, mygraph = myGraph, type = "gauss")
 ```
 
 ```
@@ -286,10 +286,10 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3.0)
 ## forced
 ## [1] 1 0 1 0
 ## 
-## means
+## parameters
 ## [1]  0.07184646  1.07184646  0.06240383  1.06240383 -0.02733504
 ## 
-## cost
+## globalCost
 ## [1] 1855.191
 ## 
 ## attr(,"class")
@@ -301,7 +301,7 @@ If we skip all these constraints and use a standard fpop algorithm, the result i
 
 ```r
 myGraphStd <- graph(penalty = 2*log(n), type = "std")
-gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
+gfpop(data =  mydata, mygraph = myGraphStd, type = "gauss")
 ```
 
 ```
@@ -319,7 +319,7 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 ## forced
 ## integer(0)
 ## 
-## means
+## parameters
 ##  [1]  0.06769517 -5.50102947  0.79691169 -6.16215327  0.11315955
 ##  [6]  1.41385775 -4.89402085  1.84919578  6.63283081  0.73900245
 ## [11] -5.25778811  1.32759821 -4.85394086  1.22338165 -4.42072139
@@ -338,7 +338,7 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 ## [76]  0.13223191  5.68555420 -0.22790836 -5.63895812  0.19269466
 ## [81]  6.33835014 -0.60790815  6.95736250 -0.07219581
 ## 
-## cost
+## globalCost
 ## [1] 2996.055
 ## 
 ## attr(,"class")
@@ -352,12 +352,12 @@ With a unique "abs" edge, we impose a difference between the means of size at le
 
 ```r
 n <- 10000
-mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), c(0, 1, 0, 2, 1, 2, 0, 1, 0, 1), 0.5)
+mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), c(0, 1, 0, 2, 1, 2, 0, 1, 0, 1), sigma = 0.5)
 beta <- 2*log(n)
 myGraph <- graph(
-  edge(0, 0,"abs", beta, gap = 1),
-  edge(0, 0,"null"))
-gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
+  Edge(0, 0,"abs", beta, gap = 1),
+  Edge(0, 0,"null"))
+gfpop(data =  mydata, mygraph = myGraph, type = "gauss", K = 3)
 ```
 
 ```
@@ -370,11 +370,11 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
 ## forced
 ## [1] 0 0 0 0 0 0 1 0 0
 ## 
-## means
+## parameters
 ##  [1] -1.979279e-02  1.013197e+00  4.166539e-03  1.998449e+00  9.707397e-01
 ##  [6]  1.997130e+00  3.710429e-05  1.000037e+00 -1.691713e-02  1.028223e+00
 ## 
-## cost
+## globalCost
 ## [1] 2667.117
 ## 
 ## attr(,"class")
@@ -391,13 +391,13 @@ The null edge corresponds to an exponential decay state if its parameter is not 
 
 ```r
 n <- 1000
-mydata <- dataGenerator(n, c(0.2, 0.5, 0.8, 1), c(5, 10, 15, 20), 1, gamma = 0.966)
+mydata <- dataGenerator(n, c(0.2, 0.5, 0.8, 1), c(5, 10, 15, 20), sigma = 1, gamma = 0.966)
 beta <- 2*log(n)
 myGraphDecay <- graph(
-  edge(0, 0, "up", beta),
-  edge(0, 0, "null", 0, decay = 0.966)
+  Edge(0, 0, "up", beta),
+  Edge(0, 0, "null", 0, decay = 0.966)
   )
-g <- gfpop(vectData =  mydata, mygraph = myGraphDecay, type = "gauss", min = 0)
+g <- gfpop(data =  mydata, mygraph = myGraphDecay, type = "gauss", min = 0)
 g
 ```
 
@@ -411,10 +411,10 @@ g
 ## forced
 ## [1] 0 0 0
 ## 
-## means
+## parameters
 ## [1] 0.0049073122 0.0003113153 0.0004682635 0.0197665863
 ## 
-## cost
+## globalCost
 ## [1] 1059.672
 ## 
 ## attr(,"class")
@@ -444,7 +444,7 @@ plot(signal, type ='l', col = 4, ylim = ylimits, lwd = 3)
 
 ## Graph construction
 
-In the `gfpop` package, graphs are represented by a dataframe with 5 features and build with the R functions `Edge`, `Node`, `StartEnd` and `graph`.
+In the `gfpop` package, graphs are represented by a dataframe with 9 features and build with the R functions `Edge`, `Node`, `StartEnd` and `graph`.
 
 
 ```r
