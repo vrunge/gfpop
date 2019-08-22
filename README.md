@@ -24,7 +24,7 @@ DANGER : code broken in August in preparation for big update!
 
 > [Graph construction](#gc)
 
-> [More on the main gfpop function with C++ structure](#gfpop)
+> [More on the main gfpop function and its C++ structure](#gfpop)
 
 > [Supplementary R functions](#suppl)
 
@@ -502,7 +502,7 @@ myGraphIso
 
 <a id="gfpop"></a>
 
-## More on the main gfpop function with C++ structure
+## More on the main gfpop function and its C++ structure
 
 
 
