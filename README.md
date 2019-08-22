@@ -446,14 +446,14 @@ We add edges into a graph as follows
 ```r
 myGraph <- graph(
   Edge(0, 0, "down", 3.1415, gap = 1),
-  Node(0, 0))
+  Edge(0, 0))
 myGraph
 ```
 
 ```
 ##   state1 state2 type penalty parameter   K   a min max
 ## 1      0      0 down  3.1415         1 Inf Inf  NA  NA
-## 2      0   <NA> node      NA        NA  NA  NA   0 Inf
+## 2      0      0 null  0.0000         1 Inf Inf  NA  NA
 ```
 
 we can only add edges to this dataframe using the object `Edge`. With the example `Edge(0, 0, "down", 3.1415, 1)`.
@@ -462,28 +462,27 @@ The graph can contain information on the starting and/or ending edge to use with
 
 
 ```r
-beta <- 2 * log(n)
+beta <- 2 * log(1000)
 myGraph <- graph(
   Edge(0, 0, "null"),
   Edge(1, 1, "null"),
-  Edge(0, 1, "up", beta, gap = 1),
-  Edge(0, 0, "down", beta),
-  Edge(1, 0, "down", beta),
+  Edge(0, 1, "up", penalty = beta, gap = 1),
+  Edge(0, 0, "down", penalty = beta),
+  Edge(1, 0, "down", penalty = beta),
   StartEnd(start = 0, end = 0))
 myGraph
 ```
 
 ```
-##   state1 state2  type  penalty parameter
-## 1      0      0  null  0.00000         1
-## 2      1      1  null  0.00000         1
-## 3      0      1    up 13.81551         1
-## 4      0      0  down 13.81551         0
-## 5      1      0  down 13.81551         0
-## 6      0     NA start       NA        NA
-## 7      0     NA   end       NA        NA
+##   state1 state2  type  penalty parameter   K   a min max
+## 1      0      0  null  0.00000         1 Inf Inf  NA  NA
+## 2      1      1  null  0.00000         1 Inf Inf  NA  NA
+## 3      0      1    up 13.81551         1 Inf Inf  NA  NA
+## 4      0      0  down 13.81551         0 Inf Inf  NA  NA
+## 5      1      0  down 13.81551         0 Inf Inf  NA  NA
+## 6      0   <NA> start       NA        NA  NA  NA  NA  NA
+## 7      0   <NA>   end       NA        NA  NA  NA  NA  NA
 ```
-
 
 Some graphs are often used: they are defined by default in the `graph` function. To use these graphs, we specify a string `type` equal to "std", "isotonic", "updown" or "relevant".
 For example,
@@ -500,9 +499,7 @@ myGraphIso
 ## 2    Iso    Iso   up      12         0 Inf Inf  NA  NA
 ```
 
-
-The function `Node` can be used to restrict the range of value for parameter associated to a node.
-For example the following graph is an isotonic graph with inferred parameters between 0 et 1 only.
+The function `Node` can be used to restrict the range of value for parameter associated to a node. For example the following graph is an isotonic graph with inferred parameters between 0 et 1 only.
 
 ```r
 myGraph <- graph(
@@ -512,6 +509,15 @@ myGraph <- graph(
   )
 myGraph
 ```
+
+```
+##   state1 state2 type penalty parameter   K   a min max
+## 1      0      0 down  3.1415         0 Inf Inf  NA  NA
+## 2      0      0 null  0.0000         1 Inf Inf  NA  NA
+## 3      0   <NA> node      NA        NA  NA  NA   0   1
+```
+
+
 <a id="gfpop"></a>
 
 ## More on the main gfpop function and its C++ structure
