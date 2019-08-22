@@ -426,7 +426,7 @@ plot(signal, type ='l', col = 4, ylim = ylimits, lwd = 3)
 
 ## Graph construction
 
-In the `gfpop` package, graphs are represented by a dataframe with 5 features. 
+In the `gfpop` package, graphs are represented by a dataframe with 5 features and build with the R functions `Edge`, `Node`, `StartEnd` and `graph`.
 
 
 ```r
@@ -435,28 +435,28 @@ emptyGraph
 ```
 
 ```
-## [1] state1    state2    type      penalty   parameter
+## [1] state1    state2    type      penalty   parameter K         a         min       max
 ## <0 rows> (or 0-length row.names)
 ```
 
-`state1` is the starting node of an edge, `state2` its ending node. `type` is one of the available edge type ("null", "std", "up", "down", "abs"). `penalty` is a nonnegative parameter: the additional cost <img src="/tex/3d13090ef3ed1448f3c4dc166d06ab4d.svg?invert_in_darkmode&sanitize=true" align=middle width=13.948864049999989pt height=22.831056599999986pt/> to consider when we move within the graph using this edge. `parameter` is annother nonnegative parameter, a characteristics of the edge, depending of its type (it is a decay if type is "null" and a gap otherwise).
+`state1` is the starting node of an edge, `state2` its ending node. `type` is one of the available edge type ("null", "std", "up", "down", "abs"). `penalty` is a nonnegative parameter: the additional cost <img src="/tex/3d13090ef3ed1448f3c4dc166d06ab4d.svg?invert_in_darkmode&sanitize=true" align=middle width=13.948864049999989pt height=22.831056599999986pt/> to consider when we move within the graph using a edge (or stay on the same node). `parameter` is annother nonnegative parameter, a characteristics of the edge, depending of its type (it is a decay if type is "null" and a gap otherwise). `K` and `a` are robust parameters. `min` and `max` are used to constrain the rang of value for the node parameter.
 
 We add edges into a graph as follows
 
 ```r
 myGraph <- graph(
-  edge(0, 0, "down", 3.1415, gap = 1),
-  edge(0, 0))
+  Edge(0, 0, "down", 3.1415, gap = 1),
+  Node(0, 0))
 myGraph
 ```
 
 ```
-##   state1 state2 type penalty parameter
-## 1      0      0 down  3.1415         1
-## 2      0      0 null  0.0000         1
+##   state1 state2 type penalty parameter   K   a min max
+## 1      0      0 down  3.1415         1 Inf Inf  NA  NA
+## 2      0   <NA> node      NA        NA  NA  NA   0 Inf
 ```
 
-we can only add edges to this dataframe using the object `edge`. With the example `edge(0, 0, "down", 3.1415, 1)` we give the 5 aforementioned features.
+we can only add edges to this dataframe using the object `Edge`. With the example `Edge(0, 0, "down", 3.1415, 1)`.
 
 The graph can contain information on the starting and/or ending edge to use with the `StartEnd` function. 
 
@@ -464,11 +464,11 @@ The graph can contain information on the starting and/or ending edge to use with
 ```r
 beta <- 2 * log(n)
 myGraph <- graph(
-  edge(0, 0, "null"),
-  edge(1, 1, "null"),
-  edge(0, 1, "up", beta, gap = 1),
-  edge(0, 0, "down", beta),
-  edge(1, 0, "down", beta),
+  Edge(0, 0, "null"),
+  Edge(1, 1, "null"),
+  Edge(0, 1, "up", beta, gap = 1),
+  Edge(0, 0, "down", beta),
+  Edge(1, 0, "down", beta),
   StartEnd(start = 0, end = 0))
 myGraph
 ```
@@ -485,7 +485,7 @@ myGraph
 ```
 
 
-Some graphs are often used: they are defined by default in the `graph` function. To use these graphs, we specify a string `type` equal to "std", "isotonic", "updown" or "infsup".
+Some graphs are often used: they are defined by default in the `graph` function. To use these graphs, we specify a string `type` equal to "std", "isotonic", "updown" or "relevant".
 For example,
 
 
@@ -495,9 +495,9 @@ myGraphIso
 ```
 
 ```
-##   state1 state2 type penalty parameter
-## 1      0      0 null       0         1
-## 2      0      0   up      12         0
+##   state1 state2 type penalty parameter   K   a min max
+## 1    Iso    Iso null       0         1 Inf Inf  NA  NA
+## 2    Iso    Iso   up      12         0 Inf Inf  NA  NA
 ```
 
 <a id="gfpop"></a>
