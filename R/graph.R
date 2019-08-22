@@ -219,6 +219,13 @@ graphReorder <- function(mygraph)
 }
 
 
+###############################################
+# invisible function for the user
+
+typeOfGraph <- function(mygraph)
+{
+  return("gfpop")
+}
 
 
 ###############################################

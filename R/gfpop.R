@@ -44,7 +44,15 @@ gfpop <- function(data = c(0), mygraph, type = "mean", weights = c(0))
   ###########################
   ### CALL Rcpp functions ###
   ###########################
-  res <- gfpopTransfer(data, newGraph, type, weights)
+
+  useThePackage <- "gfpop"
+  graphType <- typeOfGraph(newGraph) #("std", "isotonic" or "gfpop")
+
+  if(graphType == "std"){}
+  if(graphType == "isotonic"){}
+  if(graphType == "gfpop"){res <- gfpopTransfer(data, newGraph, type, weights)}
+
+
 
   ############################
   ### Response class gfpop ###

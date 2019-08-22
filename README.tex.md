@@ -14,7 +14,7 @@ DANGER : code broken in August in preparation for big update!
 # gfpop Vignette
 ### Vincent Runge
 #### LaMME, Evry University
-### February 28, 2019
+### August 22, 2019 (version 2)
 
 > [Change-point problem description](#intro)
 
@@ -33,9 +33,16 @@ DANGER : code broken in August in preparation for big update!
 
 ## Change-point problem description
 
-`gfpop` is an `R` package developed to perform parametric change-point detection in univariate time series constrained to a graph structure. The constraints are imposed to the sequence of infered means of consecutive segments and are related to the direction and/or the magnitude of the mean changes. Change-point detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm.  The user can specify some other constraints on the graph (starting and ending nodes) and constraint the range of parameters (means most of the time) to use at each node. 
+`gfpop` is an `R` package developed to complete parametric change-point detection in univariate time series constrained to a graph structure. The constraints are imposed to the sequence of inferred parameters (a mean parameter most of the time) of consecutive segments and related to the direction and/or the magnitude of the mean changes. Change-point detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm. 
 
-For each data point, the algorithm updates a function (a functional cost) and we go through an edge. The edges of the graph can be of type "null", "std",  "up", "down" or "abs" with the following meaning:
+The user chooses a global type of change-point problem to solve (change in "mean", "variance", "exp", "poisson" or "negbin" distribution).
+
+The algorithm of our package is designed to consider a large variety of constraints. These constraints are modelled by a graph. At each time $t$ a number of states is possible, these states are the nodes of the graph. Possible transitions between states at time $t$ and $t+1$ are represented by the edges of the graph. Each edge is associated to $3$ elements: a constraint
+(for example $\mu_t \le \mu_{t+1}$), a penalty (possibly null) and a loss function.
+
+In addition to the edges and nodes of the graph, the user can specify some other constraints on the graph as the starting and ending nodes and constrain the range of parameters (means, most of the time) to use at each node.
+
+The edges of the graph can be of type "null", "std",  "up", "down" or "abs" with the following meaning:
 
 - "null" edge : there is no change-point introduced. We stay on the same segment. "null" corresponds to the constraint $I_{\mu_t = \alpha\mu_{t+1}}$. The value does not change (or exponential decay if $0 < \alpha < 1$);
 - "std" edge : no contraint, the next segment can have any mean;
@@ -44,11 +51,11 @@ For each data point, the algorithm updates a function (a functional cost) and we
 - "abs" edge : the absolute value of the difference of two consecutive means is greater than a given parameter.
 
 
-A nonnegative internal parameter can thus be associated to an edge (in "up", "down" and "abs). The "null" edge refers to an absence of change-point. This edge can be used between different states to constraint segment lengths. Our package includes the segment neighborhood algorithm for which the number of change-points is fixed. More details on graph construction are given in the last [section](#gc).
+A nonnegative internal parameter can thus be associated to an edge (in "up", "down" and "abs""). The "null" edge refers to an absence of change-point. This edge can be used between different states to constraint segment lengths. Our package includes the segment neighborhood algorithm for which the number of change-points is fixed. More details on graph construction are given in the last [section](#gc).
 
-Data is modelized by a quadratic cost with possible use of a robust loss, biweight and Huber. In a next version of this package, other parametric costs will be available (L1, Poisson). 
+Data is modelized by a cost with possible use of a robust loss, biweight and Huber, in all the decomposition (Gauss, Poisson, Binomial).
 
-The package `gfpop` is designed to segment univariate data $y_{1:n} = \{y_1,...,y_n\}$ obeying to a graph structure on segment means. The change-point vector $\overline{\tau} = (\tau_0 < \cdots < \tau_{k+1}) \in \mathbb{N}^{k+2}$ defines the $k+1$ segments $\{\tau_i+1,...,\tau_{i+1}\}$, $i = 0,...,k$ with fixed bounds $\tau_0 = 0$ and  $\tau_{k+1} = n$. We use the set $S_n = \{\hbox{change-point vector} \overline{\tau} \in \mathbb{N}^{k+2}\}$ to define the nonconstrained minimal global cost given by
+The package `gfpop` is designed to segment univariate data $y_{1:n} = \{y_1,...,y_n\}$ obeying to a graph structure on segment means/parameters. The change-point vector $\overline{\tau} = (\tau_0 < \cdots < \tau_{k+1}) \in \mathbb{N}^{k+2}$ defines the $k+1$ segments $\{\tau_i+1,...,\tau_{i+1}\}$, $i = 0,...,k$ with fixed bounds $\tau_0 = 0$ and  $\tau_{k+1} = n$. We use the set $S_n = \{\hbox{change-point vector} \overline{\tau} \in \mathbb{N}^{k+2}\}$ to define the nonconstrained minimal global cost given by
 
 $$Q_n = \min_{\overline{\tau} \in S_n}\left[ \sum_{i=0}^{k}\lbrace \mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}) + \beta \rbrace \right]\,,$$
 
