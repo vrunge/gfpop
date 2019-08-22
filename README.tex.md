@@ -43,7 +43,7 @@ A nonnegative internal parameter can thus be associated to an edge (in "up", "do
 
 Data is modelized by a quadratic cost with possible use of a robust loss, biweight and Huber. In a next version of this package, other parametric costs will be available (L1, Poisson). 
 
-The package `gfpop` is designed to segment univariate data $y_{1:n} = \{y_1,...,y_n\}$ obeying to a graph structure on segment means. The change-point vector $\overline{\tau} = (\tau_0 < \cdots < \tau_{k+1}) \in \mathbb{N}^{k+2}$ defines the $k+1$ segments $\{\tau_i+1,...,\tau_{i+1}\}$, $i = 0,...,k$ with fixed bounds $\tau_0 = 0$ and  $\tau_{k+1} = n$. We use the set $S_n = \{\hbox{change-point vector } \overline{\tau} \in \mathbb{N}^{k+2}\}$ to define the nonconstrained minimal global cost given by
+The package `gfpop` is designed to segment univariate data $y_{1:n} = \{y_1,...,y_n\}$ obeying to a graph structure on segment means. The change-point vector $\overline{\tau} = (\tau_0 < \cdots < \tau_{k+1}) \in \mathbb{N}^{k+2}$ defines the $k+1$ segments $\{\tau_i+1,...,\tau_{i+1}\}$, $i = 0,...,k$ with fixed bounds $\tau_0 = 0$ and  $\tau_{k+1} = n$. We use the set $S_n = \{\hbox{change-point vector} \overline{\tau} \in \mathbb{N}^{k+2}\}$ to define the nonconstrained minimal global cost given by
 
 $$Q_n = \min_{\overline{\tau} \in S_n}\left[ \sum_{i=0}^{k}\lbrace \mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}) + \beta \rbrace \right]\,,$$
 
@@ -138,7 +138,7 @@ gfpop(vectData = myData, mygraph = myGraph, type = "gauss")
 ```
 
 ```
-## change-points
+## changepoints
 ## [1]  100  299  500  800 1000
 ## 
 ## states
@@ -157,9 +157,9 @@ gfpop(vectData = myData, mygraph = myGraph, type = "gauss")
 ## [1] "gfpop"
 ```
 
-The vector `change-points` gives the last index of each segment. It always ends with the length of the vector `vectData`.
+The vector `changepoints` gives the last index of each segment. It always ends with the length of the vector `vectData`.
 
-The vector `states` contains the states in which lies each mean. The length of this vector is the same as the length of `change-point`.
+The vector `states` contains the states in which lies each mean. The length of this vector is the same as the length of `changepoint`.
 
 The vector `forced` is a boolean vector. A forced element means that two consecutive means have been forced to satisfy the constraint. For example, the "up" edge with parameter $c$ is forced if $m_{i+1} - m_i = c$.
 
@@ -185,7 +185,7 @@ gfpop(vectData =  mydata, mygraph = myGraphIso, type = "gauss", K = 1, min = 0)
 ```
 
 ```
-## change-points
+## changepoints
 ## [1]  298  613 1000
 ## 
 ## states
@@ -228,7 +228,7 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss")
 ```
 
 ```
-## change-points
+## changepoints
 ## [1]  267  607 1000
 ## 
 ## states
@@ -266,7 +266,7 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3.0)
 ```
 
 ```
-## change-points
+## changepoints
 ## [1]   97  299  500  793 1000
 ## 
 ## states
@@ -294,7 +294,7 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 ```
 
 ```
-## change-points
+## changepoints
 ##  [1]   21   22   23   24  101  118  119  127  128  151  152  154  155  159
 ## [15]  161  169  170  221  224  253  254  290  291  302  303  314  316  319
 ## [29]  339  340  354  356  378  380  424  425  440  441  494  495  523  525
@@ -350,7 +350,7 @@ gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
 ```
 
 ```
-## change-points
+## changepoints
 ##  [1]  1000  1997  3000  4000  4999  6000  6995  8000  9000 10000
 ## 
 ## states
@@ -391,7 +391,7 @@ g
 ```
 
 ```
-## change-points
+## changepoints
 ## [1]  200  500  800 1000
 ## 
 ## states
@@ -414,7 +414,7 @@ and we plot the result
 
 ```r
 gamma <- 0.966
-len <- diff(c(0, g$change-points))
+len <- diff(c(0, g$changepoints))
 signal <- NULL
 for(i in length(len):1)
   {signal <- c(signal, g$means[i]*c(1, cumprod(rep(1/gamma,len[i]-1))))}
