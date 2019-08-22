@@ -16,9 +16,9 @@ void Graph::newEdge(Edge const& edge){edges.push_back(edge);}
 // ### nb_states ### /// /// ### nb_states ### /// /// ### nb_states ### /// /// ### nb_states ### ///
 // ### nb_states ### /// /// ### nb_states ### /// /// ### nb_states ### /// /// ### nb_states ### ///
 
-int Graph::nb_states() const
+unsigned int Graph::nb_states() const
 {
-  std::vector<int> temp;
+  std::vector<unsigned int> temp;
   for (unsigned int i = 0 ; i < edges.size() ; i++)
   {
     temp.push_back(edges[i].getState1());
@@ -26,7 +26,7 @@ int Graph::nb_states() const
   }
   sort(temp.begin(), temp.end());
 
-  int res = 1;
+  unsigned int res = 1;
   for(unsigned int j = 0; j < temp.size() - 1 ; j++)
   {
     if(temp[j] != temp[j + 1]){res = res + 1;}
@@ -38,10 +38,10 @@ int Graph::nb_states() const
 // ### get ### /// /// ### get ### /// /// ### get ### ////// ### get ### ///
 // ### get ### /// /// ### get ### /// /// ### get ### ////// ### get ### ///
 
-int Graph::nb_edges() const {return(edges.size());}
-Edge Graph::getEdge(int i) const {return(edges[i]);}
-std::vector<int> Graph::getStartState() const {return(startState);}
-std::vector<int> Graph::getEndState() const {return(endState);}
+unsigned int Graph::nb_edges() const {return(edges.size());}
+Edge Graph::getEdge(unsigned int i) const {return(edges[i]);}
+std::vector<unsigned int> Graph::getStartState() const {return(startState);}
+std::vector<unsigned int> Graph::getEndState() const {return(endState);}
 
 
 // ### AreVerticesCompatible ### /// /// ### AreVerticesCompatible ### /// /// ### AreVerticesCompatible ### ///
@@ -50,7 +50,7 @@ std::vector<int> Graph::getEndState() const {return(endState);}
 
 bool Graph::AreVerticesCompatible() const //label of the vertices from 0 to S
 {
-  int maxLabel = 0;
+  unsigned int maxLabel = 0;
   unsigned int nbEdges = nb_edges();
   for (unsigned int i = 0 ; i < nbEdges ; i++)
   {
@@ -59,17 +59,17 @@ bool Graph::AreVerticesCompatible() const //label of the vertices from 0 to S
   }
 
   bool isAvertex[maxLabel + 1];
-  for(int i = 0; i < maxLabel + 1; i++){isAvertex[i] = false;}
+  for(unsigned int i = 0; i < maxLabel + 1; i++){isAvertex[i] = false;}
 
-  for (int i = 0 ; i < nbEdges ; i++)
+  for (unsigned int i = 0 ; i < nbEdges ; i++)
   {
     isAvertex[edges[i].getState1()] = true;
     isAvertex[edges[i].getState2()] = true;
   }
 
-  int nb = 0;
-  int j = 0;
-  while((j <= maxLabel) && (isAvertex[j] == true)){nb = nb + 1; j = j + 1; }
+  unsigned int nb = 0;
+  unsigned int j = 0;
+  while((j <= maxLabel) && (isAvertex[j] == true)){nb = nb + 1; j = j + 1;}
   return(nb == nb_states());
 }
 
@@ -95,7 +95,7 @@ std::string Graph::getType() const
 // ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### ///
 
 
-Interval Graph::buildInterval(double argmin, int s1, int s2, bool& out) const
+Interval Graph::buildInterval(double argmin, unsigned int s1, unsigned int s2, bool& out) const
 {
   Interval response = Interval(-INFINITY, INFINITY);
 
@@ -138,7 +138,7 @@ Interval Graph::buildInterval(double argmin, int s1, int s2, bool& out) const
 // ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### ///
 
 
-double Graph::stateDecay(int s) const
+double Graph::stateDecay(unsigned int s) const
 {
   double response =  1;
   for (int i = edges.size()-1 ; i > -1; i--)

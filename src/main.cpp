@@ -19,7 +19,6 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
 {
   // BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT
   // BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT
-
   // BEGIN TRANSFERT INTO C++ OBJETS
 
   ///////////
@@ -53,32 +52,13 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   graph.show();
   if(graph.AreVerticesCompatible() == false){Rcout << "The vertices must be labeled by integers from 0 to S (an integer)" << std::endl; return(0);}
 
-  ///////////
-  /////////// BOUND: MIN - MAX constraints
-  ///////////
 
-  double m = data.getm();
-  double M = data.getM();
-  bool isConstr = false;
-  Bound bound = Bound(m, M, isConstr);
-
-  ///////////
-  /////////// ROBUST : K and a parameter. Defining deferent robust loss. Biweight, Huber, L1
-  ///////////
-
+  ///////////TO DELETE
+  Bound bound = Bound(0, 0, false);
   Robust robust = Robust(1000,1000);
-  robust.findRobustType();
-  robust.show();
 
   // END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT
   // END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT
-
-  ///////////
-  /////////// EXCEPTIONS
-  ///////////
-
-  if(m == M){Rcout << "min data = max data. Data can not be segmented." << std::endl; return(0);}
-  if(data.getn() < 1){Rcout << "No data" << std::endl;  return(0);}
 
   ///////////
   /////////// OMEGA
@@ -100,7 +80,7 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
     _["changepoints"] = omega.GetChangepoints(),
     _["states"] = omega.GetStates(),
     _["forced"] = omega.GetForced(),
-    _["param"] = omega.GetMeans(),
+    _["param"] = omega.GetParameters(),
     _["cost"] = omega.GetGlobalCost()
   );
 

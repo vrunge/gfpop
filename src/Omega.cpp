@@ -36,7 +36,7 @@ Omega::Omega(Graph graph, Bound bound, Robust robust) : m_graph(graph), m_bound(
 
 Omega::~Omega()
 {
-  if(Q_ts != NULL){for(int i = 0; i < (n + 1); i++){delete [] Q_ts[i]; Q_ts[i] = NULL;}}
+  if(Q_ts != NULL){for(unsigned int i = 0; i < (n + 1); i++){delete [] Q_ts[i]; Q_ts[i] = NULL;}}
   delete [] Q_edges;
   Q_edges = NULL;
   delete [] Q_s_temp;
@@ -47,7 +47,7 @@ Omega::~Omega()
 //####### accessors #######////####### accessors #######////####### accessors #######//
 
 std::vector< int > Omega::GetChangepoints() const{return(changepoints);}
-std::vector< double > Omega::GetMeans() const{return(means);}
+std::vector< double > Omega::GetParameters() const{return(parameters);}
 std::vector< int > Omega::GetStates() const{return(states);}
 std::vector< int > Omega::GetForced() const{return(forced);}
 
@@ -66,33 +66,33 @@ void Omega::pava(Data const& data)
 
   std::vector<double> CW; //current weights
 
-  means.push_back(myData[0].y);
+  parameters.push_back(myData[0].y);
   CW.push_back(myData[0].w);
   changepoints.push_back(1);
 
   for(unsigned int t = 1; t < data.getn(); t++)
   {
-    if(means.back() < myData[t].y)
+    if(parameters.back() < myData[t].y)
     {
       // Begin a new segment
-      means.push_back(myData[t].y);
+      parameters.push_back(myData[t].y);
       CW.push_back(myData[t].w);
       changepoints.push_back(t+1);
     }
     else
     {
       // Update last element
-      means[means.size()-1] = (CW[CW.size()-1] * means[means.size()-1] + myData[t].w * myData[t].y)/(CW[CW.size()-1] + myData[t].w);
+      parameters[parameters.size()-1] = (CW[CW.size()-1] * parameters[parameters.size()-1] + myData[t].w * myData[t].y)/(CW[CW.size()-1] + myData[t].w);
       CW[CW.size()-1] = CW[CW.size()-1] + myData[t].w;
       changepoints[changepoints.size()-1] = changepoints[changepoints.size()-1] + 1;
 
-      while((means.size() > 1) && (means[means.size()-2] > means[means.size()-1]))
+      while((parameters.size() > 1) && (parameters[parameters.size()-2] > parameters[parameters.size()-1]))
       {
-        means[means.size()-2] = (CW[CW.size()-1] * means[means.size()-1] + CW[CW.size()-2] * means[means.size()-2])/(CW[CW.size()-1] + CW[CW.size()-2]);
+        parameters[parameters.size()-2] = (CW[CW.size()-1] * parameters[parameters.size()-1] + CW[CW.size()-2] * parameters[parameters.size()-2])/(CW[CW.size()-1] + CW[CW.size()-2]);
         CW[CW.size()-2] = CW[CW.size()-2] + CW[CW.size()-1];
         changepoints[changepoints.size()-2] = changepoints[changepoints.size()-1];
 
-        means.pop_back();
+        parameters.pop_back();
         CW.pop_back();
         changepoints.pop_back();
       }
@@ -100,17 +100,17 @@ void Omega::pava(Data const& data)
   }
 
 
-  for(unsigned int i = 0; i < changepoints[0]; i++)
-    {globalCost = globalCost +  myData[i].w*(means[0] - myData[i].y)*(means[0] - myData[i].y);}
+  for(int i = 0; i < changepoints[0]; i++)
+    {globalCost = globalCost +  myData[i].w*(parameters[0] - myData[i].y)*(parameters[0] - myData[i].y);}
 
   for(unsigned int j = 1; j < changepoints.size(); j++)
   {
-    for(unsigned int i = changepoints[j-1]; i < changepoints[j]; i++)
-    {globalCost = globalCost +  myData[i].w*(means[j] - myData[i].y)*(means[j] - myData[i].y);}
+    for(int i = changepoints[j-1]; i < changepoints[j]; i++)
+    {globalCost = globalCost +  myData[i].w*(parameters[j] - myData[i].y)*(parameters[j] - myData[i].y);}
   }
 
   std::reverse(changepoints.begin(), changepoints.end());
-  std::reverse(means.begin(), means.end());
+  std::reverse(parameters.begin(), parameters.end());
 
 }
 
@@ -137,7 +137,7 @@ void Omega::fpop1d_graph_complex(Data const& data)
 	/// Initialize first functional cost. Interval / add first point / constraint by starting vertices
 	for (unsigned char i = 0; i < p ; i++){Q_ts[1][i] = Q_s_temp[0] -> copy();}
 	addPointQ_t(myData[0], 0);
-  std::vector<int> startState = m_graph.getStartState();
+  std::vector<unsigned int> startState = m_graph.getStartState();
   if(startState.size() != 0){for(int i = 0; i < p; i++){if(std::find(startState.begin(), startState.end(), i) == startState.end()){Q_ts[1][i] -> addConstant(INFINITY);}}}
 
   for(unsigned int t = 1; t < n; t++) /// loop for all data point (except the first one)
@@ -297,11 +297,11 @@ void Omega::fpop1d_graph_std(Data const& data)
   changepoints.push_back(data.getn());
 
   changepoints.push_back(position + 1);
-  means.push_back(temp_means[length]);
+  parameters.push_back(temp_means[length]);
 
   while(position > 0)
   {
-    means.push_back(temp_means[position]);
+    parameters.push_back(temp_means[position]);
     position = temp_changepoints[position];
     if(position != 0){changepoints.push_back(position + 1);}
   }
@@ -336,7 +336,7 @@ void Omega::fillQ_edges(int newLabel)
 
 void Omega::multiple_minimization(int t)
 {
-  int j = 0;
+  unsigned int j = 0;
   /// Q_s_temp vs Q_ts minimization
   for (unsigned int i = 0 ; i < p; i++)
   {
@@ -377,11 +377,11 @@ void Omega::backtracking()
   ///
   int CurrentState = 0; ///Current state
   int CurrentChgpt = n; /// data(1)....data(n). Last data index in each segment
-  std::vector<int> endState = m_graph.getEndState();
+  std::vector<unsigned int> endState = m_graph.getEndState();
 
   if(endState.size() == 0)
   {
-    for (int j = 1 ; j < p ; j++) ///for all states
+    for (unsigned int j = 1 ; j < p ; j++) ///for all states
     {
       malsp_temp = Q_ts[n][j] -> get_min_argmin_label_state_position_final();
       if(malsp_temp[0] < malsp[0]){CurrentState = j; malsp[0] = malsp_temp[0];}
@@ -389,7 +389,7 @@ void Omega::backtracking()
   }
   else
   {
-    for (int j = 0 ; j < endState.size() ; j++) ///for all states
+    for (unsigned int j = 0 ; j < endState.size() ; j++) ///for all states
     {
       malsp_temp = Q_ts[n][endState[j]] -> get_min_argmin_label_state_position_final();
       if(malsp_temp[0] < malsp[0]){CurrentState = endState[j]; malsp[0] = malsp_temp[0];}
@@ -399,7 +399,7 @@ void Omega::backtracking()
   malsp = Q_ts[n][CurrentState] -> get_min_argmin_label_state_position_final();
   globalCost = malsp[0];
 
-  means.push_back(malsp[1]);
+  parameters.push_back(malsp[1]);
   changepoints.push_back(CurrentChgpt);
   states.push_back(CurrentState);
 
@@ -423,7 +423,7 @@ void Omega::backtracking()
     out = false;
     boolForced = false;
     decay = m_graph.stateDecay(CurrentState);
-    if(decay != 1){correction = std::pow(decay, means.back() - malsp[2] + 1);}
+    if(decay != 1){correction = std::pow(decay, parameters.back() - malsp[2] + 1);}
 
     constrainedInterval = m_graph.buildInterval(malsp[1]*correction, malsp[3], CurrentState, out); ///update out
     CurrentState = malsp[3];
@@ -434,7 +434,7 @@ void Omega::backtracking()
     if(malsp[1] > m_bound.getM()){malsp[1] = m_bound.getM(); boolForced = true;}
     if(malsp[1] < m_bound.getm()){malsp[1] = m_bound.getm(); boolForced = true;}
 
-    means.push_back(malsp[1]);
+    parameters.push_back(malsp[1]);
     changepoints.push_back(CurrentChgpt);
     states.push_back(CurrentState);
     forced.push_back(boolForced);
@@ -460,7 +460,7 @@ void Omega::backtrackingIsotonic(std::vector<Piece*> const& Q_t)
 
   int CurrentChgpt = Q_t.size() - 1; /// data(1)....data(n). Last data index in each segment
 
-  means.push_back(malsp[1]);
+  parameters.push_back(malsp[1]);
   changepoints.push_back(CurrentChgpt);
   states.push_back(0); ///the only state is vertex state 0
 
@@ -483,7 +483,7 @@ void Omega::backtrackingIsotonic(std::vector<Piece*> const& Q_t)
     if(malsp[1] > m_bound.getM()){malsp[1] = m_bound.getM(); boolForced = true;}
     if(malsp[1] < m_bound.getm()){malsp[1] = m_bound.getm(); boolForced = true;}
 
-    means.push_back(malsp[1]);
+    parameters.push_back(malsp[1]);
     changepoints.push_back(CurrentChgpt);
     states.push_back(0);
     forced.push_back(boolForced);
@@ -510,7 +510,7 @@ void Omega::save_Q_ts_Q_edges(int t) const
 
   int s1 =  0;
 
-	for (int i = 0; i < q ; i++)
+	for (unsigned int i = 0; i < q ; i++)
   {
     ///Q_ts
 
@@ -563,7 +563,7 @@ void Omega::save_Q_s_temp_Q_ts(int t) const
 	fileQ_s_temp = fileQ_s_temp + "_";
   fileQ_tsNEW = fileQ_tsNEW + "_";
 
-	for (int i = 0; i < p ; i++)
+	for (unsigned int i = 0; i < p ; i++)
   {
     ///Q_s_temp
 
@@ -606,13 +606,13 @@ void Omega::save_Q_s_temp_Q_ts(int t) const
 std::ostream &operator<<(std::ostream &s, const Omega &om)
 {
   std::vector< int > chpt = om.GetChangepoints();
-  std::vector< double > means = om.GetMeans();
+  std::vector< double > parameters = om.GetParameters();
   std::vector< int > states = om.GetStates();
   std::vector< int > forced = om.GetForced();
   s << " n : " << om.GetN()-1 << std::endl;
   for (int i = chpt.size()-1; i > -1; i--){s << " ** " << chpt[i];}
   s << std::endl;
-  for (int i = means.size()-1; i > -1; i--){s << " ** " << means[i];}
+  for (int i = parameters.size()-1; i > -1; i--){s << " ** " << parameters[i];}
   s << std::endl;
   for (int i = states.size()-1; i > -1; i--){s << " ** " << states[i];}
   s << std::endl;

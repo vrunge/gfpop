@@ -31,6 +31,8 @@ gfpop <- function(data = c(0), mygraph, type = "mean", weights = c(0))
     if(length(data) != length(weights)){stop('data vector and weights vector have different size')}
     if(!all(weights>0)){stop('weights vector has non strictly positive components')}
   }
+  if(length(data) < 2){stop('data vector length is less than 2...')}
+
   ######################
   ### GRAPH ANALYSIS ###
   ######################

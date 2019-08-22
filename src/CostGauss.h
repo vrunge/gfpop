@@ -3,14 +3,10 @@
 
 #include "Interval.h"
 #include "Robust.h"
+#include "Data.h"
 
 #include<vector>
 
-struct Point
-{
-  double y;
-  double w;
-};
 
 class CostGauss
 {

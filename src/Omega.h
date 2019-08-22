@@ -22,7 +22,7 @@ class Omega
     ~Omega();
 
     std::vector< int > GetChangepoints() const;
-    std::vector< double > GetMeans() const;
+    std::vector< double > GetParameters() const;
     std::vector< int > GetStates() const;
     std::vector< int > GetForced() const;
     int GetN() const;
@@ -50,16 +50,16 @@ class Omega
     Bound m_bound; ///min and max of the theta interval. + bool isConstrained = false if all data in [m,M]
     Robust m_robust; ///parameter K and a to define robust loss of type Huber, biweight, L1
 
-    int n; //size of the data
-    int p;   ///number of states in the graph = number of columns in the matrix Q_ts
-    int q; ///number of edges in the graph = number of elements in the object Q_edges
+    unsigned int n; //size of the data
+    unsigned int p;   ///number of states in the graph = number of columns in the matrix Q_ts
+    unsigned int q; ///number of edges in the graph = number of elements in the object Q_edges
 
     Piece*** Q_ts;  ///cost function Q with respect to position t and state s (size t x p), t = vector size.
     Piece** Q_edges; /// transformed cost by the operators for each edge (size 1 x q)
     Piece** Q_s_temp; /// cost to compare to Q_ts last element of the vector (size 1 x p)
 
     std::vector< int > changepoints; ///vector of changepoints build by fpop (first index of each segment). size c
-    std::vector< double > means; ///vector of means build by fpop. size c
+    std::vector< double > parameters; ///vector of means build by fpop. size c
     std::vector< int > states; ///vector of states build by fpop. size c
     std::vector< int > forced; ///vector of forced = 0 or 1. 1 = forced value. size c-1
     double globalCost;
