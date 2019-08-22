@@ -86,8 +86,7 @@ The next table summarizes all the possible constraints encoded into the `gfpop` 
 | no change-point | $I_e(\mu_{t},\mu_{t+1}) =  I(\mu_t = \mu_{t+1})$ |
 | up | $I_e(\mu_{t},\mu_{t+1}) = I(\mu_{t}  + c \le \mu_{t+1})$ |
 | down | $I_e(\mu_{t},\mu_{t+1}) = I(\mu_{t+1} + c \le \mu_{t})$ |
-| absSup | $I_e(\mu_{t},\mu_{t+1}) = I(c \le \ell_1(\mu_{t} - \mu_{t+1}))$ |
-| absInf | $I_e(\mu_{t},\mu_{t+1}) = I(\ell_1(\mu_{t} - \mu_{t+1}) \le  c )$ |
+| abs | $I_e(\mu_{t},\mu_{t+1}) = I(c \le \ell_1(\mu_{t} - \mu_{t+1}))$ |
 | no constraint | $I_e(\mu_{t},\mu_{t+1}) =  I(\mu_t \ne \mu_{t+1})$ | 
 
 
@@ -335,16 +334,16 @@ gfpop(vectData =  mydata, mygraph = myGraphStd, type = "gauss")
 ```
 
 
-### absSup edges
+### abs edge
 
-With a unique "absSup" edge, we impose a difference between the means of size at least 1.  
+With a unique "abs" edge, we impose a difference between the means of size at least 1.  
 
 ```r
 n <- 10000
 mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), c(0, 1, 0, 2, 1, 2, 0, 1, 0, 1), 0.5)
 beta <- 2*log(n)
 myGraph <- graph(
-  edge(0, 0,"absSup", beta, gap = 1),
+  edge(0, 0,"abs", beta, gap = 1),
   edge(0, 0,"null"))
 gfpop(vectData =  mydata, mygraph = myGraph, type = "gauss", K = 3)
 ```
@@ -446,7 +445,7 @@ emptyGraph
 ## <0 rows> (or 0-length row.names)
 ```
 
-`state1` is the starting vertex of an edge, `state2` its ending vertex. `type` is one of the available edge type ("null", up", "down", "std", "absInf", "absSup"). `penalty` is a nonnegative parameter: the additional cost $\beta_i$ to consider when we move within the graph using this edge. `parameter` is annother nonnegative parameter, a characteristics of the edge, depending of its type (it is a decay if type is "null" and a gap otherwise).
+`state1` is the starting vertex of an edge, `state2` its ending vertex. `type` is one of the available edge type ("null", "std", "up", "down", "abs"). `penalty` is a nonnegative parameter: the additional cost $\beta_i$ to consider when we move within the graph using this edge. `parameter` is annother nonnegative parameter, a characteristics of the edge, depending of its type (it is a decay if type is "null" and a gap otherwise).
 
 We add edges into a graph as follows
 
