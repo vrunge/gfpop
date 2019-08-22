@@ -16,7 +16,7 @@ DANGER : code broken in August in preparation for big update!
 #### LaMME, Evry University
 ### February 28, 2019
 
-> [Problem desctription](#intro)
+> [Problem description](#intro)
 
 > [Quick Start](#qs)
 

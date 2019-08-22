@@ -16,7 +16,7 @@ DANGER : code broken in August in preparation for big update!
 #### LaMME, Evry University
 ### February 28, 2019
 
-> [Problem desctription](#intro)
+> [Change-point problem description](#intro)
 
 > [Quick Start](#qs)
 
@@ -24,16 +24,16 @@ DANGER : code broken in August in preparation for big update!
 
 > [Graph construction](#gc)
 
-> [More on the main gfpop function](#gfpop)
+> [More on the main gfpop function with C++ structure](#gfpop)
 
 > [Supplementary R functions](#suppl)
 
 
 <a id="intro"></a>
 
-## Problem description
+## Change-point problem description
 
-`gfpop` is an `R` package developed to perform parametric change-point detection in univariate time series constrained to a graph structure. The constraints are imposed to the sequence of infered means of consecutive segments and are related to the direction and/or the magnitude of the mean changes. Change-point detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm.  The user can specify some other constraints on the graph (starting and ending vertices) and constraint the range of means. 
+`gfpop` is an `R` package developed to perform parametric change-point detection in univariate time series constrained to a graph structure. The constraints are imposed to the sequence of infered means of consecutive segments and are related to the direction and/or the magnitude of the mean changes. Change-point detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm.  The user can specify some other constraints on the graph (starting and ending nodes) and constraint the range of parameters (means most of the time) to use at each node. 
 
 For each data point, the algorithm updates a function (a functional cost) and we go through an edge. The edges of the graph can be of type "null", "std",  "up", "down" or "abs" with the following meaning:
 
@@ -75,9 +75,9 @@ $$Q_n = \min_{(\mu_1,...,\mu_n)\in \mathbb{R}^{n}\,,\,\mu_{n+1} = +\infty}\quad\
 
 with $I \in \{0,1\}$ the indicator function. This approach can be generalized to more complex constraints on consecutive means using a graph structure. We define the transition graph $\mathcal{G}_n$ as a directed acyclic graph with the following properties:
 
-1. Vertices are indexed by time and state. $v = (t,s)$ for vertex $v$ with time $t$ and state $s$. The states are elements of the set $\mathcal{S} =  \{0,...,S\} \subset \mathbb{N}$;
+1. Nodes are indexed by time and state. $v = (t,s)$ for node $v$ with time $t$ and state $s$. The states are elements of the set $\mathcal{S} =  \{0,...,S\} \subset \mathbb{N}$;
 
-2. All the vertices have time $t$ in $\{1,...,n\}$ except for the unique starting vertex $v_0= (0,\emptyset)$ and the unique ending vertex $v_{n+1} = (n+1,\emptyset)$, where $\emptyset$ denotes an undefinite state;
+2. All the nodes have time $t$ in $\{1,...,n\}$ except for the unique starting node $v_0= (0,\emptyset)$ and the unique ending node $v_{n+1} = (n+1,\emptyset)$, where $\emptyset$ denotes an undefinite state;
 
 3. Edges are transitions between "time-consecutive" vertices of type $v = (t,s)$ and $v' = (t+1,s')$ which gives us the edge $e = (t,s,s')$ for $t \in \{0,...,n\}$;
 
@@ -103,11 +103,11 @@ Q_n(\mathcal{G}_n)  = \underset{\underset{\mu \in \mathbb{R}^n\,,\,p(\mu)}{p \in
 $$
 
 
-In the `gfpop` package, the edges $(t,s,s')$ for $t\in\{1,...,n\}$ are not time-dependent. In this case, we redefine a graph $\mathcal{G}= (V,E)$  by the label of its vertices $V = \{0,...,S\} \subset \mathbb{N}$ and its set of oriented edges $E \subset V \times V$ with $e = (s,s') \in E$ defining an edge going from vertex $s$ to vertex $s'$ with indicator function $I_e$ and penalty $\beta_e$. 
+In the `gfpop` package, the edges $(t,s,s')$ for $t\in\{1,...,n\}$ are not time-dependent. In this case, we redefine a graph $\mathcal{G}= (V,E)$  by the label of its vertices $V = \{0,...,S\} \subset \mathbb{N}$ and its set of oriented edges $E \subset V \times V$ with $e = (s,s') \in E$ defining an edge going from node $s$ to node $s'$ with indicator function $I_e$ and penalty $\beta_e$. 
 
 In most applications, the set of edges always contains edges of type $(s,s)$ for all $s \in V$ with indicator function $I_e(\mu,\nu)= I(\mu \ne \nu)$ as it corresponds to an absence of constraint on segment lengths. 
 
-The main algorithm of the package, the `gfpop` function, returns the change-point vector $\tau^*$ defined as $\{i \in \{1,...,n\}\,,\, m_{i}\ne m_{i+1}\}$, with $(m_1,...,m_n)$ the argminimum of $(\mu_1,...,\mu_n)$ in $Q_n(\mathcal{G}_n)$ and $m_{n+1} = +\infty$. we also give the possibility to restrict the set of valid paths by imposing a starting and/or an ending vertex and contraint the range of infered means, replacing $\mu \in \mathbb{R}^n$ by $\mu \in [A,B]$ in the definition of $Q_n(\mathcal{G}_n)$.
+The main algorithm of the package, the `gfpop` function, returns the change-point vector $\tau^*$ defined as $\{i \in \{1,...,n\}\,,\, m_{i}\ne m_{i+1}\}$, with $(m_1,...,m_n)$ the argminimum of $(\mu_1,...,\mu_n)$ in $Q_n(\mathcal{G}_n)$ and $m_{n+1} = +\infty$. we also give the possibility to restrict the set of valid paths by imposing a starting and/or an ending ,node and contraint the range of infered means, replacing $\mu \in \mathbb{R}^n$ by $\mu \in [A,B]$ in the definition of $Q_n(\mathcal{G}_n)$.
 
 <a id="qs"></a>
 
@@ -450,7 +450,7 @@ emptyGraph
 ## <0 rows> (or 0-length row.names)
 ```
 
-`state1` is the starting vertex of an edge, `state2` its ending vertex. `type` is one of the available edge type ("null", "std", "up", "down", "abs"). `penalty` is a nonnegative parameter: the additional cost $\beta_i$ to consider when we move within the graph using this edge. `parameter` is annother nonnegative parameter, a characteristics of the edge, depending of its type (it is a decay if type is "null" and a gap otherwise).
+`state1` is the starting node of an edge, `state2` its ending node. `type` is one of the available edge type ("null", "std", "up", "down", "abs"). `penalty` is a nonnegative parameter: the additional cost $\beta_i$ to consider when we move within the graph using this edge. `parameter` is annother nonnegative parameter, a characteristics of the edge, depending of its type (it is a decay if type is "null" and a gap otherwise).
 
 We add edges into a graph as follows
 
