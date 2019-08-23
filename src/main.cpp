@@ -67,6 +67,8 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
 
   // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects
   // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects
+  // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects
+  // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects
 
   /////////////////////////////////
   /////////// DATA COPY ///////////
@@ -90,7 +92,7 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   Rcpp::CharacterVector typeEdge = mygraph["type"];
   Rcpp::NumericVector penalty = mygraph["penalty"];
   Rcpp::NumericVector parameter = mygraph["parameter"];
-  Rcpp::NumericVector KK = mygraph["Z"];
+  Rcpp::NumericVector KK = mygraph["K"];
   Rcpp::NumericVector aa = mygraph["a"];
   Rcpp::NumericVector minn = mygraph["min"];
   Rcpp::NumericVector maxx = mygraph["max"];
@@ -100,6 +102,10 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
 
   graph.show();
 
+  // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects
+  // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects
+  // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects
+  // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects
 
   /////////////////////////////////////////////
   /////////// COST FUNCTION LOADING ///////////
@@ -112,24 +118,20 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   cost_age = age_factory(type);
 
 
-
   ///////////TO DELETE
   Bound bound = Bound(0, 0, false);
   Robust robust = Robust(1000,1000);
 
-  // END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT
-  // END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT
-
-  ///////////
-  /////////// OMEGA
-  ///////////
+  /////////////////////////////
+  /////////// OMEGA ///////////
+  /////////////////////////////
 
   Omega omega(graph, bound, robust);
-  omega.gfpop(data);
+  //omega.gfpop(data);
 
-  ///////////
-  /////////// RETURN
-  ///////////
+  /////////////////////////////
+  /////////// RETURN //////////
+  /////////////////////////////
 
   List res = List::create(
     _["changepoints"] = omega.GetChangepoints(),
