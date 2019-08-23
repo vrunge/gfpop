@@ -68,15 +68,13 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects
   // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects
   // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects
+  // DATA AND GRAPH
 
   /////////////////////////////////
   /////////// DATA COPY ///////////
   /////////////////////////////////
   Data data = Data();
-  unsigned int n = vectData.length();
-  unsigned int nw = vectWeight.length();
-  data.copy(vectData, vectWeight, n, nw);
-  //data.show(false);
+  data.copy(vectData, vectWeight, vectData.length(), vectWeight.length());
 
   //////////////////////////////////
   /////////// GRAPH COPY ///////////
@@ -115,7 +113,6 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   cost_argmin = argmin_factory(type);
   cost_intervalInterRoots = intervalInterRoots_factory(type);
   cost_age = age_factory(type);
-
 
   /////////////////////////////
   /////////// OMEGA ///////////

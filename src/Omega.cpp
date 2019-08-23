@@ -107,8 +107,7 @@ void Omega::gfpop(Data const& data)
   std::vector<unsigned int> startState = m_graph.getStartState();
   if(startState.size() != 0){for(unsigned int i = 0; i < p; i++){if(std::find(startState.begin(), startState.end(), i) == startState.end()){Q_ts[1][i] -> addConstant(INFINITY);}}}
 
-
-
+/*
   for(unsigned int t = 1; t < n; t++) /// loop for all data point (except the first one)
   {
     fillQ_edges(t); ///fillQ_edges. t = newLabel to consider
@@ -116,6 +115,7 @@ void Omega::gfpop(Data const& data)
     addPointQ_t(myData[t], t); ///Add new data point
   }
   backtracking();
+ */
 }
 
 

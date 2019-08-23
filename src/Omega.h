@@ -6,11 +6,11 @@
 #include"Edge.h"
 
 #include "ListPiece.h"
+#include"Piece.h"
 
 #include"Bound.h"
 #include"Robust.h"
 
-#include"Piece.h"
 
 #include <math.h>
 #include<vector>
@@ -32,11 +32,9 @@ class Omega
     double GetGlobalCost() const;
 
     void gfpop(Data const& data);
-
     void fillQ_edges(int newLabel);
     void multiple_minimization(int t);
     void addPointQ_t(Point pt, int t);
-
     void backtracking();
 
   private:
@@ -52,6 +50,11 @@ class Omega
     Piece*** Q_ts;  ///cost function Q with respect to position t and state s (size t x p), t = vector size.
     Piece** Q_edges; /// transformed cost by the operators for each edge (size 1 x q)
     Piece** Q_s_temp; /// cost to compare to Q_ts last element of the vector (size 1 x p)
+
+    ListPiece** LP_ts;  ///cost function Q with respect to position t and state s (size t x p), t = vector size.
+    ListPiece* LP_edges; /// transformed cost by the operators for each edge (size 1 x q)
+    ListPiece* LP_s_temp; /// cost to compare to Q_ts last element of the vector (size 1 x p)
+
 
     std::vector< int > changepoints; ///vector of changepoints build by fpop (first index of each segment). size c
     std::vector< double > parameters; ///vector of means build by fpop. size c
