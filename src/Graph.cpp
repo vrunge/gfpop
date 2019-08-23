@@ -48,6 +48,13 @@ unsigned int Graph::nb_edges() const
   return(res);
 }
 
+
+// ### nb_rows ### /// /// ### nb_rows ### /// /// ### nb_rows ### ////// ### nb_rows ### ///
+// ### nb_rows ### /// /// ### nb_rows ### /// /// ### nb_rows ### ////// ### nb_rows ### ///
+
+unsigned int Graph::nb_rows() const {return(edges.size());}
+
+
 // ### get ### /// /// ### get ### /// /// ### get ### ////// ### get ### ///
 // ### get ### /// /// ### get ### /// /// ### get ### ////// ### get ### ///
 

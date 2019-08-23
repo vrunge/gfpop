@@ -16,22 +16,43 @@
 //####### constructor #######////####### constructor #######////####### constructor #######//
 //####### constructor #######////####### constructor #######////####### constructor #######//
 
-Omega::Omega(Graph graph, Bound bound, Robust robust) : m_graph(graph), m_bound(bound), m_robust(robust)
+Omega::Omega(Graph graph)
 {
+  m_graph = graph;
+  //////////TO DELETE//////////
+  m_bound = Bound(0, 0, false);
+  m_robust = Robust(1000,1000);
+
 	p = graph.nb_states();
 	q = graph.nb_edges();
   double mini = -INFINITY;
   double maxi = INFINITY;
+  unsigned int nbR = graph.nb_rows();
 
   Q_ts = NULL;
-	Q_edges = new Piece*[q];
-	for(unsigned char i = 0 ; i < q ; i++)
-	{
 
-	  Q_edges[i] = new Piece(Track(), Interval(mini, maxi), CostGauss());
-	}
+  /// INITIALIZE Q_edges ///
+	Q_edges = new Piece*[q];
+	for(unsigned char i = 0; i < q; i++){Q_edges[i] = new Piece(Track(), Interval(-INFINITY, INFINITY), CostGauss());}
+
+	/// INITIALIZE Q_s_temp ///
 	Q_s_temp = new Piece*[p];
-  for(unsigned char i = 0 ; i < p ; i++){Q_s_temp[i] = new Piece(Track(), Interval(-INFINITY, INFINITY), CostGauss());}
+  for(unsigned char i = 0; i < p; i++)
+  {
+    ///REVEAL NODE BOUNDARIES IF ANY
+    for(unsigned char j = q; j < nbR; j++)
+    {
+      if((graph.getEdge(j).getConstraint() == "node") && (graph.getEdge(j).getState1() == i))
+        {
+          mini = graph.getEdge(j).getMinn();
+          maxi = graph.getEdge(j).getMaxx();
+        }
+    }
+
+    Q_s_temp[i] = new Piece(Track(), Interval(mini, maxi), CostGauss());
+    mini = INFINITY;
+    maxi = -INFINITY;
+  }
 }
 
 
@@ -79,7 +100,7 @@ void Omega::gfpop(Data const& data)
 	for (unsigned char i = 0; i < p ; i++){Q_ts[1][i] = Q_s_temp[0] -> copy();}
 	addPointQ_t(myData[0], 0);
   std::vector<unsigned int> startState = m_graph.getStartState();
-  if(startState.size() != 0){for(int i = 0; i < p; i++){if(std::find(startState.begin(), startState.end(), i) == startState.end()){Q_ts[1][i] -> addConstant(INFINITY);}}}
+  if(startState.size() != 0){for(unsigned int i = 0; i < p; i++){if(std::find(startState.begin(), startState.end(), i) == startState.end()){Q_ts[1][i] -> addConstant(INFINITY);}}}
 
   for(unsigned int t = 1; t < n; t++) /// loop for all data point (except the first one)
   {
@@ -221,163 +242,6 @@ void Omega::backtracking()
     forced.push_back(boolForced);
   }
   //std::cout<<"DONE"<<std::endl;
-}
-
-
-
-
-//##### backtrackingIsotonic #####//////##### backtrackingIsotonic #####//////##### backtrackingIsotonic #####///
-//##### backtrackingIsotonic #####//////##### backtrackingIsotonic #####//////##### backtrackingIsotonic #####///
-
-void Omega::backtrackingIsotonic(std::vector<Piece*> const& Q_t)
-{
-  ///
-  /// malsp = Min_Argmin_Label_State_Position_Final
-  ///
-
-  std::vector<double> malsp = Q_t.back() -> get_min_argmin_label_state_position_final();
-  globalCost = malsp[0];
-  //std::cout<< "     min : " << malsp[0] << std::endl;
-
-  int CurrentChgpt = Q_t.size() - 1; /// data(1)....data(n). Last data index in each segment
-
-  parameters.push_back(malsp[1]);
-  changepoints.push_back(CurrentChgpt);
-  states.push_back(0); ///the only state is vertex state 0
-
-
-  /// BACKTRACK
-  ///
-  ///BEFORE FINAL STATE
-  ///
-  bool boolForced = false;
-
-  while( malsp[2] > 0)  ///while Label > 0
-  {
-    ///
-    ///BACKTRACK
-    ///
-    boolForced = false;
-    CurrentChgpt = malsp[2];
-    malsp = Q_t[malsp[2]] -> get_min_argmin_label(malsp[1] - m_graph.getEdge(1).getParameter(), boolForced, m_bound.getIsConstrained());
-
-    if(malsp[1] > m_bound.getM()){malsp[1] = m_bound.getM(); boolForced = true;}
-    if(malsp[1] < m_bound.getm()){malsp[1] = m_bound.getm(); boolForced = true;}
-
-    parameters.push_back(malsp[1]);
-    changepoints.push_back(CurrentChgpt);
-    states.push_back(0);
-    forced.push_back(boolForced);
-  }
-}
-
-
-//##### saveInFiles #####/// ///##### saveInFiles #####/// ///##### saveInFiles #####/// ///##### saveInFiles #####///
-//##### saveInFiles #####/// ///##### saveInFiles #####/// ///##### saveInFiles #####/// ///##### saveInFiles #####///
-
-
-//##### save_fillQ_edges #####//////##### save_fillQ_edges #####//////##### save_fillQ_edges #####//////##### save_fillQ_edges #####///
-//##### save_fillQ_edges #####//////##### save_fillQ_edges #####//////##### save_fillQ_edges #####//////##### save_fillQ_edges #####///
-
-void Omega::save_Q_ts_Q_edges(int t) const
-{
-  std::ostringstream ttemp;  //temp as in temporary
-	ttemp << t;
-  std::string fileQ_ts = "Rtxt/Q_ts_" + ttemp.str();
-	std::string fileQ_edges = "Rtxt/Q_edges_" + ttemp.str();
-
-	fileQ_ts = fileQ_ts + "_";
-  fileQ_edges = fileQ_edges + "_";
-
-  int s1 =  0;
-
-	for (unsigned int i = 0; i < q ; i++)
-  {
-    ///Q_ts
-
-    Edge edge = m_graph.getEdge(i);
-    s1 = edge.getState1();   /// starting state
-
-    std::string filenameQ_ts;
-    std::ostringstream temp1;  //temp as in temporary
-    temp1 << i ;
-    filenameQ_ts = fileQ_ts + temp1.str();
-    filenameQ_ts += ".txt";
-    //std::cout << filenameQ_ts << std::endl;
-
-    std::ofstream fichier1(filenameQ_ts.c_str(),std::ios::out | std::ios::trunc);
-    fichier1.precision(9);
-    Piece* tmp1 = Q_ts[t][s1] -> copy();
-    fichier1 >> tmp1;
-    fichier1.close();
-
-    ///Qedges
-
-    std::string filenameQ_edges;
-    std::ostringstream temp2;  //temp as in temporary
-    temp2 << i;
-    filenameQ_edges = fileQ_edges + temp2.str();
-    filenameQ_edges += ".txt";
-    //std::cout<< filenameQ_edges <<std::endl;
-
-    std::ofstream fichier2(filenameQ_edges.c_str(),std::ios::out | std::ios::trunc);
-    fichier2.precision(9);
-    Piece* tmp2 = Q_edges[i] -> copy();
-    fichier2 >> tmp2;
-    fichier2.close();
-  }
-
-}
-
-
-//##### save_Q_s_temp_Q_ts #####//////##### save_Q_s_temp_Q_ts #####//////##### save_Q_s_temp_Q_ts #####///
-//##### save_Q_s_temp_Q_ts #####//////##### save_Q_s_temp_Q_ts #####//////##### save_Q_s_temp_Q_ts #####///
-
-
-void Omega::save_Q_s_temp_Q_ts(int t) const
-{
-  std::ostringstream ttemp;  //temp as in temporary
-	ttemp << t;
-  std::string fileQ_s_temp = "Rtxt/Q_s_temp_" + ttemp.str();
-	std::string fileQ_tsNEW = "Rtxt/Q_tsNEW_" + ttemp.str();
-
-	fileQ_s_temp = fileQ_s_temp + "_";
-  fileQ_tsNEW = fileQ_tsNEW + "_";
-
-	for (unsigned int i = 0; i < p ; i++)
-  {
-    ///Q_s_temp
-
-    std::string filenameQ_s_temp;
-    std::ostringstream temp1;  //temp as in temporary
-    temp1 << i ;
-    filenameQ_s_temp = fileQ_s_temp + temp1.str();
-    filenameQ_s_temp += ".txt";
-    //std::cout << filenameQ_s_temp << std::endl;
-
-    std::ofstream fichier1(filenameQ_s_temp.c_str(),std::ios::out | std::ios::trunc);
-    fichier1.precision(9);
-    Piece* tmp1 = Q_s_temp[i];
-    tmp1 -> save(fichier1);
-    fichier1.close();
-
-    ///Q_tsNEW
-
-    std::string filenameQ_tsNEW;
-    std::ostringstream temp2;  //temp as in temporary
-    temp2 << i;
-    filenameQ_tsNEW = fileQ_tsNEW + temp2.str();
-    filenameQ_tsNEW += ".txt";
-    //std::cout<< filenameQ_tsNEW <<std::endl;
-
-    std::ofstream fichier2(filenameQ_tsNEW.c_str(),std::ios::out | std::ios::trunc);
-
-    fichier2.precision(9);
-    Piece* tmp2 = Q_ts[t][i];
-    tmp2 -> save(fichier2);
-
-    fichier2.close();
-  }
 }
 
 

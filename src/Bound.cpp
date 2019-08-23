@@ -1,6 +1,8 @@
 #include "Bound.h"
 
 
+Bound::Bound(){}
+
 Bound::Bound(double mini, double maxi, bool isConstr) : m(mini), M(maxi), isConstrained(isConstr){}
 
 double Bound::getm() const {return(m);}

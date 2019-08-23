@@ -11,8 +11,7 @@
 #include"Data.h"
 #include"Graph.h"
 #include"Edge.h"
-#include"Bound.h"
-#include"Robust.h"
+
 
 using namespace Rcpp;
 
@@ -118,15 +117,11 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   cost_age = age_factory(type);
 
 
-  ///////////TO DELETE
-  Bound bound = Bound(0, 0, false);
-  Robust robust = Robust(1000,1000);
-
   /////////////////////////////
   /////////// OMEGA ///////////
   /////////////////////////////
 
-  Omega omega(graph, bound, robust);
+  Omega omega(graph);
   //omega.gfpop(data);
 
   /////////////////////////////

@@ -56,6 +56,10 @@ Edge <- function(state1, state2, type = "null", penalty = 0, decay = 1, gap = 0,
 
 StartEnd <- function(start = NULL, end = NULL)
 {
+  ### delete repetitions if any
+  start <- unique(start)
+  end <- unique(end)
+
   df <- data.frame(character(), character(), character(), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), stringsAsFactors = FALSE)
   colnames(df) <- c("state1", "state2", "type", "penalty", "parameter", "K", "a", "min", "max")
   if(length(start) != 0)
@@ -180,8 +184,8 @@ graphReorder <- function(mygraph)
 {
   ### BUILD an ordered Graph : myOrderedGraph ###
   ##separate startend from vertices
-  graphNA <- mygraph[is.na(mygraph[,2]),] ## Start End vertices
-  graphV <-  mygraph[!is.na(mygraph[,2]),] ## Edges of the graph
+  graphNA <- mygraph[is.na(mygraph[,4]),] ## Start End nodes and range values nodes
+  graphV <-  mygraph[!is.na(mygraph[,4]),] ## Edges of the graph
 
   myVertices <- unique(c(graphV[,1], graphV[,2]))
 
@@ -224,6 +228,7 @@ graphReorder <- function(mygraph)
 
 typeOfGraph <- function(mygraph)
 {
+
   return("gfpop")
 }
 

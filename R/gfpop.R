@@ -115,7 +115,7 @@ itergfpop <- function(data = c(0), mygraph, type = "mean", weights = c(0), iter.
   ######################
   iter <- 0
   beta_old <- 0
-  n <- length(vectData)
+  n <- length(data)
   beta <- getDerivativePenalty(D.init, n)
 
   #update newGraph

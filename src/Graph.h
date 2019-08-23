@@ -15,6 +15,8 @@ class Graph
 
     unsigned int nb_states() const;
     unsigned int nb_edges() const;
+    unsigned int nb_rows() const;
+
     Edge getEdge(unsigned int i) const;
     std::vector<unsigned int> getStartState() const;
     std::vector<unsigned int> getEndState() const;

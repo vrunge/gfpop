@@ -18,7 +18,7 @@
 class Omega
 {
   public:
-    Omega(Graph graph, Bound bound, Robust robust = Robust());
+    Omega(Graph graph);
     ~Omega();
 
     std::vector< int > GetChangepoints() const;
@@ -35,10 +35,6 @@ class Omega
     void addPointQ_t(Point pt, int t);
 
     void backtracking();
-    void backtrackingIsotonic(std::vector<Piece*> const& Q_t);
-
-    void save_Q_ts_Q_edges(int t) const;
-    void save_Q_s_temp_Q_ts(int t) const;
 
   private:
 
