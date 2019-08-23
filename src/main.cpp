@@ -27,19 +27,19 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   if(type == "variance")
   {
     double mean = 0;
-    for(unsigned int i = 0; i < vectData.size(); i++){mean = mean + vectData[i];}
+    for(int i = 0; i < vectData.size(); i++){mean = mean + vectData[i];}
     mean = mean/vectData.size();
-    for(unsigned int i = 0; i < vectData.size(); i++){vectData[i] = vectData[i] - mean; if(vectData[i] == 0){vectData[i] = epsilon;}}
+    for(int i = 0; i < vectData.size(); i++){vectData[i] = vectData[i] - mean; if(vectData[i] == 0){vectData[i] = epsilon;}}
   }
 
   if(type == "exp")
   {
-    for(unsigned int i = 0; i < vectData.size(); i++){if(vectData[i] <= 0){throw std::range_error("Data has to be all positive");}}
+    for(int i = 0; i < vectData.size(); i++){if(vectData[i] <= 0){throw std::range_error("Data has to be all positive");}}
   }
 
   if(type == "poisson")
   {
-    for(unsigned int i = 0; i < vectData.size(); i++){if(vectData[i] < 0 || (vectData[i]  > floor(vectData[i]))){throw std::range_error("There are some non-integer data");}}
+    for(int i = 0; i < vectData.size(); i++){if(vectData[i] < 0 || (vectData[i]  > floor(vectData[i]))){throw std::range_error("There are some non-integer data");}}
   }
 
   if(type == "negbin")
@@ -61,7 +61,7 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
       disp = disp  + (mean * mean / (variance - mean));
     }
     disp = disp/k;
-    for(unsigned int i = 0; i < vectData.size(); i++){vectData[i] = vectData[i]/disp; if(vectData[i] == 0){vectData[i] = epsilon/(1- epsilon);}}
+    for(int i = 0; i < vectData.size(); i++){vectData[i] = vectData[i]/disp; if(vectData[i] == 0){vectData[i] = epsilon/(1- epsilon);}}
   }
 
   // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects
