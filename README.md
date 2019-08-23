@@ -137,7 +137,7 @@ myGraph <- graph(penalty = 2*log(n), type = "updown")
 The gfpop function gives the result of the segmentation using `myData` and `myGraph` as parameters. We choose a gaussian cost.
 
 ```r
-gfpop(data = myData, mygraph = myGraph, type = "gauss")
+gfpop(data = myData, mygraph = myGraph, type = "mean")
 ```
 
 ```
@@ -184,7 +184,7 @@ The isotonic regression infers a sequence of nondecreasing means.
 n <- 1000
 mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1), c(0, 0.5, 1, 1.5, 2, 2.5, 3), sigma = 1)
 myGraphIso <- graph(penalty = 2*log(n), type = "isotonic")
-gfpop(data =  mydata, mygraph = myGraphIso, type = "gauss")
+gfpop(data =  mydata, mygraph = myGraphIso, type = "mean")
 ```
 
 ```
@@ -227,7 +227,7 @@ myGraph <- graph(
   Edge(2, 2, "null"),
   StartEnd(start = 0, end = 2))
 
-gfpop(data =  mydata, mygraph = myGraph, type = "gauss")
+gfpop(data =  mydata, mygraph = myGraph, type = "mean")
 ```
 
 ```
@@ -265,7 +265,7 @@ myGraph <- graph(
   Edge(0, 0, "null"),
   Edge(1, 1, "null"),
   StartEnd(start = 0, end = 0))
-gfpop(data =  mydata, mygraph = myGraph, type = "gauss")
+gfpop(data =  mydata, mygraph = myGraph, type = "mean")
 ```
 
 ```
@@ -293,7 +293,7 @@ If we skip all these constraints and use a standard fpop algorithm, the result i
 
 ```r
 myGraphStd <- graph(penalty = 2*log(n), type = "std")
-gfpop(data =  mydata, mygraph = myGraphStd, type = "gauss")
+gfpop(data =  mydata, mygraph = myGraphStd, type = "mean")
 ```
 
 ```
@@ -349,7 +349,7 @@ beta <- 2*log(n)
 myGraph <- graph(
   Edge(0, 0,"abs", beta, gap = 1),
   Edge(0, 0,"null"))
-gfpop(data =  mydata, mygraph = myGraph, type = "gauss", K = 3)
+gfpop(data =  mydata, mygraph = myGraph, type = "mean", K = 3)
 ```
 
 ```
@@ -389,7 +389,7 @@ myGraphDecay <- graph(
   Edge(0, 0, "up", beta),
   Edge(0, 0, "null", 0, decay = 0.966)
   )
-g <- gfpop(data =  mydata, mygraph = myGraphDecay, type = "gauss", min = 0)
+g <- gfpop(data =  mydata, mygraph = myGraphDecay, type = "mean", min = 0)
 g
 ```
 
