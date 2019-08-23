@@ -98,7 +98,7 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   Rcpp::NumericVector maxx = mygraph["max"];
 
   for(int i = 0 ; i < mygraph.nrow(); i++)
-    {graph << Edge(penalty[i], state1[i], state2[i], typeEdge[i], parameter[i]);}
+    {graph << Edge(penalty[i], state1[i], state2[i], typeEdge[i], parameter[i], KK[i], aa[i], minn[i], maxx[i]);}
 
   graph.show();
 

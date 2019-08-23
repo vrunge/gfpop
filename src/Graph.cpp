@@ -35,10 +35,22 @@ unsigned int Graph::nb_states() const
 }
 
 
+// ### nb_edges ### /// /// ### nb_edges ### /// /// ### nb_edges ### /// /// ### nb_edges ### ///
+// ### nb_edges ### /// /// ### nb_edges ### /// /// ### nb_edges ### /// /// ### nb_edges ### ///
+
+unsigned int Graph::nb_edges() const
+{
+  unsigned int res = 0;
+  for (unsigned int i = 0 ; i < edges.size() ; i++)
+  {
+    if(edges[i].getConstraint() != "node"){res = res + 1;};
+  }
+  return(res);
+}
+
 // ### get ### /// /// ### get ### /// /// ### get ### ////// ### get ### ///
 // ### get ### /// /// ### get ### /// /// ### get ### ////// ### get ### ///
 
-unsigned int Graph::nb_edges() const {return(edges.size());}
 Edge Graph::getEdge(unsigned int i) const {return(edges[i]);}
 std::vector<unsigned int> Graph::getStartState() const {return(startState);}
 std::vector<unsigned int> Graph::getEndState() const {return(endState);}
@@ -155,25 +167,25 @@ double Graph::stateDecay(unsigned int s) const
 
 void Graph::show() const
 {
-  //std::cout << "GRAPH" << std::endl;
+  std::cout << "GRAPH" << std::endl;
   for (unsigned int i = 0 ; i < edges.size() ; i++)
   {
-    //edges[i].show();
+    edges[i].show();
   }
-  //std::cout<< "Start state : ";
+  std::cout<< "Start state : ";
   for (unsigned int i = 0 ; i < startState.size() ; i++)
   {
-    //std::cout<< startState[i] << " ";
+    std::cout<< startState[i] << " ";
   }
-  //std::cout << std::endl;
-  //std::cout<< "End state : ";
+  std::cout << std::endl;
+  std::cout<< "End state : ";
   for (unsigned int i = 0 ; i < endState.size() ; i++)
   {
-    //std::cout<< endState[i] << " ";
+    std::cout<< endState[i] << " ";
   }
-  //std::cout << std::endl;
-  //std::cout<< "nb states : " << nb_states() << std::endl;
-  //std::cout<< "nb edges : " << nb_edges() << std::endl;
+  std::cout << std::endl;
+  std::cout<< "nb states : " << nb_states() << std::endl;
+  std::cout<< "nb edges : " << nb_edges() << std::endl;
 }
 
 // ### OPERATOR ### /// /// ### OPERATOR ### /// /// ### OPERATOR ### /// /// ### OPERATOR ### ///

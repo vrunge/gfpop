@@ -21,5 +21,7 @@ double Edge::getMaxx() const {return(maxx);}
 
 void Edge::show() const
 {
-  //std::cout << " state1: " << state1 << " state2: " << state2 << " constraint: " << constraint << " penalty: " << beta << " parameter: " << parameter << std::endl;
+  std::cout << "- s1: " << state1 << " s2: " << state2 << " cstt: " << constraint << " beta: " << beta << " param: " << parameter;
+  std::cout << " K  " << KK << " a: " << aa << " min: " << minn << " max: " << maxx << std::endl;
+
 }

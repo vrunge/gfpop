@@ -20,14 +20,18 @@ Omega::Omega(Graph graph, Bound bound, Robust robust) : m_graph(graph), m_bound(
 {
 	p = graph.nb_states();
 	q = graph.nb_edges();
-  double mini = m_bound.getm();
-  double maxi = m_bound.getM();
+  double mini = -INFINITY;
+  double maxi = INFINITY;
 
   Q_ts = NULL;
 	Q_edges = new Piece*[q];
-	for(unsigned char i = 0 ; i < q ; i++){Q_edges[i] = new Piece(Track(), Interval(mini, maxi), CostGauss());}
+	for(unsigned char i = 0 ; i < q ; i++)
+	{
+
+	  Q_edges[i] = new Piece(Track(), Interval(mini, maxi), CostGauss());
+	}
 	Q_s_temp = new Piece*[p];
-  for(unsigned char i = 0 ; i < p ; i++){Q_s_temp[i] = new Piece(Track(), Interval(mini, maxi), CostGauss());}
+  for(unsigned char i = 0 ; i < p ; i++){Q_s_temp[i] = new Piece(Track(), Interval(-INFINITY, INFINITY), CostGauss());}
 }
 
 

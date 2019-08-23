@@ -97,7 +97,7 @@ Node <- function(state = NULL, min = -Inf, max = Inf)
 
   df <- data.frame(character(), character(), character(), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), stringsAsFactors = FALSE)
   colnames(df) <- c("state1", "state2", "type", "penalty", "parameter", "K", "a", "min", "max")
-  df [1,] <- data.frame(state, NA, "node", NA, NA, NA, NA, min, max, stringsAsFactors = FALSE)
+  df [1,] <- data.frame(state, state, "node", NA, NA, NA, NA, min, max, stringsAsFactors = FALSE)
   return(df)
 }
 
