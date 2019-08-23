@@ -87,6 +87,8 @@ class Piece
     void show();
     void showOne();
 
+    Piece *nxt;   /// pointer to next piece
+
   private:
 
     Track m_info;
@@ -94,7 +96,7 @@ class Piece
     Interval m_interval;
     CostGauss m_cost;  /// pointer to the cost associated to the current piece
 
-    Piece *nxt;   /// pointer to next piece
+
 
 };
 

@@ -30,12 +30,15 @@ Omega::Omega(Graph graph)
   unsigned int nbR = graph.nb_rows();
 
   Q_ts = NULL;
-
+  //////////////////////////
   /// INITIALIZE Q_edges ///
+  //////////////////////////
 	Q_edges = new Piece*[q];
 	for(unsigned char i = 0; i < q; i++){Q_edges[i] = new Piece(Track(), Interval(-INFINITY, INFINITY), CostGauss());}
 
+	///////////////////////////
 	/// INITIALIZE Q_s_temp ///
+	///////////////////////////
 	Q_s_temp = new Piece*[p];
   for(unsigned char i = 0; i < p; i++)
   {
@@ -76,7 +79,7 @@ std::vector< double > Omega::GetParameters() const{return(parameters);}
 std::vector< int > Omega::GetStates() const{return(states);}
 std::vector< int > Omega::GetForced() const{return(forced);}
 
-int Omega::GetN() const{return(n);}
+unsigned int Omega::GetN() const{return(n);}
 double Omega::GetGlobalCost() const{return(globalCost);}
 
 
@@ -90,17 +93,21 @@ void Omega::gfpop(Data const& data)
 	Point* myData = data.getVecPt(); ///GET the data/// get the vector of Points = myData
   n = data.getn();
 
-	///
-	/// Initialize Q_ts Piece***
-	///
-	Q_ts = new Piece**[n + 1];
-	for(unsigned int i = 0 ; i < (n + 1) ; i++){Q_ts[i] = new Piece*[p];}
+	//////////////////////////////
+	/// Initialize Q_ts Piece ///
+	/////////////////////////////
+	Q_ts = new Piece**[n+1];
+	for(unsigned int i = 0; i < (n+1); i++){Q_ts[i] = new Piece*[p];}
 
-	/// Initialize first functional cost. Interval / add first point / constraint by starting vertices
+	///////////////////////////////////////////////////////////////////////////////////////////
+	/// Initialize first functional cost. add first point / constraint by starting vertices ///
+	///////////////////////////////////////////////////////////////////////////////////////////
 	for (unsigned char i = 0; i < p ; i++){Q_ts[1][i] = Q_s_temp[0] -> copy();}
 	addPointQ_t(myData[0], 0);
   std::vector<unsigned int> startState = m_graph.getStartState();
   if(startState.size() != 0){for(unsigned int i = 0; i < p; i++){if(std::find(startState.begin(), startState.end(), i) == startState.end()){Q_ts[1][i] -> addConstant(INFINITY);}}}
+
+
 
   for(unsigned int t = 1; t < n; t++) /// loop for all data point (except the first one)
   {

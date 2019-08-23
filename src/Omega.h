@@ -4,6 +4,9 @@
 #include"Data.h"
 #include"Graph.h"
 #include"Edge.h"
+
+#include "ListPiece.h"
+
 #include"Bound.h"
 #include"Robust.h"
 
@@ -25,7 +28,7 @@ class Omega
     std::vector< double > GetParameters() const;
     std::vector< int > GetStates() const;
     std::vector< int > GetForced() const;
-    int GetN() const;
+    unsigned int GetN() const;
     double GetGlobalCost() const;
 
     void gfpop(Data const& data);
@@ -38,7 +41,7 @@ class Omega
 
   private:
 
-    Graph m_graph; ///graph of the constraints
+    Graph m_graph; ///graph of the constraints. 9 variables
     Bound m_bound; ///min and max of the theta interval. + bool isConstrained = false if all data in [m,M]
     Robust m_robust; ///parameter K and a to define robust loss of type Huber, biweight, L1
 

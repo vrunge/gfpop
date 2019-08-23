@@ -122,7 +122,7 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   /////////////////////////////
 
   Omega omega(graph);
-  //omega.gfpop(data);
+  omega.gfpop(data);
 
   /////////////////////////////
   /////////// RETURN //////////
