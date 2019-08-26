@@ -90,7 +90,8 @@ class Piece
     //###################
     //###################
 
-    void addPointAndPenalty(Point const& pt);
+    void addPointAndPenalty(Point const& pt, double penalty);
+
 
     Piece *nxt;   /// pointer to next piece
 

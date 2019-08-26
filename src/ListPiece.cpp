@@ -74,10 +74,14 @@ void ListPiece::deleteNxtPieceAndMove(){
 
 void ListPiece::addPointAndPenalty(Point const& pt, Edge const& edge)
 {
-  currentPiece = head;
+  double K = edge.getKK();
+  double a = edge.getAA();
+  double penalty = edge.getBeta();
+
+  initializeCurrentPiece();
   while(currentPiece != NULL)
   {
-    currentPiece -> addPointAndPenalty(pt);
+    currentPiece -> addPointAndPenalty(pt, penalty);
     move();
   }
 
