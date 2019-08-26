@@ -19,14 +19,16 @@ void ListPiece::addPiece(Piece* newP)
   if (lastActivePosition -> nxt == NULL)
   {
     tail = newP;
+    tail -> nxt = NULL;
     lastActivePosition -> nxt = tail;
-    lastActivePosition = lastActivePosition->nxt;
+    lastActivePosition = tail;
   }
   else
   {
     lastActivePosition = lastActivePosition->nxt;
     lastActivePosition = newP;
   }
+
   lengthList ++;
 }
 
@@ -58,10 +60,7 @@ void ListPiece::initializeCurrentPosition()
 void ListPiece::deleteNxtPointAndMove(){
   tail -> nxt = currentPosition -> nxt;
   currentPosition -> nxt = currentPosition->nxt->nxt;
-  tail->nxt->nxt = NULL;
   tail = tail->nxt;
+  tail->nxt = NULL;
   lengthList--;
 }
-
-
-
