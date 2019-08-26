@@ -9,24 +9,24 @@ ListPiece::ListPiece()
   lengthList = 0;
   head = new Piece();
   head -> nxt = NULL;
-  lastActivePosition = head;
+  lastActivePiece = head;
   tail = head;
-  currentPosition = head;
+  currentPiece = head;
 }
 
 void ListPiece::addPiece(Piece* newP)
 {
-  if (lastActivePosition -> nxt == NULL)
+  if (lastActivePiece -> nxt == NULL)
   {
     tail = newP;
     tail -> nxt = NULL;
-    lastActivePosition -> nxt = tail;
-    lastActivePosition = tail;
+    lastActivePiece -> nxt = tail;
+    lastActivePiece = tail;
   }
   else
   {
-    lastActivePosition = lastActivePosition->nxt;
-    lastActivePosition = newP;
+    lastActivePiece = lastActivePiece->nxt;
+    lastActivePiece = newP;
   }
 
   lengthList ++;
@@ -34,7 +34,7 @@ void ListPiece::addPiece(Piece* newP)
 
 void ListPiece::move()
 {
-  currentPosition = currentPosition->nxt;
+  currentPiece = currentPiece->nxt;
 }
 
 unsigned int ListPiece::getLength()
@@ -52,15 +52,46 @@ ListPiece::~ListPiece()
   }
 }
 
-void ListPiece::initializeCurrentPosition()
+void ListPiece::initializeCurrentPiece()
 {
-  currentPosition = head;
+  currentPiece = head;
 }
 
-void ListPiece::deleteNxtPointAndMove(){
-  tail -> nxt = currentPosition -> nxt;
-  currentPosition -> nxt = currentPosition->nxt->nxt;
+void ListPiece::deleteNxtPieceAndMove(){
+  tail -> nxt = currentPiece -> nxt;
+  currentPiece -> nxt = currentPiece->nxt->nxt;
   tail = tail->nxt;
   tail->nxt = NULL;
   lengthList--;
 }
+
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+
+
+void ListPiece::addPointAndPenalty(Point const& pt, Edge const& edge)
+{
+  currentPiece = head;
+  while(currentPiece != NULL)
+  {
+    currentPiece -> addPointAndPenalty(pt);
+    move();
+  }
+
+}
+
+/////////////////////////////////////////
+
+
+ListPiece ListPiece::edgeConstraintLP(Edge const& edge, int newLabel, Bound const& bound)
+{
+}
+
+
+
+
+
+

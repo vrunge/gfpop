@@ -87,6 +87,11 @@ class Piece
     void show();
     void showOne();
 
+    //###################
+    //###################
+
+    void addPointAndPenalty(Point const& pt);
+
     Piece *nxt;   /// pointer to next piece
 
   private:

@@ -100,9 +100,9 @@ Omega::~Omega()
 
   delete [] LP_ts;
   LP_ts = NULL;
-  delete [] LP_edges;
+  delete LP_edges;
   LP_edges = NULL;
-  delete [] LP_s_temp;
+  delete LP_s_temp;
   LP_s_temp = NULL;
 }
 
@@ -167,15 +167,36 @@ void Omega::gfpop(Data const& data)
 //##### addPoint_LP_t #####//////##### addPoint_LP_t #####//////##### addPoint_LP_t #####///
 //##### addPoint_LP_t #####//////##### addPoint_LP_t #####//////##### addPoint_LP_t #####///
 
-void Omega::addPoint_LP_t(Point pt, int t)
+void Omega::addPointAndPenalty_LP_t(Point pt)
 {
-  for(unsigned char i = 0; i < p; i++)
+  for(unsigned char i = 0; i < q; i++)
   {
+    LP_edges[i].addPointAndPenalty(pt, m_graph.getEdge(i));
   }
 }
 
 
+//##### fill_LP_edges #####//////##### fill_LP_edges #####//////##### fill_LP_edges #####///
+//##### fill_LP_edges #####//////##### fill_LP_edges #####//////##### fill_LP_edges #####///
 
+void Omega::fill_LP_edges(int newLabel)
+{
+  delete(LP_edges); /// DELETE LP_edges
+  int s1; /// starting state
+  for (unsigned int i = 0 ; i < q ; i++) /// loop for all edges
+  {
+    Edge edge = m_graph.getEdge(i);
+    s1 = edge.getState1(); /// starting state
+    LP_edges[i] = LP_ts[newLabel][s1].edgeConstraintLP(edge, newLabel, m_bound);
+  }
+}
+
+//##### multipleMinimization_LP_edges #####//////##### multipleMinimization_LP_edges #####//////##### multipleMinimization_LP_edges #####///
+//##### multipleMinimization_LP_edges #####//////##### multipleMinimization_LP_edges #####//////##### multipleMinimization_LP_edges #####///
+
+void Omega::multipleMinimization_LP_edges(int t)
+{
+}
 
 
 //##### SUBFUNCTIONS #####/// ///##### SUBFUNCTIONS #####/// ///##### SUBFUNCTIONS #####///

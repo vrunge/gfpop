@@ -19,6 +19,6 @@ myGraph2 <- graph(
   Edge("D", "U", "up", gap = 1, penalty = beta, K = 3, a = 5),
   Edge("D", "D", "down", penalty = beta),
   Edge("U", "D", "down", penalty = beta),
-  StartEnd(start = "D", end = c("U","U")))
+  StartEnd(start = "D", end = c("U")))
 myGraph2
 gfpop(data = myData, mygraph = myGraph2, type = "mean")

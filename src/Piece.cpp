@@ -1456,3 +1456,7 @@ std::ostream &operator>>(std::ostream &flux, Piece* piece)
 }
 
 
+
+
+
+void Piece::addPointAndPenalty(Point const& pt){}
