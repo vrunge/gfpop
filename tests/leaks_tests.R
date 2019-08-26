@@ -1,5 +1,5 @@
 #devtools::install_github("vrunge/gfpop")
-#library(gfpop)
+library(gfpop)
 
 
 n <- 100
