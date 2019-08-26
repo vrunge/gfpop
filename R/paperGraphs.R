@@ -6,11 +6,13 @@
 #' @description Graphs of our paper in jss
 #' @param nb the number of the Figure in paper
 #' @param penalty the penalty to use for change-point
-#' @param decay coefficient of the exponential decay
+#' @param decay a nonnegative number to give the strength of the exponential decay into the segment
+#' @param gap a nonnegative number to constrain the size of the gap in the change of state
 #' @param oneValue the value for parameter when we consider the collective anomalies problem
+#' @param K a positive number. Threshold for the Biweight robust loss
 #' @return a graph
 #'
-paperGraph <- function(nb, penalty = 0, decay = 1, oneValue = 0)
+paperGraph <- function(nb, penalty = 0, decay = 1, gap = 0, oneValue = 0, K = Inf)
 {
   mygraph <- NULL
   if(nb == 4)
@@ -19,7 +21,7 @@ paperGraph <- function(nb, penalty = 0, decay = 1, oneValue = 0)
   }
   if(nb == 5)
   {
-    mygraph <- graph(type = "isotonic", penalty = penalty, decay = decay)
+    mygraph <- graph(type = "isotonic", penalty = penalty)
   }
   if(nb == 6)
   {
@@ -28,12 +30,12 @@ paperGraph <- function(nb, penalty = 0, decay = 1, oneValue = 0)
       Edge("Up", "Up", type = "null", decay = decay),
       Edge("Down", "Up", type = "up", penalty = penalty),
       Edge("Up", "Down", type = "down", penalty = penalty),
-      StartEnd(start = "Dw")
+      StartEnd(start = "Dw", end = "Dw")
     )
   }
   if(nb == 7)
   {
-    mygraph <- graph(type = "isotonic", penalty = penalty, decay = decay, K = Inf)
+    mygraph <- graph(type = "isotonic", decay = decay, gap = gap, penalty = penalty, K = Inf)
   }
   if(nb == 8)
   {
@@ -57,7 +59,7 @@ paperGraph <- function(nb, penalty = 0, decay = 1, oneValue = 0)
   }
   if(nb == 12)
   {
-    mygraph <- graph(type = "relevant", penalty = penalty)
+    mygraph <- graph(type = "relevant", decay = decay, gap = gap, penalty = penalty)
   }
   if(nb == 17)
   {

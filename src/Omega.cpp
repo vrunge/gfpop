@@ -58,7 +58,6 @@ Omega::Omega(Graph graph)
   }
 
 
-
   LP_ts = NULL;
   ///////////////////////////
   /// INITIALIZE LP_edges ///

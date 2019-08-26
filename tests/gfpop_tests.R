@@ -16,7 +16,7 @@ myGraph2 <- graph(
   Node("D", min = -10, max = 0),
   Edge("D", "D", "null", decay = 0.9),
   Edge("U", "U", "null"),
-  Edge("D", "U", "up", penalty = beta, gap = 1, K = 3, a = 5),
+  Edge("D", "U", "up", gap = 1, penalty = beta, K = 3, a = 5),
   Edge("D", "D", "down", penalty = beta),
   Edge("U", "D", "down", penalty = beta),
   StartEnd(start = "D", end = c("U","U")))

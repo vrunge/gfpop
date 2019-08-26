@@ -5,7 +5,7 @@ library(gfpop)
 n <- 100
 myData <- dataGenerator(n, c(0.1,0.3,0.5,0.8,1), c(1,2,1,3,1), sigma = 1)
 
-myGraph <- graph(penalty = 2*log(n), type = "updown")
+myGraph <- graph(type = "updown", penalty = 2*log(n))
 myGraph
 gfpop(data = myData, mygraph = myGraph, type = "mean")
 

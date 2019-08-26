@@ -8,7 +8,8 @@ class Edge
 {
   public:
     Edge();
-    Edge(double b, unsigned int s1 = 0, unsigned int s2 = 0, Rcpp::String cstt = "std", double param = 0, double K = INFINITY, double a = INFINITY, double mini = -INFINITY, double maxi = INFINITY);
+    Edge(unsigned int s1, unsigned int s2, Rcpp::String cstt = "std", double param = 0, double b = 0, double K = INFINITY, double a = INFINITY, double mini = -INFINITY, double maxi = INFINITY);
+
 
     double getBeta() const;
     unsigned int getState1() const;

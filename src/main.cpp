@@ -87,15 +87,16 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   Rcpp::IntegerVector state1 = mygraph["state1"];
   Rcpp::IntegerVector state2 = mygraph["state2"];
   Rcpp::CharacterVector typeEdge = mygraph["type"];
-  Rcpp::NumericVector penalty = mygraph["penalty"];
   Rcpp::NumericVector parameter = mygraph["parameter"];
+  Rcpp::NumericVector penalty = mygraph["penalty"];
   Rcpp::NumericVector KK = mygraph["K"];
   Rcpp::NumericVector aa = mygraph["a"];
   Rcpp::NumericVector minn = mygraph["min"];
   Rcpp::NumericVector maxx = mygraph["max"];
 
   for(int i = 0 ; i < mygraph.nrow(); i++)
-    {graph << Edge(penalty[i], state1[i], state2[i], typeEdge[i], parameter[i], KK[i], aa[i], minn[i], maxx[i]);}
+    {graph << Edge(state1[i], state2[i], typeEdge[i], parameter[i], penalty[i], KK[i], aa[i], minn[i], maxx[i]);}
+
 
   graph.show();
 
