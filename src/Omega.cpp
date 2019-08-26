@@ -56,6 +56,35 @@ Omega::Omega(Graph graph)
     mini = INFINITY;
     maxi = -INFINITY;
   }
+
+
+
+  LP_ts = NULL;
+  ///////////////////////////
+  /// INITIALIZE LP_edges ///
+  ///////////////////////////
+  LP_edges = new ListPiece[q];
+  for(unsigned char i = 0; i < q; i++){LP_edges[i].addPiece(new Piece(Track(), Interval(-INFINITY, INFINITY), CostGauss()));}
+
+  ////////////////////////////
+  /// INITIALIZE LP_s_temp ///
+  ////////////////////////////
+  LP_s_temp = new ListPiece[p];
+  for(unsigned char i = 0; i < p; i++)
+  {
+    ///REVEAL NODE BOUNDARIES IF ANY
+    for(unsigned char j = q; j < nbR; j++)
+    {
+      if((graph.getEdge(j).getConstraint() == "node") && (graph.getEdge(j).getState1() == i))
+      {
+        mini = graph.getEdge(j).getMinn();
+        maxi = graph.getEdge(j).getMaxx();
+      }
+    }
+    LP_s_temp[i].addPiece(new Piece(Track(), Interval(mini, maxi), CostGauss()));
+    mini = INFINITY;
+    maxi = -INFINITY;
+  }
 }
 
 
@@ -69,6 +98,13 @@ Omega::~Omega()
   Q_edges = NULL;
   delete [] Q_s_temp;
   Q_s_temp = NULL;
+
+  delete [] LP_ts;
+  LP_ts = NULL;
+  delete [] LP_edges;
+  LP_edges = NULL;
+  delete [] LP_s_temp;
+  LP_s_temp = NULL;
 }
 
 //####### accessors #######////####### accessors #######////####### accessors #######//
@@ -99,6 +135,12 @@ void Omega::gfpop(Data const& data)
 	Q_ts = new Piece**[n+1];
 	for(unsigned int i = 0; i < (n+1); i++){Q_ts[i] = new Piece*[p];}
 
+	//////////////////////////////
+	/// Initialize LP_ts Piece ///
+	//////////////////////////////
+	LP_ts = new ListPiece*[n+1];
+	for(unsigned int i = 0; i < (n+1); i++){LP_ts[i] = new ListPiece[p];}
+
 	///////////////////////////////////////////////////////////////////////////////////////////
 	/// Initialize first functional cost. add first point / constraint by starting vertices ///
 	///////////////////////////////////////////////////////////////////////////////////////////
@@ -117,6 +159,23 @@ void Omega::gfpop(Data const& data)
   backtracking();
  */
 }
+
+
+
+
+
+
+//##### addPoint_LP_t #####//////##### addPoint_LP_t #####//////##### addPoint_LP_t #####///
+//##### addPoint_LP_t #####//////##### addPoint_LP_t #####//////##### addPoint_LP_t #####///
+
+void Omega::addPoint_LP_t(Point pt, int t)
+{
+  for(unsigned char i = 0; i < p; i++)
+  {
+  }
+}
+
+
 
 
 

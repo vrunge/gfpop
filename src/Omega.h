@@ -32,6 +32,8 @@ class Omega
     double GetGlobalCost() const;
 
     void gfpop(Data const& data);
+    void addPoint_LP_t(Point pt, int t);
+
     void fillQ_edges(int newLabel);
     void multiple_minimization(int t);
     void addPointQ_t(Point pt, int t);
