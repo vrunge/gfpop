@@ -5,6 +5,9 @@
 #'
 #' @description Graphs of our paper in jss
 #' @param nb the number of the Figure in paper
+#' @param penalty the penalty to use for change-point
+#' @param decay coefficient of the exponential decay
+#' @param oneValue the value for parameter when we consider the collective anomalies problem
 #' @return a graph
 #'
 paperGraph <- function(nb, penalty = 0, decay = 1, oneValue = 0)

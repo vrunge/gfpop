@@ -9,6 +9,7 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports: Rcpp (>= 0.12.18)
+SystemRequirements: C++11
 DevPackage: vrunge/fpop
 LinkingTo: Rcpp
 RoxygenNote: 6.1.1

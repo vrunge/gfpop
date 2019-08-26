@@ -4,10 +4,16 @@
 \alias{paperGraph}
 \title{Graphs of our paper in jss}
 \usage{
-paperGraph(nb)
+paperGraph(nb, penalty = 0, decay = 1, oneValue = 0)
 }
 \arguments{
 \item{nb}{the number of the Figure in paper}
+
+\item{penalty}{the penalty to use for change-point}
+
+\item{decay}{coefficient of the exponential decay}
+
+\item{oneValue}{the value for parameter when we consider the collective anomalies problem}
 }
 \value{
 a graph

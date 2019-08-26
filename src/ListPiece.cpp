@@ -1,90 +1,67 @@
-// MIT License
-// Copyright (c) 2019 Vincent Runge
-
 #include "ListPiece.h"
+#include "Piece.h"
 #include <iostream>
-#include "math.h"
+#include "stdlib.h"
 
-//####### constructor #######////####### constructor #######////####### constructor #######//
-//####### constructor #######////####### constructor #######////####### constructor #######//
 
 ListPiece::ListPiece()
 {
-  firstPiece = new Piece();
-  currentPiece = firstPiece;
-  //the first Piece = an empty Piece : we consider Piece->nxt in functions
+  lengthList = 0;
+  head = new Piece();
+  head -> nxt = NULL;
+  lastActivePosition = head;
+  tail = head;
+  currentPosition = head;
 }
 
+void ListPiece::addPiece(Piece* newP)
+{
+  if (lastActivePosition -> nxt == NULL)
+  {
+    tail = newP;
+    lastActivePosition -> nxt = tail;
+    lastActivePosition = lastActivePosition->nxt;
+  }
+  else
+  {
+    lastActivePosition = lastActivePosition->nxt;
+    lastActivePosition = newP;
+  }
+  lengthList ++;
+}
 
-//####### destructor #######////####### destructor #######////####### destructor #######//
-//####### destructor #######////####### destructor #######////####### destructor #######//
+void ListPiece::move()
+{
+  currentPosition = currentPosition->nxt;
+}
+
+unsigned int ListPiece::getLength()
+{
+  return lengthList;
+}
 
 ListPiece::~ListPiece()
 {
-  while(firstPiece != NULL)
+  while(head != NULL)
   {
-    Piece* PieceToDelete = firstPiece;
-    firstPiece = firstPiece -> nxt;
-    delete(PieceToDelete);
+    Piece* pieceToDelete = head;
+    head = head -> nxt;
+    delete(pieceToDelete);
   }
 }
-
-//####### addPiece #######////####### addPiece #######////####### addPiece #######//
-//####### addPiece #######////####### addPiece #######////####### addPiece #######//
-
-void ListPiece::addPiece(Piece* P)
-{
-  P -> nxt = firstPiece -> nxt;
-  firstPiece -> nxt = P;
-}
-
-
-//####### deleteNxtPoint #######////####### deleteNxtPoint #######////####### deleteNxtPoint #######//
-//####### deleteNxtPoint #######////####### deleteNxtPoint #######////####### deleteNxtPoint #######//
-
-
-void ListPiece::deleteNxtPiece()
-{
-  if(currentPiece -> nxt != NULL)
-  {
-    Piece* PieceToDelete = currentPiece -> nxt;
-    currentPiece -> nxt = currentPiece -> nxt -> nxt;
-    delete(PieceToDelete);
-  }
-}
-
-
-
-//####### initializeCurrentPosition #######////####### initializeCurrentPosition #######////####### initializeCurrentPosition #######//
-//####### initializeCurrentPosition #######////####### initializeCurrentPosition #######////####### initializeCurrentPosition #######//
 
 void ListPiece::initializeCurrentPosition()
-{currentPiece = firstPiece;}
-
-
-//####### move #######////####### move #######////####### move #######//
-//####### move #######////####### move #######////####### move #######//
-
-bool ListPiece::move()
 {
-  bool res = true;
-  if(currentPiece -> nxt != NULL && currentPiece -> nxt -> nxt != NULL){currentPiece = currentPiece -> nxt;}
-    else{res = false;}
-
-  return(res);
+  currentPosition = head;
 }
 
-//####### isEmpty #######////####### isEmpty #######////####### isEmpty #######//
-//####### isEmpty #######////####### isEmpty #######////####### isEmpty #######//
-
-bool ListPiece::isEmpty()
-{
-  bool res = false;
-  if(firstPiece -> nxt == NULL){res = true;}
-  return(res);
+void ListPiece::deleteNxtPointAndMove(){
+  tail -> nxt = currentPosition -> nxt;
+  currentPosition -> nxt = currentPosition->nxt->nxt;
+  tail->nxt->nxt = NULL;
+  tail = tail->nxt;
+  lengthList--;
 }
-
-
 
 
 
