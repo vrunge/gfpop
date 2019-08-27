@@ -79,6 +79,7 @@ void ListPiece::addPointAndPenalty(Point const& pt, Edge const& edge)
   double penalty = edge.getBeta();
 
   initializeCurrentPiece();
+
   while(currentPiece != NULL)
   {
     currentPiece -> addPointAndPenalty(pt, penalty);
@@ -94,6 +95,10 @@ ListPiece ListPiece::edgeConstraintLP(Edge const& edge, int newLabel, Bound cons
 {
 }
 
+
+void ListPiece::addConstant(double myconst)
+{
+}
 
 
 

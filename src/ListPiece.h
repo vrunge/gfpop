@@ -31,6 +31,11 @@ public:
   ListPiece edgeConstraintLP(Edge const& edge, int newLabel, Bound const& bound);
 
 
+
+  ///////  SIMPLE OPERATIONS  ///////
+  void addConstant(double myconst);
+
+
 };
 
 #endif // LISTPIECE_H

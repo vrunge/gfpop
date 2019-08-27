@@ -19,71 +19,13 @@
 Omega::Omega(Graph graph)
 {
   m_graph = graph;
-  //////////TO DELETE//////////
-  m_bound = Bound(0, 0, false);
-  m_robust = Robust(1000,1000);
-
 	p = graph.nb_states();
 	q = graph.nb_edges();
-  double mini = -INFINITY;
-  double maxi = INFINITY;
-  unsigned int nbR = graph.nb_rows();
 
-  Q_ts = NULL;
-  //////////////////////////
-  /// INITIALIZE Q_edges ///
-  //////////////////////////
-	Q_edges = new Piece*[q];
-	for(unsigned char i = 0; i < q; i++){Q_edges[i] = new Piece(Track(), Interval(-INFINITY, INFINITY), CostGauss());}
-
-	///////////////////////////
-	/// INITIALIZE Q_s_temp ///
-	///////////////////////////
-	Q_s_temp = new Piece*[p];
-  for(unsigned char i = 0; i < p; i++)
-  {
-    ///REVEAL NODE BOUNDARIES IF ANY
-    for(unsigned char j = q; j < nbR; j++)
-    {
-      if((graph.getEdge(j).getConstraint() == "node") && (graph.getEdge(j).getState1() == i))
-        {
-          mini = graph.getEdge(j).getMinn();
-          maxi = graph.getEdge(j).getMaxx();
-        }
-    }
-
-    Q_s_temp[i] = new Piece(Track(), Interval(mini, maxi), CostGauss());
-    mini = INFINITY;
-    maxi = -INFINITY;
-  }
-
-
-  LP_ts = NULL;
-  ///////////////////////////
-  /// INITIALIZE LP_edges ///
-  ///////////////////////////
+  /// INITIALIZE ListPiece ///
   LP_edges = new ListPiece[q];
-  for(unsigned char i = 0; i < q; i++){LP_edges[i].addPiece(new Piece(Track(), Interval(-INFINITY, INFINITY), CostGauss()));}
-
-  ////////////////////////////
-  /// INITIALIZE LP_s_temp ///
-  ////////////////////////////
   LP_s_temp = new ListPiece[p];
-  for(unsigned char i = 0; i < p; i++)
-  {
-    ///REVEAL NODE BOUNDARIES IF ANY
-    for(unsigned char j = q; j < nbR; j++)
-    {
-      if((graph.getEdge(j).getConstraint() == "node") && (graph.getEdge(j).getState1() == i))
-      {
-        mini = graph.getEdge(j).getMinn();
-        maxi = graph.getEdge(j).getMaxx();
-      }
-    }
-    LP_s_temp[i].addPiece(new Piece(Track(), Interval(mini, maxi), CostGauss()));
-    mini = INFINITY;
-    maxi = -INFINITY;
-  }
+  LP_ts = NULL;
 }
 
 
@@ -92,18 +34,11 @@ Omega::Omega(Graph graph)
 
 Omega::~Omega()
 {
-  if(Q_ts != NULL){for(unsigned int i = 0; i < (n + 1); i++){delete [] Q_ts[i]; Q_ts[i] = NULL;}}
-  delete [] Q_edges;
-  Q_edges = NULL;
-  delete [] Q_s_temp;
-  Q_s_temp = NULL;
-
-  delete [] LP_ts;
-  LP_ts = NULL;
-  delete LP_edges;
-  LP_edges = NULL;
-  delete LP_s_temp;
-  LP_s_temp = NULL;
+  //if(LP_ts != NULL){delete [] LP_ts; LP_ts = NULL;}
+  //delete LP_edges;
+  //LP_edges = NULL;
+  //delete LP_s_temp;
+  //LP_s_temp = NULL;
 }
 
 //####### accessors #######////####### accessors #######////####### accessors #######//
@@ -113,10 +48,50 @@ std::vector< int > Omega::GetChangepoints() const{return(changepoints);}
 std::vector< double > Omega::GetParameters() const{return(parameters);}
 std::vector< int > Omega::GetStates() const{return(states);}
 std::vector< int > Omega::GetForced() const{return(forced);}
-
-unsigned int Omega::GetN() const{return(n);}
 double Omega::GetGlobalCost() const{return(globalCost);}
 
+
+//####### initialize_LP_ts #######// //####### initialize_LP_ts #######// //####### initialize_LP_ts #######//
+//####### initialize_LP_ts #######// //####### initialize_LP_ts #######// //####### initialize_LP_ts #######//
+
+void Omega::initialize_LP_ts(unsigned int n)
+{
+  double mini = -INFINITY;
+  double maxi = INFINITY;
+  unsigned int nbR = m_graph.nb_rows();
+
+  LP_ts = new ListPiece*[n+1];
+  for(unsigned int i = 0; i < (n+1); i++){LP_ts[i] = new ListPiece[p];}
+
+  ///REVEAL NODE BOUNDARIES IF ANY
+  ///REVEAL NODE BOUNDARIES IF ANY
+  for(unsigned char i = 0; i < p; i++)
+  {
+    for(unsigned char j = q; j < nbR; j++)
+    {
+      if((m_graph.getEdge(j).getConstraint() == "node") && (m_graph.getEdge(j).getState1() == i))
+      {
+        mini = m_graph.getEdge(j).getMinn();
+        maxi = m_graph.getEdge(j).getMaxx();
+      }
+    }
+    LP_ts[0][i].addPiece(new Piece(Track(), Interval(mini, maxi), CostGauss()));
+    mini = -INFINITY;
+    maxi = INFINITY;
+  }
+
+  ///START STATE CONSTRAINT
+  ///START STATE CONSTRAINT
+  std::vector<unsigned int> startState = m_graph.getStartState();
+  if(startState.size() != 0)
+  {
+    for(unsigned int i = 0; i < p; i++)
+    {
+      if(std::find(startState.begin(), startState.end(), i) == startState.end())
+        {LP_ts[0][i].addConstant(INFINITY);}
+    }
+  }
+}
 
 //####### gfpop #######// //####### gfpop #######// //####### gfpop #######//
 //####### gfpop #######// //####### gfpop #######// //####### gfpop #######//
@@ -129,34 +104,19 @@ void Omega::gfpop(Data const& data)
   n = data.getn();
 
 	//////////////////////////////
-	/// Initialize Q_ts Piece ///
-	/////////////////////////////
-	Q_ts = new Piece**[n+1];
-	for(unsigned int i = 0; i < (n+1); i++){Q_ts[i] = new Piece*[p];}
-
-	//////////////////////////////
 	/// Initialize LP_ts Piece ///
 	//////////////////////////////
-	LP_ts = new ListPiece*[n+1];
-	for(unsigned int i = 0; i < (n+1); i++){LP_ts[i] = new ListPiece[p];}
+	initialize_LP_ts(n);
 
-	///////////////////////////////////////////////////////////////////////////////////////////
-	/// Initialize first functional cost. add first point / constraint by starting vertices ///
-	///////////////////////////////////////////////////////////////////////////////////////////
-	for (unsigned char i = 0; i < p ; i++){Q_ts[1][i] = Q_s_temp[0] -> copy();}
-	addPointQ_t(myData[0], 0);
-  std::vector<unsigned int> startState = m_graph.getStartState();
-  if(startState.size() != 0){for(unsigned int i = 0; i < p; i++){if(std::find(startState.begin(), startState.end(), i) == startState.end()){Q_ts[1][i] -> addConstant(INFINITY);}}}
 
-/*
-  for(unsigned int t = 1; t < n; t++) /// loop for all data point (except the first one)
-  {
-    fillQ_edges(t); ///fillQ_edges. t = newLabel to consider
-    multiple_minimization(t); ///multiple_minimization
-    addPointQ_t(myData[t], t); ///Add new data point
-  }
-  backtracking();
- */
+	for(unsigned int t = 0; t < n; t++) /// loop for all data point (except the first one)
+	{
+	  //fill_LP_edges(t); ///fill_LP_edges. t = newLabel to consider
+	  //addPointAndPenalty_LP_t(myData[t]); ///Add new data point and penalty
+	  //multipleMinimization_LP_edges(t); ///multiple_minimization
+	}
+
+	//backtracking();
 }
 
 
@@ -183,7 +143,7 @@ void Omega::fill_LP_edges(int newLabel)
 {
   delete(LP_edges); /// DELETE LP_edges
   int s1; /// starting state
-  for (unsigned int i = 0 ; i < q ; i++) /// loop for all edges
+  for(unsigned int i = 0 ; i < q ; i++) /// loop for all edges
   {
     Edge edge = m_graph.getEdge(i);
     s1 = edge.getState1(); /// starting state
@@ -340,7 +300,6 @@ std::ostream &operator<<(std::ostream &s, const Omega &om)
   std::vector< double > parameters = om.GetParameters();
   std::vector< int > states = om.GetStates();
   std::vector< int > forced = om.GetForced();
-  s << " n : " << om.GetN()-1 << std::endl;
   for (int i = chpt.size()-1; i > -1; i--){s << " ** " << chpt[i];}
   s << std::endl;
   for (int i = parameters.size()-1; i > -1; i--){s << " ** " << parameters[i];}

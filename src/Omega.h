@@ -28,10 +28,15 @@ class Omega
     std::vector< double > GetParameters() const;
     std::vector< int > GetStates() const;
     std::vector< int > GetForced() const;
-    unsigned int GetN() const;
     double GetGlobalCost() const;
 
+    ///////////////
+    ///////////////
+    ///////////////
+
+    void initialize_LP_ts(unsigned int n);
     void gfpop(Data const& data);
+
     ///////////////
     ///////////////
     void fill_LP_edges(int newLabel);
@@ -48,14 +53,13 @@ class Omega
 
   private:
     Graph m_graph; ///graph of the constraints. 9 variables
-
-    unsigned int n; //size of the data
     unsigned int p;   ///number of states in the graph = number of columns in the matrix Q_ts
     unsigned int q; ///number of edges in the graph = number of elements in the object Q_edges
 
-    ListPiece** LP_ts;  ///cost function Q with respect to position t and state s (size t x p), t = vector size.
+    unsigned int n; //size of the data
     ListPiece* LP_edges; /// transformed cost by the operators for each edge (size 1 x q)
     ListPiece* LP_s_temp; /// cost to compare to Q_ts last element of the vector (size 1 x p)
+    ListPiece** LP_ts;  ///cost function Q with respect to position t and state s (size t x p), t = vector size.
 
     std::vector< int > changepoints; ///vector of changepoints build by fpop (first index of each segment). size c
     std::vector< double > parameters; ///vector of means build by fpop. size c
@@ -63,6 +67,7 @@ class Omega
     std::vector< int > forced; ///vector of forced = 0 or 1. 1 = forced value. size c-1
     double globalCost;
 
+    ///////////////////////////////////////
     ///////////////TO DELETE///////////////
     ///////////////////////////////////////
     Piece*** Q_ts;  ///cost function Q with respect to position t and state s (size t x p), t = vector size.
