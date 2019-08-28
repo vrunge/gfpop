@@ -84,12 +84,11 @@ class Piece
     //###################
 
     void save(std::ostream &flux);
+
+    //###################
+    //###################
+
     void show();
-    void showOne();
-
-    //###################
-    //###################
-
     void addPointAndPenalty(Point const& pt, double penalty);
 
 

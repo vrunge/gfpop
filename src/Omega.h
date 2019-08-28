@@ -42,6 +42,8 @@ class Omega
     void fill_LP_edges(int newLabel);
     void addPointAndPenalty_LP_t(Point pt);
     void multipleMinimization_LP_edges(int t);
+
+    void show();
     ///////////////
     ///////////////
 

@@ -35,6 +35,7 @@ public:
   ///////  SIMPLE OPERATIONS  ///////
   void addConstant(double myconst);
 
+  void show();
 
 };
 

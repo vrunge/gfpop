@@ -1416,38 +1416,6 @@ void Piece::save(std::ostream &flux)
 }
 
 
-void Piece::show()
-{
-  //int i = 1;
-  //Piece* tmp = this;
-  //if(tmp == NULL){std::cout << "#NULL EMPTY POINTER# "<< std::endl;}
-  //while(tmp != NULL)
-  //{
-  //  std::cout << i << "#";
-  //  std::cout << tmp;
-  //  std::cout << "#LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " << tmp -> m_info.getPosition() << " ";
-  //  std::cout << "#INTERVAL# "<< tmp -> m_interval.geta() << " -- " << tmp -> m_interval.getb() << " ";
-  //  tmp -> m_cost.show(tmp -> m_interval);
-  //  tmp = tmp -> nxt;
-  //  i = i + 1;
-  //}
-}
-
-
-
-void Piece::showOne()
-{
-	Piece* tmp = this;
-  //if(tmp == NULL){std::cout << "#NULL EMPTY POINTER# " << std::endl;}
-  //else
-  //{
-  //  std::cout << tmp;
-  //  std::cout << "#LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " <<  tmp -> m_info.getPosition() << " ";
-  //  std::cout << "#INTERVAL# "<< tmp -> m_interval.geta() << " -- " << tmp -> m_interval.getb()<< " ";
-  //  tmp -> m_cost.show(tmp -> m_interval);
-  //}
-}
-
 
 std::ostream &operator>>(std::ostream &flux, Piece* piece)
 {
@@ -1456,7 +1424,26 @@ std::ostream &operator>>(std::ostream &flux, Piece* piece)
 }
 
 
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 
+
+void Piece::show()
+{
+  Piece* tmp = this;
+  if(tmp == NULL){std::cout << "#NULL EMPTY POINTER# "<< std::endl;}
+  else
+  {
+    std::cout << tmp;
+    std::cout << " #LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " << tmp -> m_info.getPosition() << " ";
+    std::cout << "#INTERVAL# "<< tmp -> m_interval.geta() << " -- " << tmp -> m_interval.getb() << " ";
+    tmp -> m_cost.show(tmp -> m_interval);
+    std::cout << std::endl;
+  }
+}
 
 
 void Piece::addPointAndPenalty(Point const& pt, double penalty)
@@ -1464,3 +1451,6 @@ void Piece::addPointAndPenalty(Point const& pt, double penalty)
   ///ADD add pt
   m_cost += penalty;
 }
+
+
+

@@ -112,11 +112,13 @@ void Omega::gfpop(Data const& data)
 	for(unsigned int t = 0; t < n; t++) /// loop for all data point (except the first one)
 	{
 	  //fill_LP_edges(t); ///fill_LP_edges. t = newLabel to consider
-	  //addPointAndPenalty_LP_t(myData[t]); ///Add new data point and penalty
+	  addPointAndPenalty_LP_t(myData[t]); ///Add new data point and penalty
 	  //multipleMinimization_LP_edges(t); ///multiple_minimization
 	}
 
 	//backtracking();
+
+	show();
 }
 
 
@@ -142,7 +144,7 @@ void Omega::addPointAndPenalty_LP_t(Point pt)
 void Omega::fill_LP_edges(int newLabel)
 {
   delete(LP_edges); /// DELETE LP_edges
-  int s1; /// starting state
+  unsigned int s1; /// starting state
   for(unsigned int i = 0 ; i < q ; i++) /// loop for all edges
   {
     Edge edge = m_graph.getEdge(i);
@@ -311,5 +313,16 @@ std::ostream &operator<<(std::ostream &s, const Omega &om)
   s << "globalCost: "<< om.GetGlobalCost() << std::endl;
   return s;
 }
+
+///###///###///###///###///###///###///###///###///###///###///###///###///###///###///###
+///###///###///###///###///###///###///###///###///###///###///###///###///###///###///###
+///###///###///###///###///###///###///###///###///###///###///###///###///###///###///###
+
+
+void Omega::show()
+{
+  for(unsigned char i = 0; i < q; i++){LP_edges[i].show();}
+}
+
 
 

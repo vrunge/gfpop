@@ -257,11 +257,11 @@ void CostGauss::show() const
 
 void CostGauss::show(Interval const& inter) const
 {
-  //std::cout << "#GAUSS# #A# " << m_A << " #B# "<< m_B << " #C# " << constant;
-  //std::cout << " #MIN# "<< minimum();
-  //double argmin = arg_minimum();
-  //if(inter.isInside(argmin) == true){std::cout << " #ARGMIN# "<< argmin << std::endl;}
-  //else{std::cout << " #ARGMIN# "<< arg_minimum() << std::endl;}
+  std::cout << "#GAUSS# #A# " << m_A << " #B# "<< m_B << " #C# " << constant;
+  std::cout << " #MIN# "<< minimum();
+  double argmin = arg_minimum();
+  if(inter.isInside(argmin) == true){std::cout << " #ARGMIN# "<< argmin << std::endl;}
+  else{std::cout << " #ARGMIN# "<< arg_minimum() << std::endl;}
 }
 
 

@@ -101,6 +101,19 @@ void ListPiece::addConstant(double myconst)
 }
 
 
+void ListPiece::show()
+{
+  initializeCurrentPiece();
+
+  while(currentPiece != NULL)
+  {
+    currentPiece -> show();
+    move();
+  }
+}
+
+
+
 
 
 
