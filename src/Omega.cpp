@@ -1,5 +1,4 @@
 #include "Omega.h"
-#include "CostGauss.h"
 #include "Piece.h"
 
 #include<iostream>

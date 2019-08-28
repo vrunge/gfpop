@@ -1,12 +1,3 @@
-#ifndef COSTGAUSS_H
-#define COSTGAUSS_H
-
-#include "Interval.h"
-#include "Robust.h"
-#include "Data.h"
-
-#include<vector>
-
 
 class CostGauss
 {
@@ -51,6 +42,3 @@ class CostGauss
     double m_B;
     double constant;
 };
-
-
-#endif // COSTGAUSS_H
