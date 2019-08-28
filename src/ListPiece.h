@@ -4,6 +4,8 @@
 #include "Piece.h"
 #include "Edge.h"
 
+#include "ExternFunctions.h"
+
 #include <math.h>
 
 #include <vector>
@@ -27,9 +29,8 @@ public:
   unsigned int getLength();
 
   ///////  3 OPERATIONS in GFPOP ///////
-  void addPointAndPenalty(Point const& pt, Edge const& edge);
-  ListPiece edgeConstraintLP(Edge const& edge, int newLabel, Bound const& bound);
-
+  ListPiece LP_edges_constraint(Edge const& edge, unsigned int t);
+  void LP_edges_addPointAndPenalty(Point const& pt, Edge const& edge);
 
 
   ///////  SIMPLE OPERATIONS  ///////

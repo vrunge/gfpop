@@ -28,8 +28,8 @@ paperGraph <- function(nb, penalty = 0, decay = 1, gap = 0, oneValue = 0, K = In
     mygraph <- graph(
       Edge("Dw", "Dw", type = "null", decay = decay),
       Edge("Up", "Up", type = "null", decay = decay),
-      Edge("Down", "Up", type = "up", penalty = penalty),
-      Edge("Up", "Down", type = "down", penalty = penalty),
+      Edge("Dw", "Up", type = "up", penalty = penalty),
+      Edge("Up", "Dw", type = "down", penalty = penalty),
       StartEnd(start = "Dw", end = "Dw")
     )
   }

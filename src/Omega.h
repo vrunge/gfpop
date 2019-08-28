@@ -39,19 +39,12 @@ class Omega
 
     ///////////////
     ///////////////
-    void fill_LP_edges(int newLabel);
-    void addPointAndPenalty_LP_t(Point pt);
-    void multipleMinimization_LP_edges(int t);
+    void LP_edges_operators(unsigned int t);
+    void LP_edges_addPointAndPenalty(Point  const& pt);
+    void LP_t_new_multipleMinimization(unsigned int t);
 
     void show();
-    ///////////////
-    ///////////////
 
-    void fillQ_edges(int newLabel);
-    void multiple_minimization(int t);
-    void addPointQ_t(Point pt, int t);
-
-    void backtracking();
 
   private:
     Graph m_graph; ///graph of the constraints. 9 variables

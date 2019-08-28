@@ -30,6 +30,12 @@ void addCost(Cost& cost, const Cost& cost2)
 }
 
 
+void showCost(Cost& cost)
+{
+  std::cout << " A: " << cost.m_A << " B: " << cost.m_B << " C: " << cost.constant << std::endl;
+}
+
+
 //####### simplefunctions #######////####### simplefunctions #######////####### simplefunctions #######//
 //####### simplefunctions #######////####### simplefunctions #######////####### simplefunctions #######//
 
@@ -62,7 +68,7 @@ double log_choose(double x, double n)
 //####### coefficients #######////####### coefficients #######////####### coefficients #######//
 //####### coefficients #######////####### coefficients #######////####### coefficients #######//
 
-///mean cost = m_A*THETA^2 + m_B*log(THETA) + constant
+///mean cost = m_A*THETA^2 + m_B*THETA + constant
 ///variance cost = m_A*THETA - m_B*log(THETA) + constant
 /// poisson cost = m_A*THETA - m_B*log(THETA) + constant
 /// exp cost = m_A*THETA - m_B*log(THETA) + constant

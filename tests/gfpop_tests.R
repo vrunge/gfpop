@@ -2,12 +2,22 @@
 #devtools::install_github("vrunge/gfpop")
 library(gfpop)
 
-n <- 100
+n <- 33
 myData <- dataGenerator(n, c(0.1,0.3,0.5,0.8,1), c(1,2,1,3,1), sigma = 1)
 
 myGraph <- graph(penalty = 1, type = "updown")
 myGraph
-gfpop(data = myData, mygraph = myGraph, type = "mean")
+
+penalty <- 1.45
+mygraph <- graph(
+  Edge("Dw", "Dw", type = "null", K = 3),
+  Edge("Up", "Up", type = "null"),
+  Edge("Dw", "Up", type = "up", penalty = 1.4),
+  Edge("Up", "Dw", type = "down", penalty = 1.2),
+  Node("Dw", min = 0, max = 1),
+  StartEnd(start = "Dw", end = "Dw"))
+
+gfpop(data = myData, mygraph = mygraph, type = "mean")
 
 
 

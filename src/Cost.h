@@ -14,6 +14,7 @@ struct Cost
   Cost(double* coeff);
 };
 
+void showCost(Cost& cost);
 double log_factorial(double n);
 double log_choose(double x, double n);
 

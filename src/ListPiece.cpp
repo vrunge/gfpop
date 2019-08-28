@@ -72,27 +72,50 @@ void ListPiece::deleteNxtPieceAndMove(){
 /////////////////////////////////////////
 
 
-void ListPiece::addPointAndPenalty(Point const& pt, Edge const& edge)
+void ListPiece::LP_edges_addPointAndPenalty(Point const& pt, Edge const& edge)
 {
   double K = edge.getKK();
   double a = edge.getAA();
   double penalty = edge.getBeta();
-
   initializeCurrentPiece();
 
-  while(currentPiece != NULL)
+  ///////////////////// CASE K == INF /////////////////////
+  if(K == INFINITY)
   {
-    currentPiece -> addPointAndPenalty(pt, penalty);
-    move();
+    while(currentPiece != NULL)
+    {
+      currentPiece -> addPointAndPenalty(pt, penalty);
+      move();
+    }
   }
+
+  ///////////////////// CASE K != INF /////////////////////
+  if(K != INFINITY)
+  {
+    double* coeff = new double[3];
+    coeff[0] = 0;
+    coeff[1] = a;
+    coeff[2] = K;
+    Cost cost = Cost(coeff);
+
+
+    while(currentPiece != NULL)
+    {
+      currentPiece -> addPointAndPenalty(pt, penalty);
+      move();
+    }
+  }
+
 
 }
 
 /////////////////////////////////////////
 
 
-ListPiece ListPiece::edgeConstraintLP(Edge const& edge, int newLabel, Bound const& bound)
+ListPiece ListPiece::LP_edges_constraint(Edge const& edge, unsigned int t)
 {
+  ListPiece LP_edgesNew = ListPiece();
+  return(LP_edgesNew);
 }
 
 
