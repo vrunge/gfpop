@@ -1,6 +1,6 @@
 inst/doc
 .Rproj.user
-.tests
+tests
 *.o
 *.dll
 *.so
