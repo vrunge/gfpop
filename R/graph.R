@@ -1,3 +1,6 @@
+##  GPL-3 License
+## Copyright (c) 2019 Vincent Runge
+
 #' Edge generation
 #'
 #' @description Edge creation for graph
@@ -181,6 +184,17 @@ graph <- function(..., type = "empty", decay = 1, gap = 0, penalty = 0)
 # invisible function for the user
 #Order the graph and create integer state values
 
+
+###############################################
+# invisible function for the user
+
+typeOfGraph <- function(mygraph)
+{
+  return("gfpop")
+}
+
+
+
 graphReorder <- function(mygraph)
 {
   ### BUILD an ordered Graph : myOrderedGraph ###
@@ -223,15 +237,6 @@ graphReorder <- function(mygraph)
   return(response)
 }
 
-
-###############################################
-# invisible function for the user
-
-typeOfGraph <- function(mygraph)
-{
-
-  return("gfpop")
-}
 
 
 ###############################################

@@ -5,8 +5,8 @@
 #'
 #' @description Functional pruning optimal partitioning with a graph structure to take into account constraints on consecutive segment parameters. The user has to specify the graph he wants to use (see the graph function) and a type of cost funcion. This is the main function of the gfpop package.
 #' @param data vector of data to segment
-#' @param mygraph dataframe of class graph to constrain the changepoint inference
-#' @param type a string defining the cost model to use: "gauss", "variance", "poisson", "exp", "negbin"
+#' @param mygraph dataframe of class "graph" to constrain the changepoint inference
+#' @param type a string defining the cost model to use: "mean", "variance", "poisson", "exp", "negbin"
 #' @param weights vector of weights (positive numbers), same size as data
 #' @return a gfpop object = (changepoints, states, forced, parameters, globalCost)
 #' 'changepoints' is the vector of changepoints (we give the last element of each segment)
@@ -22,8 +22,8 @@ gfpop <- function(data = c(0), mygraph, type = "mean", weights = c(0))
   ############
   if(!any(class(mygraph) == "graph")){stop('Your graph is not a graph created with the graph function in gfpop package...')}
 
-  if(type != "mean" && type != "variance" && type != "exp" && type != "poisson" && type != "negbin")
-      {stop('Argument "type" not appropriate. Choose among "mean", "variance", "exp", "poisson" or "negbin"')}
+  if(type != "mean" && type != "variance" && type != "poisson" && type != "exp" && type != "negbin")
+      {stop('Argument "type" not appropriate. Choose among "mean", "variance", "poisson", "exp" or "negbin"')}
 
   ### if we have weights
   if(length(weights) > 1)
@@ -36,8 +36,9 @@ gfpop <- function(data = c(0), mygraph, type = "mean", weights = c(0))
   ######################
   ### GRAPH ANALYSIS ###
   ######################
-  mynewgraph <- graphReorder(mygraph)
+  mynewgraph <- graphReorder(mygraph) ### reorder the edges
   explore(mynewgraph) ### test if the graph can be used
+
   newGraph <- mynewgraph$graph
   vertices <- mynewgraph$vertices
 
@@ -46,6 +47,8 @@ gfpop <- function(data = c(0), mygraph, type = "mean", weights = c(0))
   ###########################
 
   useThePackage <- "gfpop"
+
+  ###To dispatch to 3 packages
   graphType <- typeOfGraph(newGraph) #("std", "isotonic" or "gfpop")
 
   if(graphType == "std"){}
@@ -93,8 +96,8 @@ itergfpop <- function(data = c(0), mygraph, type = "mean", weights = c(0), iter.
   ############
   if(!any(class(mygraph) == "graph")){stop('Your graph is not a graph created with the graph function in gfpop package...')}
 
-  if(type != "mean" && type != "variance" && type != "exp" && type != "poisson" && type != "negbin")
-  {stop('Argument "type" not appropriate. Choose among "mean", "variance", "exp", "poisson" or "negbin"')}
+  if(type != "mean" && type != "variance" && type != "poisson" && type != "exp" && type != "negbin")
+  {stop('Argument "type" not appropriate. Choose among "mean", "variance", "poisson", "exp" or "negbin"')}
 
   ### if we have weights
   if(length(weights) > 1)
@@ -102,13 +105,17 @@ itergfpop <- function(data = c(0), mygraph, type = "mean", weights = c(0), iter.
     if(length(data) != length(weights)){stop('data vector and weights vector have different size')}
     if(!all(weights>0)){stop('weights vector has non strictly positive components')}
   }
+  if(length(data) < 2){stop('data vector length is less than 2...')}
+
   ######################
   ### GRAPH ANALYSIS ###
   ######################
-  mynewgraph <- graphReorder(mygraph)
+  mynewgraph <- graphReorder(mygraph) ### reorder the edges
   explore(mynewgraph) ### test if the graph can be used
+
   newGraph <- mynewgraph$graph
   vertices <- mynewgraph$vertices
+
 
   ######################
   ### ITERATED GFPOP ###
