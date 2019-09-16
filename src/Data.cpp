@@ -64,26 +64,3 @@ double* Data::getw() const
 }
 
 Point* Data::getVecPt() const {return(vecPt);}
-
-//####### show #######////####### show #######////####### show #######//
-//####### show #######////####### show #######////####### show #######//
-
-void Data::show() const
-{
-  //std::cout << "vector y" << std::endl;
-
-  for (unsigned int i = 0 ; i < n ; i++)
-  {
-    //std::cout << vecPt[i].y << std::endl;
-  }
-
-  //std::cout << "vector w" << std::endl;
-  for (unsigned int i = 0 ; i < n ; i++)
-  {
-    //std::cout << vecPt[i].w << std::endl;
-  }
-
-  //std::cout << "minimum : " << m << std::endl;
-  //std::cout << "maximum : " << M << std::endl;
-  //std::cout << "n : " << n << std::endl;
-}

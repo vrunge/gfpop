@@ -5,12 +5,18 @@
 
 #include <string>
 
+///////////////////////////////////////////////////////////////
+//// POINT STRUCTURE //// POINT STRUCTURE //// POINT STRUCTURE
+///////////////////////////////////////////////////////////////
 struct Point
 {
   double y;
   double w;
 };
 
+////////////////////////////////////////////////
+//// DATA CLASS //// DATA CLASS //// DATA CLASS
+////////////////////////////////////////////////
 class Data
 {
   public:
@@ -27,10 +33,8 @@ class Data
     double* getw() const;
     Point* getVecPt() const;
 
-    void show() const;
-
   private:
-    Point* vecPt = NULL; ///see why we assign NULL in desctructor
+    Point* vecPt = NULL;
     double m; ///min value
     double M; ///max value
     unsigned int n; ///data length
