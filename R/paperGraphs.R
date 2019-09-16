@@ -10,7 +10,7 @@
 #' @param gap a nonnegative number to constrain the size of the gap in the change of state
 #' @param oneValue the value for parameter when we consider the collective anomalies problem
 #' @param K a positive number. Threshold for the Biweight robust loss
-#' @return a graph
+#' @return a dataframe with 9 variables (columns are named "state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max") with additional "graph" class.
 #'
 paperGraph <- function(nb, penalty = 0, decay = 1, gap = 0, oneValue = 0, K = Inf)
 {

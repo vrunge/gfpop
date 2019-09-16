@@ -6,15 +6,9 @@
 #include"Edge.h"
 
 #include "ListPiece.h"
-#include"Piece.h"
-
-#include"Bound.h"
-#include"Robust.h"
-
 
 #include <math.h>
 #include<vector>
-#include<list>
 
 #include <stdlib.h>
 
@@ -43,6 +37,8 @@ class Omega
     void LP_edges_addPointAndPenalty(Point  const& pt);
     void LP_t_new_multipleMinimization(unsigned int t);
 
+    void backtracking();
+
     void show();
 
 
@@ -62,15 +58,6 @@ class Omega
     std::vector< int > forced; ///vector of forced = 0 or 1. 1 = forced value. size c-1
     double globalCost;
 
-    ///////////////////////////////////////
-    ///////////////TO DELETE///////////////
-    ///////////////////////////////////////
-    Piece*** Q_ts;  ///cost function Q with respect to position t and state s (size t x p), t = vector size.
-    Piece** Q_edges; /// transformed cost by the operators for each edge (size 1 x q)
-    Piece** Q_s_temp; /// cost to compare to Q_ts last element of the vector (size 1 x p)
-
-    Bound m_bound; ///min and max of the theta interval. + bool isConstrained = false if all data in [m,M]
-    Robust m_robust; ///parameter K and a to define robust loss of type Huber, biweight, L1
 };
 
 

@@ -99,13 +99,13 @@ void Omega::initialize_LP_ts(unsigned int n)
 
 void Omega::gfpop(Data const& data)
 {
-	Point* myData = data.getVecPt(); ///GET the data/// get the vector of Points = myData
-  n = data.getn();
+	Point* myData = data.getVecPt(); ///GET the data = vector of Points = myData
+  n = data.getn(); ///data length
 
 	//////////////////////////////
 	/// Initialize LP_ts Piece ///
 	//////////////////////////////
-	initialize_LP_ts(n);
+	initialize_LP_ts(n); ///size LP_ts (n+1) x p
 
 	for(unsigned int t = 0; t < n; t++) /// loop for all data point (except the first one)
 	{
@@ -159,6 +159,13 @@ void Omega::LP_edges_addPointAndPenalty(Point const& pt)
 
 void Omega::LP_t_new_multipleMinimization(unsigned int t)
 {
+}
+
+
+
+void Omega::backtracking()
+{
+
 }
 
 ///###///###///###///###///###///###///###///###///###///###///###///###///###///###///###
