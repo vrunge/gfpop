@@ -104,17 +104,17 @@ void Omega::gfpop(Data const& data)
 
 	//////////////////////////////
 	/// Initialize LP_ts Piece ///
-	//////////////////////////////
 	initialize_LP_ts(n); ///size LP_ts (n+1) x p
+	//////////////////////////////
 
 	for(unsigned int t = 0; t < n; t++) /// loop for all data point (except the first one)
 	{
 	  LP_edges_operators(t); ///fill_LP_edges. t = newLabel to consider
 	  LP_edges_addPointAndPenalty(myData[t]); ///Add new data point and penalty
-	  //LP_t_new_multipleMinimization(t); ///multiple_minimization
+	  LP_t_new_multipleMinimization(t); ///multiple_minimization
 	}
 
-	//backtracking();
+	backtracking();
 
 	show();
 }
@@ -138,7 +138,6 @@ void Omega::LP_edges_operators(unsigned int t)
   {
     edge = m_graph.getEdge(i);
     s1 = edge.getState1(); /// starting state
-
     LP_edges[i] = LP_ts[t][s1].LP_edges_constraint(edge, t);
   }
 }
@@ -148,9 +147,11 @@ void Omega::LP_edges_operators(unsigned int t)
 
 void Omega::LP_edges_addPointAndPenalty(Point const& pt)
 {
+  Edge edge;
   for(unsigned char i = 0; i < q; i++)
   {
-    LP_edges[i].LP_edges_addPointAndPenalty(pt, m_graph.getEdge(i));
+    edge = m_graph.getEdge(i);
+    LP_edges[i].LP_edges_addPointAndPenalty(edge, pt);
   }
 }
 

@@ -57,7 +57,8 @@ void ListPiece::initializeCurrentPiece()
   currentPiece = head;
 }
 
-void ListPiece::deleteNxtPieceAndMove(){
+void ListPiece::deleteNxtPieceAndMove()
+{
   tail -> nxt = currentPiece -> nxt;
   currentPiece -> nxt = currentPiece->nxt->nxt;
   tail = tail->nxt;
@@ -65,14 +66,29 @@ void ListPiece::deleteNxtPieceAndMove(){
   lengthList--;
 }
 
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 
+//##### LP_edges_constraint #####//////##### LP_edges_constraint #####//////##### LP_edges_constraint #####///
+//##### LP_edges_constraint #####//////##### LP_edges_constraint #####//////##### LP_edges_constraint #####///
 
-void ListPiece::LP_edges_addPointAndPenalty(Point const& pt, Edge const& edge)
+ListPiece ListPiece::LP_edges_constraint(Edge const& edge, unsigned int t)
+{
+  ListPiece LP_edgesNew = ListPiece();
+  initializeCurrentPiece();
+
+  while(currentPiece != NULL)
+  {
+    move();
+  }
+  return(LP_edgesNew);
+}
+
+//##### LP_edges_addPointAndPenalty #####//////##### LP_edges_addPointAndPenalty #####//////##### LP_edges_addPointAndPenalty #####///
+//##### LP_edges_addPointAndPenalty #####//////##### LP_edges_addPointAndPenalty #####//////##### LP_edges_addPointAndPenalty #####///
+
+void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
 {
   double K = edge.getKK();
   double a = edge.getAA();
@@ -110,13 +126,6 @@ void ListPiece::LP_edges_addPointAndPenalty(Point const& pt, Edge const& edge)
 }
 
 /////////////////////////////////////////
-
-
-ListPiece ListPiece::LP_edges_constraint(Edge const& edge, unsigned int t)
-{
-  ListPiece LP_edgesNew = ListPiece();
-  return(LP_edgesNew);
-}
 
 
 void ListPiece::addConstant(double myconst)

@@ -66,6 +66,11 @@ void Piece::show()
 }
 
 
+
+
+//####### addPointAndPenalty #######////####### addPointAndPenalty #######////####### addPointAndPenalty #######//
+//####### addPointAndPenalty #######////####### addPointAndPenalty #######////####### addPointAndPenalty #######//
+
 void Piece::addPointAndPenalty(Point const& pt, double penalty)
 {
   //ADD add pt

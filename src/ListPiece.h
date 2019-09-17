@@ -3,12 +3,9 @@
 
 #include "Piece.h"
 #include "Edge.h"
-
 #include "ExternFunctions.h"
 
 #include <math.h>
-
-#include <vector>
 
 class ListPiece
 {
@@ -30,7 +27,7 @@ public:
 
   ///////  3 OPERATIONS in GFPOP ///////
   ListPiece LP_edges_constraint(Edge const& edge, unsigned int t);
-  void LP_edges_addPointAndPenalty(Point const& pt, Edge const& edge);
+  void LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt);
 
 
   ///////  SIMPLE OPERATIONS  ///////

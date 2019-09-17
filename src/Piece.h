@@ -30,6 +30,11 @@ class Piece
     Cost getCost() const;
     Cost& getRefCost();
 
+    ///
+
+
+    ///
+
     void show();
     void addPointAndPenalty(Point const& pt, double penalty);
 
