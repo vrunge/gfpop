@@ -58,7 +58,6 @@ void Omega::initialize_LP_ts(unsigned int n)
   Interval inter = cost_interval();
   double mini = inter.geta();
   double maxi = inter.getb();
-
   unsigned int nbR = m_graph.nb_rows();
 
   LP_ts = new ListPiece*[n+1];

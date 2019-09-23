@@ -200,9 +200,17 @@ graphReorder <- function(mygraph)
   ### BUILD an ordered Graph : myOrderedGraph ###
   ##separate startend from vertices
   graphNA <- mygraph[is.na(mygraph[,5]),] ## Start End nodes and range values nodes
-  graphV <-  mygraph[!is.na(mygraph[,5]),] ## Edges of the graph
+  graphVtemp <-  mygraph[!is.na(mygraph[,5]),] ## Edges of the graph
 
-  myVertices <- unique(c(graphV[,1], graphV[,2]))
+  myVertices <- unique(c(graphVtemp[,1], graphVtemp[,2]))
+
+
+  ###transform the abs edge into two edges (up and down)
+  absEdge <- graphVtemp[,3] == "abs"
+  graphVtemp[absEdge,3] <- "down"
+  addToGraphVV <- graphVtemp[absEdge,]
+  addToGraphVV[,3 ] <- "up"
+  graphV <- rbind(graphVtemp, addToGraphVV)
 
   ##create a new graph
   myNewGraph <- graph()
@@ -230,6 +238,7 @@ graphReorder <- function(mygraph)
     myNewGraph[i,1] <- which(myNewGraph[i,1] == myVertices) - 1
     if(!is.na(myNewGraph[i,2])){myNewGraph[i,2] <- which(myNewGraph[i,2] == myVertices) - 1}
   }
+
   class(myNewGraph$state1) <- "numeric"
   class(myNewGraph$state2) <- "numeric"
 
