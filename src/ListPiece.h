@@ -12,8 +12,6 @@ class ListPiece
 private:
   Piece* head;
   Piece* currentPiece;
-  Piece* lastActivePiece;
-  Piece* tail;
   unsigned int lengthList;
 
 public:
@@ -21,7 +19,6 @@ public:
   ~ListPiece();
   void move();
   void addPiece(Piece* newP);
-  void deleteNxtPieceAndMove();
   void initializeCurrentPiece();
   unsigned int getLength();
 

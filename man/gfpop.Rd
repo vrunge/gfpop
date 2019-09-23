@@ -9,9 +9,9 @@ gfpop(data = c(0), mygraph, type = "mean", weights = c(0))
 \arguments{
 \item{data}{vector of data to segment}
 
-\item{mygraph}{dataframe of class graph to constrain the changepoint inference}
+\item{mygraph}{dataframe of class "graph" to constrain the changepoint inference}
 
-\item{type}{a string defining the cost model to use: "gauss", "variance", "poisson", "exp", "negbin"}
+\item{type}{a string defining the cost model to use: "mean", "variance", "poisson", "exp", "negbin"}
 
 \item{weights}{vector of weights (positive numbers), same size as data}
 }

@@ -55,8 +55,10 @@ double Omega::GetGlobalCost() const{return(globalCost);}
 
 void Omega::initialize_LP_ts(unsigned int n)
 {
-  double mini = -INFINITY;
-  double maxi = INFINITY;
+  Interval inter = cost_interval();
+  double mini = inter.geta();
+  double maxi = inter.getb();
+
   unsigned int nbR = m_graph.nb_rows();
 
   LP_ts = new ListPiece*[n+1];
@@ -75,8 +77,8 @@ void Omega::initialize_LP_ts(unsigned int n)
       }
     }
     LP_ts[0][i].addPiece(new Piece(Track(), Interval(mini, maxi), Cost()));
-    mini = -INFINITY;
-    maxi = INFINITY;
+    mini = inter.geta();
+    maxi = inter.getb();
   }
 
   ///START STATE CONSTRAINT

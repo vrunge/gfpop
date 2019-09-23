@@ -333,52 +333,85 @@ int exp_age(const Cost& cost){return((int) cost.m_B);}
 int negbin_age(const Cost& cost){return((int) cost.m_B);}
 
 
+
+//####### intervals #######////####### intervals #######////####### intervals #######//
+//####### intervals #######////####### intervals #######////####### intervals #######//
+
+Interval mean_interval(){return(Interval(-INFINITY,INFINITY));}
+Interval variance_interval(){return(Interval(0,INFINITY));}
+Interval poisson_interval(){return(Interval(0,INFINITY));}
+Interval exp_interval(){return(Interval(0,INFINITY));}
+Interval negbin_interval(){return(Interval(0,1));}
+
+
 //####### factories #######////####### factories #######////####### factories #######//
 //####### factories #######////####### factories #######////####### factories #######//
 
 std::function<double*(double)> coeff_factory(const std::string& type)
 {
-  if(type == "mean"){return std::function<double*(double)>(mean_coeff);}
-  if(type == "variance"){return std::function<double*(double)>(variance_coeff);}
-  if(type == "poisson"){return std::function<double*(double)>(poisson_coeff);}
-  if(type == "exp"){return std::function<double*(double)>(exp_coeff);}
-  if(type == "negbin"){return std::function<double*(double)>(negbin_coeff);}
+  std::function<double*(double)> fct;
+  if(type == "mean"){fct = std::function<double*(double)>(mean_coeff);}
+  if(type == "variance"){fct = std::function<double*(double)>(variance_coeff);}
+  if(type == "poisson"){fct = std::function<double*(double)>(poisson_coeff);}
+  if(type == "exp"){fct = std::function<double*(double)>(exp_coeff);}
+  if(type == "negbin"){fct = std::function<double*(double)>(negbin_coeff);}
+  return(fct);
 }
 
 std::function<double(const Cost&)> min_factory(const std::string& type)
 {
-  if(type == "mean"){return std::function<double(const Cost&)>(mean_min);}
-  if(type == "variance"){return std::function<double(const Cost&)>(variance_min);}
-  if(type == "poisson"){return std::function<double(const Cost&)>(poisson_min);}
-  if(type == "exp"){return std::function<double(const Cost&)>(variance_min);}
-  if(type == "negbin"){return std::function<double(const Cost&)>(negbin_min);}
+  std::function<double(const Cost&)> fct;
+  if(type == "mean"){fct = std::function<double(const Cost&)>(mean_min);}
+  if(type == "variance"){fct = std::function<double(const Cost&)>(variance_min);}
+  if(type == "poisson"){fct = std::function<double(const Cost&)>(poisson_min);}
+  if(type == "exp"){fct = std::function<double(const Cost&)>(variance_min);}
+  if(type == "negbin"){fct = std::function<double(const Cost&)>(negbin_min);}
+  return(fct);
 }
 
 std::function<double(const Cost&)> argmin_factory(const std::string& type)
 {
-  if(type == "mean"){return std::function<double(const Cost&)>(mean_argmin);}
-  if(type == "variance"){return std::function<double(const Cost&)>(variance_argmin);}
-  if(type == "poisson"){return std::function<double(const Cost&)>(poisson_argmin);}
-  if(type == "exp"){return std::function<double(const Cost&)>(poisson_argmin);}
-  if(type == "negbin"){return std::function<double(const Cost&)>(negbin_argmin);}
+  std::function<double(const Cost&)> fct;
+  if(type == "mean"){fct = std::function<double(const Cost&)>(mean_argmin);}
+  if(type == "variance"){fct = std::function<double(const Cost&)>(variance_argmin);}
+  if(type == "poisson"){fct = std::function<double(const Cost&)>(poisson_argmin);}
+  if(type == "exp"){fct = std::function<double(const Cost&)>(poisson_argmin);}
+  if(type == "negbin"){fct = std::function<double(const Cost&)>(negbin_argmin);}
+  return(fct);
 }
 
 std::function<Interval(const Cost&, double& level)> intervalInterRoots_factory(const std::string& type)
 {
-  if(type == "mean"){return std::function<Interval(const Cost&, double& level)>(mean_intervalInterRoots);}
-  if(type == "variance"){return std::function<Interval(const Cost&, double& level)>(variance_intervalInterRoots);}
-  if(type == "poisson"){return std::function<Interval(const Cost&, double& level)>(poisson_intervalInterRoots);}
-  if(type == "exp"){return std::function<Interval(const Cost&, double& level)>(variance_intervalInterRoots);}
-  if(type == "negbin"){return std::function<Interval(const Cost&, double& level)>(negbin_intervalInterRoots);}
+  std::function<Interval(const Cost&, double& level)> fct;
+  if(type == "mean"){fct = std::function<Interval(const Cost&, double& level)>(mean_intervalInterRoots);}
+  if(type == "variance"){fct = std::function<Interval(const Cost&, double& level)>(variance_intervalInterRoots);}
+  if(type == "poisson"){fct = std::function<Interval(const Cost&, double& level)>(poisson_intervalInterRoots);}
+  if(type == "exp"){fct = std::function<Interval(const Cost&, double& level)>(variance_intervalInterRoots);}
+  if(type == "negbin"){fct = std::function<Interval(const Cost&, double& level)>(negbin_intervalInterRoots);}
+  return(fct);
 }
 
 std::function<int(const Cost&)> age_factory(const std::string& type)
 {
-  if(type == "mean"){return std::function<int(const Cost&)>(mean_age);}
-  if(type == "variance"){return std::function<int(const Cost&)>(variance_age);}
-  if(type == "poisson"){return std::function<int(const Cost&)>(poisson_age);}
-  if(type == "exp"){return std::function<int(const Cost&)>(exp_age);}
-  if(type == "negbin"){return std::function<int(const Cost&)>(negbin_age);}
+  std::function<int(const Cost&)> fct;
+  if(type == "mean"){fct = std::function<int(const Cost&)>(mean_age);}
+  if(type == "variance"){fct = std::function<int(const Cost&)>(variance_age);}
+  if(type == "poisson"){fct = std::function<int(const Cost&)>(poisson_age);}
+  if(type == "exp"){fct = std::function<int(const Cost&)>(exp_age);}
+  if(type == "negbin"){fct = std::function<int(const Cost&)>(negbin_age);}
+  return(fct);
 }
 
+
+
+std::function<Interval()> interval_factory(const std::string& type)
+{
+  std::function<Interval()> fct;
+  if(type == "mean"){fct = std::function<Interval()>(mean_interval);}
+  if(type == "variance"){fct = std::function<Interval()>(variance_interval);}
+  if(type == "poisson"){fct = std::function<Interval()>(poisson_interval);}
+  if(type == "exp"){fct = std::function<Interval()>(exp_interval);}
+  if(type == "negbin"){fct = std::function<Interval()>(negbin_interval);}
+  return(fct);
+}
 

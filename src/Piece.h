@@ -31,13 +31,10 @@ class Piece
     Cost& getRefCost();
 
     ///
-
-
     ///
 
     void show();
     void addPointAndPenalty(Point const& pt, double penalty);
-
 
     Piece *nxt;   /// pointer to next piece
 
@@ -47,7 +44,6 @@ class Piece
 
     Interval m_interval;
     Cost m_cost;  /// pointer to the cost associated to the current piece
-
 
 
 };

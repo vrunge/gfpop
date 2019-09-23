@@ -18,7 +18,6 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, NumericVector vectWeight)
 {
-
   ///////////////////////////////////////////
   /////////// DATA TRANSFORMATION ///////////
   ///////////////////////////////////////////
@@ -110,6 +109,7 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   cost_argmin = argmin_factory(type);
   cost_intervalInterRoots = intervalInterRoots_factory(type);
   cost_age = age_factory(type);
+  cost_interval = interval_factory(type);
 
   /////////////////////////////
   /////////// OMEGA ///////////

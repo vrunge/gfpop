@@ -26,5 +26,6 @@ std::function<double(const Cost&)> argmin_factory(const std::string& type);
 std::function<double*(double)> coeff_factory(const std::string& type);
 std::function<Interval(const Cost&, double& level)> intervalInterRoots_factory(const std::string& type);
 std::function<int(const Cost&)> age_factory(const std::string& type);
+std::function<Interval()> interval_factory(const std::string& type);
 
 #endif // COST_H

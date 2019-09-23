@@ -20,7 +20,7 @@ paperGraph(nb, penalty = 0, decay = 1, gap = 0, oneValue = 0, K = Inf)
 \item{K}{a positive number. Threshold for the Biweight robust loss}
 }
 \value{
-a graph
+a dataframe with 9 variables (columns are named "state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max") with additional "graph" class.
 }
 \description{
 Graphs of our paper in jss

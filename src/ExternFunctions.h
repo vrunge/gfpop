@@ -11,6 +11,6 @@ extern std::function<double(const Cost&)> cost_min;
 extern std::function<double(const Cost&)> cost_argmin;
 extern std::function<Interval(const Cost&, double& level)> cost_intervalInterRoots;
 extern std::function<int(const Cost&)> cost_age;
-
+extern std::function<Interval()> cost_interval;
 
 #endif // EXTERNFUNCTIONS_H

@@ -43,7 +43,6 @@ Piece::~Piece()
 Track Piece::getTrack()const {return(m_info);}
 Interval Piece::getInterval() const {return(m_interval);}
 Cost Piece::getCost() const {return(m_cost);}
-
 Cost& Piece::getRefCost(){return(m_cost);}
 
 
@@ -66,8 +65,6 @@ void Piece::show()
 }
 
 
-
-
 //####### addPointAndPenalty #######////####### addPointAndPenalty #######////####### addPointAndPenalty #######//
 //####### addPointAndPenalty #######////####### addPointAndPenalty #######////####### addPointAndPenalty #######//
 
@@ -76,6 +73,4 @@ void Piece::addPointAndPenalty(Point const& pt, double penalty)
   //ADD add pt
   addmyConstant(m_cost, penalty);
 }
-
-
 
