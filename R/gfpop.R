@@ -9,12 +9,13 @@
 #' @param type a string defining the cost model to use: "mean", "variance", "poisson", "exp", "negbin"
 #' @param weights vector of weights (positive numbers), same size as data
 #' @return a gfpop object = (changepoints, states, forced, parameters, globalCost)
-#' 'changepoints' is the vector of changepoints (we give the last element of each segment)
-#' 'states' is the vector giving the state of each segment
-#' 'forced' is the vector specifying whether the constraints of the graph are active (=1) or not (=0)
-#' 'parameters' is the vector of successive parameters of each segment
-#' 'globalCost' is a number equal to the global cost of the graph-constrained changepoint optimization problem
-
+#' \describe{
+#' \item{\code{changepoints}}{is the vector of changepoints (we give the last element of each segment)}
+#' \item{\code{states}}{is the vector giving the state of each segment}
+#' \item{\code{forced}}{is the vector specifying whether the constraints of the graph are active (=1) or not (=0)}
+#' \item{\code{parameters}}{is the vector of successive parameters of each segment}
+#' \item{\code{globalCost}}{is a number equal to the global cost of the graph-constrained changepoint optimization problem}
+#'  }
 gfpop <- function(data = c(0), mygraph, type = "mean", weights = c(0))
 {
   ############
