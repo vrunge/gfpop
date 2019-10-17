@@ -90,9 +90,7 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
     coeff[0] = 0;
     coeff[1] = a;
     coeff[2] = K;
-    Cost cost = Cost(coeff);
-
-    while(currentPiece != NULL)
+    while(currentPiece != NULL) 
     {
       currentPiece -> addPointAndPenalty(pt, penalty);
       move();
