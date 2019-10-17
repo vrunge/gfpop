@@ -4,27 +4,25 @@
 \alias{Edge}
 \title{Edge generation}
 \usage{
-Edge(state1, state2, type = "null", penalty = 0, decay = 1,
-  gap = 0, K = Inf, a = Inf)
+Edge(state1, state2, type = "null", decay = 1, gap = 0, penalty = 0,
+  K = Inf, a = Inf)
 }
 \arguments{
 \item{state1}{a string defining the starting state of the edge}
 
 \item{state2}{a string defining the ending state of the edge}
 
-\item{type}{a string equal to "null", "std", "up", "down", "absInf" or "absSup"}
-
-\item{penalty}{a nonnegative number. The penality associated to this state transition}
+\item{type}{a string equal to "null", "std", "up", "down" or "abs"}
 
 \item{decay}{a nonnegative number to give the strength of the exponential decay into the segment}
 
-\item{gap}{a nonnegative number to constraint the size of the gap in the change of state}
+\item{gap}{a nonnegative number to constrain the size of the gap in the change of state}
+
+\item{penalty}{a nonnegative number. The penality associated to this state transition}
 
 \item{K}{a positive number. Threshold for the Biweight robust loss}
 
 \item{a}{a positive number. Slope for the Huber robust loss}
-
-\item{oneValue}{the value of the oneValue edge}
 }
 \value{
 a one-row dataframe with 9 variables
@@ -33,5 +31,5 @@ a one-row dataframe with 9 variables
 Edge creation for graph
 }
 \examples{
-Edge("D", "U", "up", penalty = 10, gap = 1)
+Edge("D", "U", "up", gap = 1, penalty = 10)
 }

@@ -5,6 +5,7 @@
 class Bound
 {
   public:
+    Bound();
     Bound(double mini, double maxi, bool isConstr = false);
 
     double getm() const;

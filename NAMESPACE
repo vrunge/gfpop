@@ -1,8 +1,9 @@
 useDynLib(gfpop, .registration = TRUE)
 
 export(gfpop)
-export(Edge, StartEnd, Node, graph, graphReorder, explore)
+export(Edge, StartEnd, Node, graph)
 export(dataGenerator, sdDiff)
+export(paperGraph)
 
 importFrom(Rcpp, evalCpp)
 importFrom("stats", "rnorm", "rexp", "rpois", "mad", "sd")

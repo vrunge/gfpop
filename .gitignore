@@ -2,5 +2,10 @@
 .Rhistory
 inst/doc
 *~
+.Rproj.user
+tests
 *.o
+*.dll
 *.so
+
+
