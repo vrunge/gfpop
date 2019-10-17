@@ -183,23 +183,31 @@ graphReorder <- function(mygraph)
 {
   ### BUILD an ordered Graph : myOrderedGraph ###
   ##separate startend from vertices
-  graphNA <- mygraph[is.na(mygraph[,5]),] ## Start End nodes and range values nodes
-  graphVtemp <-  mygraph[!is.na(mygraph[,5]),] ## Edges of the graph
+  is.edge <- !is.na(mygraph$penalty)
+  graphNA <- mygraph[!is.edge,] ## Start End nodes and range values nodes
+  graphVtemp <-  mygraph[is.edge,] ## Edges of the graph
 
   myVertices <- unique(c(graphVtemp[,1], graphVtemp[,2]))
 
 
   ###transform the abs edge into two edges (up and down)
-  absEdge <- graphVtemp[,3] == "abs"
-  graphVtemp[absEdge,3] <- "down"
-  addToGraphVV <- graphVtemp[absEdge,]
-  addToGraphVV[,3 ] <- "up"
+  is.abs <- graphVtemp$type == "abs"
+  addToGraphVV <- graphVtemp[is.abs,]
+  if(any(is.abs)){
+    graphVtemp$type[is.abs] <- "down"
+    addToGraphVV$type <- "up"
+  }
   graphV <- rbind(graphVtemp, addToGraphVV)
 
   ##create a new graph
   myNewGraph <- graph()
 
-  selectNull <- graphV[, 3] == "null" ### => penalty = 0
+  selectNull <- graphV$type == "null" ### => penalty = 0
+
+  ## tdhock 17 Oct 2019: vrunge can you please clarify the code below
+  ## by changing the numeric column index to a name? penalty is column
+  ## 4, and parameter is column 5... which one do you want to set
+  ## here?
   graphV[selectNull, 5] <- -1 #set penalty to -1
 
 
@@ -226,8 +234,7 @@ graphReorder <- function(mygraph)
   class(myNewGraph$state1) <- "numeric"
   class(myNewGraph$state2) <- "numeric"
 
-  response <- list(graph = myNewGraph, vertices = myVertices)
-  return(response)
+  list(graph = myNewGraph, vertices = myVertices)
 }
 
 
