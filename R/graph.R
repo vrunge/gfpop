@@ -194,6 +194,7 @@ typeOfGraph <- function(mygraph)
 }
 
 
+###############################################
 
 graphReorder <- function(mygraph)
 {
@@ -281,6 +282,7 @@ explore <- function(mygraph)
 
 
 
+###############################################
 
 visit <- function(graph, startNode)
 {
