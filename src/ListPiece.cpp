@@ -113,8 +113,15 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
   int parentStateLabel = edge.getState1(); ///parentStateLabel = state to associate
 
   //###############################################################
-  if(edge_ctt == "null")
+  if(edge_ctt == "null") /// Simple copy of LP_state
   {
+    Piece* current = LP_state.head;
+    while(current != NULL)
+    {
+      addNewLastPiece(current -> copy());
+      current = LP_state.currentPiece -> nxt;
+    }
+
   }
   //###############################################################
   if(edge_ctt == "std")

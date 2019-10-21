@@ -2,7 +2,6 @@
 #define PIECE_H
 
 #include "Edge.h"
-#include "Bound.h"
 #include "Robust.h"
 
 #include "Data.h"
@@ -30,6 +29,7 @@ class Piece
     Cost getCost() const;
     Cost& getRefCost();
 
+    Piece* copy();
     ///
     ///
 
@@ -39,9 +39,7 @@ class Piece
     Piece *nxt;   /// pointer to next piece
 
   private:
-
     Track m_info;
-
     Interval m_interval;
     Cost m_cost;  /// pointer to the cost associated to the current piece
 

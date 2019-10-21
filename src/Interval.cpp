@@ -47,13 +47,6 @@ double Interval::internPoint() const
   return(thePoint);
 }
 
-void Interval::rescaling(double gamma, Bound bound)
-{
-  if(bound.getm() != m_a){m_a = m_a * gamma;}
-  if(bound.getM() != m_b){m_b = m_b * gamma;}
-}
-
-
 
 void Interval::show() const
 {
