@@ -138,11 +138,9 @@ void Omega::LP_edges_operators(unsigned int newLabel)
 
 void Omega::LP_edges_addPointAndPenalty(Point const& pt)
 {
-  Edge edge;
-  for(unsigned char i = 0; i < q; i++)
+  for(unsigned char i = 0; i < q; i++) /// loop for all edges
   {
-    edge = m_graph.getEdge(i);
-    LP_edges[i].LP_edges_addPointAndPenalty(edge, pt);
+    LP_edges[i].LP_edges_addPointAndPenalty(m_graph.getEdge(i), pt);
   }
 }
 

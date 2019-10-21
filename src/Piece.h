@@ -2,8 +2,6 @@
 #define PIECE_H
 
 #include "Edge.h"
-#include "Robust.h"
-
 #include "Data.h"
 
 #include "Track.h"
@@ -30,11 +28,13 @@ class Piece
     Cost& getRefCost();
 
     Piece* copy();
+    double getMin();
+    void addCoeff(Cost const& cost, double penalty);
+
     ///
     ///
 
     void show();
-    void addPointAndPenalty(Point const& pt, double penalty);
 
     Piece *nxt;   /// pointer to next piece
 

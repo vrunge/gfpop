@@ -120,16 +120,29 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     {
       addNewLastPiece(current -> copy());
       current = LP_state.currentPiece -> nxt;
+      ///DANGER : change Track?
     }
-
   }
+
   //###############################################################
   if(edge_ctt == "std")
   {
-  }
-  //###############################################################
-  if(edge_ctt == "down")
-  {
+    ///find the minimum
+    double mini = INFINITY;
+    double getmin;
+    Piece* current = LP_state.head;
+    while(current != NULL)
+    {
+      getmin = cost_minInterval(current -> getCost(), current -> getInterval());
+      if(getmin < mini){mini = getmin;}
+      current = LP_state.currentPiece -> nxt;
+    }
+
+    ///add one Piece to LP_edges
+    ///DANGER : find interval + add the constant = mini
+    Piece* onePiece = new Piece();
+    addNewLastPiece(onePiece);
+
   }
 
   //###############################################################
@@ -137,10 +150,15 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
   {
   }
 
-  while(currentPiece != NULL)
+  //###############################################################
+  if(edge_ctt == "down")
   {
-    move();
+    reverse(); ///look at pieces from right to left
+
+
+    reverse(); ///look at pieces from left to right
   }
+
 }
 
 //##### LP_edges_addPointAndPenalty #####//////##### LP_edges_addPointAndPenalty #####//////##### LP_edges_addPointAndPenalty #####///
@@ -148,9 +166,11 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
 
 void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
 {
+  /// get edge data ///
   double K = edge.getKK();
   double a = edge.getAA();
   double penalty = edge.getBeta();
+
   initializeCurrentPiece();
 
   ///////////////////// CASE K == INF /////////////////////
@@ -158,7 +178,7 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
   {
     while(currentPiece != NULL)
     {
-      currentPiece -> addPointAndPenalty(pt, penalty);
+      currentPiece -> addCoeff(Cost(cost_coeff(pt)), penalty);
       move();
     }
   }
@@ -170,11 +190,11 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
     coeff[0] = 0;
     coeff[1] = a;
     coeff[2] = K;
-    Cost cost = Cost(coeff);
+    Cost slopeCost = Cost(coeff);
 
     while(currentPiece != NULL)
     {
-      currentPiece -> addPointAndPenalty(pt, penalty);
+      currentPiece -> addCoeff(Cost(cost_coeff(pt)), penalty);
       move();
     }
   }

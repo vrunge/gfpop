@@ -1,4 +1,5 @@
 #include "Piece.h"
+#include"ExternFunctions.h"
 
 #include <math.h>
 #include <stdlib.h>
@@ -55,6 +56,17 @@ Piece* Piece::copy()
 }
 
 
+
+//####### getMin #######////####### getMin #######////####### getMin #######//
+//####### getMin #######////####### getMin #######////####### getMin #######//
+
+double Piece::getMin()
+{
+  return(cost_minInterval(m_cost, m_interval));
+}
+
+
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 
@@ -74,12 +86,13 @@ void Piece::show()
 }
 
 
-//####### addPointAndPenalty #######////####### addPointAndPenalty #######////####### addPointAndPenalty #######//
-//####### addPointAndPenalty #######////####### addPointAndPenalty #######////####### addPointAndPenalty #######//
+//####### addCoeff #######////####### addCoeff #######////####### addCoeff #######//
+//####### addCoeff #######////####### addCoeff #######////####### addCoeff #######//
 
-void Piece::addPointAndPenalty(Point const& pt, double penalty)
+void Piece::addCoeff(Cost const& cost, double penalty)
 {
-  //ADD add pt
-  addmyConstant(m_cost, penalty);
+  m_cost.m_A = m_cost.m_A + cost.m_A;
+  m_cost.m_B = m_cost.m_B + cost.m_B;
+  m_cost.constant = m_cost.constant + cost.constant + penalty;
 }
 

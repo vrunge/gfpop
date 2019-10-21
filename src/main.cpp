@@ -105,6 +105,7 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
 
   cost_coeff = coeff_factory(type);
   cost_min = min_factory(type);
+  cost_minInterval = minInterval_factory(type);
   cost_argmin = argmin_factory(type);
   cost_intervalInterRoots = intervalInterRoots_factory(type);
   cost_age = age_factory(type);

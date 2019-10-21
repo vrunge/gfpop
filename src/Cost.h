@@ -2,8 +2,10 @@
 #define COST_H
 
 #include <functional>
-#include"math.h"
-#include"Interval.h"
+#include "math.h"
+#include "Interval.h"
+#include "Data.h"
+
 
 struct Cost
 {
@@ -22,9 +24,12 @@ void addmyConstant(Cost& cost, double& cst);
 void addCost(Cost& cost, const Cost& cost2);
 
 std::function<double(const Cost&)> min_factory(const std::string& type);
+std::function<double(const Cost&, Interval inter)> minInterval_factory(const std::string& type);
 std::function<double(const Cost&)> argmin_factory(const std::string& type);
-std::function<double*(double)> coeff_factory(const std::string& type);
+
+std::function<double*(const Point&)> coeff_factory(const std::string& type); //
 std::function<Interval(const Cost&, double& level)> intervalInterRoots_factory(const std::string& type);
+
 std::function<int(const Cost&)> age_factory(const std::string& type);
 std::function<Interval()> interval_factory(const std::string& type);
 

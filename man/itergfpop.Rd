@@ -4,7 +4,7 @@
 \alias{itergfpop}
 \title{Graph-constrained functional pruning optimal partitioning iterated}
 \usage{
-itergfpop(data = c(0), mygraph, type = "mean", weights = c(0),
+itergfpop(data, mygraph, type = "mean", weights = NULL,
   iter.max = 100, D.init = 1)
 }
 \arguments{
