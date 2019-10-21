@@ -206,6 +206,22 @@ double variance_argmin(const Cost& cost)
 double poisson_argmin(const Cost& cost){return(cost.m_B/cost.m_A);}
 double negbin_argmin(const Cost& cost){return(cost.m_A/(cost.m_A + cost.m_B));}
 
+//####### shift #######////####### shift #######////####### shift #######//
+//####### shift #######////####### shift #######////####### shift #######//
+
+void mean_shift(Cost& cost, double parameter)
+{
+  cost.m_B = cost.m_B - 2 * cost.m_A * parameter;
+  cost.constant = cost.constant + parameter * (cost.m_A * parameter - cost.m_B);
+}
+
+void variance_shift(Cost& cost, double parameter)
+{
+  cost.m_A = cost.m_A * parameter;
+  cost.constant = cost.constant - cost.m_B * log(parameter);
+}
+
+void negbin_shift(Cost& cost, double parameter){}
 
 
 //####### intervalInterRoots #######////####### intervalInterRoots #######////####### intervalInterRoots #######//
@@ -441,6 +457,17 @@ std::function<double(const Cost&)> argmin_factory(const std::string& type)
   return(fct);
 }
 
+std::function<void(Cost& cost, double parameter)> shift_factory(const std::string& type)
+{
+  std::function<void(Cost& cost, double parameter)> fct;
+  if(type == "mean"){fct = std::function<void(Cost& cost, double parameter)>(mean_shift);}
+  if(type == "variance"){fct = std::function<void(Cost& cost, double parameter)>(variance_shift);}
+  if(type == "poisson"){fct = std::function<void(Cost& cost, double parameter)>(variance_shift);}
+  if(type == "exp"){fct = std::function<void(Cost& cost, double parameter)>(variance_shift);}
+  if(type == "negbin"){fct = std::function<void(Cost& cost, double parameter)>(negbin_shift);}
+  return(fct);
+}
+
 std::function<Interval(const Cost&, double& level)> intervalInterRoots_factory(const std::string& type)
 {
   std::function<Interval(const Cost&, double& level)> fct;
@@ -462,7 +489,6 @@ std::function<int(const Cost&)> age_factory(const std::string& type)
   if(type == "negbin"){fct = std::function<int(const Cost&)>(negbin_age);}
   return(fct);
 }
-
 
 
 std::function<Interval()> interval_factory(const std::string& type)

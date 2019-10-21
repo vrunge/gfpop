@@ -27,6 +27,9 @@ class Piece
     Cost getCost() const;
     Cost& getRefCost();
 
+    void setIntervalA(double a);
+    void setIntervalB(double b);
+
     Piece* copy();
     double getMin();
     void addCoeff(Cost const& cost, double penalty);

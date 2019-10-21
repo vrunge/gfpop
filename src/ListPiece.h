@@ -27,6 +27,9 @@ public:
   void addNewLastPiece(Piece* newPiece);
   void copy(ListPiece  const& LP_edge);
 
+  void shift_right(double parameter);
+  void shift_left(double parameter);
+
   ///////  3 OPERATIONS in GFPOP ///////
   void LP_edges_constraint(ListPiece const& LP_state, Edge const& edge, unsigned int newLabel);
   void LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt);

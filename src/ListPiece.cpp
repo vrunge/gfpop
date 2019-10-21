@@ -93,7 +93,6 @@ void ListPiece::initializeCurrentPiece()
   currentPiece = head;
 }
 
-
 //##### copy #####//////##### copy #####//////##### copy #####///
 //##### copy #####//////##### copy #####//////##### copy #####///
 
@@ -112,6 +111,24 @@ void ListPiece::copy(ListPiece const& LP_edge)
 }
 
 
+
+// SHIFT /// SHIFT /// SHIFT /// SHIFT /// SHIFT /// SHIFT /// SHIFT /// SHIFT ///
+// SHIFT /// SHIFT /// SHIFT /// SHIFT /// SHIFT /// SHIFT /// SHIFT /// SHIFT ///
+// WITH NO COPY // WITH NO COPY // WITH NO COPY // WITH NO COPY // WITH NO COPY //
+// WITH NO COPY // WITH NO COPY // WITH NO COPY // WITH NO COPY // WITH NO COPY //
+
+// shift_right // shift_right // shift_right // shift_right // shift_right // shift_right //
+// shift_right // shift_right // shift_right // shift_right // shift_right // shift_right //
+
+void ListPiece::shift_right(double parameter)
+{
+}
+
+void ListPiece::shift_left(double parameter)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -131,7 +148,7 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
   double edge_beta = edge.getBeta();
   int parentStateLabel = edge.getState1(); ///parentStateLabel = state to associate
 
-  //###############################################################
+  //################
   if(edge_ctt == "null") /// Simple copy of LP_state
   {
     Piece* current = LP_state.head;
@@ -143,7 +160,7 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     }
   }
 
-  //###############################################################
+  //################
   if(edge_ctt == "std")
   {
     ///find the minimum
@@ -164,12 +181,12 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
 
   }
 
-  //###############################################################
+  //################
   if(edge_ctt == "up")
   {
   }
 
-  //###############################################################
+  //################
   if(edge_ctt == "down")
   {
     reverse(); ///look at pieces from right to left
@@ -196,9 +213,10 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
   ///////////////////// CASE K == INF /////////////////////
   if(K == INFINITY)
   {
+    Cost costPt = Cost(cost_coeff(pt));
     while(currentPiece != NULL)
     {
-      currentPiece -> addCoeff(Cost(cost_coeff(pt)), penalty);
+      currentPiece -> addCoeff(costPt, penalty);
       move();
     }
   }
@@ -207,29 +225,77 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
   ///////////////////// CASE K != INF /////////////////////
   if(K != INFINITY)
   {
-    ///DANGER
-    double* coeff = new double[3];
-    coeff[0] = 0;
-    coeff[1] = -a;
-    coeff[2] = K;
-    Cost slopeLeftCost = Cost(coeff);
-    coeff[1] = a;
-    Cost slopeRightCost = Cost(coeff);
-
+    /// INTIALIZATION
     ///Interval
     Cost costInter = Cost(cost_coeff(pt));
-    Interval new_interval = cost_intervalInterRoots(costInter,K);
+    Interval new_interval = cost_intervalInterRoots(costInter, K);
 
-
-    /// Putting the bounds in variables A and B
+    /// Putting the bounds in variables AK and BK
     double AK = new_interval.geta();
     double BK = new_interval.getb();
 
+    double* coeff = new double[3];
+    coeff[0] = 0;
+    coeff[1] = -a;
+    coeff[2] = K + a * AK;
+    Cost slopeLeftCost = Cost(coeff);  /// LEFT y = -ax + K + a * AK
+    coeff[1] = a;
+    coeff[2] = K  - a * BK;
+    Cost slopeRightCost = Cost(coeff);  /// RIGHT y = ax + K - a * BK
+    Cost costPt = Cost(cost_coeff(pt));  /// CENTER pt
+
+    /// bounds of the tmp Piece
+    double tmpA = 0;
+    double tmpB = 0;
+
+    int cas = 0;
 
     while(currentPiece != NULL)
     {
-      currentPiece -> addCoeff(Cost(cost_coeff(pt)), penalty);
-      move();
+      tmpA = currentPiece -> getInterval().geta();
+      tmpB = currentPiece -> getInterval().getb();
+
+      if(tmpB <= AK){cas = 0;}
+      if(BK <= tmpA){cas = 1;}
+      if(AK <= tmpA && tmpB <= BK){cas = 2;}
+      if(tmpA < BK && BK < tmpB){cas = 3;}
+      if(tmpA < AK && AK < tmpB){cas = 4;}///priority to AK over BK between tempA and tempB.
+
+      switch(cas)
+      {
+      case 0 : currentPiece -> addCoeff(slopeLeftCost, penalty);
+        break;
+      case 1 : currentPiece -> addCoeff(slopeRightCost, penalty);
+        break;
+      case 2 : currentPiece -> addCoeff(costPt, penalty);
+        break;
+      case 3 :
+      {
+        ///copying currentPiece in new_piece add adding new_piece after currentPiece
+        Piece* new_piece = currentPiece -> copy();
+        addCurrentPiecePlus1(new_piece);
+        ///adding costPt on the left
+        currentPiece -> addCoeff(costPt, penalty);
+        ///changing interval bounds
+        currentPiece -> setIntervalB(BK);
+        new_piece -> setIntervalA(BK);
+        break;
+      }
+
+      case 4 :
+      {
+        ///copying currentPiece in new_piece add adding new_piece after currentPiece
+        Piece* new_piece = new Piece(currentPiece);
+        addCurrentPiecePlus1(new_piece);
+        ///adding slopeLeftCost on the left
+        currentPiece -> addCoeff(slopeLeftCost, penalty);
+        ///changing interval bounds
+        currentPiece -> setIntervalB(AK);
+        new_piece -> setIntervalA(AK);
+        break;
+      }
+      }
+    move();
     }
   }
 

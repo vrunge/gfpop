@@ -46,6 +46,9 @@ Interval Piece::getInterval() const {return(m_interval);}
 Cost Piece::getCost() const {return(m_cost);}
 Cost& Piece::getRefCost(){return(m_cost);}
 
+void Piece::setIntervalA(double a){m_interval.seta(a);}
+void Piece::setIntervalB(double b){m_interval.setb(b);}
+
 
 //####### copy #######////####### copy #######////####### copy #######//
 //####### copy #######////####### copy #######////####### copy #######//
