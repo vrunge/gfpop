@@ -6,27 +6,9 @@
 
 ListPiece::ListPiece()
 {
-  lengthList = 0;
-  head = new Piece();
-  head -> nxt = NULL;
-  currentPiece = head;
-}
-
-void ListPiece::addPiece(Piece* newP)
-{
-  currentPiece = currentPiece -> nxt;
-  currentPiece = newP;
-  lengthList = lengthList + 1;
-}
-
-void ListPiece::move()
-{
-  currentPiece = currentPiece -> nxt;
-}
-
-unsigned int ListPiece::getLength()
-{
-  return lengthList;
+  head = NULL;
+  currentPiece = NULL;
+  lastPiece = NULL;
 }
 
 ListPiece::~ListPiece()
@@ -39,6 +21,73 @@ ListPiece::~ListPiece()
   }
 }
 
+//##### reset #####//////##### reset #####//////##### reset #####///
+//##### reset #####//////##### reset #####//////##### reset #####///
+
+void ListPiece::reset()
+{
+  while(head != NULL)
+  {
+    Piece* pieceToDelete = head;
+    head = head -> nxt;
+    delete(pieceToDelete);
+  }
+  currentPiece = NULL;
+  lastPiece = NULL;
+}
+
+//##### reverse #####//////##### reverse #####//////##### reverse #####///
+//##### reverse #####//////##### reverse #####//////##### reverse #####///
+
+void ListPiece::reverse()
+{
+  lastPiece = head;
+
+  Piece* prev =  NULL;
+  Piece* current = head;
+  Piece* next = current;
+
+  while(current != NULL)
+  {
+    next  = current -> nxt;
+    current -> nxt = prev; /// new nxt
+    prev = current;
+    current = next;
+  }
+
+  head = prev;
+  currentPiece = head;
+}
+
+//##### addNewCurrentPiece #####//////##### addNewCurrentPiece #####//////##### addNewCurrentPiece #####///
+//##### addNewCurrentPiece #####//////##### addNewCurrentPiece #####//////##### addNewCurrentPiece #####///
+
+void ListPiece::addCurrentPiecePlus1(Piece* newPiece)
+{
+  newPiece -> nxt = currentPiece -> nxt;
+  currentPiece -> nxt = newPiece;
+}
+
+//##### addNewLastPiece #####//////##### addNewLastPiece #####//////##### addNewLastPiece #####///
+//##### addNewLastPiece #####//////##### addNewLastPiece #####//////##### addNewLastPiece #####///
+
+void ListPiece::addNewLastPiece(Piece* newPiece)
+{
+  lastPiece -> nxt = newPiece;
+  lastPiece = newPiece;
+}
+
+//##### move #####//////##### move #####//////##### move #####///
+//##### move #####//////##### move #####//////##### move #####///
+
+void ListPiece::move()
+{
+  currentPiece = currentPiece -> nxt;
+}
+
+//##### initializeCurrentPiece #####//////##### initializeCurrentPiece #####//////##### initializeCurrentPiece #####///
+//##### initializeCurrentPiece #####//////##### initializeCurrentPiece #####//////##### initializeCurrentPiece #####///
+
 void ListPiece::initializeCurrentPiece()
 {
   currentPiece = head;
@@ -46,21 +95,45 @@ void ListPiece::initializeCurrentPiece()
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
 
 //##### LP_edges_constraint #####//////##### LP_edges_constraint #####//////##### LP_edges_constraint #####///
 //##### LP_edges_constraint #####//////##### LP_edges_constraint #####//////##### LP_edges_constraint #####///
 
-ListPiece ListPiece::LP_edges_constraint(Edge const& edge, unsigned int t)
+void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge, unsigned int newLabel)
 {
-  ListPiece LP_edgesNew = ListPiece();
-  initializeCurrentPiece();
+  reset(); /// build a new LP_edges from scratch
+
+  /// 4 types of edges : null, std, up, down
+  ///
+  /// EDGE PARAMETERS
+  ///
+  std::string edge_ctt = edge.getConstraint();
+  double edge_parameter = edge.getParameter();
+  double edge_beta = edge.getBeta();
+  int parentStateLabel = edge.getState1(); ///parentStateLabel = state to associate
+
+  //###############################################################
+  if(edge_ctt == "null")
+  {
+  }
+  //###############################################################
+  if(edge_ctt == "std")
+  {
+  }
+  //###############################################################
+  if(edge_ctt == "down")
+  {
+  }
+
+  //###############################################################
+  if(edge_ctt == "up")
+  {
+  }
 
   while(currentPiece != NULL)
   {
     move();
   }
-  return(LP_edgesNew);
 }
 
 //##### LP_edges_addPointAndPenalty #####//////##### LP_edges_addPointAndPenalty #####//////##### LP_edges_addPointAndPenalty #####///

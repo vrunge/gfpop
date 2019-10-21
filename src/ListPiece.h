@@ -12,22 +12,26 @@ class ListPiece
 private:
   Piece* head;
   Piece* currentPiece;
-  unsigned int lengthList;
+  Piece* lastPiece;
 
 public:
   ListPiece();
   ~ListPiece();
+
+  ///////  Simple list operations  ///////
+  void reset();
+  void reverse();
   void move();
-  void addPiece(Piece* newP);
   void initializeCurrentPiece();
-  unsigned int getLength();
+  void addCurrentPiecePlus1(Piece* newPiece);
+  void addNewLastPiece(Piece* newPiece);
 
   ///////  3 OPERATIONS in GFPOP ///////
-  ListPiece LP_edges_constraint(Edge const& edge, unsigned int t);
+  void LP_edges_constraint(ListPiece const& LP_state, Edge const& edge, unsigned int newLabel);
   void LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt);
 
 
-  ///////  SIMPLE OPERATIONS  ///////
+  ///////  Simple Piece operations  ///////
   void addConstant(double myconst);
 
   void show();

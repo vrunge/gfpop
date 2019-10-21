@@ -75,7 +75,7 @@ void Omega::initialize_LP_ts(unsigned int n)
         maxi = m_graph.getEdge(j).getMaxx();
       }
     }
-    LP_ts[0][i].addPiece(new Piece(Track(), Interval(mini, maxi), Cost()));
+    LP_ts[0][i].addNewLastPiece(new Piece(Track(), Interval(mini, maxi), Cost()));
     mini = inter.geta();
     maxi = inter.getb();
   }
@@ -120,26 +120,16 @@ void Omega::gfpop(Data const& data)
 	show();
 }
 
-
-
-//##### SUBFUNCTIONS #####/// ///##### SUBFUNCTIONS #####/// ///##### SUBFUNCTIONS #####///
-//##### SUBFUNCTIONS #####/// ///##### SUBFUNCTIONS #####/// ///##### SUBFUNCTIONS #####///
-//##### SUBFUNCTIONS #####/// ///##### SUBFUNCTIONS #####/// ///##### SUBFUNCTIONS #####///
-//##### SUBFUNCTIONS #####/// ///##### SUBFUNCTIONS #####/// ///##### SUBFUNCTIONS #####///
-
 //##### LP_edges_operators #####//////##### LP_edges_operators #####//////##### LP_edges_operators #####///
 //##### LP_edges_operators #####//////##### LP_edges_operators #####//////##### LP_edges_operators #####///
 
-void Omega::LP_edges_operators(unsigned int t)
+void Omega::LP_edges_operators(unsigned int newLabel)
 {
-  //delete(LP_edges); /// DELETE LP_edges
-  unsigned int s1; /// starting state
-  Edge edge;
   for(unsigned int i = 0 ; i < q ; i++) /// loop for all edges
   {
-    edge = m_graph.getEdge(i);
-    s1 = edge.getState1(); /// starting state
-    LP_edges[i] = LP_ts[t][s1].LP_edges_constraint(edge, t);
+    ///i-th edge = m_graph.getEdge(i)
+    ///starting state = m_graph.getEdge(i).getState1()
+    LP_edges[i].LP_edges_constraint(LP_ts[newLabel][m_graph.getEdge(i).getState1()], m_graph.getEdge(i), newLabel);
   }
 }
 

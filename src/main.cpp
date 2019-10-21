@@ -12,7 +12,6 @@
 #include"Graph.h"
 #include"Edge.h"
 
-
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -132,5 +131,3 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
 
   return res;
 }
-
-
