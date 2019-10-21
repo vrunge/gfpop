@@ -8,7 +8,7 @@
 %\VignetteIndexEntry{An Introduction to gfpop}
 --> 
 
-DANGER : code broken in September in preparation for big update!
+DANGER : code broken in October in preparation for big update!
 
 
 # gfpop Vignette
