@@ -16,7 +16,7 @@
 #' \item{\code{parameters}}{is the vector of successive parameters of each segment}
 #' \item{\code{globalCost}}{is a number equal to the global cost of the graph-constrained changepoint optimization problem}
 #'  }
-gfpop <- function(data = c(0), mygraph, type = "mean", weights = c(0))
+gfpop <- function(data, mygraph, type = "mean", weights = NULL)
 {
   ############
   ### STOP ###
@@ -27,10 +27,10 @@ gfpop <- function(data = c(0), mygraph, type = "mean", weights = c(0))
       {stop('Argument "type" not appropriate. Choose among "mean", "variance", "poisson", "exp" or "negbin"')}
 
   ### if we have weights
-  if(length(weights) > 1)
+  if(!is.null(weights))
   {
-    if(length(data) != length(weights)){stop('data vector and weights vector have different size')}
-    if(!all(weights>0)){stop('weights vector has non strictly positive components')}
+    if(length(data) != length(weights)){stop('data vector and weights vector have different sizes')}
+    if(!all(weights > 0)){stop('weights vector has non strictly positive components')}
   }
   if(length(data) < 2){stop('data vector length is less than 2...')}
 
@@ -49,14 +49,12 @@ gfpop <- function(data = c(0), mygraph, type = "mean", weights = c(0))
 
   useThePackage <- "gfpop"
 
-  ###To dispatch to 3 packages
+  ###Dispatch to 3 packages ### for future packages : fpop and ifpop
   graphType <- typeOfGraph(newGraph) #("std", "isotonic" or "gfpop")
 
   if(graphType == "std"){}
   if(graphType == "isotonic"){}
   if(graphType == "gfpop"){res <- gfpopTransfer(data, newGraph, type, weights)}
-
-
 
   ############################
   ### Response class gfpop ###
@@ -90,7 +88,7 @@ gfpop <- function(data = c(0), mygraph, type = "mean", weights = c(0))
 #' \item{\code{globalCost}}{is a number equal to the global cost of the graph-constrained changepoint optimization problem}
 #' \item{\code{Dvect}}{is a vector of integers. The successive tested D in the Birgé Massart penalty until convergence}
 #'  }
-itergfpop <- function(data = c(0), mygraph, type = "mean", weights = c(0), iter.max = 100, D.init = 1)
+itergfpop <- function(data, mygraph, type = "mean", weights = NULL, iter.max = 100, D.init = 1)
 {
   ############
   ### STOP ###
@@ -101,9 +99,9 @@ itergfpop <- function(data = c(0), mygraph, type = "mean", weights = c(0), iter.
   {stop('Argument "type" not appropriate. Choose among "mean", "variance", "poisson", "exp" or "negbin"')}
 
   ### if we have weights
-  if(length(weights) > 1)
+  if(!is.null(weights))
   {
-    if(length(data) != length(weights)){stop('data vector and weights vector have different size')}
+    if(length(data) != length(weights)){stop('data vector and weights vector have different sizes')}
     if(!all(weights>0)){stop('weights vector has non strictly positive components')}
   }
   if(length(data) < 2){stop('data vector length is less than 2...')}
@@ -116,7 +114,6 @@ itergfpop <- function(data = c(0), mygraph, type = "mean", weights = c(0), iter.
 
   newGraph <- mynewgraph$graph
   vertices <- mynewgraph$vertices
-
 
   ######################
   ### ITERATED GFPOP ###
