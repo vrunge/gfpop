@@ -23,7 +23,6 @@ Omega::Omega(Graph graph)
 
   /// INITIALIZE ListPiece ///
   LP_edges = new ListPiece[q];
-  LP_s_temp = new ListPiece[p];
   LP_ts = NULL;
 }
 
@@ -36,8 +35,6 @@ Omega::~Omega()
   //if(LP_ts != NULL){delete [] LP_ts; LP_ts = NULL;}
   //delete LP_edges;
   //LP_edges = NULL;
-  //delete LP_s_temp;
-  //LP_s_temp = NULL;
 }
 
 //####### accessors #######////####### accessors #######////####### accessors #######//
@@ -88,7 +85,7 @@ void Omega::initialize_LP_ts(unsigned int n)
     for(unsigned int i = 0; i < p; i++)
     {
       if(std::find(startState.begin(), startState.end(), i) == startState.end())
-        {LP_ts[0][i].addConstant(INFINITY);}
+        {LP_ts[0][i].setUniquePieceCostToInfinity();}
     }
   }
 }
@@ -127,8 +124,8 @@ void Omega::LP_edges_operators(unsigned int newLabel)
 {
   for(unsigned int i = 0 ; i < q ; i++) /// loop for all edges
   {
-    ///i-th edge = m_graph.getEdge(i)
-    ///starting state = m_graph.getEdge(i).getState1()
+    /// i-th edge = m_graph.getEdge(i)
+    /// starting state = m_graph.getEdge(i).getState1()
     LP_edges[i].LP_edges_constraint(LP_ts[newLabel][m_graph.getEdge(i).getState1()], m_graph.getEdge(i), newLabel);
   }
 }
@@ -140,6 +137,7 @@ void Omega::LP_edges_addPointAndPenalty(Point const& pt)
 {
   for(unsigned char i = 0; i < q; i++) /// loop for all edges
   {
+    /// LP_edges[i] = i-th edge = m_graph.getEdge(i) = we need K, a and penalty
     LP_edges[i].LP_edges_addPointAndPenalty(m_graph.getEdge(i), pt);
   }
 }
@@ -149,6 +147,18 @@ void Omega::LP_edges_addPointAndPenalty(Point const& pt)
 
 void Omega::LP_t_new_multipleMinimization(unsigned int t)
 {
+  ///m_graph is rearranged with increasing integer state2
+  int j = 0;
+  for (unsigned int i = 0 ; i < p; i++)
+  {
+    LP_ts[t + 1][i].copy(LP_edges[j]);  //copy pointers in Q_ts[t + 1][i] from Q_edges
+    while((j + 1 < q) && (m_graph.getEdge(j + 1).getState2() == i))
+    {
+      LP_ts[t + 1][i].LP_ts_Minimization(LP_edges[j + 1]); ///
+      j = j + 1;
+    }
+    j = j + 1;
+  }
 }
 
 

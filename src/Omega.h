@@ -48,7 +48,6 @@ class Omega
 
     unsigned int n; //size of the data
     ListPiece* LP_edges; /// transformed cost by the operators for each edge (size 1 x q)
-    ListPiece* LP_s_temp; /// cost to compare to Q_ts last element of the vector (size 1 x p)
     ListPiece** LP_ts;  ///cost function Q with respect to position t and state s (size t x p), t = vector size.
 
     std::vector< int > changepoints; ///vector of changepoints build by fpop (first index of each segment). size c

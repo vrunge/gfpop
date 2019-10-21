@@ -208,10 +208,18 @@ graphReorder <- function(mygraph)
 
   ###transform the abs edge into two edges (up and down)
   absEdge <- graphVtemp[,3] == "abs"
-  graphVtemp[absEdge,3] <- "down"
-  addToGraphVV <- graphVtemp[absEdge,]
-  addToGraphVV[,3 ] <- "up"
-  graphV <- rbind(graphVtemp, addToGraphVV)
+
+  if(!all(absEdge == FALSE))
+  {
+    graphVtemp[absEdge,3] <- "down"
+    addToGraphVV <- graphVtemp[absEdge,]
+    addToGraphVV[,3] <- "up"
+    graphV <- rbind(graphVtemp, addToGraphVV)
+  }
+  else
+  {
+    graphV <- graphVtemp
+  }
 
   ##create a new graph
   myNewGraph <- graph()

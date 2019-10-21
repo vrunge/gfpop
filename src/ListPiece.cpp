@@ -93,6 +93,25 @@ void ListPiece::initializeCurrentPiece()
   currentPiece = head;
 }
 
+
+//##### copy #####//////##### copy #####//////##### copy #####///
+//##### copy #####//////##### copy #####//////##### copy #####///
+
+void ListPiece::copy(ListPiece const& LP_edge)
+{
+  Piece* current = LP_edge.head;
+  head = current;
+
+  while(current != NULL)
+  {
+    currentPiece = current -> copy(); //copy content in Piece
+    currentPiece -> nxt = current -> nxt; //copy nxt pointer
+    current = current -> nxt;
+  }
+  lastPiece = currentPiece;
+}
+
+
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -119,7 +138,7 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     while(current != NULL)
     {
       addNewLastPiece(current -> copy());
-      current = LP_state.currentPiece -> nxt;
+      current = current -> nxt;
       ///DANGER : change Track?
     }
   }
@@ -174,6 +193,7 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
   initializeCurrentPiece();
 
   ///////////////////// CASE K == INF /////////////////////
+  ///////////////////// CASE K == INF /////////////////////
   if(K == INFINITY)
   {
     while(currentPiece != NULL)
@@ -184,13 +204,27 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
   }
 
   ///////////////////// CASE K != INF /////////////////////
+  ///////////////////// CASE K != INF /////////////////////
   if(K != INFINITY)
   {
+    ///DANGER
     double* coeff = new double[3];
     coeff[0] = 0;
-    coeff[1] = a;
+    coeff[1] = -a;
     coeff[2] = K;
-    Cost slopeCost = Cost(coeff);
+    Cost slopeLeftCost = Cost(coeff);
+    coeff[1] = a;
+    Cost slopeRightCost = Cost(coeff);
+
+    ///Interval
+    Cost costInter = Cost(cost_coeff(pt));
+    Interval new_interval = cost_intervalInterRoots(costInter,K);
+
+
+    /// Putting the bounds in variables A and B
+    double AK = new_interval.geta();
+    double BK = new_interval.getb();
+
 
     while(currentPiece != NULL)
     {
@@ -202,13 +236,25 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
 
 }
 
-/////////////////////////////////////////
-/////////////////////////////////////////
 
 
-void ListPiece::addConstant(double myconst)
+//##### LP_ts_Minimization #####//////##### LP_ts_Minimization #####//////##### LP_ts_Minimization #####///
+//##### LP_ts_Minimization #####//////##### LP_ts_Minimization #####//////##### LP_ts_Minimization #####///
+
+void ListPiece::LP_ts_Minimization(ListPiece const& LP_edge)
 {
 
+
+}
+
+
+/////////////////////////////////////////
+/////////////////////////////////////////
+
+
+void ListPiece::setUniquePieceCostToInfinity()
+{
+  head -> getRefCost().constant = INFINITY;
 }
 
 /////////////////////////////////////////

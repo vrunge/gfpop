@@ -25,14 +25,16 @@ public:
   void initializeCurrentPiece();
   void addCurrentPiecePlus1(Piece* newPiece);
   void addNewLastPiece(Piece* newPiece);
+  void copy(ListPiece  const& LP_edge);
 
   ///////  3 OPERATIONS in GFPOP ///////
   void LP_edges_constraint(ListPiece const& LP_state, Edge const& edge, unsigned int newLabel);
   void LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt);
+  void LP_ts_Minimization(ListPiece const& LP_edge);
 
 
   ///////  Simple Piece operations  ///////
-  void addConstant(double myconst);
+  void setUniquePieceCostToInfinity();
 
   void show();
 
