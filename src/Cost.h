@@ -26,6 +26,7 @@ void addCost(Cost& cost, const Cost& cost2);
 ///
 
 std::function<double*(const Point&)> coeff_factory(const std::string& type);
+std::function<double(const Cost&, double value)> eval_factory(const std::string& type);
 
 std::function<double(const Cost&)> min_factory(const std::string& type);
 std::function<double(const Cost&, Interval inter)> minInterval_factory(const std::string& type);

@@ -5,6 +5,9 @@
 #include"Cost.h"
 
 extern std::function<double*(Point const& pt)> cost_coeff;
+extern std::function<double(const Cost&, double value)> cost_eval;
+
+
 extern std::function<double(const Cost&)> cost_min;
 extern std::function<double(const Cost&, Interval inter)> cost_minInterval;
 extern std::function<double(const Cost&)> cost_argmin;

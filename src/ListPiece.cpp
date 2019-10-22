@@ -365,6 +365,7 @@ void ListPiece::operator_up(ListPiece const& LP_edge, unsigned int newLabel, uns
   {
     currentPiece -> paste(tmp, currentValue);
     tmp = tmp -> nxt;
+    counter = counter + 1;
   }
 
 }

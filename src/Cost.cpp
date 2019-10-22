@@ -123,6 +123,15 @@ double* negbin_coeff(Point const& pt)
 }
 
 
+//####### eval #######////####### eval #######////####### eval #######//
+//####### eval #######////####### eval #######////####### eval #######//
+
+
+double mean_eval(const Cost& cost, double value){return(cost.m_A*value*value + cost.m_B*value + cost.constant);}
+double variance_eval(const Cost& cost, double value){return(cost.m_A*value - cost.m_B*log(value) + cost.constant);}
+double negbin_eval(const Cost& cost, double value){return(-cost.m_A*log(value) - cost.m_B*log(1 - value) + cost.constant);}
+
+
 //####### minimum #######////####### minimum #######////####### minimum #######//
 //####### minimum #######////####### minimum #######////####### minimum #######//
 
@@ -462,6 +471,10 @@ Interval exp_interval(){return(Interval(0,INFINITY));}
 Interval negbin_interval(){return(Interval(0,1));}
 
 
+
+//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#
+//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#
+
 //####### factories #######////####### factories #######////####### factories #######//
 //####### factories #######////####### factories #######////####### factories #######//
 
@@ -475,6 +488,18 @@ std::function<double*(const Point&)> coeff_factory(const std::string& type)
   if(type == "negbin"){fct = std::function<double*(const Point&)>(negbin_coeff);}
   return(fct);
 }
+
+std::function<double(const Cost&, double value)> eval_factory(const std::string& type)
+{
+  std::function<double(const Cost&, double value)> fct;
+  if(type == "mean"){fct = std::function<double(const Cost&, double value)>(mean_eval);}
+  if(type == "variance"){fct = std::function<double(const Cost&, double value)>(variance_eval);}
+  if(type == "poisson"){fct = std::function<double(const Cost&, double value)>(variance_eval);}
+  if(type == "exp"){fct = std::function<double(const Cost&, double value)>(variance_eval);}
+  if(type == "negbin"){fct = std::function<double(const Cost&, double value)>(negbin_eval);}
+  return(fct);
+}
+
 
 std::function<double(const Cost&)> min_factory(const std::string& type)
 {
