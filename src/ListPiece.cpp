@@ -21,6 +21,16 @@ ListPiece::~ListPiece()
   }
 }
 
+
+
+//##### setUniquePieceCostToInfinity #####//////##### setUniquePieceCostToInfinity #####//////##### setUniquePieceCostToInfinity #####///
+//##### setUniquePieceCostToInfinity #####//////##### setUniquePieceCostToInfinity #####//////##### setUniquePieceCostToInfinity #####///
+
+void ListPiece::setUniquePieceCostToInfinity()
+{
+  head -> getRefCost().constant = INFINITY;
+}
+
 //##### reset #####//////##### reset #####//////##### reset #####///
 //##### reset #####//////##### reset #####//////##### reset #####///
 
@@ -111,21 +121,41 @@ void ListPiece::copy(ListPiece const& LP_edge)
 }
 
 
+//##### shift #####//////##### shift #####//////##### shift #####///
+//##### shift #####//////##### shift #####//////##### shift #####///
 
-// SHIFT /// SHIFT /// SHIFT /// SHIFT /// SHIFT /// SHIFT /// SHIFT /// SHIFT ///
-// SHIFT /// SHIFT /// SHIFT /// SHIFT /// SHIFT /// SHIFT /// SHIFT /// SHIFT ///
-// WITH NO COPY // WITH NO COPY // WITH NO COPY // WITH NO COPY // WITH NO COPY //
-// WITH NO COPY // WITH NO COPY // WITH NO COPY // WITH NO COPY // WITH NO COPY //
-
-// shift_right // shift_right // shift_right // shift_right // shift_right // shift_right //
-// shift_right // shift_right // shift_right // shift_right // shift_right // shift_right //
-
-void ListPiece::shift_right(double parameter)
+void ListPiece::shift(double parameter)
 {
+  currentPiece = head;
+  while(currentPiece != NULL)
+  {
+    ///MOVE bounds
+    Interval inter = currentPiece -> getInterval();
+    currentPiece -> setIntervalA(cost_interShift(inter.geta(),parameter));
+    currentPiece -> setIntervalB(cost_interShift(inter.getb(),parameter));
+    ///MOVE Cost
+    cost_shift(currentPiece -> getRefCost(), parameter);
+    currentPiece = currentPiece -> nxt;
+  }
 }
 
-void ListPiece::shift_left(double parameter)
+
+//##### expDecay #####//////##### expDecay #####//////##### expDecay #####///
+//##### expDecay #####//////##### expDecay #####//////##### expDecay #####///
+
+void ListPiece::expDecay(double gamma)
 {
+  currentPiece = head;
+  while(currentPiece != NULL)
+  {
+    ///MOVE bounds
+    Interval inter = currentPiece -> getInterval();
+    currentPiece -> setIntervalA(cost_interExpDecay(inter.geta(),gamma));
+    currentPiece -> setIntervalB(cost_interExpDecay(inter.getb(),gamma));
+    ///MOVE Cost
+    cost_expDecay(currentPiece -> getRefCost(), gamma);
+    currentPiece = currentPiece -> nxt;
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -314,14 +344,6 @@ void ListPiece::LP_ts_Minimization(ListPiece const& LP_edge)
 }
 
 
-/////////////////////////////////////////
-/////////////////////////////////////////
-
-
-void ListPiece::setUniquePieceCostToInfinity()
-{
-  head -> getRefCost().constant = INFINITY;
-}
 
 /////////////////////////////////////////
 /////////////////////////////////////////
@@ -337,9 +359,4 @@ void ListPiece::show()
     move();
   }
 }
-
-
-
-
-
 

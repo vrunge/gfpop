@@ -19,6 +19,7 @@ public:
   ~ListPiece();
 
   ///////  Simple list operations  ///////
+  void setUniquePieceCostToInfinity();
   void reset();
   void reverse();
   void move();
@@ -27,17 +28,14 @@ public:
   void addNewLastPiece(Piece* newPiece);
   void copy(ListPiece  const& LP_edge);
 
-  void shift_right(double parameter);
-  void shift_left(double parameter);
+  void shift(double parameter);
+  void expDecay(double gamma);
 
   ///////  3 OPERATIONS in GFPOP ///////
   void LP_edges_constraint(ListPiece const& LP_state, Edge const& edge, unsigned int newLabel);
   void LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt);
   void LP_ts_Minimization(ListPiece const& LP_edge);
 
-
-  ///////  Simple Piece operations  ///////
-  void setUniquePieceCostToInfinity();
 
   void show();
 

@@ -224,6 +224,59 @@ void variance_shift(Cost& cost, double parameter)
 void negbin_shift(Cost& cost, double parameter){}
 
 
+//####### interShift #######////####### interShift #######////####### interShift #######//
+//####### interShift #######////####### interShift #######////####### interShift #######//
+
+double mean_interShift(double bound, double parameter)
+{
+  return(bound + parameter);
+}
+
+double variance_interShift(double bound, double parameter)
+{
+  return(bound/parameter);
+}
+
+double negbin_interShift(double bound, double parameter){return(bound);}
+
+
+
+//####### expDecay #######////####### expDecay #######////####### expDecay #######//
+//####### expDecay #######////####### expDecay #######////####### expDecay #######//
+
+void mean_expDecay(Cost& cost, double gamma)
+{
+  cost.m_A = cost.m_A / (gamma * gamma);
+  cost.m_B = cost.m_B / gamma;
+}
+
+void variance_expDecay(Cost& cost, double gamma)
+{
+  cost.m_A = cost.m_A / gamma;
+  cost.constant = cost.constant + cost.m_B * log(gamma);
+}
+
+void negbin_expDecay(Cost& cost, double gamma){}
+
+
+
+//####### interExpDecay #######////####### interExpDecay #######////####### interExpDecay #######//
+//####### interExpDecay #######////####### interExpDecay #######////####### interExpDecay #######//
+
+double mean_interExpDecay(double bound, double gamma)
+{
+  return(bound*gamma);
+}
+
+double variance_interExpDecay(double bound, double gamma)
+{
+  return(bound*gamma);
+}
+
+double negbin_interExpDecay(double bound, double gamma){return(bound);}
+
+
+
 //####### intervalInterRoots #######////####### intervalInterRoots #######////####### intervalInterRoots #######//
 //####### intervalInterRoots #######////####### intervalInterRoots #######////####### intervalInterRoots #######//
 
@@ -467,6 +520,44 @@ std::function<void(Cost& cost, double parameter)> shift_factory(const std::strin
   if(type == "negbin"){fct = std::function<void(Cost& cost, double parameter)>(negbin_shift);}
   return(fct);
 }
+
+
+std::function<double(double bound, double parameter)> interShift_factory(const std::string& type)
+{
+  std::function<double(double bound, double parameter)> fct;
+  if(type == "mean"){fct = std::function<double(double bound, double parameter)>(mean_interShift);}
+  if(type == "variance"){fct = std::function<double(double bound, double parameter)>(variance_interShift);}
+  if(type == "poisson"){fct = std::function<double(double bound, double parameter)>(variance_interShift);}
+  if(type == "exp"){fct = std::function<double(double bound, double parameter)>(variance_interShift);}
+  if(type == "negbin"){fct = std::function<double(double bound, double parameter)>(negbin_interShift);}
+  return(fct);
+}
+
+
+
+std::function<void(Cost& cost, double gamma)> expDecay_factory(const std::string& type)
+{
+  std::function<void(Cost& cost, double gamma)> fct;
+  if(type == "mean"){fct = std::function<void(Cost& cost, double gamma)>(mean_expDecay);}
+  if(type == "variance"){fct = std::function<void(Cost& cost, double gamma)>(variance_expDecay);}
+  if(type == "poisson"){fct = std::function<void(Cost& cost, double gamma)>(variance_expDecay);}
+  if(type == "exp"){fct = std::function<void(Cost& cost, double gamma)>(variance_expDecay);}
+  if(type == "negbin"){fct = std::function<void(Cost& cost, double gamma)>(negbin_expDecay);}
+  return(fct);
+}
+
+
+std::function<double(double bound, double gamma)> interExpDecay_factory(const std::string& type)
+{
+  std::function<double(double bound, double gamma)> fct;
+  if(type == "mean"){fct = std::function<double(double bound, double gamma)>(mean_interExpDecay);}
+  if(type == "variance"){fct = std::function<double(double bound, double gamma)>(variance_interExpDecay);}
+  if(type == "poisson"){fct = std::function<double(double bound, double gamma)>(variance_interExpDecay);}
+  if(type == "exp"){fct = std::function<double(double bound, double gamma)>(variance_interExpDecay);}
+  if(type == "negbin"){fct = std::function<double(double bound, double gamma)>(negbin_interExpDecay);}
+  return(fct);
+}
+
 
 std::function<Interval(const Cost&, double& level)> intervalInterRoots_factory(const std::string& type)
 {
