@@ -5,24 +5,22 @@ class Track
 {
   public:
     Track();
-    Track(int label, int state, int position);
+    Track(unsigned int label, unsigned int state, unsigned int position);
 
-    int getLabel() const;
-    int getState() const;
-    int getPosition() const;
+    unsigned int getLabel() const;
+    unsigned int getState() const;
+    unsigned int getPosition() const;
 
-    void setLabel(int label);
-    void setState(int state);
-    void setPosition(int position);
-    void setTrack(int label, int state, int position);
+    void setLabel(unsigned int label);
+    void setState(unsigned int state);
+    void setPosition(unsigned int position);
+    void setTrack(unsigned int label, unsigned int state, unsigned int position);
     void setTrack(Track const& newTrack);
 
-    void axisSymmetry(int length); ///start counting the label from the end of Piece
-
   private:
-    int myLabel; ///label of the Piece
-    int myParentState; ///parent state of the Piece
-    int myParentPosition; ///position of the parent Piece in the list of Pieces in functional cost
+    unsigned int myLabel; ///label of the Piece
+    unsigned int myParentState; ///parent state of the Piece
+    unsigned int myParentPosition; ///position of the parent Piece in the list of Pieces in functional cost
 
 };
 

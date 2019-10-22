@@ -37,18 +37,6 @@ Piece::~Piece()
 }
 
 
-//####### accessors #######////####### accessors #######////####### accessors #######//
-//####### accessors #######////####### accessors #######////####### accessors #######//
-
-
-Track Piece::getTrack()const {return(m_info);}
-Interval Piece::getInterval() const {return(m_interval);}
-Cost Piece::getCost() const {return(m_cost);}
-Cost& Piece::getRefCost(){return(m_cost);}
-
-void Piece::setIntervalA(double a){m_interval.seta(a);}
-void Piece::setIntervalB(double b){m_interval.setb(b);}
-
 
 //####### copy #######////####### copy #######////####### copy #######//
 //####### copy #######////####### copy #######////####### copy #######//
@@ -66,6 +54,33 @@ Piece* Piece::copy()
 double Piece::getMin()
 {
   return(cost_minInterval(m_cost, m_interval));
+}
+
+
+
+//####### addCostAndPenalty #######////####### addCostAndPenalty #######////####### addCostAndPenalty #######//
+//####### addCostAndPenalty #######////####### addCostAndPenalty #######////####### addCostAndPenalty #######//
+
+void Piece::addCostAndPenalty(Cost const& cost, double penalty)
+{
+  m_cost.m_A = m_cost.m_A + cost.m_A;
+  m_cost.m_B = m_cost.m_B + cost.m_B;
+  m_cost.constant = m_cost.constant + cost.constant + penalty;
+}
+
+
+//####### paste #######////####### paste #######////####### paste #######//
+//####### paste #######////####### paste #######////####### paste #######//
+
+void Piece::paste(Piece* tmp, double currentValue)
+{
+  ///INFORMATION
+  double argmini = cost_argmin(tmp -> m_cost);
+  double mini = cost_minInterval(tmp -> m_cost, tmp -> m_interval);
+  Interval inter = cost_intervalInterRoots(tmp -> m_cost, currentValue);
+
+
+
 }
 
 
@@ -89,13 +104,4 @@ void Piece::show()
 }
 
 
-//####### addCoeff #######////####### addCoeff #######////####### addCoeff #######//
-//####### addCoeff #######////####### addCoeff #######////####### addCoeff #######//
-
-void Piece::addCoeff(Cost const& cost, double penalty)
-{
-  m_cost.m_A = m_cost.m_A + cost.m_A;
-  m_cost.m_B = m_cost.m_B + cost.m_B;
-  m_cost.constant = m_cost.constant + cost.constant + penalty;
-}
 

@@ -16,35 +16,26 @@
 class Piece
 {
   public:
+    Track m_info;
+    Interval m_interval;
+    Cost m_cost;
+    Piece *nxt;   /// pointer to next piece
+
     Piece();
     Piece(Track const& info, Interval const& inter = Interval(), Cost const& cost = Cost());
     Piece(const Piece* piece); ///COPY CONSTRUCTOR => copy only the first Piece. piece -> nxt = NULL
-
     ~Piece();
-
-    Track getTrack() const;
-    Interval getInterval() const;
-    Cost getCost() const;
-    Cost& getRefCost();
-
-    void setIntervalA(double a);
-    void setIntervalB(double b);
 
     Piece* copy();
     double getMin();
-    void addCoeff(Cost const& cost, double penalty);
 
+    void addCostAndPenalty(Cost const& cost, double penalty);
+
+    void paste(Piece* tmp, double currentValue);
     ///
     ///
 
     void show();
-
-    Piece *nxt;   /// pointer to next piece
-
-  private:
-    Track m_info;
-    Interval m_interval;
-    Cost m_cost;  /// pointer to the cost associated to the current piece
 
 
 };

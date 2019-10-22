@@ -1,13 +1,14 @@
 #include "Track.h"
+#include"math.h"
 
 Track::Track()
 {
-  myLabel = 0;
-  myParentState = -1;
-  myParentPosition = -1;
+  myLabel = INFINITY;
+  myParentState = INFINITY;
+  myParentPosition = INFINITY;
 }
 
-Track::Track(int label, int state, int position)
+Track::Track(unsigned int label, unsigned int state, unsigned int position)
 {
   myLabel = label;
   myParentState = state;
@@ -15,15 +16,15 @@ Track::Track(int label, int state, int position)
 }
 
 
-int Track::getLabel() const {return(myLabel);}
-int Track::getState() const {return(myParentState);}
-int Track::getPosition() const {return(myParentPosition);}
+unsigned int Track::getLabel() const {return(myLabel);}
+unsigned int Track::getState() const {return(myParentState);}
+unsigned int Track::getPosition() const {return(myParentPosition);}
 
-void Track::setLabel(int label){myLabel = label;}
-void Track::setState(int state){myParentState = state;}
-void Track::setPosition(int position){myParentPosition = position;}
+void Track::setLabel(unsigned int label){myLabel = label;}
+void Track::setState(unsigned int state){myParentState = state;}
+void Track::setPosition(unsigned int position){myParentPosition = position;}
 
-void Track::setTrack(int label, int state, int position)
+void Track::setTrack(unsigned int label, unsigned int state, unsigned int position)
 {
   myLabel = label;
   myParentState = state;
@@ -37,7 +38,3 @@ void Track::setTrack(Track const& newTrack)
   myParentState = newTrack.getState();
   myParentPosition = newTrack.getPosition();
 }
-
-
-
-void Track::axisSymmetry(int length){myParentPosition = length - myParentPosition + 1;}

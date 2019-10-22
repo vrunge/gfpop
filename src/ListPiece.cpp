@@ -21,14 +21,12 @@ ListPiece::~ListPiece()
   }
 }
 
-
-
 //##### setUniquePieceCostToInfinity #####//////##### setUniquePieceCostToInfinity #####//////##### setUniquePieceCostToInfinity #####///
 //##### setUniquePieceCostToInfinity #####//////##### setUniquePieceCostToInfinity #####//////##### setUniquePieceCostToInfinity #####///
 
 void ListPiece::setUniquePieceCostToInfinity()
 {
-  head -> getRefCost().constant = INFINITY;
+  head -> m_cost.constant = INFINITY;
 }
 
 //##### reset #####//////##### reset #####//////##### reset #####///
@@ -69,8 +67,8 @@ void ListPiece::reverse()
   currentPiece = head;
 }
 
-//##### addNewCurrentPiece #####//////##### addNewCurrentPiece #####//////##### addNewCurrentPiece #####///
-//##### addNewCurrentPiece #####//////##### addNewCurrentPiece #####//////##### addNewCurrentPiece #####///
+//##### addCurrentPiecePlus1 #####//////##### addCurrentPiecePlus1 #####//////##### addCurrentPiecePlus1 #####///
+//##### addCurrentPiecePlus1 #####//////##### addCurrentPiecePlus1 #####//////##### addCurrentPiecePlus1 #####///
 
 void ListPiece::addCurrentPiecePlus1(Piece* newPiece)
 {
@@ -130,11 +128,11 @@ void ListPiece::shift(double parameter)
   while(currentPiece != NULL)
   {
     ///MOVE bounds
-    Interval inter = currentPiece -> getInterval();
-    currentPiece -> setIntervalA(cost_interShift(inter.geta(),parameter));
-    currentPiece -> setIntervalB(cost_interShift(inter.getb(),parameter));
+    Interval inter = currentPiece -> m_interval;
+    currentPiece -> m_interval.seta(cost_interShift(inter.geta(), parameter));
+    currentPiece -> m_interval.setb(cost_interShift(inter.getb(), parameter));
     ///MOVE Cost
-    cost_shift(currentPiece -> getRefCost(), parameter);
+    cost_shift(currentPiece -> m_cost, parameter);
     currentPiece = currentPiece -> nxt;
   }
 }
@@ -149,11 +147,11 @@ void ListPiece::expDecay(double gamma)
   while(currentPiece != NULL)
   {
     ///MOVE bounds
-    Interval inter = currentPiece -> getInterval();
-    currentPiece -> setIntervalA(cost_interExpDecay(inter.geta(),gamma));
-    currentPiece -> setIntervalB(cost_interExpDecay(inter.getb(),gamma));
+    Interval inter = currentPiece -> m_interval;
+    currentPiece -> m_interval.seta(cost_interExpDecay(inter.geta(), gamma));
+    currentPiece -> m_interval.setb(cost_interExpDecay(inter.getb(), gamma));
     ///MOVE Cost
-    cost_expDecay(currentPiece -> getRefCost(), gamma);
+    cost_expDecay(currentPiece -> m_cost, gamma);
     currentPiece = currentPiece -> nxt;
   }
 }
@@ -176,18 +174,13 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
   std::string edge_ctt = edge.getConstraint();
   double edge_parameter = edge.getParameter();
   double edge_beta = edge.getBeta();
-  int parentStateLabel = edge.getState1(); ///parentStateLabel = state to associate
+  unsigned int parentState = edge.getState1(); ///parentState = state to associate
 
   //################
   if(edge_ctt == "null") /// Simple copy of LP_state
   {
-    Piece* current = LP_state.head;
-    while(current != NULL)
-    {
-      addNewLastPiece(current -> copy());
-      current = current -> nxt;
-      ///DANGER : change Track?
-    }
+    copy(LP_state);
+    if(edge_parameter < 1){expDecay(edge_parameter);}
   }
 
   //################
@@ -196,17 +189,22 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     ///find the minimum
     double mini = INFINITY;
     double getmin;
+    unsigned int counter = 0;
+    unsigned int myCounter;
+
     Piece* current = LP_state.head;
     while(current != NULL)
     {
-      getmin = cost_minInterval(current -> getCost(), current -> getInterval());
-      if(getmin < mini){mini = getmin;}
-      current = LP_state.currentPiece -> nxt;
+      counter = counter + 1;
+      getmin = cost_minInterval(current -> m_cost, current -> m_interval);
+      if(getmin < mini){mini = getmin; myCounter = counter;}
+      current = current -> nxt;
     }
 
-    ///add one Piece to LP_edges
-    ///DANGER : find interval + add the constant = mini
+    ///add onePiece to LP_edges
     Piece* onePiece = new Piece();
+    onePiece ->addCostAndPenalty(Cost(), mini + edge_beta); /// Cost() = 0
+    onePiece -> m_info = Track(newLabel, parentState, myCounter);
     addNewLastPiece(onePiece);
 
   }
@@ -214,15 +212,17 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
   //################
   if(edge_ctt == "up")
   {
+    operator_up(LP_state, newLabel, parentState, true);
+    if(edge_parameter < 1){shift(edge_parameter);}
   }
 
   //################
   if(edge_ctt == "down")
   {
     reverse(); ///look at pieces from right to left
-
-
+    operator_up(LP_state, newLabel, parentState, false);
     reverse(); ///look at pieces from left to right
+    if(edge_parameter < 1){shift(-edge_parameter);}
   }
 
 }
@@ -246,7 +246,7 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
     Cost costPt = Cost(cost_coeff(pt));
     while(currentPiece != NULL)
     {
-      currentPiece -> addCoeff(costPt, penalty);
+      currentPiece -> addCostAndPenalty(costPt, penalty);
       move();
     }
   }
@@ -282,8 +282,8 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
 
     while(currentPiece != NULL)
     {
-      tmpA = currentPiece -> getInterval().geta();
-      tmpB = currentPiece -> getInterval().getb();
+      tmpA = currentPiece -> m_interval.geta();
+      tmpB = currentPiece -> m_interval.getb();
 
       if(tmpB <= AK){cas = 0;}
       if(BK <= tmpA){cas = 1;}
@@ -293,11 +293,11 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
 
       switch(cas)
       {
-      case 0 : currentPiece -> addCoeff(slopeLeftCost, penalty);
+      case 0 : currentPiece -> addCostAndPenalty(slopeLeftCost, penalty);
         break;
-      case 1 : currentPiece -> addCoeff(slopeRightCost, penalty);
+      case 1 : currentPiece -> addCostAndPenalty(slopeRightCost, penalty);
         break;
-      case 2 : currentPiece -> addCoeff(costPt, penalty);
+      case 2 : currentPiece -> addCostAndPenalty(costPt, penalty);
         break;
       case 3 :
       {
@@ -305,10 +305,10 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
         Piece* new_piece = currentPiece -> copy();
         addCurrentPiecePlus1(new_piece);
         ///adding costPt on the left
-        currentPiece -> addCoeff(costPt, penalty);
+        currentPiece -> addCostAndPenalty(costPt, penalty);
         ///changing interval bounds
-        currentPiece -> setIntervalB(BK);
-        new_piece -> setIntervalA(BK);
+        currentPiece -> m_interval.setb(BK);
+        new_piece -> m_interval.seta(BK);
         break;
       }
 
@@ -318,10 +318,10 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
         Piece* new_piece = new Piece(currentPiece);
         addCurrentPiecePlus1(new_piece);
         ///adding slopeLeftCost on the left
-        currentPiece -> addCoeff(slopeLeftCost, penalty);
+        currentPiece -> addCostAndPenalty(slopeLeftCost, penalty);
         ///changing interval bounds
-        currentPiece -> setIntervalB(AK);
-        new_piece -> setIntervalA(AK);
+        currentPiece -> m_interval.setb(AK);
+        new_piece -> m_interval.seta(AK);
         break;
       }
       }
@@ -343,6 +343,31 @@ void ListPiece::LP_ts_Minimization(ListPiece const& LP_edge)
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+
+//##### operator_up #####//////##### operator_up #####//////##### operator_up #####///
+//##### operator_up #####//////##### operator_up #####//////##### operator_up #####///
+
+void ListPiece::operator_up(ListPiece const& LP_edge, unsigned int newLabel, unsigned int parentState, bool upDirection)
+{
+  Piece* tmp = LP_edge.head;
+  double currentValue;
+  head = new Piece();
+  unsigned int counter = 1;
+
+  Track trackUp = Track(newLabel, parentState, counter);
+  head -> m_info.setTrack(trackUp); ///set Track
+
+
+  while(tmp != NULL)
+  {
+    currentPiece -> paste(tmp, currentValue);
+    tmp = tmp -> nxt;
+  }
+
+}
 
 
 /////////////////////////////////////////
