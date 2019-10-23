@@ -31,7 +31,10 @@ class Piece
 
     void addCostAndPenalty(Cost const& cost, double penalty);
 
-    void paste(Piece* tmp, double currentValue);
+    ///
+    ///
+    Interval intervalMinLess(double leftBound, double currentValue, bool constPiece);
+    Piece* pastePiece(const Piece* Q, Interval const& decrInter, Track const& newTrack);
     ///
     ///
 

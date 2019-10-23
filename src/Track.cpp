@@ -3,9 +3,9 @@
 
 Track::Track()
 {
-  myLabel = INFINITY;
-  myParentState = INFINITY;
-  myParentPosition = INFINITY;
+  myLabel = 0;
+  myParentState = 0;
+  myParentPosition = 0;
 }
 
 Track::Track(unsigned int label, unsigned int state, unsigned int position)

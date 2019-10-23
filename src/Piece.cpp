@@ -69,20 +69,92 @@ void Piece::addCostAndPenalty(Cost const& cost, double penalty)
 }
 
 
-//####### paste #######////####### paste #######////####### paste #######//
-//####### paste #######////####### paste #######////####### paste #######//
 
-void Piece::paste(Piece* tmp, double currentValue)
+//####### intervalMinLess #######////####### intervalMinLess #######////####### intervalMinLess #######//
+//####### intervalMinLess #######////####### intervalMinLess #######////####### intervalMinLess #######//
+
+
+Interval Piece::intervalMinLess(double leftBound, double currentValue, bool constPiece)
 {
-  ///INFORMATION
-  double argmini = cost_argmin(tmp -> m_cost);
-  double mini = cost_minInterval(tmp -> m_cost, tmp -> m_interval);
-  Interval inter = cost_intervalInterRoots(tmp -> m_cost, currentValue);
+  Interval response = Interval(); /// Interval = (INFINITY, INFINITY)
+  double mini = cost_min(m_cost);
 
 
+  if(currentValue > mini) /// otherwise currentValue constant doesn't intersect Piece cost
+  {
+    double argmini = cost_argmin(m_cost);
+    if(leftBound < argmini) /// otherwise currentValue constant doesn't intersect Piece cost
+    {
+      if(constPiece == true)
+      {
+        double* coeff = new double[3];
+        coeff[0] = m_cost.m_A;
+        coeff[1] = m_cost.m_B;
+        coeff[2] = m_cost.constant;
+        Cost costInter = Cost(coeff);
+        response = cost_intervalInterRoots(costInter, currentValue);
+        response.setb(argmini);
+        delete(coeff);
+      }
+      else /// i.e. point_eval(leftBound) == current_min : continuity condition
+      {
+        response.seta(leftBound);
+        response.setb(argmini);
+      }
+    }
+  }
 
+  return(response);
 }
 
+
+
+//####### pastePiece #######// //####### pastePiece #######// //####### pastePiece #######//
+//####### pastePiece #######// //####### pastePiece #######// //####### pastePiece #######//
+
+
+Piece* Piece::pastePiece(const Piece* Q, Interval const& decrInter, Track const& newTrack)
+{
+  Piece* BUILD = this;
+
+  /// decreasingInterval = (a,b)
+  /// Q -> m_interval = (m_a,m_b)
+
+  if(decrInter.isEmpty())
+  {
+    BUILD -> m_interval.setb(Q -> m_interval.getb());
+  }
+  else
+  {
+    BUILD -> m_interval.setb(decrInter.geta());    ///if a > m_a, no change otherwise
+
+    ///ADD of the PIECE Q (troncated)
+    if(BUILD -> m_interval.isEmpty()) ///if BUILD empty
+    {
+      BUILD -> m_interval.setb(decrInter.getb());
+      BUILD -> m_cost = Q -> m_cost;
+      BUILD -> m_info.setTrack(newTrack);
+    }
+    else
+    {
+      Piece* NewQ = new Piece(newTrack, decrInter, Q -> m_cost);
+      BUILD -> nxt = NewQ;
+      BUILD = NewQ;
+    }
+
+    if(!((Q -> nxt == NULL) && (decrInter.getb() == Q -> m_interval.getb())))
+    {
+      double outputValue = cost_eval(Q -> m_cost, decrInter.getb());
+      Piece* PieceOut = new Piece(newTrack, Interval(decrInter.getb(), Q -> m_interval.getb()), Cost());
+      addmyConstant(PieceOut -> m_cost, outputValue);
+      BUILD -> nxt = PieceOut;
+      BUILD = PieceOut;
+    }
+
+  }
+
+  return(BUILD);
+}
 
 
 /////////////////////////////////////////////////////////////////////
