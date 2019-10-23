@@ -386,12 +386,13 @@ void ListPiece::LP_ts_Minimization(ListPiece const& LP_edge)
 //##### operatorUpDown #####//////##### operatorUpDown #####//////##### operatorUpDown #####///
 //##### operatorUpDown #####//////##### operatorUpDown #####//////##### operatorUpDown #####///
 
-void ListPiece::operatorUpDown(ListPiece const& LP_edge, unsigned int newLabel, unsigned int parentState, bool upDirection)
+void ListPiece::operatorUpDown(ListPiece const& LP_state, unsigned int newLabel, unsigned int parentState, bool upDirection)
 {
   /// variable definition
-  Piece* tmp = LP_edge.head; ///to follow LP_edge List
+  Piece* tmp; ///to follow LP_edge List
   double currentValue; ///for the ListPiece to build, last current value
-  double rightBound; ///value at the (right) bound of the left build interval
+  double rightBound; ///value at the (right) bound of the last build interval. Up case
+  double leftBound; ///value at the (left) bound of the last build interval. Down case
   bool constPiece; ///has the Piece to build constant cost?
   unsigned int counter = 1; ///number of the considered Piece in LP_edge
   Track trackUp = Track(newLabel, parentState, counter);
@@ -404,17 +405,18 @@ void ListPiece::operatorUpDown(ListPiece const& LP_edge, unsigned int newLabel, 
     ///First Piece head
     //////////////////
     head = new Piece();
+    tmp = LP_state.head;
 
     /// INFO
     head -> m_info.setTrack(trackUp); ///set Track
 
     /// INTERVAL
-    rightBound = tmp -> m_interval.geta();
+    rightBound = tmp -> m_interval.geta(); ///tmp interval
     head -> m_interval.seta(rightBound);
     head -> m_interval.setb(rightBound);
 
     /// COST
-    currentValue = cost_eval(tmp -> m_cost, rightBound);
+    currentValue = cost_eval(tmp -> m_cost, rightBound); ///tmp cost value
     addmyConstant(head -> m_cost, currentValue);
 
     /// bool constPiece : is the first Piece constant? If cost increasing at bound, constPiece = true
@@ -422,17 +424,17 @@ void ListPiece::operatorUpDown(ListPiece const& LP_edge, unsigned int newLabel, 
 
     initializeCurrentPiece(); ///currentPiece = head
 
-    ///////////////////////////:
+    ///////////////////////////
 
     while(tmp != NULL)
     {
       ///decreasingInterval for currentPiece to create based on current tmp
-      decreasingInterval = tmp -> intervalMinLess(rightBound, currentValue, constPiece); ///"decreasing" interval
+      decreasingInterval = tmp -> intervalMinLess(rightBound, currentValue, constPiece, true); ///"decreasing" interval
       decreasingInterval = decreasingInterval.intersection(tmp -> m_interval); ///decreasingInterval = intersection of decreasingInterval (=intervalMinLess) and interval of  tmp
       if(decreasingInterval.isEmpty() == false){trackUp.setPosition(counter);}
 
       /// paste new piece(s)
-      currentPiece = currentPiece -> pastePiece(tmp, decreasingInterval, trackUp); ///add new Piece to BUILD
+      currentPiece = currentPiece -> pastePieceUp(tmp, decreasingInterval, trackUp); ///add new Piece to BUILD
       ///
 
       ///UDPATES rightBound, currentValue, constPiece
@@ -440,7 +442,6 @@ void ListPiece::operatorUpDown(ListPiece const& LP_edge, unsigned int newLabel, 
       currentValue = cost_eval(currentPiece -> m_cost, rightBound); ///new currentValue (=the minimum)
       if(constPiece == true){if(decreasingInterval.isEmpty() == false){constPiece = false;}}
       if(constPiece == false){if(decreasingInterval.getb() < tmp -> m_interval.getb()){constPiece = true;}}
-
 
       tmp = tmp -> nxt;
       counter = counter + 1;
@@ -454,43 +455,43 @@ void ListPiece::operatorUpDown(ListPiece const& LP_edge, unsigned int newLabel, 
     ///First Piece head
     //////////////////
     head = new Piece();
+    tmp = LP_state.head;
 
     /// INFO
     head -> m_info.setTrack(trackUp); ///set Track
 
     /// INTERVAL
-    rightBound = tmp -> m_interval.geta();
+    leftBound = tmp -> m_interval.getb();
     head -> m_interval.seta(rightBound);
     head -> m_interval.setb(rightBound);
 
     /// COST
-    currentValue = cost_eval(tmp -> m_cost, rightBound);
+    currentValue = cost_eval(tmp -> m_cost, leftBound);
     addmyConstant(head -> m_cost, currentValue);
 
     /// bool constPiece : is the first Piece constant? If cost increasing at bound, constPiece = true
-    if(cost_argmin(tmp -> m_cost) <= rightBound){constPiece = true;}else{constPiece = false;}
+    if(cost_argmin(tmp -> m_cost) <= leftBound){constPiece = true;}else{constPiece = false;}
 
     initializeCurrentPiece(); ///currentPiece = head
 
-    ///////////////////////////:
+    ///////////////////////////
 
     while(tmp != NULL)
     {
       ///decreasingInterval for currentPiece to create based on current tmp
-      decreasingInterval = tmp -> intervalMinLess(rightBound, currentValue, constPiece); ///"decreasing" interval
+      decreasingInterval = tmp -> intervalMinLess(leftBound, currentValue, constPiece, false); ///"decreasing" interval
       decreasingInterval = decreasingInterval.intersection(tmp -> m_interval); ///decreasingInterval = intersection of decreasingInterval (=intervalMinLess) and interval of  tmp
       if(decreasingInterval.isEmpty() == false){trackUp.setPosition(counter);}
 
       /// paste new piece(s)
-      currentPiece = currentPiece -> pastePiece(tmp, decreasingInterval, trackUp); ///add new Piece to BUILD
+      currentPiece = currentPiece ->pastePieceDw(tmp, decreasingInterval, trackUp); ///add new Piece to BUILD
       ///
 
       ///UDPATES rightBound, currentValue, constPiece
-      rightBound = currentPiece -> m_interval.getb(); ///new rightBound
-      currentValue = cost_eval(currentPiece -> m_cost, rightBound); ///new currentValue (=the minimum)
+      leftBound = currentPiece -> m_interval.geta(); ///new rightBound
+      currentValue = cost_eval(currentPiece -> m_cost, leftBound); ///new currentValue (=the minimum)
       if(constPiece == true){if(decreasingInterval.isEmpty() == false){constPiece = false;}}
-      if(constPiece == false){if(decreasingInterval.getb() < tmp -> m_interval.getb()){constPiece = true;}}
-
+      if(constPiece == false){if(decreasingInterval.geta() > tmp -> m_interval.geta()){constPiece = true;}}
 
       tmp = tmp -> nxt;
       counter = counter + 1;

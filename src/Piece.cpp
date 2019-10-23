@@ -74,7 +74,7 @@ void Piece::addCostAndPenalty(Cost const& cost, double penalty)
 //####### intervalMinLess #######////####### intervalMinLess #######////####### intervalMinLess #######//
 
 
-Interval Piece::intervalMinLess(double leftBound, double currentValue, bool constPiece)
+Interval Piece::intervalMinLess(double bound, double currentValue, bool constPiece, bool upDirection)
 {
   Interval response = Interval(); /// Interval = (INFINITY, INFINITY)
   double mini = cost_min(m_cost);
@@ -83,7 +83,7 @@ Interval Piece::intervalMinLess(double leftBound, double currentValue, bool cons
   if(currentValue > mini) /// otherwise currentValue constant doesn't intersect Piece cost
   {
     double argmini = cost_argmin(m_cost);
-    if(leftBound < argmini) /// otherwise currentValue constant doesn't intersect Piece cost
+    if(bound < argmini) /// otherwise currentValue constant doesn't intersect Piece cost
     {
       if(constPiece == true)
       {
@@ -93,13 +93,21 @@ Interval Piece::intervalMinLess(double leftBound, double currentValue, bool cons
         coeff[2] = m_cost.constant;
         Cost costInter = Cost(coeff);
         response = cost_intervalInterRoots(costInter, currentValue);
-        response.setb(argmini);
+        if(upDirection == true){response.setb(argmini);}else{response.seta(argmini);}
         delete(coeff);
       }
-      else /// i.e. point_eval(leftBound) == current_min : continuity condition
+      else /// i.e. point_eval(bound) == current_min : continuity condition
       {
-        response.seta(leftBound);
-        response.setb(argmini);
+        if(upDirection == true)
+        {
+          response.seta(bound);
+          response.setb(argmini);
+        }
+        else
+        {
+          response.seta(argmini);
+          response.setb(bound);
+        }
       }
     }
   }
@@ -109,11 +117,11 @@ Interval Piece::intervalMinLess(double leftBound, double currentValue, bool cons
 
 
 
-//####### pastePiece #######// //####### pastePiece #######// //####### pastePiece #######//
-//####### pastePiece #######// //####### pastePiece #######// //####### pastePiece #######//
+//####### pastePieceUp #######// //####### pastePieceUp #######// //####### pastePieceUp #######//
+//####### pastePieceUp #######// //####### pastePieceUp #######// //####### pastePieceUp #######//
 
 
-Piece* Piece::pastePiece(const Piece* Q, Interval const& decrInter, Track const& newTrack)
+Piece* Piece::pastePieceUp(const Piece* NXTPiece, Interval const& decrInter, Track const& newTrack)
 {
   Piece* BUILD = this;
 
@@ -122,30 +130,79 @@ Piece* Piece::pastePiece(const Piece* Q, Interval const& decrInter, Track const&
 
   if(decrInter.isEmpty())
   {
-    BUILD -> m_interval.setb(Q -> m_interval.getb());
+    BUILD -> m_interval.setb(NXTPiece -> m_interval.getb());
   }
   else
   {
     BUILD -> m_interval.setb(decrInter.geta());    ///if a > m_a, no change otherwise
 
-    ///ADD of the PIECE Q (troncated)
+    ///ADD of the PIECE NXTPiece (troncated)
     if(BUILD -> m_interval.isEmpty()) ///if BUILD empty
     {
       BUILD -> m_interval.setb(decrInter.getb());
-      BUILD -> m_cost = Q -> m_cost;
+      BUILD -> m_cost = NXTPiece -> m_cost;
       BUILD -> m_info.setTrack(newTrack);
     }
     else
     {
-      Piece* NewQ = new Piece(newTrack, decrInter, Q -> m_cost);
+      Piece* NewQ = new Piece(newTrack, decrInter, NXTPiece -> m_cost);
       BUILD -> nxt = NewQ;
       BUILD = NewQ;
     }
 
-    if(!((Q -> nxt == NULL) && (decrInter.getb() == Q -> m_interval.getb())))
+    if(!((NXTPiece -> nxt == NULL) && (decrInter.getb() == NXTPiece -> m_interval.getb())))
     {
-      double outputValue = cost_eval(Q -> m_cost, decrInter.getb());
-      Piece* PieceOut = new Piece(newTrack, Interval(decrInter.getb(), Q -> m_interval.getb()), Cost());
+      double outputValue = cost_eval(NXTPiece -> m_cost, decrInter.getb());
+      Piece* PieceOut = new Piece(newTrack, Interval(decrInter.getb(), NXTPiece -> m_interval.getb()), Cost());
+      addmyConstant(PieceOut -> m_cost, outputValue);
+      BUILD -> nxt = PieceOut;
+      BUILD = PieceOut;
+    }
+
+  }
+
+  return(BUILD);
+}
+
+
+
+//####### pastePieceDw #######// //####### pastePieceDw #######// //####### pastePieceDw #######//
+//####### pastePieceDw #######// //####### pastePieceDw #######// //####### pastePieceDw #######//
+
+
+Piece* Piece::pastePieceDw(const Piece* NXTPiece, Interval const& decrInter, Track const& newTrack)
+{
+  Piece* BUILD = this;
+
+  /// decreasingInterval = (a,b)
+  /// NXTPiece -> m_interval = (m_a,m_b)
+
+  if(decrInter.isEmpty())
+  {
+    BUILD -> m_interval.seta(NXTPiece -> m_interval.geta());
+  }
+  else
+  {
+    BUILD -> m_interval.seta(decrInter.getb());    ///if a > m_a, no change otherwise
+
+    ///ADD of the PIECE NXTPiece (troncated)
+    if(BUILD -> m_interval.isEmpty()) ///if BUILD empty
+    {
+      BUILD -> m_interval.seta(decrInter.geta());
+      BUILD -> m_cost = NXTPiece -> m_cost;
+      BUILD -> m_info.setTrack(newTrack);
+    }
+    else
+    {
+      Piece* NewQ = new Piece(newTrack, decrInter, NXTPiece -> m_cost);
+      BUILD -> nxt = NewQ;
+      BUILD = NewQ;
+    }
+
+    if(!((NXTPiece -> nxt == NULL) && (decrInter.geta() == NXTPiece -> m_interval.geta())))
+    {
+      double outputValue = cost_eval(NXTPiece -> m_cost, decrInter.geta());
+      Piece* PieceOut = new Piece(newTrack, Interval(decrInter.geta(), NXTPiece -> m_interval.geta()), Cost());
       addmyConstant(PieceOut -> m_cost, outputValue);
       BUILD -> nxt = PieceOut;
       BUILD = PieceOut;
