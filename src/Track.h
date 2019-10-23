@@ -17,6 +17,8 @@ class Track
     void setTrack(unsigned int label, unsigned int state, unsigned int position);
     void setTrack(Track const& newTrack);
 
+    void reversePosition(unsigned int length);
+
   private:
     unsigned int myLabel; ///label of the Piece
     unsigned int myParentState; ///parent state of the Piece

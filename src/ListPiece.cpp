@@ -44,10 +44,10 @@ void ListPiece::reset()
   lastPiece = NULL;
 }
 
-//##### reverse #####//////##### reverse #####//////##### reverse #####///
-//##### reverse #####//////##### reverse #####//////##### reverse #####///
+//##### reverseAndCount #####//////##### reverseAndCount #####//////##### reverseAndCount #####///
+//##### reverseAndCount #####//////##### reverseAndCount #####//////##### reverseAndCount #####///
 
-void ListPiece::reverse()
+void ListPiece::reverseAndCount(unsigned int& length)
 {
   lastPiece = head;
 
@@ -60,12 +60,39 @@ void ListPiece::reverse()
     next  = current -> nxt;
     current -> nxt = prev; /// new nxt
     prev = current;
+    length = length + 1;
     current = next;
   }
 
   head = prev;
   currentPiece = head;
 }
+
+
+//##### reverseAndSetTrackPosition #####//////##### reverseAndSetTrackPosition #####//////##### reverseAndSetTrackPosition #####///
+//##### reverseAndSetTrackPosition #####//////##### reverseAndSetTrackPosition #####//////##### reverseAndSetTrackPosition #####///
+
+void ListPiece::reverseAndSetTrackPosition(unsigned int length)
+{
+  lastPiece = head;
+
+  Piece* prev =  NULL;
+  Piece* tmp = head;
+  Piece* next = tmp;
+
+  while(tmp != NULL)
+  {
+    next  = tmp -> nxt;
+    tmp -> nxt = prev; /// new nxt
+    prev = tmp;
+    tmp -> m_info.reversePosition(length);
+    tmp = next;
+  }
+
+  head = prev;
+  currentPiece = head;
+}
+
 
 //##### addCurrentPiecePlus1 #####//////##### addCurrentPiecePlus1 #####//////##### addCurrentPiecePlus1 #####///
 //##### addCurrentPiecePlus1 #####//////##### addCurrentPiecePlus1 #####//////##### addCurrentPiecePlus1 #####///
@@ -106,14 +133,14 @@ void ListPiece::initializeCurrentPiece()
 
 void ListPiece::copy(ListPiece const& LP_edge)
 {
-  Piece* current = LP_edge.head;
-  head = current;
+  Piece* tmp = LP_edge.head;
+  head = tmp;
 
-  while(current != NULL)
+  while(tmp != NULL)
   {
-    currentPiece = current -> copy(); //copy content in Piece
-    currentPiece -> nxt = current -> nxt; //copy nxt pointer
-    current = current -> nxt;
+    currentPiece = tmp -> copy(); //copy content in Piece
+    currentPiece -> nxt = tmp -> nxt; //copy nxt pointer
+    tmp = tmp -> nxt;
   }
   lastPiece = currentPiece;
 }
@@ -165,14 +192,15 @@ void ListPiece::expDecay(double gamma)
 
 void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge, unsigned int newLabel)
 {
-  reset(); /// build a new LP_edges from scratch
+  /// build a new LP_edges from scratch
+  reset();
 
   /// 4 types of edges : null, std, up, down
   ///
   /// EDGE PARAMETERS
   ///
   std::string edge_ctt = edge.getConstraint();
-  double edge_parameter = edge.getParameter();
+  double edge_parameter = edge.getParameter(); /// always positive
   double edge_beta = edge.getBeta();
   unsigned int parentState = edge.getState1(); ///parentState = state to associate
 
@@ -186,25 +214,26 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
   //################
   if(edge_ctt == "std")
   {
-    ///find the minimum
+    ///variable definition
+    Piece* tmp = LP_state.head;
     double mini = INFINITY;
     double getmin;
     unsigned int counter = 0;
-    unsigned int myCounter;
+    unsigned int counterMini;
 
-    Piece* tmp = LP_state.head;
+    ///find the minimum
     while(tmp != NULL)
     {
       counter = counter + 1;
       getmin = cost_minInterval(tmp -> m_cost, tmp -> m_interval);
-      if(getmin < mini){mini = getmin; myCounter = counter;}
+      if(getmin < mini){mini = getmin; counterMini = counter;}
       tmp = tmp -> nxt;
     }
 
     ///add onePiece to LP_edges
     Piece* onePiece = new Piece();
     onePiece ->addCostAndPenalty(Cost(), mini + edge_beta); /// Cost() = 0
-    onePiece -> m_info = Track(newLabel, parentState, myCounter);
+    onePiece -> m_info = Track(newLabel, parentState, counterMini);
     addNewLastPiece(onePiece);
 
   }
@@ -219,9 +248,16 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
   //################
   if(edge_ctt == "down")
   {
-    reverse(); ///look at pieces from right to left
-    operatorUpDown(LP_state, newLabel, parentState, false);
-    reverse(); ///look at pieces from left to right
+    ///LP_state working copy
+    ListPiece LP_stateCopy = ListPiece();
+    LP_stateCopy.copy(LP_state);
+    ///reverse LP_stateCopy
+    unsigned int length = 0;
+    LP_stateCopy.reverseAndCount(length);
+    ///down operations and reverse result
+    operatorUpDown(LP_stateCopy, newLabel, parentState, false);
+    reverseAndSetTrackPosition(length);
+
     if(edge_parameter > 0){shift(-edge_parameter);} ///edge_parameter = left/right decay
   }
 

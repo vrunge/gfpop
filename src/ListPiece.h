@@ -21,9 +21,12 @@ public:
   ///////  Simple list operations  ///////
   void setUniquePieceCostToInfinity();
   void reset();
-  void reverse();
+  void reverseAndCount(unsigned int& length);
+  void reverseAndSetTrackPosition(unsigned int length);
+
   void move();
   void initializeCurrentPiece();
+
   void addCurrentPiecePlus1(Piece* newPiece);
   void addNewLastPiece(Piece* newPiece);
   void copy(ListPiece  const& LP_edge);

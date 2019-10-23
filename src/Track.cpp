@@ -38,3 +38,8 @@ void Track::setTrack(Track const& newTrack)
   myParentState = newTrack.getState();
   myParentPosition = newTrack.getPosition();
 }
+
+void Track::reversePosition(unsigned int length){myParentPosition = length - myParentPosition + 1;}
+
+
+
