@@ -70,11 +70,11 @@ void Piece::addCostAndPenalty(Cost const& cost, double penalty)
 
 
 
-//####### intervalMinLess #######////####### intervalMinLess #######////####### intervalMinLess #######//
-//####### intervalMinLess #######////####### intervalMinLess #######////####### intervalMinLess #######//
+//####### intervalMinLessUp #######////####### intervalMinLessUp #######////####### intervalMinLessUp #######//
+//####### intervalMinLessUp #######////####### intervalMinLessUp #######////####### intervalMinLessUp #######//
 
 
-Interval Piece::intervalMinLess(double bound, double currentValue, bool constPiece, bool upDirection)
+Interval Piece::intervalMinLessUp(double bound, double currentValue, bool constPiece)
 {
   Interval response = Interval(); /// Interval = (INFINITY, INFINITY)
   double mini = cost_min(m_cost);
@@ -93,21 +93,13 @@ Interval Piece::intervalMinLess(double bound, double currentValue, bool constPie
         coeff[2] = m_cost.constant;
         Cost costInter = Cost(coeff);
         response = cost_intervalInterRoots(costInter, currentValue);
-        if(upDirection == true){response.setb(argmini);}else{response.seta(argmini);}
+        response.setb(argmini);
         delete(coeff);
       }
       else /// i.e. point_eval(bound) == current_min : continuity condition
       {
-        if(upDirection == true)
-        {
-          response.seta(bound);
-          response.setb(argmini);
-        }
-        else
-        {
-          response.seta(argmini);
-          response.setb(bound);
-        }
+        response.seta(bound);
+        response.setb(argmini);
       }
     }
   }
@@ -116,6 +108,42 @@ Interval Piece::intervalMinLess(double bound, double currentValue, bool constPie
 }
 
 
+
+//####### intervalMinLessDw #######////####### intervalMinLessDw #######////####### intervalMinLessDw #######//
+//####### intervalMinLessDw #######////####### intervalMinLessDw #######////####### intervalMinLessDw #######//
+
+
+Interval Piece::intervalMinLessDw(double bound, double currentValue, bool constPiece)
+{
+  Interval response = Interval(); /// Interval = (INFINITY, INFINITY)
+  double mini = cost_min(m_cost);
+
+  if(currentValue > mini) /// otherwise currentValue constant doesn't intersect Piece cost
+  {
+    double argmini = cost_argmin(m_cost);
+    if(bound < argmini) /// otherwise currentValue constant doesn't intersect Piece cost
+    {
+      if(constPiece == true)
+      {
+        double* coeff = new double[3];
+        coeff[0] = m_cost.m_A;
+        coeff[1] = m_cost.m_B;
+        coeff[2] = m_cost.constant;
+        Cost costInter = Cost(coeff);
+        response = cost_intervalInterRoots(costInter, currentValue);
+        response.seta(argmini);
+        delete(coeff);
+      }
+      else /// i.e. point_eval(bound) == current_min : continuity condition
+      {
+        response.seta(argmini);
+        response.setb(bound);
+      }
+    }
+  }
+
+  return(response);
+}
 
 //####### pastePieceUp #######// //####### pastePieceUp #######// //####### pastePieceUp #######//
 //####### pastePieceUp #######// //####### pastePieceUp #######// //####### pastePieceUp #######//
@@ -207,9 +235,7 @@ Piece* Piece::pastePieceDw(const Piece* NXTPiece, Interval const& decrInter, Tra
       BUILD -> nxt = PieceOut;
       BUILD = PieceOut;
     }
-
   }
-
   return(BUILD);
 }
 

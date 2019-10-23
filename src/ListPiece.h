@@ -39,7 +39,8 @@ public:
   void LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt);
   void LP_ts_Minimization(ListPiece const& LP_edge);
 
-  void operatorUpDown(ListPiece const& LP_edge, unsigned int newLabel, unsigned int parentState, bool upDirection);
+  void operatorUp(ListPiece const& LP_edge, unsigned int newLabel, unsigned int parentState);
+  void operatorDw(ListPiece const& LP_edge, unsigned int newLabel, unsigned int parentState);
 
   void show();
 

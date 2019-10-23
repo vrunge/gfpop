@@ -33,7 +33,8 @@ class Piece
 
     ///
     ///
-    Interval intervalMinLess(double bound, double currentValue, bool constPiece, bool upDirection);
+    Interval intervalMinLessUp(double bound, double currentValue, bool constPiece);
+    Interval intervalMinLessDw(double bound, double currentValue, bool constPiece);
     Piece* pastePieceUp(const Piece* NXTPiece, Interval const& decrInter, Track const& newTrack);
     Piece* pastePieceDw(const Piece* NXTPiece, Interval const& decrInter, Track const& newTrack);
     ///
