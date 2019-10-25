@@ -24,11 +24,11 @@ class Edge
     void show() const;
 
   private:
-    double beta;
     unsigned int state1;
     unsigned int state2;
     std::string constraint;
     double parameter;
+    double beta;
     double KK;
     double aa;
     double minn;

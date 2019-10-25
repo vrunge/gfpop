@@ -282,7 +282,7 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
   double centerPoint;
   int Q2_Minus_Q1;  ///Sign of Q2 - Q1
   Cost testCost;
-  bool test;
+  bool test = false;
 
   //std::cout << "change: " << change << std::endl;
 

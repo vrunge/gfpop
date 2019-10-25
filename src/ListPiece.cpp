@@ -219,7 +219,7 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     double mini = INFINITY;
     double getmin;
     unsigned int counter = 0;
-    unsigned int counterMini;
+    unsigned int counterMini = 0;
 
     ///find the minimum
     while(tmp != NULL)

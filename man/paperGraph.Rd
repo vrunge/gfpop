@@ -4,8 +4,7 @@
 \alias{paperGraph}
 \title{Graphs of our paper in jss}
 \usage{
-paperGraph(nb, penalty = 0, decay = 1, gap = 0, oneValue = 0,
-  K = Inf)
+paperGraph(nb, penalty = 0, decay = 1, gap = 0, oneValue = 0, K = Inf)
 }
 \arguments{
 \item{nb}{the number of the Figure in paper}

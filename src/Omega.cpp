@@ -148,7 +148,7 @@ void Omega::LP_edges_addPointAndPenalty(Point const& pt)
 void Omega::LP_t_new_multipleMinimization(unsigned int t)
 {
   ///m_graph is rearranged with increasing integer state2
-  int j = 0;
+  unsigned int j = 0;
   for (unsigned int i = 0 ; i < p; i++)
   {
     LP_ts[t + 1][i].copy(LP_edges[j]);  //copy pointers in Q_ts[t + 1][i] from Q_edges
@@ -174,7 +174,7 @@ void Omega::backtracking()
   /// malsp = Min_Argmin_Label_State_Position
   ///
   double* malsp = LP_ts[n][0].get_min_argmin_label_state_position_ListPiece();
-  double* malsp_temp;
+  double* malsp_temp = malsp;
 
   ///////////////////
   /// FINAL STATE ///
