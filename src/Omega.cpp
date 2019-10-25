@@ -163,9 +163,85 @@ void Omega::LP_t_new_multipleMinimization(unsigned int t)
 
 
 
+
+//##### backtracking #####//////##### backtracking #####//////##### backtracking #####///
+//##### backtracking #####//////##### backtracking #####//////##### backtracking #####///
+
 void Omega::backtracking()
 {
+  Interval constrainedInterval; ///Interval to fit the constraints
+  ///
+  /// malsp = Min_Argmin_Label_State_Position_Final
+  ///
+  std::vector<double> malsp = LP_ts[n][0].get_min_argmin_label_state_position_final();
+  std::vector<double> malsp_temp;
 
+  ///
+  ///FINAL STATE
+  ///
+  unsigned int CurrentState = 0; ///Current state
+  unsigned int CurrentChgpt = n; /// data(1)....data(n). Last data index in each segment
+  std::vector<unsigned int> endState = m_graph.getEndState();
+
+
+  /// IF no endState, all the states are endstates.
+  if(endState.size() == 0)
+  {
+    for (unsigned int j = 1 ; j < p ; j++) ///for all states
+    {
+      malsp_temp = LP_ts[n][j].get_min_argmin_label_state_position_final();
+      if(malsp_temp[0] < malsp[0]){CurrentState = j; malsp[0] = malsp_temp[0];}
+    }
+  }
+  else
+  {
+    for (unsigned int j = 0 ; j < endState.size() ; j++) ///for all states
+    {
+      malsp_temp = LP_ts[n][endState[j]].get_min_argmin_label_state_position_final();
+      if(malsp_temp[0] < malsp[0]){CurrentState = endState[j]; malsp[0] = malsp_temp[0];}
+    }
+  }
+
+  malsp = LP_ts[n][CurrentState].get_min_argmin_label_state_position_final();
+  globalCost = malsp[0];
+
+  parameters.push_back(malsp[1]);
+  changepoints.push_back(CurrentChgpt);
+  states.push_back(CurrentState);
+
+
+  /// BACKTRACK
+  ///
+  ///BEFORE FINAL STATE
+  ///
+
+  bool boolForced = false;
+  double decay = 1;
+  double correction = 1;
+
+
+  while(malsp[2] > 0) ///while Label > 0
+  {
+    ///
+    ///BACKTRACK
+    ///
+    boolForced = false;
+    decay = m_graph.stateDecay(CurrentState);
+    if(decay != 1){correction = std::pow(decay, parameters.back() - malsp[2] + 1);}
+
+    CurrentState = malsp[3];
+    CurrentChgpt = malsp[2];
+
+    malsp = LP_ts[(int) malsp[2]][(int) malsp[3]].get_min_argmin_label_state_position((int) malsp[4], constrainedInterval, boolForced); ///update boolForced
+
+    //if(malsp[1] > m_bound.getM()){malsp[1] = m_bound.getM(); boolForced = true;}
+    //if(malsp[1] < m_bound.getm()){malsp[1] = m_bound.getm(); boolForced = true;}
+
+    parameters.push_back(malsp[1]);
+    changepoints.push_back(CurrentChgpt);
+    states.push_back(CurrentState);
+    forced.push_back(boolForced);
+  }
 }
 
 ///###///###///###///###///###///###///###///###///###///###///###///###///###///###///###

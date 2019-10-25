@@ -42,6 +42,9 @@ public:
   void operatorUp(ListPiece const& LP_edge, unsigned int newLabel, unsigned int parentState);
   void operatorDw(ListPiece const& LP_edge, unsigned int newLabel, unsigned int parentState);
 
+  std::vector<double> get_min_argmin_label_state_position_final();
+  std::vector<double> get_min_argmin_label_state_position(int i, Interval const& constrainedInter, bool& forced);
+
   void show();
 
 };
