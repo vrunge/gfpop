@@ -422,6 +422,22 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
 }
 
 
+//####### get_min_argmin_label_state_position #######// //####### get_min_argmin_label_state_position #######// //####### get_min_argmin_label_state_position #######//
+//####### get_min_argmin_label_state_position #######// //####### get_min_argmin_label_state_position #######// //####### get_min_argmin_label_state_position #######//
+
+double* Piece::get_min_argmin_label_state_position()
+{
+  double* response = new double[5];
+  response[0] = cost_minInterval(this -> m_cost, this -> m_interval);
+  response[1] = cost_argmin(this -> m_cost);
+  response[2] = this -> m_info.getLabel();
+  response[3] = this -> m_info.getState();
+  response[4] = this -> m_info.getPosition();
+  return(response);
+}
+
+
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 

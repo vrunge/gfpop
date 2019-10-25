@@ -564,20 +564,14 @@ void ListPiece::operatorDw(ListPiece const& LP_state, unsigned int newLabel, uns
 //####### min_argmin_label_state_position_final #######// //####### min_argmin_label_state_position_final #######// //####### min_argmin_label_state_position_final #######//
 ///We test all the Piece
 
-std::vector<double> ListPiece::get_min_argmin_label_state_position_final()
+double* ListPiece::get_min_argmin_label_state_position_ListPiece()
 {
-  std::vector<double> response(5,0);
+  double* response = new double[5];
   Piece* tmp = head;
 
   ///INITIALIZATION
+  double* currentResponse = tmp -> get_min_argmin_label_state_position();
   double current_min;
-  double global_min = cost_minInterval(tmp -> m_cost, tmp -> m_interval); ///global minimum to find
-  double global_argmin = cost_argmin(tmp -> m_cost); ///global argminimum to find
-
-
-  unsigned int label = tmp -> m_info.getLabel();
-  unsigned int state = tmp -> m_info.getState();
-  unsigned int position = tmp -> m_info.getPosition();
 
   tmp = tmp -> nxt;
 
@@ -585,56 +579,18 @@ std::vector<double> ListPiece::get_min_argmin_label_state_position_final()
   while(tmp != NULL)
   {
     current_min = cost_minInterval(tmp -> m_cost, tmp -> m_interval);
-    if(current_min < global_min)
+    if(current_min < currentResponse[0])
     {
-      global_min = current_min;
-      global_argmin = cost_argmin(tmp -> m_cost);
-      label = tmp -> m_info.getLabel();
-      state = tmp -> m_info.getState();
-      position = tmp -> m_info.getPosition();
+      currentResponse = tmp -> get_min_argmin_label_state_position();
     }
     tmp = tmp -> nxt;
   }
 
-  response[0] = global_min;
-  response[1] = global_argmin;
-  response[2] = label;
-  response[3] = state;
-  response[4] = position;
+  response = currentResponse;
 
   return(response);
 }
 
-
-
-//####### min_argmin_label_state_position #######// //####### min_argmin_label_state_position #######// //####### min_argmin_label_state_position #######//
-//####### min_argmin_label_state_position #######// //####### min_argmin_label_state_position #######// //####### min_argmin_label_state_position #######//
-///We test only the piece at position i
-
-
-std::vector<double> ListPiece::get_min_argmin_label_state_position(int i, Interval const& constrainedInter, bool& forced)
-{
-  std::vector<double> response(5,0);
-  std::vector<double> min_argmin;
-  Piece* tmp = head;
-
-  ///Go to the right Piece
-  int pos = 1;
-  while(pos != i){tmp = tmp -> nxt; pos = pos + 1;}
-
-  response[0] = cost_minInterval(tmp -> m_cost, tmp -> m_interval);
-  response[1] = cost_argmin(tmp -> m_cost);
-  response[2] = tmp -> m_info.getLabel();
-  response[3] = tmp -> m_info.getState();
-  response[4] = tmp -> m_info.getPosition();
-
-  ///force arg_min (mean in segmentation) to fit the constaints
-
-  if(constrainedInter.geta() >= response[1]){response[1] = constrainedInter.geta(); forced = true;}
-  if(constrainedInter.getb() <= response[1]){response[1] = constrainedInter.getb(); forced = true;}
-
-  return(response);
-}
 
 
 

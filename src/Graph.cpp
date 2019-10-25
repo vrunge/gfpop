@@ -114,50 +114,28 @@ std::string Graph::getType() const
 // ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### ///
 
 
-Interval Graph::buildInterval(double argmin, unsigned int s1, unsigned int s2, bool& out) const
+Interval Graph::buildInterval(double argmin, unsigned int s1, unsigned int s2) const
 {
   Interval response = Interval(-INFINITY, INFINITY);
 
-  /// FIND edge. If there are 2 edges (s1,s2) we get the second one (which is not of "null" or "decay" type). (cf ordering in gfpop R function)
-  Edge myedge;
   for (unsigned int i = 0 ; i < edges.size() ; i++)
   {
-    if((edges[i].getState1() == s1) && (edges[i].getState2() == s2)){myedge = edges[i];}
+    if((edges[i].getState1() == s1) && (edges[i].getState2() == s2))
+    {
+      if(edges[i].getConstraint() == "up"){response.setb(argmin - edges[i].getParameter());}
+      if(edges[i].getConstraint()  == "down"){response.seta(argmin + edges[i].getParameter());}
+    }
   }
-
-  if(myedge.getConstraint() == "up")
-  {
-    response.setb(argmin - myedge.getParameter());
-  }
-
-  if(myedge.getConstraint()  == "down")
-  {
-    response.seta(argmin + myedge.getParameter());
-  }
-
-  if(myedge.getConstraint()  == "absInf")
-  {
-    response.seta(argmin - myedge.getParameter());
-    response.setb(argmin + myedge.getParameter());
-  }
-
-  if(myedge.getConstraint()  == "absSup") ///DANGER : exclusion of this interval
-  {
-    response.seta(argmin - myedge.getParameter());
-    response.setb(argmin + myedge.getParameter());
-    out = true;
-  }
-
   return(response);
 }
 
 
 
-// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### ///
-// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### ///
+// ### recursiveState ### /// /// ### recursiveState ### /// /// ### recursiveState ### /// /// ### recursiveState ### ///
+// ### recursiveState ### /// /// ### recursiveState ### /// /// ### recursiveState ### /// /// ### recursiveState ### ///
 
 
-double Graph::stateDecay(unsigned int s) const
+double Graph::recursiveState(unsigned int s) const
 {
   double response =  1;
   for (int i = edges.size()-1 ; i > -1; i--)
