@@ -1,14 +1,8 @@
 #include "Omega.h"
-#include "Piece.h"
 
 #include<iostream>
-#include <iomanip> ///Set Precision scientific
-
 #include<typeinfo>
 #include <stdlib.h>
-
-#include <fstream> ///write in a file
-#include<sstream> ///for conversion int to string : function ostringstream
 
 #include <algorithm>
 
@@ -32,9 +26,9 @@ Omega::Omega(Graph graph)
 
 Omega::~Omega()
 {
-  //if(LP_ts != NULL){delete [] LP_ts; LP_ts = NULL;}
-  //delete LP_edges;
-  //LP_edges = NULL;
+  if(LP_ts != NULL){delete [] LP_ts; LP_ts = NULL;}
+  delete LP_edges;
+  LP_edges = NULL;
 }
 
 //####### accessors #######////####### accessors #######////####### accessors #######//
@@ -113,7 +107,6 @@ void Omega::gfpop(Data const& data)
 	}
 
 	backtracking();
-
 	show();
 }
 
@@ -216,7 +209,7 @@ void Omega::backtracking()
   ///////////////////////////////
 
   bool boolForced = false;
-  double decay = 1;
+  double decay = 0;
   double correction = 1;
 
   while(malsp[2] > 0) ///while Label > 0

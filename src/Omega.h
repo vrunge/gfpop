@@ -4,12 +4,11 @@
 #include"Data.h"
 #include"Graph.h"
 #include"Edge.h"
-
 #include "ListPiece.h"
+#include "Piece.h"
 
 #include <math.h>
 #include<vector>
-
 #include <stdlib.h>
 
 class Omega
@@ -25,20 +24,15 @@ class Omega
     double GetGlobalCost() const;
 
     ///////////////
-
     void initialize_LP_ts(unsigned int n);
     void gfpop(Data const& data);
 
     ///////////////
-
     void LP_edges_operators(unsigned int newLabel);
     void LP_edges_addPointAndPenalty(Point  const& pt);
     void LP_t_new_multipleMinimization(unsigned int t);
-
     void backtracking();
-
     void show();
-
 
   private:
     Graph m_graph; ///graph of the constraints. 9 variables
@@ -54,9 +48,7 @@ class Omega
     std::vector< int > states; ///vector of states build by fpop. size c
     std::vector< int > forced; ///vector of forced = 0 or 1. 1 = forced value. size c-1
     double globalCost;
-
 };
-
 
 std::ostream &operator<<(std::ostream &s, const Omega &om);
 

@@ -1,7 +1,5 @@
 #include "ExternFunctions.h"
 #include <functional>
-#include "Cost.h"
-
 #include "math.h"
 
 std::function<double*(Point const& pt)> cost_coeff;

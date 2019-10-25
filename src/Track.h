@@ -1,6 +1,8 @@
 #ifndef TRACK_H
 #define TRACK_H
 
+#include"math.h"
+
 class Track
 {
   public:

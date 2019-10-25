@@ -1,5 +1,4 @@
 #include "Track.h"
-#include"math.h"
 
 Track::Track()
 {
@@ -14,7 +13,6 @@ Track::Track(unsigned int label, unsigned int state, unsigned int position)
   myParentState = state;
   myParentPosition = position;
 }
-
 
 unsigned int Track::getLabel() const {return(myLabel);}
 unsigned int Track::getState() const {return(myParentState);}
@@ -31,7 +29,6 @@ void Track::setTrack(unsigned int label, unsigned int state, unsigned int positi
   myParentPosition = position;
 }
 
-
 void Track::setTrack(Track const& newTrack)
 {
   myLabel = newTrack.getLabel();
@@ -40,6 +37,3 @@ void Track::setTrack(Track const& newTrack)
 }
 
 void Track::reversePosition(unsigned int length){myParentPosition = length - myParentPosition + 1;}
-
-
-

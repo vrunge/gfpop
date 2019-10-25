@@ -1,6 +1,8 @@
 #ifndef INTERVAL_H
 #define INTERVAL_H
 
+#include"math.h"
+
 class Interval
 {
   public:
@@ -16,8 +18,6 @@ class Interval
     double getb() const;
 
     bool isInside(double x) const;
-    void axisSymmetry();
-
     double internPoint() const;
 
     void show() const;
