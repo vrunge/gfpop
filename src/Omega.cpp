@@ -1,7 +1,6 @@
 #include "Omega.h"
 
 #include<iostream>
-#include<typeinfo>
 #include <stdlib.h>
 
 #include <algorithm>

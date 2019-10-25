@@ -4,10 +4,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include<iostream>
-#include<typeinfo>
-
-#include <fstream> ///write in a file
-#include<vector>
 
 Piece::Piece(){m_info = Track(); m_interval = Interval(); m_cost = Cost(); nxt = NULL;}
 Piece::Piece(Track const& info, Interval const& inter, Cost const& cost)
