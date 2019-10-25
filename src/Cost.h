@@ -22,6 +22,10 @@ double log_choose(double x, double n);
 
 void addmyConstant(Cost& cost, double& cst);
 void addCost(Cost& cost, const Cost& cost2);
+Cost minusCost(Cost& cost, const Cost& cost2);
+int signValue(double value);
+bool isEqual(Cost const& cost1, Cost const& cost2);
+
 
 ///
 

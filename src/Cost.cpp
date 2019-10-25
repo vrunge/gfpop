@@ -29,6 +29,30 @@ void addCost(Cost& cost, const Cost& cost2)
   cost.constant = cost.constant + cost2.constant;
 }
 
+Cost minusCost(Cost& cost, const Cost& cost2)
+{
+  Cost res = Cost();
+  res.m_A = cost.m_A - cost2.m_A;
+  res.m_B = cost.m_B - cost2.m_B;
+  res.constant = cost.constant - cost2.constant;
+  return(res);
+}
+
+int signValue(double value)
+{
+  int res = 1;
+  if(value < 0){res = -1;}
+  return(res);
+}
+
+
+bool isEqual(Cost const& cost1, Cost const& cost2)
+{
+  bool res = false;
+  res = (cost1.m_A == cost2.m_A)&&(cost1.m_B == cost2.m_B)&&(cost1.constant == cost2.constant);
+  return(res);
+}
+
 
 void showCost(Cost& cost)
 {

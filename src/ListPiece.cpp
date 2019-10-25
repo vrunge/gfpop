@@ -260,7 +260,6 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
 
     if(edge_parameter > 0){shift(-edge_parameter);} ///edge_parameter = left/right decay
   }
-
 }
 
 //##### LP_edges_addPointAndPenalty #####//////##### LP_edges_addPointAndPenalty #####//////##### LP_edges_addPointAndPenalty #####///
@@ -375,16 +374,66 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
 
 void ListPiece::LP_ts_Minimization(ListPiece const& LP_edge)
 {
+  double M = lastPiece -> m_interval.getb();
+  //"MOST OF THE TIME" : Q2 > Q1
+  Piece* Q1 = head;  /// first Piece to compare
+  Piece* Q2 = LP_edge.head;  /// first Piece to compare
+  Piece* Q12 = new Piece();
+  Piece* newHead = Q12;
 
+  ///
+  /// SET Q2_Minus_Q1
+  ///
+  double firstLeftBound = Q1 -> m_interval.geta();
 
+  /// Q2_Minus_Q1 -> = 1 if Q2 >= Q1 at the current point, - 1 if Q2 < Q1
+  ///
+  /// Q12 first Piece
+  ///
+  Q12 -> m_interval = Interval(firstLeftBound,firstLeftBound);
+
+  int Bound_Q2_Minus_Q1 = 0;
+
+  while(Q1 != NULL)
+  {
+    ///Q12 = Piece with an interval but no cost no label
+    /// Bound_Q2_Minus_Q1
+    /// = 0 if bound interval Q2 - bound interval Q1 == 0 : Q1 and Q2 stop
+    /// = 1 if bound interval Q2 - bound interval Q1 > 0: Q1 stops
+    /// = -1 if bound interval Q2 - bound interval Q1 < 0 : Q2 stops
+    Bound_Q2_Minus_Q1 = -1;
+
+    while(Bound_Q2_Minus_Q1 == -1)
+    {
+      /// right bound
+      if(Q2 -> m_interval.getb() - Q1 -> m_interval.getb() > 0){Bound_Q2_Minus_Q1 = 1;}
+      if(Q1 -> m_interval.getb() - Q2 -> m_interval.getb() == 0){Bound_Q2_Minus_Q1 = 0;}
+
+      Q12 = Q12 -> pieceGenerator(Q1, Q2, Bound_Q2_Minus_Q1, M); ///add new Piece(s) to Q12
+
+      if(Bound_Q2_Minus_Q1 < 1){Q2 = Q2 -> nxt;}
+    }
+
+    Q1 = Q1 -> nxt;
+  }
+
+  ///UPDATE ListPiece
+  reset();
+  head = newHead;
+  currentPiece = newHead;
+  lastPiece = Q12;
 }
 
+
+
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
-//##### operatorUpDown #####//////##### operatorUpDown #####//////##### operatorUpDown #####///
-//##### operatorUpDown #####//////##### operatorUpDown #####//////##### operatorUpDown #####///
+//##### operatorUp #####//////##### operatorUp #####//////##### operatorUp #####///
+//##### operatorUp #####//////##### operatorUp #####//////##### operatorUp #####///
 
 void ListPiece::operatorUp(ListPiece const& LP_state, unsigned int newLabel, unsigned int parentState)
 {
@@ -447,8 +496,8 @@ void ListPiece::operatorUp(ListPiece const& LP_state, unsigned int newLabel, uns
 
 
 
-//##### operatorUpDown #####//////##### operatorUpDown #####//////##### operatorUpDown #####///
-//##### operatorUpDown #####//////##### operatorUpDown #####//////##### operatorUpDown #####///
+//##### operatorDw #####//////##### operatorDw #####//////##### operatorDw #####///
+//##### operatorDw #####//////##### operatorDw #####//////##### operatorDw #####///
 
 void ListPiece::operatorDw(ListPiece const& LP_state, unsigned int newLabel, unsigned int parentState)
 {
@@ -507,7 +556,6 @@ void ListPiece::operatorDw(ListPiece const& LP_state, unsigned int newLabel, uns
     tmp = tmp -> nxt;
     counter = counter + 1;
   }
-
 }
 
 /////////////////////////////////////////

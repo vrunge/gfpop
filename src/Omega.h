@@ -32,7 +32,6 @@ class Omega
     ///////////////
 
     void LP_edges_operators(unsigned int newLabel);
-
     void LP_edges_addPointAndPenalty(Point  const& pt);
     void LP_t_new_multipleMinimization(unsigned int t);
 
