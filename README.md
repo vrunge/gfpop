@@ -16,7 +16,7 @@ DANGER : code broken in October in preparation for big update!
 #### LaMME, Evry University
 ### August 22, 2019 (version 2)
 
-> [Change-point problem description](#intro)
+> [The Graph-constrained Change-point problem](#intro)
 
 > [Quick Start](#qs)
 
@@ -31,11 +31,11 @@ DANGER : code broken in October in preparation for big update!
 
 <a id="intro"></a>
 
-## Change-point problem description
+## The Graph-constrained Change-point problem
 
-`gfpop` is an `R` package developed to complete parametric change-point detection in univariate time series constrained to a graph structure. The constraints are imposed to the sequence of inferred parameters (a mean parameter most of the time) of consecutive segments and related to the direction and/or the magnitude of the mean changes. Change-point detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm. 
+`gfpop` is an `R` package developed to complete parametric change-point detection in univariate time series constrained to a graph structure. Constraints are imposed to the sequence of inferred parameters (a mean parameter most of the time) of consecutive segments and related to the direction and/or the magnitude of the mean changes. Change-point detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm.
 
-The user chooses a global type of change-point problem to solve (change in "mean", "variance", "exp", "poisson" or "negbin" distribution).
+The user chooses a global parametric model for the change-point problem to solve (change in "mean", "variance", "exp", "poisson" or "negbin" distribution).
 
 The algorithm of our package is designed to consider a large variety of constraints. These constraints are modelled by a graph. At each time <img src="/tex/4f4f4e395762a3af4575de74c019ebb5.svg?invert_in_darkmode&sanitize=true" align=middle width=5.936097749999991pt height=20.221802699999984pt/> a number of states is possible, these states are the nodes of the graph. Possible transitions between states at time <img src="/tex/4f4f4e395762a3af4575de74c019ebb5.svg?invert_in_darkmode&sanitize=true" align=middle width=5.936097749999991pt height=20.221802699999984pt/> and <img src="/tex/628783099380408a32610228991619a8.svg?invert_in_darkmode&sanitize=true" align=middle width=34.24649744999999pt height=21.18721440000001pt/> are represented by the edges of the graph. Each edge is associated to <img src="/tex/5dc642f297e291cfdde8982599601d7e.svg?invert_in_darkmode&sanitize=true" align=middle width=8.219209349999991pt height=21.18721440000001pt/> elements: a constraint
 (for example <img src="/tex/d0b08429a8092571e5683ca898c7e0a0.svg?invert_in_darkmode&sanitize=true" align=middle width=69.12487889999998pt height=20.908638300000003pt/>), a penalty (possibly null) and a loss function.

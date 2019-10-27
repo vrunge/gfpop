@@ -8,7 +8,7 @@
 %\VignetteIndexEntry{An Introduction to gfpop}
 --> 
 
-DANGER : code broken in October in preparation for big update!
+DANGER : code broken in October in preparation for big update! The new implementation makes possible the use of non-gaussian cost functions.
 
 
 # gfpop Vignette
@@ -16,7 +16,7 @@ DANGER : code broken in October in preparation for big update!
 #### LaMME, Evry University
 ### August 22, 2019 (version 2)
 
-> [Change-point problem description](#intro)
+> [The Graph-constrained Change-point problemn](#intro)
 
 > [Quick Start](#qs)
 
@@ -24,34 +24,43 @@ DANGER : code broken in October in preparation for big update!
 
 > [Graph construction](#gc)
 
-> [More on the main gfpop function and its C++ structure](#gfpop)
-
 > [Supplementary R functions](#suppl)
+
+> [More on the main gfpop function and its C++ structure](#gfpop)
 
 
 <a id="intro"></a>
 
-## Change-point problem description
+## The Graph-constrained Change-point problem
 
-`gfpop` is an `R` package developed to complete parametric change-point detection in univariate time series constrained to a graph structure. The constraints are imposed to the sequence of inferred parameters (a mean parameter most of the time) of consecutive segments and related to the direction and/or the magnitude of the mean changes. Change-point detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm. 
+`gfpop` is an `R` package developed to complete parametric change-point detection in univariate time series constrained to a graph structure. Constraints are imposed to the sequence of inferred parameters (a mean parameter most of the time) of consecutive segments and related to the direction and/or the magnitude of the mean changes. 
 
-The user chooses a global type of change-point problem to solve (change in "mean", "variance", "exp", "poisson" or "negbin" distribution).
+Change-point detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm. This algorithmic strategy can be seen as an extented Viterbi algorithm for a Hidden Markov Model with continuous parameter states.
 
-The algorithm of our package is designed to consider a large variety of constraints. These constraints are modelled by a graph. At each time $t$ a number of states is possible, these states are the nodes of the graph. Possible transitions between states at time $t$ and $t+1$ are represented by the edges of the graph. Each edge is associated to $3$ elements: a constraint
-(for example $\mu_t \le \mu_{t+1}$), a penalty (possibly null) and a loss function.
+In the main `gfpop` function the user chooses a global parametric model for the change-point problem to solve (change in "mean", "variance", "exp", "poisson" or "negbin" distribution) and a graph structure. To run the function, the user also gives some `data` to segment potentially associated with a `weights` vector of same length.
 
-In addition to the edges and nodes of the graph, the user can specify some other constraints on the graph as the starting and ending nodes and constrain the range of parameters (means, most of the time) to use at each node.
+```r
+gfpop <- function(data, mygraph, type = "mean", weights = NULL)
+```
+
+The algorithm of our package is designed to consider a large variety of constraints. These constraints are modelled by a graph. At each time $t$ a number of states is possible, these states are the nodes of the graph. Possible transitions between states at time $t$ and $t+1$ are represented by the edges of the graph. Each edge is associated to $4$ main elements: a **constraint**
+(for example $\mu_t \le \mu_{t+1}$), some *parameters* associated to the constraint, a **penalty** (possibly null) and **robust parameters** to use Huber or biweight losses only on the considered edge.
+
+In addition to the edge definition, the nodes can be constrained to a range of values (means, most of the time) in the inference. We only can specify starting and ending nodes.
 
 The edges of the graph can be of type "null", "std",  "up", "down" or "abs" with the following meaning:
 
-- "null" edge : there is no change-point introduced. We stay on the same segment. "null" corresponds to the constraint $I_{\mu_t = \alpha\mu_{t+1}}$. The value does not change (or exponential decay if $0 < \alpha < 1$);
+- "null" edge : there is no change-point introduced. We stay on the same segment. "null" corresponds to the constraint $I_{\mu_t = \alpha\mu_{t+1}}$. The value does not change (or we have an exponential decay if $0 < \alpha < 1$);
 - "std" edge : no contraint, the next segment can have any mean;
 - "up" edge : the next segment has a greater mean (we can also force the size of the gap to be greater than a minimal value). "up" corresponds to the constraint $I_{\mu_t \leq \mu_{t+1}}$;
 - "down" edge : the next segment has a lower mean (wan also can force the size of the gap to be greater that a minimal value). "down" corresponds to the constraint $I_{\mu_t \geq \mu_{t+1}}$;
 - "abs" edge : the absolute value of the difference of two consecutive means is greater than a given parameter.
 
 
-A nonnegative internal parameter can thus be associated to an edge (in "up", "down" and "abs""). The "null" edge refers to an absence of change-point. This edge can be used between different states to constraint segment lengths. Our package includes the segment neighborhood algorithm for which the number of change-points is fixed. More details on graph construction are given in the last [section](#gc).
+A nonnegative internal parameter can thus be associated to an edge (in "up", "down" and "abs""). The "null" edge refers to an absence of change-point. This edge can be used between different states to constraint segment lengths. Our package includes the segment neighborhood algorithm for which the number of change-points is fixed. More details on graph construction are given in the section [Graph construction](#gc).
+
+___
+
 
 Data is modelized by a cost with possible use of a robust loss, biweight and Huber, in all the decomposition (Gauss, Poisson, Binomial).
 
@@ -80,6 +89,9 @@ so that we get another description of the objective function :
 
 $$Q_n = \min_{(\mu_1,...,\mu_n)\in \mathbb{R}^{n}\,,\,\mu_{n+1} = +\infty}\quad\sum_{i=1}^n\gamma(y_i,\mu_i) + \beta I(\mu_{i} \ne \mu_{i+1})\,,$$
 
+___
+
+
 with $I \in \{0,1\}$ the indicator function. This approach can be generalized to more complex constraints on consecutive means using a graph structure. We define the transition graph $\mathcal{G}_n$ as a directed acyclic graph with the following properties:
 
 1. Nodes are indexed by time and state. $v = (t,s)$ for node $v$ with time $t$ and state $s$. The states are elements of the set $\mathcal{S} =  \{0,...,S\} \subset \mathbb{N}$;
@@ -92,14 +104,13 @@ with $I \in \{0,1\}$ the indicator function. This approach can be generalized to
 
 The next table summarizes all the possible constraints encoded into the `gfpop` package.
 
-
 | constraints | $I_e : \mathbb{R}\times \mathbb{R} \mapsto \mathbb{R}$, $c \in \mathbb{R}^+$ |
 |---------:|-----:|
-| no change-point | $I_e(\mu_{t},\mu_{t+1}) =  I(\mu_t = \mu_{t+1})$ |
-| no constraint | $I_e(\mu_{t},\mu_{t+1}) =  I(\mu_t \ne \mu_{t+1})$ | 
-| up | $I_e(\mu_{t},\mu_{t+1}) = I(\mu_{t}  + c \le \mu_{t+1})$ |
-| down | $I_e(\mu_{t},\mu_{t+1}) = I(\mu_{t+1} + c \le \mu_{t})$ |
-| abs | $I_e(\mu_{t},\mu_{t+1}) = I(c \le \ell_1(\mu_{t} - \mu_{t+1}))$ |
+| null | $I_e(\mu_{t},\mu_{t+1}) =  I_{\mu_t = \mu_{t+1}}$ |
+| std | $I_e(\mu_{t},\mu_{t+1}) =  I_{\mu_t \ne \mu_{t+1}}$ | 
+| up | $I_e(\mu_{t},\mu_{t+1}) = I_{\mu_{t}  + c \le \mu_{t+1}}$ |
+| down | $I_e(\mu_{t},\mu_{t+1}) = I_{\mu_{t+1} + c \le \mu_{t}}$ |
+| abs | $I_e(\mu_{t},\mu_{t+1}) = I_{c \le \ell_1(\mu_{t} - \mu_{t+1})}$|
 
 
 We define a path $p \in \mathcal{G}_n$ of the graph as a collection of $n+2$ vertices $(v_0,...,v_{n+1})$ with $v_0 = (0,\emptyset)$ and $v_{n+1} = (n+1,\emptyset)$ and $v_t = (t,s_t)$ for $t \in \{1,...,n\}$ and $s_t \in \mathcal{S}$. Morever, the path is made of $n+1$ edges denoted $e_0,...,e_n$ with $\beta_{e_n} = 0$. A vector $\mu \in \mathbb{R}^n$ verifies the path $p$ if for all $t \in \{1,...,n-1\}$, we have $I_{e_t}(\mu_t,\mu_{t+1}) = 1$ (valid constraint). We write $p(\mu)$ to say that the vector $\mu$ verifies the path $p$. The formulation of our graph-constrained problem is then the following:
@@ -536,12 +547,6 @@ myGraph
 ```
 
 
-<a id="gfpop"></a>
-
-## More on the main gfpop function and its C++ structure
-
-
-
 <a id="suppl"></a>
 
 ## Supplementary R functions
@@ -553,6 +558,10 @@ dataGenerator
 ### Standard deviation estimation
 
 sdDiff
+
+<a id="gfpop"></a>
+
+## More on the main gfpop function and its C++ structure
 
 
 
