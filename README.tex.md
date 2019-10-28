@@ -26,27 +26,28 @@ DANGER : code broken in October in preparation for big update! The new implement
 
 > [Supplementary R functions](#suppl)
 
-> [More on the main gfpop function and its C++ structure](#gfpop)
+> [More on the gfpop function and its C++ structure](#gfpop)
 
 
 <a id="intro"></a>
 
 ## The Graph-constrained Change-point problem
 
-`gfpop` is an `R` package developed to complete parametric change-point detection in univariate time series constrained to a graph structure. Constraints are imposed to the sequence of inferred parameters (a mean parameter most of the time) of consecutive segments and related to the direction and/or the magnitude of the mean changes. 
+### General description
 
-Change-point detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm. This algorithmic strategy can be seen as an extented Viterbi algorithm for a Hidden Markov Model with continuous parameter states.
+`gfpop` is an `R` package developed to complete parametric change-point detection in univariate time series constrained to a graph structure. Constraints are imposed to the sequence of inferred parameters (most of the time a mean parameter) of consecutive segments and related to the direction and/or the magnitude of the mean changes. 
 
-In the main `gfpop` function the user chooses a global parametric model for the change-point problem to solve (change in "mean", "variance", "exp", "poisson" or "negbin" distribution) and a graph structure. To run the function, the user also gives some `data` to segment potentially associated with a `weights` vector of same length.
+Change-point detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm. [Cf paper. On optimal multiple changepoint algorithms for large data](https://link.springer.com/article/10.1007/s11222-016-9636-3). This algorithmic strategy can be seen as an extented Viterbi algorithm for a Hidden Markov Model with continuous parameter states.
+
+In the main `gfpop` function the user chooses a global parametric model for the change-point problem to solve (change in "mean", "variance", "exp", "poisson" or "negbin" distribution) and a graph structure. To run the function the user also gives some `data` to segment potentially associated with a `weights` vector of same length.
 
 ```r
 gfpop <- function(data, mygraph, type = "mean", weights = NULL)
 ```
 
-The algorithm of our package is designed to consider a large variety of constraints. These constraints are modelled by a graph. At each time $t$ a number of states is possible, these states are the nodes of the graph. Possible transitions between states at time $t$ and $t+1$ are represented by the edges of the graph. Each edge is associated to $4$ main elements: a **constraint**
-(for example $\mu_t \le \mu_{t+1}$), some *parameters* associated to the constraint, a **penalty** (possibly null) and **robust parameters** to use Huber or biweight losses only on the considered edge.
+The algorithm of our package is designed to consider a large variety of constraints. These constraints are modelled by a graph. At each time $t$ a number of states is accessible, these states are the nodes of the graph. Possible transitions between states at time $t$ and $t+1$ are represented by the edges of the graph. Each edge is associated to $4$ main elements: a **constraint** (for example $\mu_t \le \mu_{t+1}$), some **parameters** associated to the constraint, a **penalty** (possibly null) and **robust parameters** to use Huber or biweight losses only on the considered edge.
 
-In addition to the edge definition, the nodes can be constrained to a range of values (means, most of the time) in the inference. We only can specify starting and ending nodes.
+In addition to the edge definition, the nodes can be constrained to a range of values (means) in the inference. We also can specify starting and ending nodes. In our implementation the transitions are not time-dependent except for starting and ending steps.
 
 The edges of the graph can be of type "null", "std",  "up", "down" or "abs" with the following meaning:
 
@@ -57,12 +58,9 @@ The edges of the graph can be of type "null", "std",  "up", "down" or "abs" with
 - "abs" edge : the absolute value of the difference of two consecutive means is greater than a given parameter.
 
 
-A nonnegative internal parameter can thus be associated to an edge (in "up", "down" and "abs""). The "null" edge refers to an absence of change-point. This edge can be used between different states to constraint segment lengths. Our package includes the segment neighborhood algorithm for which the number of change-points is fixed. More details on graph construction are given in the section [Graph construction](#gc).
+A nonnegative internal parameter can thus be associated to an edge (in "up", "down" and "abs""). The "null" edge refers to an absence of change-point. This edge can be used between different states to constraint segment lengths. Thus our package includes the segment neighborhood algorithm for which the number of change-points is fixed. More details on graph construction are given in the section [Graph construction](#gc).
 
-___
-
-
-Data is modelized by a cost with possible use of a robust loss, biweight and Huber, in all the decomposition (Gauss, Poisson, Binomial).
+### From non-constrained to constrained changepoint problem
 
 The package `gfpop` is designed to segment univariate data $y_{1:n} = \{y_1,...,y_n\}$ obeying to a graph structure on segment means/parameters. The change-point vector $\overline{\tau} = (\tau_0 < \cdots < \tau_{k+1}) \in \mathbb{N}^{k+2}$ defines the $k+1$ segments $\{\tau_i+1,...,\tau_{i+1}\}$, $i = 0,...,k$ with fixed bounds $\tau_0 = 0$ and  $\tau_{k+1} = n$. We use the set $S_n = \{\hbox{change-point vector} \overline{\tau} \in \mathbb{N}^{k+2}\}$ to define the nonconstrained minimal global cost given by
 
@@ -89,8 +87,8 @@ so that we get another description of the objective function :
 
 $$Q_n = \min_{(\mu_1,...,\mu_n)\in \mathbb{R}^{n}\,,\,\mu_{n+1} = +\infty}\quad\sum_{i=1}^n\gamma(y_i,\mu_i) + \beta I(\mu_{i} \ne \mu_{i+1})\,,$$
 
-___
 
+### Graph-constrained problem
 
 with $I \in \{0,1\}$ the indicator function. This approach can be generalized to more complex constraints on consecutive means using a graph structure. We define the transition graph $\mathcal{G}_n$ as a directed acyclic graph with the following properties:
 
@@ -474,18 +472,19 @@ We add edges into a graph as follows
 
 ```r
 myGraph <- graph(
-  Edge(0, 0, "down", 3.1415, gap = 1),
-  Edge(0, 0))
+  Edge("E1", "E1", "null"),
+  Edge("E1", "E2", "down", 3.1415, gap = 1.5)
+)
 myGraph
 ```
 
 ```
-##   state1 state2 type penalty parameter   K   a min max
-## 1      0      0 down  3.1415         1 Inf Inf  NA  NA
-## 2      0      0 null  0.0000         1 Inf Inf  NA  NA
+##  state1 state2 type parameter penalty   K   a min max
+## 1     E1     E1 null       1.0       0 Inf Inf  NA  NA
+## 2     E1     E2 down       1.5       0 Inf Inf  NA  NA
 ```
 
-we can only add edges to this dataframe using the object `Edge`. With the example `Edge(0, 0, "down", 3.1415, 1)`.
+we can only add edges to this dataframe using the object `Edge`.
 
 The graph can contain information on the starting and/or ending edge to use with the `StartEnd` function. 
 
@@ -493,24 +492,24 @@ The graph can contain information on the starting and/or ending edge to use with
 ```r
 beta <- 2 * log(1000)
 myGraph <- graph(
-  Edge(0, 0, "null"),
-  Edge(1, 1, "null"),
-  Edge(0, 1, "up", penalty = beta, gap = 1),
-  Edge(0, 0, "down", penalty = beta),
-  Edge(1, 0, "down", penalty = beta),
-  StartEnd(start = 0, end = 0))
+  Edge("Dw", "Dw", "null"),
+  Edge("Up", "Up", "null"),
+  Edge("Dw", "Up", "up", penalty = beta, gap = 1),
+  Edge("Dw", "Dw", "down", penalty = beta),
+  Edge("Up", "Dw", "down", penalty = beta),
+  StartEnd(start = "Dw", end = "Dw"))
 myGraph
 ```
 
 ```
-##   state1 state2  type  penalty parameter   K   a min max
-## 1      0      0  null  0.00000         1 Inf Inf  NA  NA
-## 2      1      1  null  0.00000         1 Inf Inf  NA  NA
-## 3      0      1    up 13.81551         1 Inf Inf  NA  NA
-## 4      0      0  down 13.81551         0 Inf Inf  NA  NA
-## 5      1      0  down 13.81551         0 Inf Inf  NA  NA
-## 6      0   <NA> start       NA        NA  NA  NA  NA  NA
-## 7      0   <NA>   end       NA        NA  NA  NA  NA  NA
+## state1 state2  type parameter  penalty   K   a min max
+## 1     Dw     Dw  null         1  0.00000 Inf Inf  NA  NA
+## 2     Up     Up  null         1  0.00000 Inf Inf  NA  NA
+## 3     Dw     Up    up         1 13.81551 Inf Inf  NA  NA
+## 4     Dw     Dw  down         0 13.81551 Inf Inf  NA  NA
+## 5     Up     Dw  down         0 13.81551 Inf Inf  NA  NA
+## 6     Dw   <NA> start        NA       NA  NA  NA  NA  NA
+## 7     Dw   <NA>   end        NA       NA  NA  NA  NA  NA
 ```
 
 Some graphs are often used: they are defined by default in the `graph` function. To use these graphs, we specify a string `type` equal to "std", "isotonic", "updown" or "relevant".
@@ -523,27 +522,27 @@ myGraphIso
 ```
 
 ```
-##   state1 state2 type penalty parameter   K   a min max
-## 1    Iso    Iso null       0         1 Inf Inf  NA  NA
-## 2    Iso    Iso   up      12         0 Inf Inf  NA  NA
+##   state1 state2 type parameter penalty   K   a min max
+## 1    Iso    Iso null         1       0 Inf Inf  NA  NA
+## 2    Iso    Iso   up         0      12 Inf Inf  NA  NA
 ```
 
-The function `Node` can be used to restrict the range of value for parameter associated to a node. For example the following graph is an isotonic graph with inferred parameters between 0 et 1 only.
+The function `Node` can be used to restrict the range of value for parameter associated to a node (called also a vertex). For example the following graph is an isotonic graph with inferred parameters between 0 et 1 only.
 
 ```r
 myGraph <- graph(
-  Edge(0, 0, "down", 3.1415),
-  Edge(0, 0),
-  Node(0, min = 0, max = 1)
+  Edge("Up", "Up", "up", penalty = 3.1415),
+  Edge("Up", "Up"),
+  Node("Up", min = 0, max = 1)
   )
 myGraph
 ```
 
 ```
-##   state1 state2 type penalty parameter   K   a min max
-## 1      0      0 down  3.1415         0 Inf Inf  NA  NA
-## 2      0      0 null  0.0000         1 Inf Inf  NA  NA
-## 3      0   <NA> node      NA        NA  NA  NA   0   1
+##   state1 state2 type parameter penalty   K   a min max
+## 1     Up     Up   up         0  3.1415 Inf Inf  NA  NA
+## 2     Up     Up null         1  0.0000 Inf Inf  NA  NA
+## 3     Up     Up node        NA      NA  NA  NA   0   1
 ```
 
 
@@ -561,8 +560,7 @@ sdDiff
 
 <a id="gfpop"></a>
 
-## More on the main gfpop function and its C++ structure
-
+## More on the gfpop function and its C++ structure
 
 
 [Back to Top](#top)
