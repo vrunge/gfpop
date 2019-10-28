@@ -62,28 +62,28 @@ A nonnegative internal parameter can thus be associated to an edge (in "up", "do
 
 ### The non-constrained changepoint detection problem
 
-The package `gfpop` is designed to segment univariate data $y_{1:n} = \{y_1,...,y_n\}$ obeying to a graph structure on segment means/parameters. The change-point vector $\overline{\tau} = (\tau_0 < \cdots < \tau_{k+1}) \in \mathbb{N}^{k+2}$ defines the $k+1$ segments $\{\tau_i+1,...,\tau_{i+1}\}$, $i = 0,...,k$ with fixed bounds $\tau_0 = 0$ and  $\tau_{k+1} = n$. We use the set $S_n = \{\hbox{change-point vector} \overline{\tau} \in \mathbb{N}^{k+2}\}$ to define the nonconstrained minimal global cost given by
+The change-point vector $\overline{\tau} = (\tau_0 < \cdots < \tau_{k+1}) \in \mathbb{N}^{k+2}$ defines the $k+1$ segments $\{\tau_i+1,...,\tau_{i+1}\}$, $i = 0,...,k$ with fixed bounds $\tau_0 = 0$ and  $\tau_{k+1} = n$. We use the set $S_n = \{\hbox{change-point vector } \overline{\tau} \in \mathbb{N}^{k+2}\}$ to define the non-constrained minimal global cost given by
 
 $$Q_n = \min_{\overline{\tau} \in S_n}\left[ \sum_{i=0}^{k}\lbrace \mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}) + \beta \rbrace \right]\,,$$
 
-where $\beta > 0$ is a penalty parameter and $\mathcal{C}(y_{u:v})$ is the minimal cost over the segment $\{u,...,v\}$. The penalty $\beta$ is understood as an additional cost when introducing a new segment. The argminimum of this quantity gives a vector $\tau^*$ containing the last position of each segment (if we do not consider $\tau_0 = 0$). The quantity $Q_n$ is the solution of the nonconstrained optimal partitioning method. 
+where $\beta > 0$ is a penalty parameter and $\mathcal{C}(y_{u:v})$ is the minimal cost over the segment $\{u,...,v\}$. The penalty $\beta$ is understood as an additional cost when introducing a new segment. The argminimum of this quantity gives a vector $\tau^*$ containing the last position of each segment (if we do not consider $\tau_0 = 0$). The quantity $Q_n$ is the solution of the non-constrained optimal partitioning method. 
 
 In our setting, the cost $\mathcal{C}$ is the result of the minimization of a cost function with additive property:
 
 $$ \left\{
 \begin{array}{l}
-  \mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}) = \min_{\theta_i}\mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}, \theta_i) = \min_{\theta_i} \sum_{j = \tau_i+1}^{\tau_{i+1}}\gamma(y_j, \theta_i)\,,\\
-  m_i = \mathrm{argmin}_{\theta_i}\mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}, \theta_i)\,,
+  \mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}) = \min_{\mu_i}\mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}, \mu_i) = \min_{\mu_i} \sum_{j = \tau_i+1}^{\tau_{i+1}}\gamma(y_j, \mu_i)\,,\\
+  m_i = \mathrm{argmin}_{\mu_i}\mathcal{C}(y_{(\tau_i+1):\tau_{i+1}}, \mu_i)\,,
 \end{array}
 \right.$$
 
-with the argminimum defining the infered mean $m_i$ of the i+1-th segment $\{\tau_i+1,...,\tau_{i+1}\}$ with $i \in \{0,...,k\}$. Additivity of the cost (the $\gamma$ decomposition) is guaranteed as we will use costs deriving from a likelihood. $\gamma$ has in our package $3$ possible decompositions:
+with the argminimum defining the infered mean $m_i$ of the i+1-th segment $\{\tau_i+1,...,\tau_{i+1}\}$ with $i \in \{0,...,k\}$. Additivity of the cost (the $\gamma$ decomposition) is guaranteed as we will use costs deriving from a likelihood. $\gamma$ has in our package $3$ possible basis decompositions:
 
 \begin{description}
-\item[Gauss decomposition.] $f_1 : \theta \mapsto 1$, $f_2 : \theta \mapsto \theta$ and $f_3 : \theta \mapsto \theta^2$. This decomposition allows to consider $\ell_2$, biweight and Huber loss functions; 
-\item[Poisson decomposition.] $f_1 : \theta \mapsto 1$, $f_2 : \theta \mapsto \theta$ and $f_3 : \theta \mapsto \log(\theta)$. This decomposition allows to consider the Poisson, Exponential, as well as the fixed mean and variable variance Normal likelihoods;
+\item[Gauss decomposition.] $f_1 : \mu \mapsto 1$, $f_2 : \mu \mapsto \mu$ and $f_3 : \mu \mapsto \mu^2$. This decomposition allows to consider $\ell_2$, biweight and Huber loss functions; 
+\item[Poisson decomposition.] $f_1 : \mu \mapsto 1$, $f_2 : \mu \mapsto \mu$ and $f_3 : \mu \mapsto \log(\mu)$. This decomposition allows to consider the Poisson, Exponential, as well as the fixed mean and variable variance Normal likelihoods;
 
-\item[Binomial decomposition.] $f_1 : \theta \mapsto 1$, $f_2 : \theta \mapsto \log(\theta)$ and $f_3 : \theta \mapsto \log(1-\theta)$. This decomposition allows to consider the Binomial and Negative binomial likelihoods.
+\item[Binomial decomposition.] $f_1 : \mu \mapsto 1$, $f_2 : \mu \mapsto \log(\mu)$ and $f_3 : \mu \mapsto \log(1-\mu)$. This decomposition allows to consider the Binomial and Negative binomial likelihoods.
 \end{description}
 
 We can associate a current mean $\mu_i$ to each data point $y_i$ and we write a cost on a segment $\{u,...,v\}$ as a result of a constrained minimization:
@@ -92,12 +92,13 @@ $$\mathcal{C}(y_{u:v}) = \min_{\overset{(\mu_u,...,\mu_v)\in \mathbb{R}^{{v-u+1}
 
 so that we get another description of the objective function :
 
-$$Q_n = \min_{(\mu_1,...,\mu_n)\in \mathbb{R}^{n}\,,\,\mu_{n+1} = +\infty}\quad\sum_{i=1}^n\gamma(y_i,\mu_i) + \beta I(\mu_{i} \ne \mu_{i+1})\,,$$
+$$Q_n = \min_{\overset{(\mu_1,...,\mu_n)\in \mathbb{R}^{n}}{\mu_{n+1} = +\infty}}\quad\sum_{i=1}^n\gamma(y_i,\mu_i) + \beta I(\mu_{i} \ne \mu_{i+1})\,,$$
+
 From this expression, it will be possible to impose some constraints on the vector of means $\mu$.
 
 ### Graph-constrained problem
 
-with $I \in \{0,1\}$ the indicator function. This approach can be generalized to more complex constraints on consecutive means using a graph structure. We define the transition graph $\mathcal{G}_n$ as a directed acyclic graph with the following properties:
+$I \in \{0,1\}$ is the indicator function. This previous approach can be generalized to complex constraints on consecutive means using a graph structure. We define the transition graph $\mathcal{G}_n$ as a directed acyclic graph with the following properties:
 
 1. Nodes are indexed by time and state. $v = (t,s)$ for node $v$ with time $t$ and state $s$. The states are elements of the set $\mathcal{S} =  \{0,...,S\} \subset \mathbb{N}$;
 
