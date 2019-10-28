@@ -37,9 +37,9 @@ DANGER : code broken in October in preparation for big update! The new implement
 
 `gfpop` is an `R` package developed to complete parametric change-point detection in univariate time series constrained to a graph structure. Constraints are imposed to the sequence of inferred parameters (most of the time a mean parameter) of consecutive segments and related to the direction and/or the magnitude of the mean changes. 
 
-Change-point detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm. [Cf paper. On optimal multiple changepoint algorithms for large data](https://link.springer.com/article/10.1007/s11222-016-9636-3). This algorithmic strategy can be seen as an extented Viterbi algorithm for a Hidden Markov Model with continuous parameter states.
+Change-point detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm. [Cf paper. On optimal multiple changepoint algorithms for large data](https://link.springer.com/article/10.1007/s11222-016-9636-3). This algorithmic strategy can be seen as an extented Viterbi algorithm for a Hidden Markov Model with continuous parameter states. A presentation of the generalized fpop (gfpop) algorithm is available in the paper [A log-linear time algorithm for constrained changepoint detection.](https://arxiv.org/pdf/1703.03352.pdf)
 
-In the main `gfpop` function the user chooses a global parametric model for the change-point problem to solve (change in "mean", "variance", "exp", "poisson" or "negbin" distribution) and a graph structure. To run the function the user also gives some `data` to segment potentially associated with a `weights` vector of same length.
+In the main `gfpop` function the user chooses a global parametric model for the change-point problem to solve (change in "mean", "variance", "exp", "poisson" or "negbin" distribution in `type` variable) and a `graph` structure. To run the function the user also gives some `data` to segment potentially associated with a `weights` vector of same length.
 
 ```r
 gfpop <- function(data, mygraph, type = "mean", weights = NULL)
@@ -60,7 +60,7 @@ The edges of the graph can be of type "null", "std",  "up", "down" or "abs" with
 
 A nonnegative internal parameter can thus be associated to an edge (in "up", "down" and "abs""). The "null" edge refers to an absence of change-point. This edge can be used between different states to constraint segment lengths. Thus our package includes the segment neighborhood algorithm for which the number of change-points is fixed. More details on graph construction are given in the section [Graph construction](#gc).
 
-### From non-constrained to constrained changepoint problem
+### The non-constrained changepoint detection problem
 
 The package `gfpop` is designed to segment univariate data $y_{1:n} = \{y_1,...,y_n\}$ obeying to a graph structure on segment means/parameters. The change-point vector $\overline{\tau} = (\tau_0 < \cdots < \tau_{k+1}) \in \mathbb{N}^{k+2}$ defines the $k+1$ segments $\{\tau_i+1,...,\tau_{i+1}\}$, $i = 0,...,k$ with fixed bounds $\tau_0 = 0$ and  $\tau_{k+1} = n$. We use the set $S_n = \{\hbox{change-point vector} \overline{\tau} \in \mathbb{N}^{k+2}\}$ to define the nonconstrained minimal global cost given by
 
@@ -77,16 +77,23 @@ $$ \left\{
 \end{array}
 \right.$$
 
-with the argminimum defining the infered mean $m_i$ of the i+1-th segment $\{\tau_i+1,...,\tau_{i+1}\}$ with $i \in \{0,...,k\}$. Additivity of the cost (the $\gamma$ decomposition) is guaranteed as we will use costs deriving from a likelihood. 
+with the argminimum defining the infered mean $m_i$ of the i+1-th segment $\{\tau_i+1,...,\tau_{i+1}\}$ with $i \in \{0,...,k\}$. Additivity of the cost (the $\gamma$ decomposition) is guaranteed as we will use costs deriving from a likelihood. $\gamma$ has in our package $3$ possible decompositions:
 
-More generally, we can associate a current mean $\mu_i$ to each data point $y_i$ and we write a cost on a segment $\{u,...,v\}$ as a result of a constrained minimization:
+\begin{description}
+\item[Gauss decomposition.] $f_1 : \theta \mapsto 1$, $f_2 : \theta \mapsto \theta$ and $f_3 : \theta \mapsto \theta^2$. This decomposition allows to consider $\ell_2$, biweight and Huber loss functions; 
+\item[Poisson decomposition.] $f_1 : \theta \mapsto 1$, $f_2 : \theta \mapsto \theta$ and $f_3 : \theta \mapsto \log(\theta)$. This decomposition allows to consider the Poisson, Exponential, as well as the fixed mean and variable variance Normal likelihoods;
+
+\item[Binomial decomposition.] $f_1 : \theta \mapsto 1$, $f_2 : \theta \mapsto \log(\theta)$ and $f_3 : \theta \mapsto \log(1-\theta)$. This decomposition allows to consider the Binomial and Negative binomial likelihoods.
+\end{description}
+
+We can associate a current mean $\mu_i$ to each data point $y_i$ and we write a cost on a segment $\{u,...,v\}$ as a result of a constrained minimization:
 
 $$\mathcal{C}(y_{u:v}) = \min_{\overset{(\mu_u,...,\mu_v)\in \mathbb{R}^{{v-u+1}}}{\mu_u = \cdots = \mu_v}}\sum_{j = u}^{v}\gamma(y_j, \mu_j)\,,$$
 
 so that we get another description of the objective function :
 
 $$Q_n = \min_{(\mu_1,...,\mu_n)\in \mathbb{R}^{n}\,,\,\mu_{n+1} = +\infty}\quad\sum_{i=1}^n\gamma(y_i,\mu_i) + \beta I(\mu_{i} \ne \mu_{i+1})\,,$$
-
+From this expression, it will be possible to impose some constraints on the vector of means $\mu$.
 
 ### Graph-constrained problem
 
