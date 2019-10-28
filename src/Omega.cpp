@@ -25,8 +25,12 @@ Omega::Omega(Graph graph)
 
 Omega::~Omega()
 {
-  if(LP_ts != NULL){delete [] LP_ts; LP_ts = NULL;}
-  delete LP_edges;
+  if(LP_ts != NULL)
+  {
+    for(unsigned int i = 0; i < n + 1; i++)
+      {delete[] LP_ts[i]; LP_ts[i] = NULL;}
+  }
+  delete[] LP_edges;
   LP_edges = NULL;
 }
 
@@ -65,7 +69,7 @@ void Omega::initialize_LP_ts(unsigned int n)
         maxi = m_graph.getEdge(j).getMaxx();
       }
     }
-    LP_ts[0][i].addNewLastPiece(new Piece(Track(), Interval(mini, maxi), Cost()));
+    LP_ts[0][i].addFirstPiece(new Piece(Track(), Interval(mini, maxi), Cost()));
     mini = inter.geta();
     maxi = inter.getb();
   }
@@ -98,14 +102,14 @@ void Omega::gfpop(Data const& data)
 	initialize_LP_ts(n); ///size LP_ts (n+1) x p
 	//////////////////////////////
 
-	for(unsigned int t = 0; t < n; t++) /// loop for all data point (except the first one)
+	for(unsigned int t = 0; t < 1; t++) /// loop for all data point (except the first one)
 	{
 	  LP_edges_operators(t); ///fill_LP_edges. t = newLabel to consider
-	  LP_edges_addPointAndPenalty(myData[t]); ///Add new data point and penalty
-	  LP_t_new_multipleMinimization(t); ///multiple_minimization
+	  //LP_edges_addPointAndPenalty(myData[t]); ///Add new data point and penalty
+	  //LP_t_new_multipleMinimization(t); ///multiple_minimization
 	}
 
-	backtracking();
+	//backtracking();
 	show();
 }
 
@@ -248,7 +252,12 @@ void Omega::backtracking()
 
 void Omega::show()
 {
-  for(unsigned char i = 0; i < q; i++){LP_edges[i].show();}
+  for(unsigned char i = 0; i < q; i++)
+  {
+    std::cout << "s1: " << m_graph.getEdge(i).getState1() + 1;
+    std::cout << " s2: " << m_graph.getEdge(i).getState2() + 1 << " ";
+    LP_edges[i].show();
+  }
 }
 
 

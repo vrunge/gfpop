@@ -32,6 +32,7 @@ gfpop <- function(data, mygraph, type = "mean", weights = NULL)
     if(length(data) != length(weights)){stop('data vector and weights vector have different sizes')}
     if(!all(weights > 0)){stop('weights vector has non strictly positive components')}
   }
+  else{weights <- 0} #to send a double in gfpopTransfer
   if(length(data) < 2){stop('data vector length is less than 2...')}
 
   ######################
@@ -152,8 +153,3 @@ itergfpop <- function(data, mygraph, type = "mean", weights = NULL, iter.max = 1
 
   return(response)
 }
-
-
-
-
-

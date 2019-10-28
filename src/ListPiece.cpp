@@ -104,12 +104,13 @@ void ListPiece::addCurrentPiecePlus1(Piece* newPiece)
   currentPiece -> nxt = newPiece;
 }
 
-//##### addNewLastPiece #####//////##### addNewLastPiece #####//////##### addNewLastPiece #####///
-//##### addNewLastPiece #####//////##### addNewLastPiece #####//////##### addNewLastPiece #####///
+//##### addFirstPiece #####//////##### addFirstPiece #####//////##### addFirstPiece #####///
+//##### addFirstPiece #####//////##### addFirstPiece #####//////##### addFirstPiece #####///
 
-void ListPiece::addNewLastPiece(Piece* newPiece)
+void ListPiece::addFirstPiece(Piece* newPiece)
 {
-  lastPiece -> nxt = newPiece;
+  head = newPiece;
+  currentPiece = newPiece;
   lastPiece = newPiece;
 }
 
@@ -135,7 +136,7 @@ void ListPiece::initializeCurrentPiece()
 void ListPiece::copy(ListPiece const& LP_edge)
 {
   Piece* tmp = LP_edge.head;
-  head = tmp;
+  head = tmp -> copy();
 
   while(tmp != NULL)
   {
@@ -212,6 +213,7 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     if(edge_parameter < 1){expDecay(edge_parameter);} ///edge_parameter = exponential decay
   }
 
+
   //################
   if(edge_ctt == "std")
   {
@@ -235,10 +237,11 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     Piece* onePiece = new Piece();
     onePiece ->addCostAndPenalty(Cost(), mini + edge_beta); /// Cost() = 0
     onePiece -> m_info = Track(newLabel, parentState, counterMini);
-    addNewLastPiece(onePiece);
+    addFirstPiece(onePiece);
 
   }
 
+  /*
   //################
   if(edge_ctt == "up")
   {
@@ -261,6 +264,7 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
 
     if(edge_parameter > 0){shift(-edge_parameter);} ///edge_parameter = left/right decay
   }
+ */
 }
 
 //##### LP_edges_addPointAndPenalty #####//////##### LP_edges_addPointAndPenalty #####//////##### LP_edges_addPointAndPenalty #####///

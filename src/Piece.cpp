@@ -448,7 +448,6 @@ void Piece::show()
     std::cout << " #LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " << tmp -> m_info.getPosition() << " ";
     std::cout << "#INTERVAL# "<< tmp -> m_interval.geta() << " -- " << tmp -> m_interval.getb() << " ";
     showCost(tmp ->m_cost);
-    std::cout << std::endl;
   }
 }
 

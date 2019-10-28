@@ -99,16 +99,16 @@ void Graph::show() const
   {
     edges[i].show();
   }
-  std::cout<< "Start state : ";
+  std::cout<< "Start state (+1): ";
   for (unsigned int i = 0 ; i < startState.size() ; i++)
   {
-    std::cout<< startState[i] << " ";
+    std::cout<< startState[i] + 1 << " ";
   }
   std::cout << std::endl;
-  std::cout<< "End state : ";
+  std::cout<< "End state (+1): ";
   for (unsigned int i = 0 ; i < endState.size() ; i++)
   {
-    std::cout<< endState[i] << " ";
+    std::cout<< endState[i] + 1 << " ";
   }
   std::cout << std::endl;
   std::cout<< "nb states : " << nb_states() << std::endl;

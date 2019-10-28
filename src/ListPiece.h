@@ -28,7 +28,7 @@ public:
   void initializeCurrentPiece();
 
   void addCurrentPiecePlus1(Piece* newPiece);
-  void addNewLastPiece(Piece* newPiece);
+  void addFirstPiece(Piece* newPiece);
   void copy(ListPiece  const& LP_edge);
 
   void shift(double parameter);
