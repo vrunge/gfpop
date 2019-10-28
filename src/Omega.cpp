@@ -69,7 +69,12 @@ void Omega::initialize_LP_ts(unsigned int n)
         maxi = m_graph.getEdge(j).getMaxx();
       }
     }
-    LP_ts[0][i].addFirstPiece(new Piece(Track(), Interval(mini, maxi), Cost()));
+
+    ///DANGER -> replace with ***** in next update
+    for(unsigned int j = 0; j < (n+1); j++)
+      {LP_ts[j][i].addFirstPiece(new Piece(Track(), Interval(mini, maxi), Cost()));}
+    //***** LP_ts[0][i].addFirstPiece(new Piece(Track(), Interval(mini, maxi), Cost()));
+
     mini = inter.geta();
     maxi = inter.getb();
   }
@@ -102,7 +107,7 @@ void Omega::gfpop(Data const& data)
 	initialize_LP_ts(n); ///size LP_ts (n+1) x p
 	//////////////////////////////
 
-	for(unsigned int t = 0; t < 1; t++) /// loop for all data point (except the first one)
+	for(unsigned int t = 0; t < n + 1; t++) /// loop for all data point (except the first one)
 	{
 	  LP_edges_operators(t); ///fill_LP_edges. t = newLabel to consider
 	  //LP_edges_addPointAndPenalty(myData[t]); ///Add new data point and penalty
@@ -110,7 +115,7 @@ void Omega::gfpop(Data const& data)
 	}
 
 	//backtracking();
-	show();
+	//show();
 }
 
 //##### LP_edges_operators #####//////##### LP_edges_operators #####//////##### LP_edges_operators #####///

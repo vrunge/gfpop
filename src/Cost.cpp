@@ -184,11 +184,26 @@ double negbin_min(const Cost& cost)
 
 double mean_minInterval(const Cost& cost, Interval inter)
 {
-  double argmin = -cost.m_B/(2*cost.m_A);
-  double res = -(cost.m_B*cost.m_B/(4*cost.m_A)) + cost.constant;
-  if(argmin < inter.geta()){res = cost.m_A* inter.geta()* inter.geta() + cost.m_B* inter.geta() + cost.constant;}
-  if(argmin > inter.getb()){res = cost.m_A* inter.getb()* inter.getb() + cost.m_B* inter.getb() + cost.constant;}
-  return(res);
+  double minimum = -INFINITY;
+  //case m_A > 0
+  if(cost.m_A > 0)
+  {
+    minimum = -(cost.m_B*cost.m_B/(4*cost.m_A)) + cost.constant;
+    double argmin = -cost.m_B/(2*cost.m_A);
+    if(argmin < inter.geta()){minimum = cost.m_A * inter.geta() * inter.geta() + cost.m_B * inter.geta() + cost.constant;}
+    if(argmin > inter.getb()){minimum = cost.m_A * inter.getb() * inter.getb() + cost.m_B * inter.getb() + cost.constant;}
+  }
+
+  //case m_A = 0 & m_B != 0
+  if((cost.m_A == 0) && (cost.m_B != 0))
+  {
+    if(cost.m_B > 0){minimum = cost.m_B * inter.geta() + cost.constant;}
+      else{minimum = cost.m_B * inter.getb() + cost.constant;}
+  }
+  //case m_A = 0 & m_B = 0
+  if((cost.m_A == 0) && (cost.m_B == 0)){minimum = cost.constant;}
+
+  return(minimum);
 }
 
 

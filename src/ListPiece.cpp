@@ -213,7 +213,6 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     if(edge_parameter < 1){expDecay(edge_parameter);} ///edge_parameter = exponential decay
   }
 
-
   //################
   if(edge_ctt == "std")
   {
@@ -235,10 +234,10 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
 
     ///add onePiece to LP_edges
     Piece* onePiece = new Piece();
-    onePiece ->addCostAndPenalty(Cost(), mini + edge_beta); /// Cost() = 0
     onePiece -> m_info = Track(newLabel, parentState, counterMini);
+    onePiece -> m_interval = Interval(LP_state.head -> m_interval.geta(), LP_state.lastPiece -> m_interval.getb());
+    onePiece -> addCostAndPenalty(Cost(), mini + edge_beta); /// Cost() = 0
     addFirstPiece(onePiece);
-
   }
 
   /*
