@@ -2,9 +2,6 @@
 #define PIECE_H
 
 #include "Edge.h"
-#include "Bound.h"
-#include "Robust.h"
-
 #include "Data.h"
 
 #include "Track.h"
@@ -19,31 +16,39 @@
 class Piece
 {
   public:
+    Track m_info;
+    Interval m_interval;
+    Cost m_cost;
+    Piece *nxt;   /// pointer to next piece
+
     Piece();
     Piece(Track const& info, Interval const& inter = Interval(), Cost const& cost = Cost());
     Piece(const Piece* piece); ///COPY CONSTRUCTOR => copy only the first Piece. piece -> nxt = NULL
-
     ~Piece();
 
-    Track getTrack() const;
-    Interval getInterval() const;
-    Cost getCost() const;
-    Cost& getRefCost();
+    Piece* copy();
+    double getMin();
 
+    void addCostAndPenalty(Cost const& cost, double penalty);
+
+    ///
+    ///
+    Interval intervalMinLessUp(double bound, double currentValue, bool constPiece);
+    Interval intervalMinLessDw(double bound, double currentValue, bool constPiece);
+    Piece* pastePieceUp(const Piece* NXTPiece, Interval const& decrInter, Track const& newTrack);
+    Piece* pastePieceDw(const Piece* NXTPiece, Interval const& decrInter, Track const& newTrack);
+
+    Piece* pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double M);
+    Piece* piece0(Piece* Q1, Piece* Q2, Interval interToPaste, int& Q2_Minus_Q1);
+    Piece* piece1(Piece* Q1, Piece* Q2, Interval interToPaste, Interval interRoots, int& Q2_Minus_Q1);
+    Piece* piece2(Piece* Q1, Piece* Q2, Interval interToPaste, Interval interRoots, int& Q2_Minus_Q1);
+
+
+    double* get_min_argmin_label_state_position();
     ///
     ///
 
     void show();
-    void addPointAndPenalty(Point const& pt, double penalty);
-
-    Piece *nxt;   /// pointer to next piece
-
-  private:
-
-    Track m_info;
-
-    Interval m_interval;
-    Cost m_cost;  /// pointer to the cost associated to the current piece
 
 
 };

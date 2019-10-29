@@ -29,6 +29,30 @@ void addCost(Cost& cost, const Cost& cost2)
   cost.constant = cost.constant + cost2.constant;
 }
 
+Cost minusCost(Cost& cost, const Cost& cost2)
+{
+  Cost res = Cost();
+  res.m_A = cost.m_A - cost2.m_A;
+  res.m_B = cost.m_B - cost2.m_B;
+  res.constant = cost.constant - cost2.constant;
+  return(res);
+}
+
+int signValue(double value)
+{
+  int res = 1;
+  if(value < 0){res = -1;}
+  return(res);
+}
+
+
+bool isEqual(Cost const& cost1, Cost const& cost2)
+{
+  bool res = false;
+  res = (cost1.m_A == cost2.m_A)&&(cost1.m_B == cost2.m_B)&&(cost1.constant == cost2.constant);
+  return(res);
+}
+
 
 void showCost(Cost& cost)
 {
@@ -75,52 +99,61 @@ double log_choose(double x, double n)
 /// rbinom cost = -m_A*log(THETA) - m_B*log(1-THETA) + constant
 
 
-double* mean_coeff(double y)
+double* mean_coeff(Point const& pt)
 {
   double* coeff = new double[3];
-  coeff[0] = 1;
-  coeff[1] = -2*y;
-  coeff[2] = y*y;
+  coeff[0] = pt.w;
+  coeff[1] = -2*pt.y*pt.w;
+  coeff[2] = pt.y*pt.y*pt.w;
   return(coeff);
 }
 
-double* variance_coeff(double y)
+double* variance_coeff(Point const& pt)
 {
   double* coeff = new double[3];
-  coeff[0] = y*y;
-  coeff[1] = 1;
+  coeff[0] = pt.y*pt.y*pt.w;
+  coeff[1] = pt.w;
   //coeff[2] = log(2*M_PI);
   coeff[2] = 0;
   return(coeff);
 }
 
-double* poisson_coeff(double y)
+double* poisson_coeff(Point const& pt)
 {
   double* coeff = new double[3];
-  coeff[0] = 1;
-  coeff[1] = y;
+  coeff[0] = pt.w;
+  coeff[1] = pt.y*pt.w;
   //coeff[2] = log_factorial(y);
   coeff[2] = 0;
   return(coeff);
 }
 
-double* exp_coeff(double y)
+double* exp_coeff(Point const& pt)
 {
   double* coeff = new double[3];
-  coeff[0] = y;
-  coeff[1] = 1;
+  coeff[0] = pt.y*pt.w;
+  coeff[1] = pt.w;
   coeff[2] = 0;
   return(coeff);
 }
 
-double* negbin_coeff(double y)
+double* negbin_coeff(Point const& pt)
 {
   double* coeff = new double[3];
-  coeff[0] = y;
-  coeff[1] = 1;
+  coeff[0] = pt.y*pt.w;
+  coeff[1] = pt.w;
   coeff[2] = 0;
   return(coeff);
 }
+
+
+//####### eval #######////####### eval #######////####### eval #######//
+//####### eval #######////####### eval #######////####### eval #######//
+
+
+double mean_eval(const Cost& cost, double value){return(cost.m_A*value*value + cost.m_B*value + cost.constant);}
+double variance_eval(const Cost& cost, double value){return(cost.m_A*value - cost.m_B*log(value) + cost.constant);}
+double negbin_eval(const Cost& cost, double value){return(-cost.m_A*log(value) - cost.m_B*log(1 - value) + cost.constant);}
 
 
 //####### minimum #######////####### minimum #######////####### minimum #######//
@@ -145,6 +178,70 @@ double negbin_min(const Cost& cost)
   return(res);
 }
 
+
+//####### minimumInter #######////####### minimumInter #######////####### minimumInter #######//
+//####### minimumInter #######////####### minimumInter #######////####### minimumInter #######//
+
+double mean_minInterval(const Cost& cost, Interval inter)
+{
+  double minimum = -INFINITY;
+  //case m_A > 0
+  if(cost.m_A > 0)
+  {
+    minimum = -(cost.m_B*cost.m_B/(4*cost.m_A)) + cost.constant;
+    double argmin = -cost.m_B/(2*cost.m_A);
+    if(argmin < inter.geta()){minimum = cost.m_A * inter.geta() * inter.geta() + cost.m_B * inter.geta() + cost.constant;}
+    if(argmin > inter.getb()){minimum = cost.m_A * inter.getb() * inter.getb() + cost.m_B * inter.getb() + cost.constant;}
+  }
+
+  //case m_A = 0 & m_B != 0
+  if((cost.m_A == 0) && (cost.m_B != 0))
+  {
+    if(cost.m_B > 0){minimum = cost.m_B * inter.geta() + cost.constant;}
+      else{minimum = cost.m_B * inter.getb() + cost.constant;}
+  }
+  //case m_A = 0 & m_B = 0
+  if((cost.m_A == 0) && (cost.m_B == 0)){minimum = cost.constant;}
+
+  return(minimum);
+}
+
+
+double variance_minInterval(const Cost& cost, Interval inter)
+{
+  double argmin = sqrt(cost.m_A/cost.m_B);
+  double res = cost.m_B - cost.m_B*log(cost.m_B/cost.m_A) + cost.constant;
+  if(argmin < inter.geta()){res = cost.m_A* inter.geta() - cost.m_B* log(inter.geta()) + cost.constant;}
+  if(argmin > inter.getb()){res = cost.m_A* inter.getb() - cost.m_B* log(inter.getb()) + cost.constant;}
+  return(res);
+}
+
+double poisson_minInterval(const Cost& cost, Interval inter)
+{
+  double argmin = cost.m_B/cost.m_A;
+  double res = INFINITY;
+  if(cost.m_A != 0 && cost.m_B == 0){res = cost.constant;}
+  if(cost.m_A != 0 && cost.m_B != 0){res = cost.m_B - cost.m_B*log(cost.m_B/cost.m_A) + cost.constant;}
+
+  if(argmin < inter.geta()){res = cost.m_A* inter.geta() - cost.m_B* log(inter.geta()) + cost.constant;}
+  if(argmin > inter.getb()){res = cost.m_A* inter.getb() - cost.m_B* log(inter.getb()) + cost.constant;}
+
+  return(res);
+}
+
+
+double negbin_minInterval(const Cost& cost, Interval inter)
+{
+  double argmin = cost.m_A/(cost.m_A + cost.m_B);
+  double res = -INFINITY;
+  if(cost.m_A != 0 && cost.m_B != 0){res = - cost.m_A * log(cost.m_A/(cost.m_A + cost.m_B)) - cost.m_B * log(cost.m_B/(cost.m_A + cost.m_B)) + cost.constant;}
+
+  if(argmin < inter.geta()){res = cost.m_A*log(inter.geta()) - cost.m_B* log(1-inter.geta()) + cost.constant;}
+  if(argmin > inter.getb()){res = cost.m_A*log(inter.getb()) - cost.m_B* log(1-inter.getb()) + cost.constant;}
+
+  return(res);
+}
+
 //####### argminimum #######////####### argminimum #######////####### argminimum #######//
 //####### argminimum #######////####### argminimum #######////####### argminimum #######//
 
@@ -156,6 +253,75 @@ double variance_argmin(const Cost& cost)
 }
 double poisson_argmin(const Cost& cost){return(cost.m_B/cost.m_A);}
 double negbin_argmin(const Cost& cost){return(cost.m_A/(cost.m_A + cost.m_B));}
+
+//####### shift #######////####### shift #######////####### shift #######//
+//####### shift #######////####### shift #######////####### shift #######//
+
+void mean_shift(Cost& cost, double parameter)
+{
+  cost.m_B = cost.m_B - 2 * cost.m_A * parameter;
+  cost.constant = cost.constant + parameter * (cost.m_A * parameter - cost.m_B);
+}
+
+void variance_shift(Cost& cost, double parameter)
+{
+  cost.m_A = cost.m_A * parameter;
+  cost.constant = cost.constant - cost.m_B * log(parameter);
+}
+
+void negbin_shift(Cost& cost, double parameter){}
+
+
+//####### interShift #######////####### interShift #######////####### interShift #######//
+//####### interShift #######////####### interShift #######////####### interShift #######//
+
+double mean_interShift(double bound, double parameter)
+{
+  return(bound + parameter);
+}
+
+double variance_interShift(double bound, double parameter)
+{
+  return(bound/parameter);
+}
+
+double negbin_interShift(double bound, double parameter){return(bound);}
+
+
+
+//####### expDecay #######////####### expDecay #######////####### expDecay #######//
+//####### expDecay #######////####### expDecay #######////####### expDecay #######//
+
+void mean_expDecay(Cost& cost, double gamma)
+{
+  cost.m_A = cost.m_A / (gamma * gamma);
+  cost.m_B = cost.m_B / gamma;
+}
+
+void variance_expDecay(Cost& cost, double gamma)
+{
+  cost.m_A = cost.m_A / gamma;
+  cost.constant = cost.constant + cost.m_B * log(gamma);
+}
+
+void negbin_expDecay(Cost& cost, double gamma){}
+
+
+
+//####### interExpDecay #######////####### interExpDecay #######////####### interExpDecay #######//
+//####### interExpDecay #######////####### interExpDecay #######////####### interExpDecay #######//
+
+double mean_interExpDecay(double bound, double gamma)
+{
+  return(bound*gamma);
+}
+
+double variance_interExpDecay(double bound, double gamma)
+{
+  return(bound*gamma);
+}
+
+double negbin_interExpDecay(double bound, double gamma){return(bound);}
 
 
 
@@ -344,19 +510,35 @@ Interval exp_interval(){return(Interval(0,INFINITY));}
 Interval negbin_interval(){return(Interval(0,1));}
 
 
+
+//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#
+//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#
+
 //####### factories #######////####### factories #######////####### factories #######//
 //####### factories #######////####### factories #######////####### factories #######//
 
-std::function<double*(double)> coeff_factory(const std::string& type)
+std::function<double*(const Point&)> coeff_factory(const std::string& type)
 {
-  std::function<double*(double)> fct;
-  if(type == "mean"){fct = std::function<double*(double)>(mean_coeff);}
-  if(type == "variance"){fct = std::function<double*(double)>(variance_coeff);}
-  if(type == "poisson"){fct = std::function<double*(double)>(poisson_coeff);}
-  if(type == "exp"){fct = std::function<double*(double)>(exp_coeff);}
-  if(type == "negbin"){fct = std::function<double*(double)>(negbin_coeff);}
+  std::function<double*(const Point&)> fct;
+  if(type == "mean"){fct = std::function<double*(const Point&)>(mean_coeff);}
+  if(type == "variance"){fct = std::function<double*(const Point&)>(variance_coeff);}
+  if(type == "poisson"){fct = std::function<double*(const Point&)>(poisson_coeff);}
+  if(type == "exp"){fct = std::function<double*(const Point&)>(exp_coeff);}
+  if(type == "negbin"){fct = std::function<double*(const Point&)>(negbin_coeff);}
   return(fct);
 }
+
+std::function<double(const Cost&, double value)> eval_factory(const std::string& type)
+{
+  std::function<double(const Cost&, double value)> fct;
+  if(type == "mean"){fct = std::function<double(const Cost&, double value)>(mean_eval);}
+  if(type == "variance"){fct = std::function<double(const Cost&, double value)>(variance_eval);}
+  if(type == "poisson"){fct = std::function<double(const Cost&, double value)>(variance_eval);}
+  if(type == "exp"){fct = std::function<double(const Cost&, double value)>(variance_eval);}
+  if(type == "negbin"){fct = std::function<double(const Cost&, double value)>(negbin_eval);}
+  return(fct);
+}
+
 
 std::function<double(const Cost&)> min_factory(const std::string& type)
 {
@@ -369,6 +551,18 @@ std::function<double(const Cost&)> min_factory(const std::string& type)
   return(fct);
 }
 
+std::function<double(const Cost&, Interval inter)> minInterval_factory(const std::string& type)
+{
+  std::function<double(const Cost&, Interval inter)> fct;
+  if(type == "mean"){fct = std::function<double(const Cost&, Interval inter)>(mean_minInterval);}
+  if(type == "variance"){fct = std::function<double(const Cost&, Interval inter)>(variance_minInterval);}
+  if(type == "poisson"){fct = std::function<double(const Cost&, Interval inter)>(poisson_minInterval);}
+  if(type == "exp"){fct = std::function<double(const Cost&, Interval inter)>(variance_minInterval);}
+  if(type == "negbin"){fct = std::function<double(const Cost&, Interval inter)>(negbin_minInterval);}
+  return(fct);
+}
+
+
 std::function<double(const Cost&)> argmin_factory(const std::string& type)
 {
   std::function<double(const Cost&)> fct;
@@ -379,6 +573,55 @@ std::function<double(const Cost&)> argmin_factory(const std::string& type)
   if(type == "negbin"){fct = std::function<double(const Cost&)>(negbin_argmin);}
   return(fct);
 }
+
+std::function<void(Cost& cost, double parameter)> shift_factory(const std::string& type)
+{
+  std::function<void(Cost& cost, double parameter)> fct;
+  if(type == "mean"){fct = std::function<void(Cost& cost, double parameter)>(mean_shift);}
+  if(type == "variance"){fct = std::function<void(Cost& cost, double parameter)>(variance_shift);}
+  if(type == "poisson"){fct = std::function<void(Cost& cost, double parameter)>(variance_shift);}
+  if(type == "exp"){fct = std::function<void(Cost& cost, double parameter)>(variance_shift);}
+  if(type == "negbin"){fct = std::function<void(Cost& cost, double parameter)>(negbin_shift);}
+  return(fct);
+}
+
+
+std::function<double(double bound, double parameter)> interShift_factory(const std::string& type)
+{
+  std::function<double(double bound, double parameter)> fct;
+  if(type == "mean"){fct = std::function<double(double bound, double parameter)>(mean_interShift);}
+  if(type == "variance"){fct = std::function<double(double bound, double parameter)>(variance_interShift);}
+  if(type == "poisson"){fct = std::function<double(double bound, double parameter)>(variance_interShift);}
+  if(type == "exp"){fct = std::function<double(double bound, double parameter)>(variance_interShift);}
+  if(type == "negbin"){fct = std::function<double(double bound, double parameter)>(negbin_interShift);}
+  return(fct);
+}
+
+
+
+std::function<void(Cost& cost, double gamma)> expDecay_factory(const std::string& type)
+{
+  std::function<void(Cost& cost, double gamma)> fct;
+  if(type == "mean"){fct = std::function<void(Cost& cost, double gamma)>(mean_expDecay);}
+  if(type == "variance"){fct = std::function<void(Cost& cost, double gamma)>(variance_expDecay);}
+  if(type == "poisson"){fct = std::function<void(Cost& cost, double gamma)>(variance_expDecay);}
+  if(type == "exp"){fct = std::function<void(Cost& cost, double gamma)>(variance_expDecay);}
+  if(type == "negbin"){fct = std::function<void(Cost& cost, double gamma)>(negbin_expDecay);}
+  return(fct);
+}
+
+
+std::function<double(double bound, double gamma)> interExpDecay_factory(const std::string& type)
+{
+  std::function<double(double bound, double gamma)> fct;
+  if(type == "mean"){fct = std::function<double(double bound, double gamma)>(mean_interExpDecay);}
+  if(type == "variance"){fct = std::function<double(double bound, double gamma)>(variance_interExpDecay);}
+  if(type == "poisson"){fct = std::function<double(double bound, double gamma)>(variance_interExpDecay);}
+  if(type == "exp"){fct = std::function<double(double bound, double gamma)>(variance_interExpDecay);}
+  if(type == "negbin"){fct = std::function<double(double bound, double gamma)>(negbin_interExpDecay);}
+  return(fct);
+}
+
 
 std::function<Interval(const Cost&, double& level)> intervalInterRoots_factory(const std::string& type)
 {
@@ -401,7 +644,6 @@ std::function<int(const Cost&)> age_factory(const std::string& type)
   if(type == "negbin"){fct = std::function<int(const Cost&)>(negbin_age);}
   return(fct);
 }
-
 
 
 std::function<Interval()> interval_factory(const std::string& type)

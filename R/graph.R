@@ -111,7 +111,7 @@ Node <- function(state = NULL, min = -Inf, max = Inf)
 #'
 #' @description Graph creation using component functions "Edge", "StartEnd" and "Node"
 #' @param ... This is a list of edges definied by functions "Edge", "StartEnd" and "Node"
-#' @param type a string equal to "std", "isotonic", "updown", "infsup". to build a predefined classic graph
+#' @param type a string equal to "std", "isotonic", "updown", "relevant". to build a predefined classic graph
 #' @param decay a nonnegative number to give the strength of the exponential decay into the segment
 #' @param gap a nonnegative number to constrain the size of the gap in the change of state
 #' @param penalty a nonnegative number equals to the common penalty to use for all edges
@@ -191,13 +191,19 @@ graphReorder <- function(mygraph)
 
 
   ###transform the abs edge into two edges (up and down)
-  is.abs <- graphVtemp$type == "abs"
-  addToGraphVV <- graphVtemp[is.abs,]
-  if(any(is.abs)){
-    graphVtemp$type[is.abs] <- "down"
-    addToGraphVV$type <- "up"
+  absEdge <- graphVtemp[,3] == "abs"
+
+  if(!all(absEdge == FALSE))
+  {
+    graphVtemp[absEdge,3] <- "down"
+    addToGraphVV <- graphVtemp[absEdge,]
+    addToGraphVV[,3] <- "up"
+    graphV <- rbind(graphVtemp, addToGraphVV)
   }
-  graphV <- rbind(graphVtemp, addToGraphVV)
+  else
+  {
+    graphV <- graphVtemp
+  }
 
   ##create a new graph
   myNewGraph <- graph()

@@ -1,8 +1,5 @@
 #include "Edge.h"
-
-#include <math.h>
-#include<iostream>
-#include<string>
+//#include<iostream>
 
 Edge::Edge(){};
 Edge::Edge(unsigned int s1, unsigned int s2, Rcpp::String cstt, double param, double b, double K, double a, double mini, double maxi) :
@@ -20,7 +17,6 @@ double Edge::getMaxx() const {return(maxx);}
 
 void Edge::show() const
 {
-  std::cout << "- s1: " << state1 << " s2: " << state2 << " cstt: " << constraint << " param: " << parameter << " beta: " << beta;
-  std::cout << " K  " << KK << " a: " << aa << " min: " << minn << " max: " << maxx << std::endl;
-
+  //std::cout << "- s1: " << state1 << " s2: " << state2 << " cstt: " << constraint << " param: " << parameter << " beta: " << beta;
+  //std::cout << " K  " << KK << " a: " << aa << " min: " << minn << " max: " << maxx << std::endl;
 }

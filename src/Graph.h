@@ -6,6 +6,9 @@
 
 #include<vector>
 #include<string>
+#include <math.h>
+#include <algorithm>
+
 
 class Graph
 {
@@ -21,11 +24,8 @@ class Graph
     std::vector<unsigned int> getStartState() const;
     std::vector<unsigned int> getEndState() const;
 
-    bool AreVerticesCompatible() const;
-    std::string getType() const;
-
-    Interval buildInterval(double argmin, unsigned int s1, unsigned int s2, bool& out) const;
-    double stateDecay(unsigned int s) const;
+    Interval buildInterval(double argmin, unsigned int s1, unsigned int s2) const;
+    double recursiveState(unsigned int s) const;
 
     void show() const;
 

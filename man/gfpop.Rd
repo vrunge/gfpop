@@ -4,7 +4,7 @@
 \alias{gfpop}
 \title{Graph-Constrained Functional Pruning Optimal Partitioning}
 \usage{
-gfpop(data = c(0), mygraph, type = "mean", weights = c(0))
+gfpop(data, mygraph, type = "mean", weights = NULL)
 }
 \arguments{
 \item{data}{vector of data to segment}

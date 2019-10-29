@@ -3,15 +3,8 @@
 #include "Graph.h"
 
 #include<iostream>
-#include<string>
-#include<vector>
-#include <math.h>
 
-#include <algorithm>
-
-Graph::Graph()
-{
-}
+Graph::Graph(){}
 
 void Graph::newEdge(Edge const& edge){edges.push_back(edge);}
 
@@ -56,7 +49,6 @@ unsigned int Graph::nb_edges() const
 
 unsigned int Graph::nb_rows() const {return(edges.size());}
 
-
 // ### get ### /// /// ### get ### /// /// ### get ### ////// ### get ### ///
 // ### get ### /// /// ### get ### /// /// ### get ### ////// ### get ### ///
 
@@ -65,104 +57,33 @@ std::vector<unsigned int> Graph::getStartState() const {return(startState);}
 std::vector<unsigned int> Graph::getEndState() const {return(endState);}
 
 
-// ### AreVerticesCompatible ### /// /// ### AreVerticesCompatible ### /// /// ### AreVerticesCompatible ### ///
-// ### AreVerticesCompatible ### /// /// ### AreVerticesCompatible ### /// /// ### AreVerticesCompatible ### ///
-
-
-bool Graph::AreVerticesCompatible() const //label of the vertices from 0 to S
-{
-  unsigned int maxLabel = 0;
-  unsigned int nbEdges = nb_edges();
-  for (unsigned int i = 0 ; i < nbEdges ; i++)
-  {
-    if(edges[i].getState1() > maxLabel){maxLabel = edges[i].getState1();}
-    if(edges[i].getState2() > maxLabel){maxLabel = edges[i].getState2();}
-  }
-
-  bool isAvertex[maxLabel + 1];
-  for(unsigned int i = 0; i < maxLabel + 1; i++){isAvertex[i] = false;}
-
-  for (unsigned int i = 0 ; i < nbEdges ; i++)
-  {
-    isAvertex[edges[i].getState1()] = true;
-    isAvertex[edges[i].getState2()] = true;
-  }
-
-  unsigned int nb = 0;
-  unsigned int j = 0;
-  while((j <= maxLabel) && (isAvertex[j] == true)){nb = nb + 1; j = j + 1;}
-  return(nb == nb_states());
-}
-
-
-// ### getType ### /// /// ### getType ### /// /// ### getType ### /// /// ### getType ### ///
-// ### getType ### /// /// ### getType ### /// /// ### getType ### /// /// ### getType ### ///
-
-
-std::string Graph::getType() const
-{
-  std::string response = "complex";
-  if(edges.size() == 2)
-  {
-    if(edges[0].getConstraint() == "null" && edges[1].getConstraint() == "up" && nb_states() == 1 && edges[0].getParameter() == 1){response = "isotonic";}
-    if(edges[0].getConstraint() == "null" && edges[1].getConstraint() == "up" && nb_states() == 1 && edges[0].getParameter() == 1  && edges[1].getBeta() == 0){response = "pava";}
-    if(edges[0].getConstraint() == "null" && edges[1].getConstraint() == "std" && nb_states() == 1 && edges[0].getParameter() == 1){response = "std";}
-   }
-  return(response);
-}
-
-
 // ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### ///
 // ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### ///
 
-
-Interval Graph::buildInterval(double argmin, unsigned int s1, unsigned int s2, bool& out) const
+Interval Graph::buildInterval(double argmin, unsigned int s1, unsigned int s2) const
 {
   Interval response = Interval(-INFINITY, INFINITY);
 
-  /// FIND edge. If there are 2 edges (s1,s2) we get the second one (which is not of "null" or "decay" type). (cf ordering in gfpop R function)
-  Edge myedge;
   for (unsigned int i = 0 ; i < edges.size() ; i++)
   {
-    if((edges[i].getState1() == s1) && (edges[i].getState2() == s2)){myedge = edges[i];}
+    if((edges[i].getState1() == s1) && (edges[i].getState2() == s2))
+    {
+      if(edges[i].getConstraint() == "up"){response.setb(argmin - edges[i].getParameter());}
+      if(edges[i].getConstraint()  == "down"){response.seta(argmin + edges[i].getParameter());}
+    }
   }
-
-  if(myedge.getConstraint() == "up")
-  {
-    response.setb(argmin - myedge.getParameter());
-  }
-
-  if(myedge.getConstraint()  == "down")
-  {
-    response.seta(argmin + myedge.getParameter());
-  }
-
-  if(myedge.getConstraint()  == "absInf")
-  {
-    response.seta(argmin - myedge.getParameter());
-    response.setb(argmin + myedge.getParameter());
-  }
-
-  if(myedge.getConstraint()  == "absSup") ///DANGER : exclusion of this interval
-  {
-    response.seta(argmin - myedge.getParameter());
-    response.setb(argmin + myedge.getParameter());
-    out = true;
-  }
-
   return(response);
 }
 
 
 
-// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### ///
-// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### ///
+// ### recursiveState ### /// /// ### recursiveState ### /// /// ### recursiveState ### /// /// ### recursiveState ### ///
+// ### recursiveState ### /// /// ### recursiveState ### /// /// ### recursiveState ### /// /// ### recursiveState ### ///
 
-
-double Graph::stateDecay(unsigned int s) const
+double Graph::recursiveState(unsigned int s) const
 {
   double response =  1;
-  for (int i = edges.size()-1 ; i > -1; i--)
+  for (int i = edges.size() - 1 ; i > -1; i--)
   {
     if((edges[i].getState1() == s) && (edges[i].getState2() == s)){response = edges[i].getParameter();}
   }
@@ -173,20 +94,22 @@ double Graph::stateDecay(unsigned int s) const
 // ### show ### /// /// ### show ### /// /// ### show ### /// /// ### show ### ///
 // ### show ### /// /// ### show ### /// /// ### show ### /// /// ### show ### ///
 
-
 void Graph::show() const
 {
   for (unsigned int i = 0 ; i < edges.size() ; i++)
   {
     edges[i].show();
   }
+  std::cout<< "Start state (+1): ";
   for (unsigned int i = 0 ; i < startState.size() ; i++)
   {
-    std::cout<< startState[i] << " ";
+    std::cout<< startState[i] + 1 << " ";
   }
+  std::cout << std::endl;
+  std::cout<< "End state (+1): ";
   for (unsigned int i = 0 ; i < endState.size() ; i++)
   {
-    std::cout<< endState[i] << " ";
+    std::cout<< endState[i] + 1 << " ";
   }
   std::cout << std::endl;
   std::cout<< "nb states : " << nb_states() << std::endl;

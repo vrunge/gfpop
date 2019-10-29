@@ -9,7 +9,7 @@ graph(..., type = "empty", decay = 1, gap = 0, penalty = 0)
 \arguments{
 \item{...}{This is a list of edges definied by functions "Edge", "StartEnd" and "Node"}
 
-\item{type}{a string equal to "std", "isotonic", "updown", "infsup". to build a predefined classic graph}
+\item{type}{a string equal to "std", "isotonic", "updown", "relevant". to build a predefined classic graph}
 
 \item{decay}{a nonnegative number to give the strength of the exponential decay into the segment}
 

@@ -5,6 +5,10 @@ context("sn")
 library(data.table)
 data(profile614chr2, package="gfpop")
 
+g <- gfpop::graph(type="std")
+x <- rnorm(10)
+gfpop::gfpop(x, g)
+
 sngraph <- function(n.segs, type, gap){
   stopifnot(is.integer(n.segs), length(n.segs)==1, n.segs >= 1)
   s <- n.segs-1

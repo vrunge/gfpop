@@ -4,7 +4,7 @@
 \alias{dataGenerator}
 \title{Data Generator}
 \usage{
-dataGenerator(n, changepoints, parameters, type = "gauss", sigma = 1,
+dataGenerator(n, changepoints, parameters, type = "mean", sigma = 1,
   gamma = 1)
 }
 \arguments{
@@ -14,7 +14,7 @@ dataGenerator(n, changepoints, parameters, type = "gauss", sigma = 1,
 
 \item{parameters}{vector of means for the consecutive segments (same length as changepoints)}
 
-\item{type}{a string defining the cost model to use: "gauss", "variance", "poisson", "exp", "negbin"}
+\item{type}{a string defining the cost model to use: "mean", "variance", "poisson", "exp"}
 
 \item{sigma}{a positive number = the standard deviation of the data}
 

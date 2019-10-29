@@ -3,13 +3,13 @@
 
 #include<string>
 #include "Rcpp.h"
+#include "math.h" //to use INFINITY
 
 class Edge
 {
   public:
     Edge();
     Edge(unsigned int s1, unsigned int s2, Rcpp::String cstt = "std", double param = 0, double b = 0, double K = INFINITY, double a = INFINITY, double mini = -INFINITY, double maxi = INFINITY);
-
 
     double getBeta() const;
     unsigned int getState1() const;
@@ -24,11 +24,11 @@ class Edge
     void show() const;
 
   private:
-    double beta;
     unsigned int state1;
     unsigned int state2;
     std::string constraint;
     double parameter;
+    double beta;
     double KK;
     double aa;
     double minn;

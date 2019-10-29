@@ -3,33 +3,31 @@
 Track::Track()
 {
   myLabel = 0;
-  myParentState = -1;
-  myParentPosition = -1;
+  myParentState = 0;
+  myParentPosition = 0;
 }
 
-Track::Track(int label, int state, int position)
+Track::Track(unsigned int label, unsigned int state, unsigned int position)
 {
   myLabel = label;
   myParentState = state;
   myParentPosition = position;
 }
 
+unsigned int Track::getLabel() const {return(myLabel);}
+unsigned int Track::getState() const {return(myParentState);}
+unsigned int Track::getPosition() const {return(myParentPosition);}
 
-int Track::getLabel() const {return(myLabel);}
-int Track::getState() const {return(myParentState);}
-int Track::getPosition() const {return(myParentPosition);}
+void Track::setLabel(unsigned int label){myLabel = label;}
+void Track::setState(unsigned int state){myParentState = state;}
+void Track::setPosition(unsigned int position){myParentPosition = position;}
 
-void Track::setLabel(int label){myLabel = label;}
-void Track::setState(int state){myParentState = state;}
-void Track::setPosition(int position){myParentPosition = position;}
-
-void Track::setTrack(int label, int state, int position)
+void Track::setTrack(unsigned int label, unsigned int state, unsigned int position)
 {
   myLabel = label;
   myParentState = state;
   myParentPosition = position;
 }
-
 
 void Track::setTrack(Track const& newTrack)
 {
@@ -38,6 +36,4 @@ void Track::setTrack(Track const& newTrack)
   myParentPosition = newTrack.getPosition();
 }
 
-
-
-void Track::axisSymmetry(int length){myParentPosition = length - myParentPosition + 1;}
+void Track::reversePosition(unsigned int length){myParentPosition = length - myParentPosition + 1;}

@@ -8,7 +8,7 @@
 %\VignetteIndexEntry{An Introduction to gfpop}
 --> 
 
-DANGER : code broken in September in preparation for big update!
+DANGER : code broken in October in preparation for big update! The new implementation makes possible the use of non-gaussian cost functions.
 
 
 # gfpop Vignette
@@ -16,7 +16,7 @@ DANGER : code broken in September in preparation for big update!
 #### LaMME, Evry University
 ### August 22, 2019 (version 2)
 
-> [Change-point problem description](#intro)
+> [The Graph-constrained Change-point problemn](#intro)
 
 > [Quick Start](#qs)
 
@@ -24,58 +24,71 @@ DANGER : code broken in September in preparation for big update!
 
 > [Graph construction](#gc)
 
-> [More on the main gfpop function and its C++ structure](#gfpop)
-
 > [Supplementary R functions](#suppl)
+
+> [More on the gfpop function and its C++ structure](#gfpop)
 
 
 <a id="intro"></a>
 
-## Change-point problem description
+## The Graph-constrained Change-point problem
 
-`gfpop` is an `R` package developed to complete parametric change-point detection in univariate time series constrained to a graph structure. The constraints are imposed to the sequence of inferred parameters (a mean parameter most of the time) of consecutive segments and related to the direction and/or the magnitude of the mean changes. Change-point detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm. 
+### General description
 
-The user chooses a global type of change-point problem to solve (change in "mean", "variance", "exp", "poisson" or "negbin" distribution).
+`gfpop` is an `R` package developed to complete parametric change-point detection in univariate time series constrained to a graph structure. Constraints are imposed to the sequence of inferred parameters (most of the time a mean parameter) of consecutive segments and related to the direction and/or the magnitude of the mean changes. 
 
-The algorithm of our package is designed to consider a large variety of constraints. These constraints are modelled by a graph. At each time <img src="/tex/4f4f4e395762a3af4575de74c019ebb5.svg?invert_in_darkmode&sanitize=true" align=middle width=5.936097749999991pt height=20.221802699999984pt/> a number of states is possible, these states are the nodes of the graph. Possible transitions between states at time <img src="/tex/4f4f4e395762a3af4575de74c019ebb5.svg?invert_in_darkmode&sanitize=true" align=middle width=5.936097749999991pt height=20.221802699999984pt/> and <img src="/tex/628783099380408a32610228991619a8.svg?invert_in_darkmode&sanitize=true" align=middle width=34.24649744999999pt height=21.18721440000001pt/> are represented by the edges of the graph. Each edge is associated to <img src="/tex/5dc642f297e291cfdde8982599601d7e.svg?invert_in_darkmode&sanitize=true" align=middle width=8.219209349999991pt height=21.18721440000001pt/> elements: a constraint
-(for example <img src="/tex/d0b08429a8092571e5683ca898c7e0a0.svg?invert_in_darkmode&sanitize=true" align=middle width=69.12487889999998pt height=20.908638300000003pt/>), a penalty (possibly null) and a loss function.
+Change-point detection is performed using the functional pruning optimal partitioning method (fpop) based on an exact dynamic programming algorithm. [Cf paper. On optimal multiple changepoint algorithms for large data](https://link.springer.com/article/10.1007/s11222-016-9636-3). This algorithmic strategy can be seen as an extented Viterbi algorithm for a Hidden Markov Model with continuous parameter states. A presentation of the generalized fpop (gfpop) algorithm is available in the paper [A log-linear time algorithm for constrained changepoint detection.](https://arxiv.org/pdf/1703.03352.pdf)
 
-In addition to the edges and nodes of the graph, the user can specify some other constraints on the graph as the starting and ending nodes and constrain the range of parameters (means, most of the time) to use at each node.
+In the main `gfpop` function the user chooses a global parametric model for the change-point problem to solve (change in "mean", "variance", "exp", "poisson" or "negbin" distribution in `type` variable) and a `graph` structure. To run the function the user also gives some `data` to segment potentially associated with a `weights` vector of same length.
+
+```r
+gfpop <- function(data, mygraph, type = "mean", weights = NULL)
+```
+
+The algorithm of our package is designed to consider a large variety of constraints. These constraints are modelled by a graph. At each time <img src="/tex/4f4f4e395762a3af4575de74c019ebb5.svg?invert_in_darkmode&sanitize=true" align=middle width=5.936097749999991pt height=20.221802699999984pt/> a number of states is accessible, these states are the nodes of the graph. Possible transitions between states at time <img src="/tex/4f4f4e395762a3af4575de74c019ebb5.svg?invert_in_darkmode&sanitize=true" align=middle width=5.936097749999991pt height=20.221802699999984pt/> and <img src="/tex/628783099380408a32610228991619a8.svg?invert_in_darkmode&sanitize=true" align=middle width=34.24649744999999pt height=21.18721440000001pt/> are represented by the edges of the graph. Each edge is associated to <img src="/tex/ecf4fe2774fd9244b4fd56f7e76dc882.svg?invert_in_darkmode&sanitize=true" align=middle width=8.219209349999991pt height=21.18721440000001pt/> main elements: a **constraint** (for example <img src="/tex/d0b08429a8092571e5683ca898c7e0a0.svg?invert_in_darkmode&sanitize=true" align=middle width=69.12487889999998pt height=20.908638300000003pt/>), some **parameters** associated to the constraint, a **penalty** (possibly null) and **robust parameters** to use Huber or biweight losses only on the considered edge.
+
+In addition to the edge definition, the nodes can be constrained to a range of values (means) in the inference. We also can specify starting and ending nodes. In our implementation the transitions are not time-dependent except for starting and ending steps.
 
 The edges of the graph can be of type "null", "std",  "up", "down" or "abs" with the following meaning:
 
-- "null" edge : there is no change-point introduced. We stay on the same segment. "null" corresponds to the constraint <img src="/tex/7a973d7d4f51344eadbf9e25b2c18d88.svg?invert_in_darkmode&sanitize=true" align=middle width=65.97801374999999pt height=22.465723500000017pt/>. The value does not change (or exponential decay if <img src="/tex/3622f66f0df4e0212870fbe5f45e395b.svg?invert_in_darkmode&sanitize=true" align=middle width=70.8501783pt height=21.18721440000001pt/>);
+- "null" edge : there is no change-point introduced. We stay on the same segment. "null" corresponds to the constraint <img src="/tex/7a973d7d4f51344eadbf9e25b2c18d88.svg?invert_in_darkmode&sanitize=true" align=middle width=65.97801374999999pt height=22.465723500000017pt/>. The value does not change (or we have an exponential decay if <img src="/tex/3622f66f0df4e0212870fbe5f45e395b.svg?invert_in_darkmode&sanitize=true" align=middle width=70.8501783pt height=21.18721440000001pt/>);
 - "std" edge : no contraint, the next segment can have any mean;
 - "up" edge : the next segment has a greater mean (we can also force the size of the gap to be greater than a minimal value). "up" corresponds to the constraint <img src="/tex/3fb11313b3f76ebb5dc499c8caa916f3.svg?invert_in_darkmode&sanitize=true" align=middle width=57.61474949999999pt height=22.465723500000017pt/>;
 - "down" edge : the next segment has a lower mean (wan also can force the size of the gap to be greater that a minimal value). "down" corresponds to the constraint <img src="/tex/10f9abe364a7546a343e9ca6d717ed34.svg?invert_in_darkmode&sanitize=true" align=middle width=57.61474949999999pt height=22.465723500000017pt/>;
 - "abs" edge : the absolute value of the difference of two consecutive means is greater than a given parameter.
 
 
-A nonnegative internal parameter can thus be associated to an edge (in "up", "down" and "abs""). The "null" edge refers to an absence of change-point. This edge can be used between different states to constraint segment lengths. Our package includes the segment neighborhood algorithm for which the number of change-points is fixed. More details on graph construction are given in the last [section](#gc).
+A nonnegative internal parameter can thus be associated to an edge (in "up", "down" and "abs""). The "null" edge refers to an absence of change-point. This edge can be used between different states to constraint segment lengths. Thus our package includes the segment neighborhood algorithm for which the number of change-points is fixed. More details on graph construction are given in the section [Graph construction](#gc).
 
-Data is modelized by a cost with possible use of a robust loss, biweight and Huber, in all the decomposition (Gauss, Poisson, Binomial).
+### The non-constrained changepoint detection problem
 
-The package `gfpop` is designed to segment univariate data <img src="/tex/b704a970e46e8418f3ef56718438b122.svg?invert_in_darkmode&sanitize=true" align=middle width=126.38913869999998pt height=24.65753399999998pt/> obeying to a graph structure on segment means/parameters. The change-point vector <img src="/tex/ed535ca37308856c5f0c6d85b4d4c676.svg?invert_in_darkmode&sanitize=true" align=middle width=209.11492305pt height=27.91243950000002pt/> defines the <img src="/tex/33359de825e43daa97171e27f6558ae9.svg?invert_in_darkmode&sanitize=true" align=middle width=37.38576269999999pt height=22.831056599999986pt/> segments <img src="/tex/97a268c17395aace06ce389334ba5322.svg?invert_in_darkmode&sanitize=true" align=middle width=115.02097364999997pt height=24.65753399999998pt/>, <img src="/tex/59680c09e0e2d723d0bcf2005047b028.svg?invert_in_darkmode&sanitize=true" align=middle width=73.18587374999998pt height=22.831056599999986pt/> with fixed bounds <img src="/tex/370a29c873e3d269a6111aa219085d0b.svg?invert_in_darkmode&sanitize=true" align=middle width=44.697406049999984pt height=21.18721440000001pt/> and  <img src="/tex/afdb85da7c3e7b7c3d226050994dbf5f.svg?invert_in_darkmode&sanitize=true" align=middle width=63.70246739999999pt height=14.15524440000002pt/>. We use the set <img src="/tex/29114c2b5ea7646dfac0072f71dd3b99.svg?invert_in_darkmode&sanitize=true" align=middle width=264.26770754999995pt height=27.91243950000002pt/> to define the nonconstrained minimal global cost given by
+The change-point vector <img src="/tex/ed535ca37308856c5f0c6d85b4d4c676.svg?invert_in_darkmode&sanitize=true" align=middle width=209.11492305pt height=27.91243950000002pt/> defines the <img src="/tex/33359de825e43daa97171e27f6558ae9.svg?invert_in_darkmode&sanitize=true" align=middle width=37.38576269999999pt height=22.831056599999986pt/> segments <img src="/tex/97a268c17395aace06ce389334ba5322.svg?invert_in_darkmode&sanitize=true" align=middle width=115.02097364999997pt height=24.65753399999998pt/>, <img src="/tex/59680c09e0e2d723d0bcf2005047b028.svg?invert_in_darkmode&sanitize=true" align=middle width=73.18587374999998pt height=22.831056599999986pt/> with fixed bounds <img src="/tex/370a29c873e3d269a6111aa219085d0b.svg?invert_in_darkmode&sanitize=true" align=middle width=44.697406049999984pt height=21.18721440000001pt/> and  <img src="/tex/afdb85da7c3e7b7c3d226050994dbf5f.svg?invert_in_darkmode&sanitize=true" align=middle width=63.70246739999999pt height=14.15524440000002pt/>. We use the set <img src="/tex/de3cb25372b9c18c99bc9f21a0efab11.svg?invert_in_darkmode&sanitize=true" align=middle width=269.7471512999999pt height=27.91243950000002pt/> to define the non-constrained minimal global cost given by
 
 <p align="center"><img src="/tex/55e63ede9d3bc1ac8c64fa74af425a24.svg?invert_in_darkmode&sanitize=true" align=middle width=277.1488236pt height=49.315569599999996pt/></p>
 
-where <img src="/tex/99751e94989c68f9be0f6aa442bc80d5.svg?invert_in_darkmode&sanitize=true" align=middle width=40.302373649999986pt height=22.831056599999986pt/> is a penalty parameter and <img src="/tex/a44ff4154fc3bc708e9e752a14051324.svg?invert_in_darkmode&sanitize=true" align=middle width=49.762892849999986pt height=24.65753399999998pt/> is the minimal cost over the segment <img src="/tex/add1478513cabbadcd5004323f01b74c.svg?invert_in_darkmode&sanitize=true" align=middle width=62.71697189999998pt height=24.65753399999998pt/>. The penalty <img src="/tex/8217ed3c32a785f0b5aad4055f432ad8.svg?invert_in_darkmode&sanitize=true" align=middle width=10.16555099999999pt height=22.831056599999986pt/> is understood as an additional cost when introducing a new segment. The argminimum of this quantity gives a vector <img src="/tex/fa1931c6895840344a67aa4df9cf3f59.svg?invert_in_darkmode&sanitize=true" align=middle width=15.782028899999991pt height=22.63846199999998pt/> containing the last position of each segment (if we do not consider <img src="/tex/370a29c873e3d269a6111aa219085d0b.svg?invert_in_darkmode&sanitize=true" align=middle width=44.697406049999984pt height=21.18721440000001pt/>). The quantity <img src="/tex/0ce745c733fc96f40b3901e008412ce9.svg?invert_in_darkmode&sanitize=true" align=middle width=21.121448699999988pt height=22.465723500000017pt/> is the solution of the nonconstrained optimal partitioning method. 
+where <img src="/tex/99751e94989c68f9be0f6aa442bc80d5.svg?invert_in_darkmode&sanitize=true" align=middle width=40.302373649999986pt height=22.831056599999986pt/> is a penalty parameter and <img src="/tex/a44ff4154fc3bc708e9e752a14051324.svg?invert_in_darkmode&sanitize=true" align=middle width=49.762892849999986pt height=24.65753399999998pt/> is the minimal cost over the segment <img src="/tex/add1478513cabbadcd5004323f01b74c.svg?invert_in_darkmode&sanitize=true" align=middle width=62.71697189999998pt height=24.65753399999998pt/>. The penalty <img src="/tex/8217ed3c32a785f0b5aad4055f432ad8.svg?invert_in_darkmode&sanitize=true" align=middle width=10.16555099999999pt height=22.831056599999986pt/> is understood as an additional cost when introducing a new segment. The argminimum of this quantity gives a vector <img src="/tex/fa1931c6895840344a67aa4df9cf3f59.svg?invert_in_darkmode&sanitize=true" align=middle width=15.782028899999991pt height=22.63846199999998pt/> containing the last position of each segment (if we do not consider <img src="/tex/370a29c873e3d269a6111aa219085d0b.svg?invert_in_darkmode&sanitize=true" align=middle width=44.697406049999984pt height=21.18721440000001pt/>). The quantity <img src="/tex/0ce745c733fc96f40b3901e008412ce9.svg?invert_in_darkmode&sanitize=true" align=middle width=21.121448699999988pt height=22.465723500000017pt/> is the solution of the non-constrained optimal partitioning method. 
 
 In our setting, the cost <img src="/tex/db5f7b3e9934fbc5a2859d88c4ba84a3.svg?invert_in_darkmode&sanitize=true" align=middle width=9.614228249999991pt height=22.465723500000017pt/> is the result of the minimization of a cost function with additive property:
 
-<p align="center"><img src="/tex/aca209e810ec973a24c9e1fb4d2828a0.svg?invert_in_darkmode&sanitize=true" align=middle width=496.7556429pt height=40.23961095pt/></p>
+<p align="center"><img src="/tex/a2c69706ac0380a606c182ae3c52eea7.svg?invert_in_darkmode&sanitize=true" align=middle width=504.5946576pt height=40.51346475pt/></p>
 
-with the argminimum defining the infered mean <img src="/tex/47b592a798cd56ccf668b67abad36a61.svg?invert_in_darkmode&sanitize=true" align=middle width=19.083998999999988pt height=14.15524440000002pt/> of the i+1-th segment <img src="/tex/97a268c17395aace06ce389334ba5322.svg?invert_in_darkmode&sanitize=true" align=middle width=115.02097364999997pt height=24.65753399999998pt/> with <img src="/tex/0794cee3e13634952ef9036a12e8fb9e.svg?invert_in_darkmode&sanitize=true" align=middle width=87.79779359999999pt height=24.65753399999998pt/>. Additivity of the cost (the <img src="/tex/11c596de17c342edeed29f489aa4b274.svg?invert_in_darkmode&sanitize=true" align=middle width=9.423880949999988pt height=14.15524440000002pt/> decomposition) is guaranteed as we will use costs deriving from a likelihood. 
+with the argminimum defining the infered mean <img src="/tex/47b592a798cd56ccf668b67abad36a61.svg?invert_in_darkmode&sanitize=true" align=middle width=19.083998999999988pt height=14.15524440000002pt/> of the i+1-th segment <img src="/tex/97a268c17395aace06ce389334ba5322.svg?invert_in_darkmode&sanitize=true" align=middle width=115.02097364999997pt height=24.65753399999998pt/> with <img src="/tex/0794cee3e13634952ef9036a12e8fb9e.svg?invert_in_darkmode&sanitize=true" align=middle width=87.79779359999999pt height=24.65753399999998pt/>. Additivity of the cost (the <img src="/tex/11c596de17c342edeed29f489aa4b274.svg?invert_in_darkmode&sanitize=true" align=middle width=9.423880949999988pt height=14.15524440000002pt/> decomposition) is guaranteed as we will use costs deriving from a likelihood. <img src="/tex/11c596de17c342edeed29f489aa4b274.svg?invert_in_darkmode&sanitize=true" align=middle width=9.423880949999988pt height=14.15524440000002pt/> has in our package <img src="/tex/5dc642f297e291cfdde8982599601d7e.svg?invert_in_darkmode&sanitize=true" align=middle width=8.219209349999991pt height=21.18721440000001pt/> possible basis decompositions:
 
-More generally, we can associate a current mean <img src="/tex/ce9c41bf6906ffd46ac330f09cacc47f.svg?invert_in_darkmode&sanitize=true" align=middle width=14.555823149999991pt height=14.15524440000002pt/> to each data point <img src="/tex/2b442e3e088d1b744730822d18e7aa21.svg?invert_in_darkmode&sanitize=true" align=middle width=12.710331149999991pt height=14.15524440000002pt/> and we write a cost on a segment <img src="/tex/add1478513cabbadcd5004323f01b74c.svg?invert_in_darkmode&sanitize=true" align=middle width=62.71697189999998pt height=24.65753399999998pt/> as a result of a constrained minimization:
+<p align="center"><img src="/tex/16ee85ae1690e8b380c396dd91218e25.svg?invert_in_darkmode&sanitize=true" align=middle width=700.2745497pt height=161.23476104999997pt/></p>
+
+We can associate a current mean <img src="/tex/ce9c41bf6906ffd46ac330f09cacc47f.svg?invert_in_darkmode&sanitize=true" align=middle width=14.555823149999991pt height=14.15524440000002pt/> to each data point <img src="/tex/2b442e3e088d1b744730822d18e7aa21.svg?invert_in_darkmode&sanitize=true" align=middle width=12.710331149999991pt height=14.15524440000002pt/> and we write a cost on a segment <img src="/tex/add1478513cabbadcd5004323f01b74c.svg?invert_in_darkmode&sanitize=true" align=middle width=62.71697189999998pt height=24.65753399999998pt/> as a result of a constrained minimization:
 
 <p align="center"><img src="/tex/4060746cfc34359c50eb0701ada25324.svg?invert_in_darkmode&sanitize=true" align=middle width=276.95500799999996pt height=48.7101186pt/></p>
 
 so that we get another description of the objective function :
 
-<p align="center"><img src="/tex/c1ba660018d6595156881adfbf0c7bc3.svg?invert_in_darkmode&sanitize=true" align=middle width=433.3941711pt height=44.89738935pt/></p>
+<p align="center"><img src="/tex/d069c19a2f5fdecd518c4a0f5c8f9dd7.svg?invert_in_darkmode&sanitize=true" align=middle width=354.07496355pt height=49.931608649999994pt/></p>
 
-with <img src="/tex/37ca9e919ee5a54f28ed9f70e6ed1277.svg?invert_in_darkmode&sanitize=true" align=middle width=68.78982494999998pt height=24.65753399999998pt/> the indicator function. This approach can be generalized to more complex constraints on consecutive means using a graph structure. We define the transition graph <img src="/tex/0553770832b41fddeb39cbfa76cf036a.svg?invert_in_darkmode&sanitize=true" align=middle width=17.90463839999999pt height=22.465723500000017pt/> as a directed acyclic graph with the following properties:
+From this expression, it will be possible to impose some constraints on the vector of means <img src="/tex/07617f9d8fe48b4a7b3f523d6730eef0.svg?invert_in_darkmode&sanitize=true" align=middle width=9.90492359999999pt height=14.15524440000002pt/>.
+
+### Graph-constrained problem
+
+<img src="/tex/37ca9e919ee5a54f28ed9f70e6ed1277.svg?invert_in_darkmode&sanitize=true" align=middle width=68.78982494999998pt height=24.65753399999998pt/> is the indicator function. This previous approach can be generalized to complex constraints on consecutive means using a graph structure. We define the transition graph <img src="/tex/0553770832b41fddeb39cbfa76cf036a.svg?invert_in_darkmode&sanitize=true" align=middle width=17.90463839999999pt height=22.465723500000017pt/> as a directed acyclic graph with the following properties:
 
 1. Nodes are indexed by time and state. <img src="/tex/6c8ced74f5b3bcbfbd287c91837d0b64.svg?invert_in_darkmode&sanitize=true" align=middle width=64.20836564999999pt height=24.65753399999998pt/> for node <img src="/tex/6c4adbc36120d62b98deef2a20d5d303.svg?invert_in_darkmode&sanitize=true" align=middle width=8.55786029999999pt height=14.15524440000002pt/> with time <img src="/tex/4f4f4e395762a3af4575de74c019ebb5.svg?invert_in_darkmode&sanitize=true" align=middle width=5.936097749999991pt height=20.221802699999984pt/> and state <img src="/tex/6f9bad7347b91ceebebd3ad7e6f6f2d1.svg?invert_in_darkmode&sanitize=true" align=middle width=7.7054801999999905pt height=14.15524440000002pt/>. The states are elements of the set <img src="/tex/4b924de9e932698c85d5af3791bea6bf.svg?invert_in_darkmode&sanitize=true" align=middle width=130.89004995pt height=24.65753399999998pt/>;
 
@@ -87,14 +100,13 @@ with <img src="/tex/37ca9e919ee5a54f28ed9f70e6ed1277.svg?invert_in_darkmode&sani
 
 The next table summarizes all the possible constraints encoded into the `gfpop` package.
 
-
 | constraints | <img src="/tex/cc7c3637db1e725c477f85fd4d9903cd.svg?invert_in_darkmode&sanitize=true" align=middle width=109.26161729999998pt height=22.648391699999998pt/>, <img src="/tex/69e4724bb8055a140759e9aac47561fb.svg?invert_in_darkmode&sanitize=true" align=middle width=49.168495199999995pt height=26.17730939999998pt/> |
 |---------:|-----:|
-| no change-point | <img src="/tex/fd7c00e2a1d565658787e8000b2f94ba.svg?invert_in_darkmode&sanitize=true" align=middle width=195.57111419999998pt height=24.65753399999998pt/> |
-| no constraint | <img src="/tex/aa6acfdc302d20cce40de97d9a0d6bdc.svg?invert_in_darkmode&sanitize=true" align=middle width=195.57111419999998pt height=24.65753399999998pt/> | 
-| up | <img src="/tex/8e4b447e027d0fad46fd5e86d22ceece.svg?invert_in_darkmode&sanitize=true" align=middle width=222.7761096pt height=24.65753399999998pt/> |
-| down | <img src="/tex/5d084c33cc699e5de28eb57d5eeef4d0.svg?invert_in_darkmode&sanitize=true" align=middle width=222.7761096pt height=24.65753399999998pt/> |
-| abs | <img src="/tex/c305f8d88f6b5b252ea9903d92b74329.svg?invert_in_darkmode&sanitize=true" align=middle width=249.78536879999996pt height=24.65753399999998pt/> |
+| null | <img src="/tex/99f6e4a4989dea6b5e336f8f326ca8b6.svg?invert_in_darkmode&sanitize=true" align=middle width=161.75505059999998pt height=24.65753399999998pt/> |
+| std | <img src="/tex/f21b890a3381a0da31c3f229444dba9f.svg?invert_in_darkmode&sanitize=true" align=middle width=161.75505059999998pt height=24.65753399999998pt/> | 
+| up | <img src="/tex/6de9c4956a1bef11d38879f6f1b94eae.svg?invert_in_darkmode&sanitize=true" align=middle width=177.90372269999997pt height=24.65753399999998pt/> |
+| down | <img src="/tex/da6a35ac039e3397f4da159c56918967.svg?invert_in_darkmode&sanitize=true" align=middle width=177.90371609999997pt height=24.65753399999998pt/> |
+| abs | <img src="/tex/84f0c45ef917380c122efe039401e111.svg?invert_in_darkmode&sanitize=true" align=middle width=201.100251pt height=24.65753399999998pt/>|
 
 
 We define a path <img src="/tex/f26713629da615784507a3edf48fb24b.svg?invert_in_darkmode&sanitize=true" align=middle width=46.26634319999999pt height=22.465723500000017pt/> of the graph as a collection of <img src="/tex/014ae02bf2b677c4c225a7dfd00b8420.svg?invert_in_darkmode&sanitize=true" align=middle width=38.17727759999999pt height=21.18721440000001pt/> vertices <img src="/tex/54d840342c0d4e1f4770f2572852818c.svg?invert_in_darkmode&sanitize=true" align=middle width=89.99831279999998pt height=24.65753399999998pt/> with <img src="/tex/93729215cb2ecc9aea94ffd3ff1ed5bf.svg?invert_in_darkmode&sanitize=true" align=middle width=73.78989254999999pt height=24.65753399999998pt/> and <img src="/tex/f508dd141f08e86bda0a55c9e2815f37.svg?invert_in_darkmode&sanitize=true" align=middle width=121.96534844999998pt height=24.65753399999998pt/> and <img src="/tex/73eb8592e5cb867e19391571ae12bfb0.svg?invert_in_darkmode&sanitize=true" align=middle width=75.19396665pt height=24.65753399999998pt/> for <img src="/tex/985dbad85d61b07e704840368824ee09.svg?invert_in_darkmode&sanitize=true" align=middle width=88.86217889999998pt height=24.65753399999998pt/> and <img src="/tex/308736d40f48c7c0c2e28c99b956051e.svg?invert_in_darkmode&sanitize=true" align=middle width=44.77148444999999pt height=22.465723500000017pt/>. Morever, the path is made of <img src="/tex/3f18d8f60c110e865571bba5ba67dcc6.svg?invert_in_darkmode&sanitize=true" align=middle width=38.17727759999999pt height=21.18721440000001pt/> edges denoted <img src="/tex/892f838396f392c3a6c9da53214ef424.svg?invert_in_darkmode&sanitize=true" align=middle width=59.119196399999986pt height=14.15524440000002pt/> with <img src="/tex/b8e1a11c627257800b07edffe7fbe8a9.svg?invert_in_darkmode&sanitize=true" align=middle width=54.554976299999986pt height=22.831056599999986pt/>. A vector <img src="/tex/ea48643af203a0e7ad01bcafddbc8f82.svg?invert_in_darkmode&sanitize=true" align=middle width=49.99426409999999pt height=22.648391699999998pt/> verifies the path <img src="/tex/2ec6e630f199f589a2402fdf3e0289d5.svg?invert_in_darkmode&sanitize=true" align=middle width=8.270567249999992pt height=14.15524440000002pt/> if for all <img src="/tex/875f0d0d37d49d24b63ba045d9e7491a.svg?invert_in_darkmode&sanitize=true" align=middle width=117.1725786pt height=24.65753399999998pt/>, we have <img src="/tex/a9f7bf6538d048b2d8fae862a45abeb5.svg?invert_in_darkmode&sanitize=true" align=middle width=117.99692024999999pt height=24.65753399999998pt/> (valid constraint). We write <img src="/tex/5a2bcf863517582f776c5598b8a1c6b2.svg?invert_in_darkmode&sanitize=true" align=middle width=30.960925049999993pt height=24.65753399999998pt/> to say that the vector <img src="/tex/07617f9d8fe48b4a7b3f523d6730eef0.svg?invert_in_darkmode&sanitize=true" align=middle width=9.90492359999999pt height=14.15524440000002pt/> verifies the path <img src="/tex/2ec6e630f199f589a2402fdf3e0289d5.svg?invert_in_darkmode&sanitize=true" align=middle width=8.270567249999992pt height=14.15524440000002pt/>. The formulation of our graph-constrained problem is then the following:
@@ -452,18 +464,19 @@ We add edges into a graph as follows
 
 ```r
 myGraph <- graph(
-  Edge(0, 0, "down", 3.1415, gap = 1),
-  Edge(0, 0))
+  Edge("E1", "E1", "null"),
+  Edge("E1", "E2", "down", 3.1415, gap = 1.5)
+)
 myGraph
 ```
 
 ```
-##   state1 state2 type penalty parameter   K   a min max
-## 1      0      0 down  3.1415         1 Inf Inf  NA  NA
-## 2      0      0 null  0.0000         1 Inf Inf  NA  NA
+##  state1 state2 type parameter penalty   K   a min max
+## 1     E1     E1 null       1.0       0 Inf Inf  NA  NA
+## 2     E1     E2 down       1.5       0 Inf Inf  NA  NA
 ```
 
-we can only add edges to this dataframe using the object `Edge`. With the example `Edge(0, 0, "down", 3.1415, 1)`.
+we can only add edges to this dataframe using the object `Edge`.
 
 The graph can contain information on the starting and/or ending edge to use with the `StartEnd` function. 
 
@@ -471,24 +484,24 @@ The graph can contain information on the starting and/or ending edge to use with
 ```r
 beta <- 2 * log(1000)
 myGraph <- graph(
-  Edge(0, 0, "null"),
-  Edge(1, 1, "null"),
-  Edge(0, 1, "up", penalty = beta, gap = 1),
-  Edge(0, 0, "down", penalty = beta),
-  Edge(1, 0, "down", penalty = beta),
-  StartEnd(start = 0, end = 0))
+  Edge("Dw", "Dw", "null"),
+  Edge("Up", "Up", "null"),
+  Edge("Dw", "Up", "up", penalty = beta, gap = 1),
+  Edge("Dw", "Dw", "down", penalty = beta),
+  Edge("Up", "Dw", "down", penalty = beta),
+  StartEnd(start = "Dw", end = "Dw"))
 myGraph
 ```
 
 ```
-##   state1 state2  type  penalty parameter   K   a min max
-## 1      0      0  null  0.00000         1 Inf Inf  NA  NA
-## 2      1      1  null  0.00000         1 Inf Inf  NA  NA
-## 3      0      1    up 13.81551         1 Inf Inf  NA  NA
-## 4      0      0  down 13.81551         0 Inf Inf  NA  NA
-## 5      1      0  down 13.81551         0 Inf Inf  NA  NA
-## 6      0   <NA> start       NA        NA  NA  NA  NA  NA
-## 7      0   <NA>   end       NA        NA  NA  NA  NA  NA
+## state1 state2  type parameter  penalty   K   a min max
+## 1     Dw     Dw  null         1  0.00000 Inf Inf  NA  NA
+## 2     Up     Up  null         1  0.00000 Inf Inf  NA  NA
+## 3     Dw     Up    up         1 13.81551 Inf Inf  NA  NA
+## 4     Dw     Dw  down         0 13.81551 Inf Inf  NA  NA
+## 5     Up     Dw  down         0 13.81551 Inf Inf  NA  NA
+## 6     Dw   <NA> start        NA       NA  NA  NA  NA  NA
+## 7     Dw   <NA>   end        NA       NA  NA  NA  NA  NA
 ```
 
 Some graphs are often used: they are defined by default in the `graph` function. To use these graphs, we specify a string `type` equal to "std", "isotonic", "updown" or "relevant".
@@ -501,34 +514,28 @@ myGraphIso
 ```
 
 ```
-##   state1 state2 type penalty parameter   K   a min max
-## 1    Iso    Iso null       0         1 Inf Inf  NA  NA
-## 2    Iso    Iso   up      12         0 Inf Inf  NA  NA
+##   state1 state2 type parameter penalty   K   a min max
+## 1    Iso    Iso null         1       0 Inf Inf  NA  NA
+## 2    Iso    Iso   up         0      12 Inf Inf  NA  NA
 ```
 
-The function `Node` can be used to restrict the range of value for parameter associated to a node. For example the following graph is an isotonic graph with inferred parameters between 0 et 1 only.
+The function `Node` can be used to restrict the range of value for parameter associated to a node (called also a vertex). For example the following graph is an isotonic graph with inferred parameters between 0 et 1 only.
 
 ```r
 myGraph <- graph(
-  Edge(0, 0, "down", 3.1415),
-  Edge(0, 0),
-  Node(0, min = 0, max = 1)
+  Edge("Up", "Up", "up", penalty = 3.1415),
+  Edge("Up", "Up"),
+  Node("Up", min = 0, max = 1)
   )
 myGraph
 ```
 
 ```
-##   state1 state2 type penalty parameter   K   a min max
-## 1      0      0 down  3.1415         0 Inf Inf  NA  NA
-## 2      0      0 null  0.0000         1 Inf Inf  NA  NA
-## 3      0   <NA> node      NA        NA  NA  NA   0   1
+##   state1 state2 type parameter penalty   K   a min max
+## 1     Up     Up   up         0  3.1415 Inf Inf  NA  NA
+## 2     Up     Up null         1  0.0000 Inf Inf  NA  NA
+## 3     Up     Up node        NA      NA  NA  NA   0   1
 ```
-
-
-<a id="gfpop"></a>
-
-## More on the main gfpop function and its C++ structure
-
 
 
 <a id="suppl"></a>
@@ -543,6 +550,9 @@ dataGenerator
 
 sdDiff
 
+<a id="gfpop"></a>
+
+## More on the gfpop function and its C++ structure
 
 
 [Back to Top](#top)
