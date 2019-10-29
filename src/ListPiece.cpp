@@ -410,6 +410,7 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
 
 void ListPiece::LP_ts_Minimization(ListPiece& LP_edge)
 {
+  // Initialize LP_edge -> same range as this
   Interval newBounds = Interval(this -> head -> m_interval.geta(),this -> lastPiece -> m_interval.getb());
   LP_edge.setNewBounds(newBounds);
 
@@ -417,38 +418,33 @@ void ListPiece::LP_ts_Minimization(ListPiece& LP_edge)
   Piece* Q1 = head;  /// first Piece to compare
   Piece* Q2 = LP_edge.head;  /// first Piece to compare
   Piece* Q12 = new Piece();
+  Q12 -> m_interval = Interval(Q1 -> m_interval.geta(), Q1 -> m_interval.geta());
+  int Bound_Q2_Minus_Q1 = 0;
+  ///Q12 = Piece with an interval but no cost no label
+  /// Bound_Q2_Minus_Q1
+  /// = 0 if bound interval Q2 - bound interval Q1 == 0 : Q1 and Q2 stop
+  /// = 1 if bound interval Q2 - bound interval Q1 > 0: Q2 stops
+  /// = -1 if bound interval Q2 - bound interval Q1 < 0 : Q1 stops
 
+  ///start info
   Piece* newHead = Q12;
   double M = lastPiece -> m_interval.getb(); //global right bound
-  double firstLeftBound = Q1 -> m_interval.geta();
-
-  /// Q12 first Piece interval initialization
-  Q12 -> m_interval = Interval(firstLeftBound,firstLeftBound);
-  int Bound_Q2_Minus_Q1;
 
   while(Q1 != NULL)
   {
-    ///Q12 = Piece with an interval but no cost no label
-    /// Bound_Q2_Minus_Q1
-    /// = 0 if bound interval Q2 - bound interval Q1 == 0 : Q1 and Q2 stop
-    /// = 1 if bound interval Q2 - bound interval Q1 > 0: Q2 stops
-    /// = -1 if bound interval Q2 - bound interval Q1 < 0 : Q1 stops
     Bound_Q2_Minus_Q1 = -1;
-
     while(Bound_Q2_Minus_Q1 == -1)
     {
       /// right bound
-      if(Q2 -> m_interval.getb() > Q1 -> m_interval.getb()){Bound_Q2_Minus_Q1 = 1;}
+      if(Q1 -> m_interval.getb() < Q2 -> m_interval.getb()){Bound_Q2_Minus_Q1 = 1;}
       if(Q1 -> m_interval.getb() == Q2 -> m_interval.getb()){Bound_Q2_Minus_Q1 = 0;}
-
       Q12 = Q12 -> pieceGenerator(Q1, Q2, Bound_Q2_Minus_Q1, M); ///add new Piece(s) to Q12
-
       if(Bound_Q2_Minus_Q1 < 1){Q2 = Q2 -> nxt;}
     }
     Q1 = Q1 -> nxt;
   }
 
-  ///UPDATE ListPiece
+  ///UPDATE ListPiece LP_ts[t + 1][i]
   reset();
   head = newHead;
   currentPiece = newHead;

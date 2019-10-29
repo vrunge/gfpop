@@ -259,16 +259,16 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
   //// INFORMATION change
   // int change = 0, 1 or 2 change-points
   // if bounds of interRoots close to bounds of interToPaste > 1e-12
-  int change = 0;
+  unsigned int change = 0;
   if((interRoots.geta() > interToPaste.geta() + 1e-12)&&(interRoots.geta() + 1e-12 < interToPaste.getb())){change = change + 1;}
   if((interRoots.getb() > interToPaste.geta() + 1e-12)&&(interRoots.getb() + 1e-12 < interToPaste.getb())){change = change + 1;}
 
-  ///Security steps: length interRoots very small < 1e-4 DANGER DANGER DANGER DANGER if put to < 1e-12 ???
-  if(interRoots.getb() - interRoots.geta() < 1e-4)
+  ///Security steps: length interRoots very small < 1e-12
+  if(interRoots.getb() - interRoots.geta() < 1e-12)
   {
     change = 0;
-    interRoots.seta(INFINITY);
-    interRoots.setb(INFINITY);
+    interRoots.seta(interToPaste.geta());
+    interRoots.setb(interToPaste.getb());
   }
 
   // CONSTRUCTION
@@ -276,32 +276,28 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
 
   switch(change)
   {
-    /// IF WE ADD 0 PIECE
-  case 0 :
-  {
-    BUILD = BUILD -> piece0(Q1, Q2, interToPaste, Q2_Minus_Q1);
-    break;
+    case 0 : /// IF WE ADD 0 PIECE
+    {
+      BUILD = BUILD -> piece0(Q1, Q2, interToPaste, Q2_Minus_Q1);
+      break;
+    }
+    case 1 : /// IF WE ADD 1 PIECE
+    {
+      BUILD = BUILD -> piece1(Q1, Q2, interToPaste, interRoots, Q2_Minus_Q1);
+      break;
+    }
+    case 2 : /// IF WE ADD 2 PIECES
+    {
+      BUILD = BUILD -> piece2(Q1, Q2, interToPaste, interRoots, Q2_Minus_Q1);
+      break;
+    }
   }
-
-    /// IF WE ADD 1 PIECE
-  case 1 :
-  {
-    BUILD = BUILD -> piece1(Q1, Q2, interToPaste, interRoots, Q2_Minus_Q1);
-    break;
-  }
-
-    /// IF WE ADD 2 PIECES
-  case 2 :
-  {
-    BUILD = BUILD -> piece2(Q1, Q2, interToPaste, interRoots, Q2_Minus_Q1);
-    break;
-  }
-  }
-
 
   //CONSTRUCTION outPiece
   ///Need of a last "OUT" Piece if we have reached the end of the Piece Q1 or Piece Q2
-  if((((Q2_Minus_Q1 == 1)&&(Bound_Q2_Minus_Q1 >= 0)) || ((Q2_Minus_Q1 == -1)&&(Bound_Q2_Minus_Q1 <= 0))) && (interToPaste.getb() != M))
+  if((((Q2_Minus_Q1 == 1) && (Bound_Q2_Minus_Q1 >= 0))
+   || ((Q2_Minus_Q1 == -1) && (Bound_Q2_Minus_Q1 <= 0)))
+       && (interToPaste.getb() != M))
   {
     Piece* outPiece = new Piece();
     outPiece -> m_interval = Interval(interToPaste.getb(), interToPaste.getb());
@@ -326,14 +322,8 @@ Piece* Piece::piece0(Piece* Q1, Piece* Q2, Interval interToPaste, int& Q2_Minus_
   Q2_Minus_Q1 = signValue(cost_eval(costDiff, centerPoint));
   bool test;
 
-  std::cout << centerPoint << " ----------------- " << Q2_Minus_Q1 << std::endl;
-  std::cout << "BUILD" << BUILD -> m_interval.geta() << " --------- " << BUILD -> m_interval.getb() << std::endl;
-  std::cout << "isEmpty " << BUILD -> m_interval.isEmpty() << " --------- " << std::endl;
-
   if (BUILD -> m_interval.isEmpty() == true) /// IF BUILD interval = empty
   {
-    std::cout << "PROLONGATIONPROLONGATIONPROLONGATION " << std::endl;
-    //PROLONGATION
     BUILD -> m_interval.setb(interToPaste.getb());
     if(Q2_Minus_Q1 == 1){BUILD -> m_cost = Q1 -> m_cost; BUILD -> m_info = Q1 -> m_info;}
     if(Q2_Minus_Q1 == -1){BUILD -> m_cost = Q2 -> m_cost; BUILD -> m_info = Q2 -> m_info;}
@@ -346,9 +336,8 @@ Piece* Piece::piece0(Piece* Q1, Piece* Q2, Interval interToPaste, int& Q2_Minus_
     if(Q2_Minus_Q1 == -1){test = isEqual(testCost, Q2 -> m_cost);}
     std::cout << "test " << test << " ----------------- " << Q2_Minus_Q1 << std::endl;
 
-    if (test == true) ///no pb with the cost
+    if (test == true) ///Prolongation
     {
-      //PROLONGATION
       BUILD -> m_interval.setb(interToPaste.getb());
       if(Q2_Minus_Q1 == 1){BUILD -> m_cost = Q1 -> m_cost; BUILD -> m_info = Q1 -> m_info;}
       if(Q2_Minus_Q1 == -1){BUILD -> m_cost = Q2 -> m_cost; BUILD -> m_info = Q2 -> m_info;}
@@ -376,12 +365,13 @@ Piece* Piece::piece1(Piece* Q1, Piece* Q2, Interval interToPaste, Interval inter
   Piece* BUILD = this;
   //PROLONGATION theChangePoint
   double theChangePoint;
-  if(interToPaste.geta() < interRoots.geta()){theChangePoint = interRoots.geta();}else{theChangePoint = interRoots.getb();}
+  if(interToPaste.geta() < interRoots.geta()){theChangePoint = interRoots.geta();}
+                                         else{theChangePoint = interRoots.getb();}
 
   //// FIND the winner on the new piece
   // centerPoint = centre (left interToPaste, right theChangePoint)
   double centerPoint = Interval(interToPaste.geta(), theChangePoint).internPoint();
-  Cost costDiff = minusCost(Q2 -> m_cost,Q1 -> m_cost);
+  Cost costDiff = minusCost(Q2 -> m_cost, Q1 -> m_cost);
   Q2_Minus_Q1 = signValue(cost_eval(costDiff, centerPoint));
 
   if(Q2_Minus_Q1 == 1){BUILD -> m_cost = Q1 -> m_cost; BUILD -> m_info = Q1 -> m_info;}
