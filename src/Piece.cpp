@@ -240,21 +240,21 @@ Piece* Piece::pastePieceDw(const Piece* NXTPiece, Interval const& decrInter, Tra
 
 Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double M)
 {
-  Piece* BUILD = this;
-
-  //// INFORMATION interToPaste
-  // Interval interToPaste = interval on which we build BUILD
-  // interToPaste : right BUILD -> min(right Q1, right Q2)
-  Interval interToPaste;
-  interToPaste.seta(BUILD -> m_interval.getb()); ///enter Piece BUILD :
-  if(Bound_Q2_Minus_Q1 == -1){interToPaste.setb(Q2 -> m_interval.getb());}else{interToPaste.setb(Q1 -> m_interval.getb());}
-
-  //// INFORMATION interRoots
-  // Interval interRoots (Q1 - Q2)
-  Cost costDiff = minusCost(Q1 -> m_cost,Q2 -> m_cost);
+  Piece* BUILD = this; // = Q12
   double zero = 0;
-  Interval interRoots = cost_intervalInterRoots(costDiff, zero);
 
+  // INFORMATION interToPaste
+  // Interval interToPaste = interval on which we build BUILD = right BUILD TO min(right Q1, right Q2)
+  Interval interToPaste = Interval();
+  interToPaste.seta(BUILD -> m_interval.getb()); ///enter Piece BUILD
+  if(Bound_Q2_Minus_Q1 == -1)
+         {interToPaste.setb(Q2 -> m_interval.getb());
+    }else{interToPaste.setb(Q1 -> m_interval.getb());}
+
+  // INFORMATION interRoots
+  // Interval interRoots (Q1 - Q2)
+  Cost costDiff = minusCost(Q1 -> m_cost, Q2 -> m_cost);
+  Interval interRoots = cost_intervalInterRoots(costDiff, zero);
 
   //// INFORMATION change
   // int change = 0, 1 or 2 change-points
@@ -270,138 +270,34 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
     interRoots.seta(INFINITY);
     interRoots.setb(INFINITY);
   }
-  //std::cout << "change: " << change << std::endl;
 
-  //// CONSTRUCTION
   // CONSTRUCTION
-  double centerPoint;
   int Q2_Minus_Q1;  ///Sign of Q2 - Q1
-  Cost testCost;
-  bool test = false;
-
-  //std::cout << "change: " << change << std::endl;
 
   switch(change)
   {
     /// IF WE ADD 0 PIECE
   case 0 :
   {
-    /// Possible inversion => test Q2_Minus_Q1 at centerPoint
-    centerPoint = interToPaste.internPoint();
-    costDiff = minusCost(Q2 -> m_cost, Q1 -> m_cost);
-    Q2_Minus_Q1 = signValue(cost_eval(costDiff, centerPoint));
-
-    if (BUILD -> m_interval.isEmpty() == true) /// IF BUILD interval = empty
-    {
-      //PROLONGATION
-      BUILD -> m_interval.setb(interToPaste.getb());
-      if(Q2_Minus_Q1 == 1){BUILD -> m_cost = Q1 -> m_cost; BUILD -> m_info = Q1 -> m_info;}
-      if(Q2_Minus_Q1 == -1){BUILD -> m_cost = Q2 -> m_cost; BUILD -> m_info = Q2 -> m_info;}
-    }
-    else
-    {
-      ///SECURITY step
-      testCost = BUILD -> m_cost;
-      if(Q2_Minus_Q1 == 1){test = isEqual(testCost, Q1 -> m_cost);}
-      if(Q2_Minus_Q1 == -1){test = isEqual(testCost, Q2 -> m_cost);}
-
-      if (test == true) ///no pb with the cost
-      {
-        //PROLONGATION
-        BUILD -> m_interval.setb(interToPaste.getb());
-        if(Q2_Minus_Q1 == 1){BUILD -> m_cost = Q1 -> m_cost; BUILD -> m_info = Q1 -> m_info;}
-        if(Q2_Minus_Q1 == -1){BUILD -> m_cost = Q2 -> m_cost; BUILD -> m_info = Q2 -> m_info;}
-      }
-      else ///pb with the cost -> we stop BUILD interval at interToPaste left -> we create a new piece
-      {
-        //CONSTRUCTION newPiece
-        BUILD -> m_interval.setb(interToPaste.geta());
-        Piece* newPiece = new Piece();
-        newPiece -> m_interval = interToPaste;
-        if(Q2_Minus_Q1 == 1){newPiece -> m_cost = Q1 -> m_cost; newPiece -> m_info = Q1 -> m_info;}
-        if(Q2_Minus_Q1 == -1){newPiece -> m_cost = Q2 -> m_cost; newPiece -> m_info = Q2 -> m_info;}
-        BUILD -> nxt = newPiece;
-        BUILD = newPiece;
-      }
-    }
+    BUILD = BUILD -> piece0(Q1, Q2, interToPaste, Q2_Minus_Q1);
     break;
   }
 
     /// IF WE ADD 1 PIECE
   case 1 :
   {
-    //PROLONGATION theChangePoint
-    double theChangePoint;
-    if(interToPaste.geta() < interRoots.geta()){theChangePoint = interRoots.geta();}else{theChangePoint = interRoots.getb();}
-
-    //// FIND the winner on the new piece
-    // centerPoint = centre (left interToPaste, right theChangePoint)
-    centerPoint = Interval(interToPaste.geta(), theChangePoint).internPoint();
-    costDiff = minusCost(Q2 -> m_cost,Q1 -> m_cost);
-    Q2_Minus_Q1 = signValue(cost_eval(costDiff, centerPoint));
-
-    if(Q2_Minus_Q1 == 1){BUILD -> m_cost = Q1 -> m_cost; BUILD -> m_info = Q1 -> m_info;}
-    if(Q2_Minus_Q1 == -1){BUILD -> m_cost = Q2 -> m_cost; BUILD -> m_info = Q2 -> m_info;}
-
-    BUILD -> m_interval.setb(theChangePoint);
-
-    //std::cout << centerPoint <<  " &&& " << theChangePoint<< std::endl;
-    //std::cout << "interRoots "; interRoots.show();
-    //std::cout << "interToPaste "; interToPaste.show();
-    //std::cout << "BUILD "; BUILD -> m_interval.show();
-    //std::cout << "Q1 "; Q1 -> m_interval.show();
-    //std::cout << "Q2 "; Q2 -> m_interval.show();
-
-    //CONSTRUCTION newPiece
-    Piece* newPiece = new Piece();
-    newPiece -> m_interval = Interval(theChangePoint, interToPaste.getb());
-
-    centerPoint = newPiece -> m_interval.internPoint();
-    costDiff = minusCost(Q2 -> m_cost, Q1 -> m_cost);
-    Q2_Minus_Q1 = signValue(cost_eval(costDiff, centerPoint));
-
-    if(Q2_Minus_Q1 == 1){newPiece -> m_cost = Q1 -> m_cost; newPiece -> m_info = Q1 -> m_info;}
-    if(Q2_Minus_Q1 == -1){newPiece -> m_cost = Q2 -> m_cost; newPiece -> m_info = Q2 -> m_info;}
-    BUILD -> nxt = newPiece;
-    BUILD = newPiece;
-
+    BUILD = BUILD -> piece1(Q1, Q2, interToPaste, interRoots, Q2_Minus_Q1);
     break;
   }
 
     /// IF WE ADD 2 PIECES
   case 2 :
   {
-    //PROLONGATION theChangePoint
-    //FIND the winner on the newpiece1 (the central piece defined on interval interRoots)
-    centerPoint = interRoots.internPoint();
-    costDiff = minusCost(Q2 -> m_cost, Q1 -> m_cost);
-    Q2_Minus_Q1 = -signValue(cost_eval(costDiff, centerPoint));///INVERSION!!!
-
-    if(Q2_Minus_Q1 == 1){BUILD -> m_cost = Q1 -> m_cost; BUILD -> m_info = Q1 -> m_info;}
-    if(Q2_Minus_Q1 == -1){BUILD -> m_cost = Q2 -> m_cost; BUILD -> m_info = Q2 -> m_info;}
-
-    BUILD -> m_interval.setb(interRoots.geta());
-
-    //CONSTRUCTION newPiece1
-    Q2_Minus_Q1 = -Q2_Minus_Q1; ///INVERSION!!!
-    Piece* newPiece1 = new Piece();
-    newPiece1 -> m_interval = interRoots;
-    if(Q2_Minus_Q1 == 1){newPiece1 -> m_cost = Q1 -> m_cost; newPiece1 -> m_info = Q1 -> m_info;}
-    if(Q2_Minus_Q1 == -1){newPiece1 -> m_cost = Q2 -> m_cost; newPiece1 -> m_info = Q2 -> m_info;}
-    BUILD -> nxt = newPiece1;
-    BUILD = newPiece1;
-
-    Q2_Minus_Q1 = -Q2_Minus_Q1;
-    //CONSTRUCTION newPiece2
-    Piece* newPiece2 = new Piece();
-    newPiece2 -> m_interval = Interval(interRoots.getb(), interToPaste.getb());
-    if(Q2_Minus_Q1 == 1){newPiece2 -> m_cost = Q1 -> m_cost; newPiece2 -> m_info = Q1 -> m_info;}
-    if(Q2_Minus_Q1 == -1){newPiece2 -> m_cost = Q2 -> m_cost; newPiece2 -> m_info = Q2 -> m_info;}
-    BUILD -> nxt = newPiece2;
-    BUILD = newPiece2;
+    BUILD = BUILD -> piece2(Q1, Q2, interToPaste, interRoots, Q2_Minus_Q1);
     break;
   }
   }
+
 
   //CONSTRUCTION outPiece
   ///Need of a last "OUT" Piece if we have reached the end of the Piece Q1 or Piece Q2
@@ -412,6 +308,140 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
     BUILD -> nxt = outPiece;
     BUILD = outPiece;
   }
+
+  return(BUILD);
+}
+
+
+//####### piece0 #######// //####### piece0 #######// //####### piece0 #######//
+//####### piece0 #######// //####### piece0 #######// //####### piece0 #######//
+
+Piece* Piece::piece0(Piece* Q1, Piece* Q2, Interval interToPaste, int& Q2_Minus_Q1)
+{
+  Piece* BUILD = this;
+
+  /// Possible inversion => test Q2_Minus_Q1 at centerPoint
+  double centerPoint = interToPaste.internPoint();
+  Cost costDiff = minusCost(Q2 -> m_cost, Q1 -> m_cost);
+  Q2_Minus_Q1 = signValue(cost_eval(costDiff, centerPoint));
+  bool test;
+
+  std::cout << centerPoint << " ----------------- " << Q2_Minus_Q1 << std::endl;
+  std::cout << "BUILD" << BUILD -> m_interval.geta() << " --------- " << BUILD -> m_interval.getb() << std::endl;
+  std::cout << "isEmpty " << BUILD -> m_interval.isEmpty() << " --------- " << std::endl;
+
+  if (BUILD -> m_interval.isEmpty() == true) /// IF BUILD interval = empty
+  {
+    std::cout << "PROLONGATIONPROLONGATIONPROLONGATION " << std::endl;
+    //PROLONGATION
+    BUILD -> m_interval.setb(interToPaste.getb());
+    if(Q2_Minus_Q1 == 1){BUILD -> m_cost = Q1 -> m_cost; BUILD -> m_info = Q1 -> m_info;}
+    if(Q2_Minus_Q1 == -1){BUILD -> m_cost = Q2 -> m_cost; BUILD -> m_info = Q2 -> m_info;}
+  }
+  else
+  {
+    ///SECURITY step
+    Cost testCost = BUILD -> m_cost;
+    if(Q2_Minus_Q1 == 1){test = isEqual(testCost, Q1 -> m_cost);}
+    if(Q2_Minus_Q1 == -1){test = isEqual(testCost, Q2 -> m_cost);}
+    std::cout << "test " << test << " ----------------- " << Q2_Minus_Q1 << std::endl;
+
+    if (test == true) ///no pb with the cost
+    {
+      //PROLONGATION
+      BUILD -> m_interval.setb(interToPaste.getb());
+      if(Q2_Minus_Q1 == 1){BUILD -> m_cost = Q1 -> m_cost; BUILD -> m_info = Q1 -> m_info;}
+      if(Q2_Minus_Q1 == -1){BUILD -> m_cost = Q2 -> m_cost; BUILD -> m_info = Q2 -> m_info;}
+    }
+    else ///pb with the cost -> we stop BUILD interval at interToPaste left -> we create a new piece
+    {
+      //CONSTRUCTION newPiece
+      BUILD -> m_interval.setb(interToPaste.geta());
+      Piece* newPiece = new Piece();
+      newPiece -> m_interval = interToPaste;
+      if(Q2_Minus_Q1 == 1){newPiece -> m_cost = Q1 -> m_cost; newPiece -> m_info = Q1 -> m_info;}
+      if(Q2_Minus_Q1 == -1){newPiece -> m_cost = Q2 -> m_cost; newPiece -> m_info = Q2 -> m_info;}
+      BUILD -> nxt = newPiece;
+      BUILD = newPiece;
+    }
+  }
+  return(BUILD);
+}
+
+//####### piece1 #######// //####### piece1 #######// //####### piece1 #######//
+//####### piece1 #######// //####### piece1 #######// //####### piece1 #######//
+
+Piece* Piece::piece1(Piece* Q1, Piece* Q2, Interval interToPaste, Interval interRoots, int& Q2_Minus_Q1)
+{
+  Piece* BUILD = this;
+  //PROLONGATION theChangePoint
+  double theChangePoint;
+  if(interToPaste.geta() < interRoots.geta()){theChangePoint = interRoots.geta();}else{theChangePoint = interRoots.getb();}
+
+  //// FIND the winner on the new piece
+  // centerPoint = centre (left interToPaste, right theChangePoint)
+  double centerPoint = Interval(interToPaste.geta(), theChangePoint).internPoint();
+  Cost costDiff = minusCost(Q2 -> m_cost,Q1 -> m_cost);
+  Q2_Minus_Q1 = signValue(cost_eval(costDiff, centerPoint));
+
+  if(Q2_Minus_Q1 == 1){BUILD -> m_cost = Q1 -> m_cost; BUILD -> m_info = Q1 -> m_info;}
+  if(Q2_Minus_Q1 == -1){BUILD -> m_cost = Q2 -> m_cost; BUILD -> m_info = Q2 -> m_info;}
+
+  BUILD -> m_interval.setb(theChangePoint);
+
+  //CONSTRUCTION newPiece
+  Piece* newPiece = new Piece();
+  newPiece -> m_interval = Interval(theChangePoint, interToPaste.getb());
+
+  centerPoint = newPiece -> m_interval.internPoint();
+  costDiff = minusCost(Q2 -> m_cost, Q1 -> m_cost);
+  Q2_Minus_Q1 = signValue(cost_eval(costDiff, centerPoint));
+
+  if(Q2_Minus_Q1 == 1){newPiece -> m_cost = Q1 -> m_cost; newPiece -> m_info = Q1 -> m_info;}
+  if(Q2_Minus_Q1 == -1){newPiece -> m_cost = Q2 -> m_cost; newPiece -> m_info = Q2 -> m_info;}
+  BUILD -> nxt = newPiece;
+  BUILD = newPiece;
+
+  return(BUILD);
+}
+
+
+
+
+//####### piece2 #######// //####### piece2 #######// //####### piece2 #######//
+//####### piece2 #######// //####### piece2 #######// //####### piece2 #######//
+
+Piece* Piece::piece2(Piece* Q1, Piece* Q2, Interval interToPaste, Interval interRoots, int& Q2_Minus_Q1)
+{
+  Piece* BUILD;
+  //PROLONGATION theChangePoint
+  //FIND the winner on the newpiece1 (the central piece defined on interval interRoots)
+  double centerPoint = interRoots.internPoint();
+  Cost costDiff = minusCost(Q2 -> m_cost, Q1 -> m_cost);
+  Q2_Minus_Q1 = -signValue(cost_eval(costDiff, centerPoint));///INVERSION!!!
+
+  if(Q2_Minus_Q1 == 1){BUILD -> m_cost = Q1 -> m_cost; BUILD -> m_info = Q1 -> m_info;}
+  if(Q2_Minus_Q1 == -1){BUILD -> m_cost = Q2 -> m_cost; BUILD -> m_info = Q2 -> m_info;}
+
+  BUILD -> m_interval.setb(interRoots.geta());
+
+  //CONSTRUCTION newPiece1
+  Q2_Minus_Q1 = -Q2_Minus_Q1; ///INVERSION!!!
+  Piece* newPiece1 = new Piece();
+  newPiece1 -> m_interval = interRoots;
+  if(Q2_Minus_Q1 == 1){newPiece1 -> m_cost = Q1 -> m_cost; newPiece1 -> m_info = Q1 -> m_info;}
+  if(Q2_Minus_Q1 == -1){newPiece1 -> m_cost = Q2 -> m_cost; newPiece1 -> m_info = Q2 -> m_info;}
+  BUILD -> nxt = newPiece1;
+  BUILD = newPiece1;
+
+  Q2_Minus_Q1 = -Q2_Minus_Q1;
+  //CONSTRUCTION newPiece2
+  Piece* newPiece2 = new Piece();
+  newPiece2 -> m_interval = Interval(interRoots.getb(), interToPaste.getb());
+  if(Q2_Minus_Q1 == 1){newPiece2 -> m_cost = Q1 -> m_cost; newPiece2 -> m_info = Q1 -> m_info;}
+  if(Q2_Minus_Q1 == -1){newPiece2 -> m_cost = Q2 -> m_cost; newPiece2 -> m_info = Q2 -> m_info;}
+  BUILD -> nxt = newPiece2;
+  BUILD = newPiece2;
 
   return(BUILD);
 }

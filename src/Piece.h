@@ -39,6 +39,9 @@ class Piece
     Piece* pastePieceDw(const Piece* NXTPiece, Interval const& decrInter, Track const& newTrack);
 
     Piece* pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double M);
+    Piece* piece0(Piece* Q1, Piece* Q2, Interval interToPaste, int& Q2_Minus_Q1);
+    Piece* piece1(Piece* Q1, Piece* Q2, Interval interToPaste, Interval interRoots, int& Q2_Minus_Q1);
+    Piece* piece2(Piece* Q1, Piece* Q2, Interval interToPaste, Interval interRoots, int& Q2_Minus_Q1);
 
 
     double* get_min_argmin_label_state_position();

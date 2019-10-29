@@ -30,6 +30,42 @@ void ListPiece::setUniquePieceCostToInfinity()
   head -> m_cost.constant = INFINITY;
 }
 
+
+//##### setNewBounds #####//////##### setNewBounds #####//////##### setNewBounds #####///
+//##### setNewBounds #####//////##### setNewBounds #####//////##### setNewBounds #####///
+
+void ListPiece::setNewBounds(Interval newBounds)
+{
+  double a = newBounds.geta();
+  double b = newBounds.getb();
+  Piece* tmp;
+
+  //left bound
+  if(a < head -> m_interval.geta()){head -> m_interval.seta(a);}
+  else
+  {
+    while(a > head -> m_interval.getb())
+    {
+      tmp = head;
+      head = head -> nxt;
+      tmp -> nxt = NULL;
+      delete(tmp);
+    }
+    head -> m_interval.seta(a);
+  }
+
+  //right bound
+  if(b > lastPiece -> m_interval.getb()){lastPiece -> m_interval.setb(b);}
+  else
+  {
+    tmp = head;
+    while(tmp -> m_interval.getb() < b){tmp = tmp -> nxt;}
+    tmp -> m_interval.setb(b);
+    if(tmp -> nxt != NULL){delete(tmp -> nxt); tmp -> nxt = NULL;}
+    lastPiece = tmp;
+  }
+}
+
 //##### reset #####//////##### reset #####//////##### reset #####///
 //##### reset #####//////##### reset #####//////##### reset #####///
 
@@ -240,30 +276,26 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     addFirstPiece(onePiece);
   }
 
-  /*
+
   //################
   if(edge_ctt == "up")
   {
     operatorUp(LP_state, newLabel, parentState);
-    if(edge_parameter > 0){shift(edge_parameter);} ///edge_parameter = left/right decay
+    if(edge_parameter > 0){shift(edge_parameter);} ///edge_parameter = right decay
   }
+
 
   //################
   if(edge_ctt == "down")
   {
-    ///LP_state working copy
-    ListPiece LP_stateCopy = ListPiece();
+    ListPiece LP_stateCopy = ListPiece(); ///LP_state working copy
     LP_stateCopy.copy(LP_state);
-    ///reverse LP_stateCopy
     unsigned int length = 0;
-    LP_stateCopy.reverseAndCount(length);
-    ///down operations and reverse result
-    operatorUp(LP_stateCopy, newLabel, parentState);
-    reverseAndSetTrackPosition(length);
-
-    if(edge_parameter > 0){shift(-edge_parameter);} ///edge_parameter = left/right decay
+    LP_stateCopy.reverseAndCount(length); ///reverse LP_stateCopy
+    operatorUp(LP_stateCopy, newLabel, parentState); ///down operations
+    reverseAndSetTrackPosition(length); ///reverse result
+    if(edge_parameter > 0){shift(-edge_parameter);} ///edge_parameter = left decay
   }
- */
 }
 
 //##### LP_edges_addPointAndPenalty #####//////##### LP_edges_addPointAndPenalty #####//////##### LP_edges_addPointAndPenalty #####///
@@ -376,48 +408,43 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
 //##### LP_ts_Minimization #####//////##### LP_ts_Minimization #####//////##### LP_ts_Minimization #####///
 //##### LP_ts_Minimization #####//////##### LP_ts_Minimization #####//////##### LP_ts_Minimization #####///
 
-void ListPiece::LP_ts_Minimization(ListPiece const& LP_edge)
+void ListPiece::LP_ts_Minimization(ListPiece& LP_edge)
 {
-  double M = lastPiece -> m_interval.getb();
+  Interval newBounds = Interval(this -> head -> m_interval.geta(),this -> lastPiece -> m_interval.getb());
+  LP_edge.setNewBounds(newBounds);
+
   //"MOST OF THE TIME" : Q2 > Q1
   Piece* Q1 = head;  /// first Piece to compare
   Piece* Q2 = LP_edge.head;  /// first Piece to compare
   Piece* Q12 = new Piece();
-  Piece* newHead = Q12;
 
-  ///
-  /// SET Q2_Minus_Q1
-  ///
+  Piece* newHead = Q12;
+  double M = lastPiece -> m_interval.getb(); //global right bound
   double firstLeftBound = Q1 -> m_interval.geta();
 
-  /// Q2_Minus_Q1 -> = 1 if Q2 >= Q1 at the current point, - 1 if Q2 < Q1
-  ///
-  /// Q12 first Piece
-  ///
+  /// Q12 first Piece interval initialization
   Q12 -> m_interval = Interval(firstLeftBound,firstLeftBound);
-
-  int Bound_Q2_Minus_Q1 = 0;
+  int Bound_Q2_Minus_Q1;
 
   while(Q1 != NULL)
   {
     ///Q12 = Piece with an interval but no cost no label
     /// Bound_Q2_Minus_Q1
     /// = 0 if bound interval Q2 - bound interval Q1 == 0 : Q1 and Q2 stop
-    /// = 1 if bound interval Q2 - bound interval Q1 > 0: Q1 stops
-    /// = -1 if bound interval Q2 - bound interval Q1 < 0 : Q2 stops
+    /// = 1 if bound interval Q2 - bound interval Q1 > 0: Q2 stops
+    /// = -1 if bound interval Q2 - bound interval Q1 < 0 : Q1 stops
     Bound_Q2_Minus_Q1 = -1;
 
     while(Bound_Q2_Minus_Q1 == -1)
     {
       /// right bound
-      if(Q2 -> m_interval.getb() - Q1 -> m_interval.getb() > 0){Bound_Q2_Minus_Q1 = 1;}
-      if(Q1 -> m_interval.getb() - Q2 -> m_interval.getb() == 0){Bound_Q2_Minus_Q1 = 0;}
+      if(Q2 -> m_interval.getb() > Q1 -> m_interval.getb()){Bound_Q2_Minus_Q1 = 1;}
+      if(Q1 -> m_interval.getb() == Q2 -> m_interval.getb()){Bound_Q2_Minus_Q1 = 0;}
 
       Q12 = Q12 -> pieceGenerator(Q1, Q2, Bound_Q2_Minus_Q1, M); ///add new Piece(s) to Q12
 
       if(Bound_Q2_Minus_Q1 < 1){Q2 = Q2 -> nxt;}
     }
-
     Q1 = Q1 -> nxt;
   }
 

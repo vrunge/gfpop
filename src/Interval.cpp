@@ -33,6 +33,7 @@ bool Interval::isInside(double x) const {return((m_a <= x) && (x <= m_b));}
 double Interval::internPoint() const
 {
   double thePoint = INFINITY;
+  if((m_a == -INFINITY) && (m_b == INFINITY)){thePoint = 0;}
   if((m_a == -INFINITY) && (m_b < INFINITY)){thePoint = m_b - 1;}
   if((-INFINITY < m_a) && (m_b == INFINITY)){thePoint = m_a + 1;}
   if((-INFINITY < m_a) && (m_b < INFINITY)){thePoint = (m_a + 2*m_b)/3;}

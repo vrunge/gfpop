@@ -20,6 +20,8 @@ public:
 
   ///////  Simple list operations  ///////
   void setUniquePieceCostToInfinity();
+  void setNewBounds(Interval newBounds);
+
   void reset();
   void reverseAndCount(unsigned int& length);
   void reverseAndSetTrackPosition(unsigned int length);
@@ -37,7 +39,7 @@ public:
   ///////  3 OPERATIONS in GFPOP ///////
   void LP_edges_constraint(ListPiece const& LP_state, Edge const& edge, unsigned int newLabel);
   void LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt);
-  void LP_ts_Minimization(ListPiece const& LP_edge);
+  void LP_ts_Minimization(ListPiece& LP_edge);
 
   void operatorUp(ListPiece const& LP_edge, unsigned int newLabel, unsigned int parentState);
   void operatorDw(ListPiece const& LP_edge, unsigned int newLabel, unsigned int parentState);
