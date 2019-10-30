@@ -113,6 +113,7 @@ void Omega::gfpop(Data const& data)
 	for(unsigned int t = 0; t < 1; t++) /// loop for all data point (except the first one)
 	{
 	  LP_edges_operators(t); ///fill_LP_edges. t = newLabel to consider
+	  //for(int i = 0; i <q;i++){LP_edges[i] -> show();}
 	  LP_edges_addPointAndPenalty(myData[t]); ///Add new data point and penalty
 	  LP_t_new_multipleMinimization(t); ///multiple_minimization
 	}
@@ -162,8 +163,6 @@ void Omega::LP_t_new_multipleMinimization(unsigned int t)
     }
   }
 }
-
-
 
 
 //##### backtracking #####//////##### backtracking #####//////##### backtracking #####///
