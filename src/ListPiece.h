@@ -41,11 +41,13 @@ public:
   void LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt);
   void LP_ts_Minimization(ListPiece& LP_edge);
 
+  ///////  operators up and down ///////
   void operatorUp(ListPiece const& LP_edge, unsigned int newLabel, unsigned int parentState);
   void operatorDw(ListPiece const& LP_edge, unsigned int newLabel, unsigned int parentState);
 
+  ///////  get info ///////
   double* get_min_argmin_label_state_position_ListPiece();
-  double* get_min_argmin_label_state_position(unsigned int position, Interval constrainedInterval, bool& forced);
+  double* get_min_argmin_label_state_position_onePiece(unsigned int position, Interval constrainedInterval, bool& forced);
 
   void show();
 

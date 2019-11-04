@@ -618,11 +618,11 @@ double* ListPiece::get_min_argmin_label_state_position_ListPiece()
   return(response);
 }
 
-//####### min_argmin_label_state_position_final #######// //####### min_argmin_label_state_position_final #######// //####### min_argmin_label_state_position_final #######//
-//####### min_argmin_label_state_position_final #######// //####### min_argmin_label_state_position_final #######// //####### min_argmin_label_state_position_final #######//
+//####### get_min_argmin_label_state_position_onePiece #######// //####### get_min_argmin_label_state_position_onePiece #######// //####### get_min_argmin_label_state_position_onePiece #######//
+//####### get_min_argmin_label_state_position_onePiece #######// //####### get_min_argmin_label_state_position_onePiece #######// //####### get_min_argmin_label_state_position_onePiece #######//
 ///We test all the Piece
 
-double* ListPiece::get_min_argmin_label_state_position(unsigned int position, Interval constrainedInterval, bool& forced)
+double* ListPiece::get_min_argmin_label_state_position_onePiece(unsigned int position, Interval constrainedInterval, bool& forced)
 {
   double* response = new double[5];
   Piece* tmp = head;

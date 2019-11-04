@@ -229,7 +229,7 @@ void Omega::backtracking()
     CurrentChgpt = malsp[2];
 
     //TO UPDATE: malsp[4] = position
-    malsp = LP_ts[(int) malsp[2]][(int) malsp[3]].get_min_argmin_label_state_position((int) malsp[4], constrainedInterval, boolForced); ///update boolForced
+    malsp = LP_ts[(int) malsp[2]][(int) malsp[3]].get_min_argmin_label_state_position_onePiece((int) malsp[4], constrainedInterval, boolForced); ///update boolForced
 
     parameters.push_back(malsp[1]);
     changepoints.push_back(CurrentChgpt);
