@@ -96,10 +96,10 @@ void Omega::initialize_LP_ts(unsigned int n)
   }
 }
 
-//####### gfpop #######// //####### gfpop #######// //####### gfpop #######//
-//####### gfpop #######// //####### gfpop #######// //####### gfpop #######//
-//####### gfpop #######// //####### gfpop #######// //####### gfpop #######//
-//####### gfpop #######// //####### gfpop #######// //####### gfpop #######//
+//####### gfpop BEGIN #######// //####### gfpop BEGIN #######// //####### gfpop BEGIN #######//
+//####### gfpop BEGIN #######// //####### gfpop BEGIN #######// //####### gfpop BEGIN #######//
+//####### gfpop BEGIN #######// //####### gfpop BEGIN #######// //####### gfpop BEGIN #######//
+//####### gfpop BEGIN #######// //####### gfpop BEGIN #######// //####### gfpop BEGIN #######//
 
 void Omega::gfpop(Data const& data)
 {
@@ -116,6 +116,13 @@ void Omega::gfpop(Data const& data)
 
 	backtracking();
 }
+
+//####### gfpop END #######// //####### gfpop END #######// //####### gfpop END #######//
+//####### gfpop END #######// //####### gfpop END #######// //####### gfpop END #######//
+//####### gfpop END #######// //####### gfpop END #######// //####### gfpop END #######//
+//####### gfpop END #######// //####### gfpop END #######// //####### gfpop END #######//
+
+
 
 //##### LP_edges_operators #####//////##### LP_edges_operators #####//////##### LP_edges_operators #####///
 //##### LP_edges_operators #####//////##### LP_edges_operators #####//////##### LP_edges_operators #####///
@@ -188,7 +195,7 @@ void Omega::backtracking()
   }
   else
   {
-    for (unsigned int j = 0 ; j < endState.size() ; j++) // for all p states
+    for (unsigned int j = 0 ; j < endState.size() ; j++) // for all endState available
     {
       malsp_temp = LP_ts[n][endState[j]].get_min_argmin_label_state_position_ListPiece();
       if(malsp_temp[0] < malsp[0]){CurrentState = endState[j]; malsp[0] = malsp_temp[0];}
@@ -234,10 +241,10 @@ void Omega::backtracking()
   delete(malsp_temp);
 }
 
-///###///###///###///###///###///###///###///###///###///###///###///###///###///###///###
-///###///###///###///###///###///###///###///###///###///###///###///###///###///###///###
-///###///###///###///###///###///###///###///###///###///###///###///###///###///###///###
 
+///###///###///###///###///###///###///###///###///###///###///###///###///###///###///###
+///###///###///###///###///###///###///###///###///###///###///###///###///###///###///###
+///###///###///###///###///###///###///###///###///###///###///###///###///###///###///###
 
 void Omega::show()
 {
@@ -248,6 +255,3 @@ void Omega::show()
     LP_edges[i].show();
   }
 }
-
-
-
