@@ -29,7 +29,7 @@ public:
   void move();
   void initializeCurrentPiece();
 
-  void addCurrentPiecePlus1(Piece* newPiece);
+  void addCurrentPiecePlus1NotMove(Piece* newPiece);
   void addFirstPiece(Piece* newPiece);
   void copy(ListPiece  const& LP_edge);
 
@@ -45,6 +45,7 @@ public:
   void operatorDw(ListPiece const& LP_edge, unsigned int newLabel, unsigned int parentState);
 
   double* get_min_argmin_label_state_position_ListPiece();
+  double* get_min_argmin_label_state_position(unsigned int position, Interval constrainedInterval, bool& forced);
 
   void show();
 

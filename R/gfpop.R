@@ -67,7 +67,6 @@ gfpop <- function(data, mygraph, type = "mean", weights = NULL)
 }
 
 
-
 ########################################################################################
 # mygraph has penalties of type = sigma^2 or const * sigma^2
 

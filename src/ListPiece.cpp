@@ -97,7 +97,7 @@ void ListPiece::reverseAndCount(unsigned int& length)
     next  = current -> nxt;
     current -> nxt = prev; /// new nxt
     prev = current;
-    length = length + 1;
+    length = length + 1; ///add +1 to length
     current = next;
   }
 
@@ -131,10 +131,10 @@ void ListPiece::reverseAndSetTrackPosition(unsigned int length)
 }
 
 
-//##### addCurrentPiecePlus1 #####//////##### addCurrentPiecePlus1 #####//////##### addCurrentPiecePlus1 #####///
-//##### addCurrentPiecePlus1 #####//////##### addCurrentPiecePlus1 #####//////##### addCurrentPiecePlus1 #####///
+//##### addCurrentPiecePlus1NotMove #####//////##### addCurrentPiecePlus1NotMove #####//////##### addCurrentPiecePlus1NotMove #####///
+//##### addCurrentPiecePlus1NotMove #####//////##### addCurrentPiecePlus1NotMove #####//////##### addCurrentPiecePlus1NotMove #####///
 
-void ListPiece::addCurrentPiecePlus1(Piece* newPiece)
+void ListPiece::addCurrentPiecePlus1NotMove(Piece* newPiece)
 {
   newPiece -> nxt = currentPiece -> nxt;
   currentPiece -> nxt = newPiece;
@@ -374,7 +374,7 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
       {
         ///copying currentPiece in new_piece add adding new_piece after currentPiece
         Piece* new_piece = currentPiece -> copy();
-        addCurrentPiecePlus1(new_piece);
+        addCurrentPiecePlus1NotMove(new_piece);
         ///adding costPt on the left
         currentPiece -> addCostAndPenalty(costPt, penalty);
         ///changing interval bounds
@@ -387,7 +387,7 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
       {
         ///copying currentPiece in new_piece add adding new_piece after currentPiece
         Piece* new_piece = new Piece(currentPiece);
-        addCurrentPiecePlus1(new_piece);
+        addCurrentPiecePlus1NotMove(new_piece);
         ///adding slopeLeftCost on the left
         currentPiece -> addCostAndPenalty(slopeLeftCost, penalty);
         ///changing interval bounds
@@ -490,7 +490,7 @@ void ListPiece::operatorUp(ListPiece const& LP_state, unsigned int newLabel, uns
 
   /// COST
   currentValue = cost_eval(tmp -> m_cost, rightBound); ///tmp cost value
-  addmyConstant(head -> m_cost, currentValue);
+  addConstant(head -> m_cost, currentValue);
 
   /// bool constPiece : is the first Piece constant? If cost increasing at bound, constPiece = true
   if(cost_argmin(tmp -> m_cost) <= rightBound){constPiece = true;}else{constPiece = false;}
@@ -554,7 +554,7 @@ void ListPiece::operatorDw(ListPiece const& LP_state, unsigned int newLabel, uns
 
   /// COST
   currentValue = cost_eval(tmp -> m_cost, leftBound);
-  addmyConstant(head -> m_cost, currentValue);
+  addConstant(head -> m_cost, currentValue);
 
   /// bool constPiece : is the first Piece constant? If cost increasing at bound, constPiece = true
   if(cost_argmin(tmp -> m_cost) <= leftBound){constPiece = true;}else{constPiece = false;}
@@ -618,8 +618,26 @@ double* ListPiece::get_min_argmin_label_state_position_ListPiece()
   return(response);
 }
 
+//####### min_argmin_label_state_position_final #######// //####### min_argmin_label_state_position_final #######// //####### min_argmin_label_state_position_final #######//
+//####### min_argmin_label_state_position_final #######// //####### min_argmin_label_state_position_final #######// //####### min_argmin_label_state_position_final #######//
+///We test all the Piece
 
+double* ListPiece::get_min_argmin_label_state_position(unsigned int position, Interval constrainedInterval, bool& forced)
+{
+  double* response = new double[5];
+  Piece* tmp = head;
+  unsigned int nb = 1;
+  while(nb < position){tmp = tmp -> nxt; nb = nb + 1;}
+  response = tmp -> get_min_argmin_label_state_position();
+  forced = true;
 
+  if(constrainedInterval.isInside(response[1]) == false)
+  {
+    if(response[1] > constrainedInterval.getb()){response[1] = constrainedInterval.getb(); forced = true;}
+    if(response[1] < constrainedInterval.geta()){response[1] = constrainedInterval.geta(); forced = true;}
+  }
+  return(response);
+}
 
 /////////////////////////////////////////
 /////////////////////////////////////////
@@ -628,7 +646,6 @@ double* ListPiece::get_min_argmin_label_state_position_ListPiece()
 void ListPiece::show()
 {
   initializeCurrentPiece();
-
   while(currentPiece != NULL)
   {
     currentPiece -> show();

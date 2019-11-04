@@ -16,15 +16,17 @@ struct Cost
   Cost(double* coeff);
 };
 
-void showCost(Cost& cost);
+void addConstant(Cost& cost, double& cst);
+void addCost(Cost& cost, const Cost& cost2);
+Cost minusCost(Cost& cost, const Cost& cost2);
+bool isEqual(Cost const& cost1, Cost const& cost2);
+
+void showCost(const Cost& cost);
+
+int signValue(double value);
 double log_factorial(double n);
 double log_choose(double x, double n);
 
-void addmyConstant(Cost& cost, double& cst);
-void addCost(Cost& cost, const Cost& cost2);
-Cost minusCost(Cost& cost, const Cost& cost2);
-int signValue(double value);
-bool isEqual(Cost const& cost1, Cost const& cost2);
 
 
 ///

@@ -3,6 +3,7 @@
 
 #include"Edge.h"
 #include"Interval.h"
+#include"ExternFunctions.h"
 
 #include<vector>
 #include<string>

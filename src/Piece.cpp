@@ -177,7 +177,7 @@ Piece* Piece::pastePieceUp(const Piece* NXTPiece, Interval const& decrInter, Tra
     {
       double outputValue = cost_eval(NXTPiece -> m_cost, decrInter.getb());
       Piece* PieceOut = new Piece(newTrack, Interval(decrInter.getb(), NXTPiece -> m_interval.getb()), Cost());
-      addmyConstant(PieceOut -> m_cost, outputValue);
+      addConstant(PieceOut -> m_cost, outputValue);
       BUILD -> nxt = PieceOut;
       BUILD = PieceOut;
     }
@@ -226,7 +226,7 @@ Piece* Piece::pastePieceDw(const Piece* NXTPiece, Interval const& decrInter, Tra
     {
       double outputValue = cost_eval(NXTPiece -> m_cost, decrInter.geta());
       Piece* PieceOut = new Piece(newTrack, Interval(decrInter.geta(), NXTPiece -> m_interval.geta()), Cost());
-      addmyConstant(PieceOut -> m_cost, outputValue);
+      addConstant(PieceOut -> m_cost, outputValue);
       BUILD -> nxt = PieceOut;
       BUILD = PieceOut;
     }
@@ -466,7 +466,7 @@ void Piece::show()
     std::cout << tmp;
     std::cout << " #LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " << tmp -> m_info.getPosition() << " ";
     std::cout << "#INTERVAL# "<< tmp -> m_interval.geta() << " to " << tmp -> m_interval.getb() << " ";
-    showCost(tmp ->m_cost);
+    showCost(tmp -> m_cost);
   }
 }
 

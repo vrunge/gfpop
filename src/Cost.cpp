@@ -20,7 +20,7 @@ Cost::Cost(double* coeff)
   constant = coeff[2];
 }
 
-void addmyConstant(Cost& cost, double& cst){cost.constant = cost.constant + cst;}
+void addConstant(Cost& cost, double& cst){cost.constant = cost.constant + cst;}
 
 void addCost(Cost& cost, const Cost& cost2)
 {
@@ -38,23 +38,16 @@ Cost minusCost(Cost& cost, const Cost& cost2)
   return(res);
 }
 
-int signValue(double value)
-{
-  int res = 1;
-  if(value < 0){res = -1;}
-  return(res);
-}
-
-
 bool isEqual(Cost const& cost1, Cost const& cost2)
 {
-  bool res = false;
-  res = (cost1.m_A == cost2.m_A)&&(cost1.m_B == cost2.m_B)&&(cost1.constant == cost2.constant);
-  return(res);
+  return((cost1.m_A == cost2.m_A) && (cost1.m_B == cost2.m_B) && (cost1.constant == cost2.constant));
 }
 
 
-void showCost(Cost& cost)
+//####### showCost #######////####### showCost #######////####### showCost #######//
+//####### showCost #######////####### showCost #######////####### showCost #######//
+
+void showCost(const Cost& cost)
 {
   std::cout << " A: " << cost.m_A << " B: " << cost.m_B << " C: " << cost.constant << std::endl;
 }
@@ -63,6 +56,12 @@ void showCost(Cost& cost)
 //####### simplefunctions #######////####### simplefunctions #######////####### simplefunctions #######//
 //####### simplefunctions #######////####### simplefunctions #######////####### simplefunctions #######//
 
+int signValue(double value)
+{
+  int res = 1;
+  if(value < 0){res = -1;}
+  return(res);
+}
 
 double log_factorial(double n)
 {
@@ -70,7 +69,6 @@ double log_factorial(double n)
   for(int i = 2; i < floor(n) + 1; i++){res = res + log(i);}
   return(res);
 }
-
 
 double log_choose(double x, double n)
 {
@@ -86,8 +84,7 @@ double log_choose(double x, double n)
   {
     return log_factorial(n) - log_factorial(x) - log_factorial(n - x);
   }
-};
-
+}
 
 //####### coefficients #######////####### coefficients #######////####### coefficients #######//
 //####### coefficients #######////####### coefficients #######////####### coefficients #######//
@@ -228,7 +225,6 @@ double poisson_minInterval(const Cost& cost, Interval inter)
 
   return(res);
 }
-
 
 double negbin_minInterval(const Cost& cost, Interval inter)
 {
@@ -510,7 +506,9 @@ Interval exp_interval(){return(Interval(0,INFINITY));}
 Interval negbin_interval(){return(Interval(0,1));}
 
 
-
+//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#
+//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#
+//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#
 //#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#
 //#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#//#
 
