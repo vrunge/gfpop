@@ -1,3 +1,6 @@
+//  GPL-3 License
+// Copyright (c) 2019 Vincent Runge
+
 #ifndef TRACK_H
 #define TRACK_H
 
@@ -13,10 +16,7 @@ class Track
     unsigned int getState() const;
     unsigned int getPosition() const;
 
-    void setLabel(unsigned int label);
-    void setState(unsigned int state);
     void setPosition(unsigned int position);
-    void setTrack(unsigned int label, unsigned int state, unsigned int position);
     void setTrack(Track const& newTrack);
 
     void reversePosition(unsigned int length);
