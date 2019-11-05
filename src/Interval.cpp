@@ -2,7 +2,7 @@
 
 #include<iostream>
 
-Interval::Interval() : m_a(INFINITY), m_b(INFINITY){}
+Interval::Interval() : m_a(INFINITY), m_b(INFINITY){} ///empty interval = (+INF, +INF)
 Interval::Interval(double a, double b) : m_a(a), m_b(b){}
 
 bool Interval::isEmpty() const {return(m_a >= m_b);}
@@ -43,5 +43,5 @@ double Interval::internPoint() const
 
 void Interval::show() const
 {
-  //std::cout << "INTERVAL ## " << m_a << " -- " << m_b << std::endl;
+  std::cout << "INTERVAL ## " << m_a << " -- " << m_b << std::endl;
 }

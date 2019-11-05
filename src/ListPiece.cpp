@@ -14,12 +14,8 @@ ListPiece::ListPiece()
 
 ListPiece::~ListPiece()
 {
-  while(head != NULL)
-  {
-    Piece* pieceToDelete = head;
-    head = head -> nxt;
-    delete(pieceToDelete);
-  }
+  delete(head);
+  head = NULL;
 }
 
 //##### setUniquePieceCostToInfinity #####//////##### setUniquePieceCostToInfinity #####//////##### setUniquePieceCostToInfinity #####///
@@ -80,6 +76,26 @@ void ListPiece::reset()
   currentPiece = NULL;
   lastPiece = NULL;
 }
+
+//##### copy #####//////##### copy #####//////##### copy #####///
+//##### copy #####//////##### copy #####//////##### copy #####///
+
+void ListPiece::copy(ListPiece const& LP_edge)
+{
+  Piece* tmp = LP_edge.head;
+  head = tmp -> copy();
+  currentPiece = head;
+  tmp = tmp -> nxt;
+
+  while(tmp != NULL)
+  {
+    currentPiece -> nxt = tmp -> copy(); //copy content in Piece
+    currentPiece = currentPiece -> nxt; //copy nxt pointer
+    tmp = tmp -> nxt;
+  }
+  lastPiece = currentPiece;
+}
+
 
 //##### reverseAndCount #####//////##### reverseAndCount #####//////##### reverseAndCount #####///
 //##### reverseAndCount #####//////##### reverseAndCount #####//////##### reverseAndCount #####///
@@ -166,23 +182,6 @@ void ListPiece::initializeCurrentPiece()
   currentPiece = head;
 }
 
-//##### copy #####//////##### copy #####//////##### copy #####///
-//##### copy #####//////##### copy #####//////##### copy #####///
-
-void ListPiece::copy(ListPiece const& LP_edge)
-{
-  Piece* tmp = LP_edge.head;
-  head = tmp -> copy();
-
-  while(tmp != NULL)
-  {
-    currentPiece = tmp -> copy(); //copy content in Piece
-    currentPiece -> nxt = tmp -> nxt; //copy nxt pointer
-    tmp = tmp -> nxt;
-  }
-  lastPiece = currentPiece;
-}
-
 
 //##### shift #####//////##### shift #####//////##### shift #####///
 //##### shift #####//////##### shift #####//////##### shift #####///
@@ -233,7 +232,7 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
   /// build a new LP_edges from scratch
   reset();
 
-  /// 4 types of edges : null, std, up, down
+  /// only 4 types of edges : null, std, up, down
   ///
   /// EDGE PARAMETERS
   ///
@@ -249,32 +248,37 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     if(edge_parameter < 1){expDecay(edge_parameter);} ///edge_parameter = exponential decay
   }
 
+
   //################
   if(edge_ctt == "std")
   {
     ///variable definition
     Piece* tmp = LP_state.head;
-    double mini = INFINITY;
-    double getmin;
-    unsigned int counter = 0;
-    unsigned int counterMini = 0;
+    double globalMin = INFINITY;
+    unsigned int positionMin;
+    unsigned int currentCounter = 0;
+    double currentMin;
+
 
     ///find the minimum
     while(tmp != NULL)
     {
-      counter = counter + 1;
-      getmin = cost_minInterval(tmp -> m_cost, tmp -> m_interval);
-      if(getmin < mini){mini = getmin; counterMini = counter;}
+      currentCounter = currentCounter + 1;
+      currentMin = cost_minInterval(tmp -> m_cost, tmp -> m_interval);
+      if(currentMin < globalMin){globalMin = currentMin; positionMin = currentCounter;}
       tmp = tmp -> nxt;
     }
 
     ///add onePiece to LP_edges
     Piece* onePiece = new Piece();
-    onePiece -> m_info = Track(newLabel, parentState, counterMini);
+    onePiece -> m_info = Track(newLabel, parentState, positionMin);
     onePiece -> m_interval = Interval(LP_state.head -> m_interval.geta(), LP_state.lastPiece -> m_interval.getb());
-    onePiece -> addCostAndPenalty(Cost(), mini + edge_beta); /// Cost() = 0
+    onePiece -> addCostAndPenalty(Cost(), globalMin + edge_beta); /// Cost() = 0
     addFirstPiece(onePiece);
   }
+
+
+  /*
 
 
   //################
@@ -296,6 +300,7 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     reverseAndSetTrackPosition(length); ///reverse result
     if(edge_parameter > 0){shift(-edge_parameter);} ///edge_parameter = left decay
   }
+  */
 }
 
 //##### LP_edges_addPointAndPenalty #####//////##### LP_edges_addPointAndPenalty #####//////##### LP_edges_addPointAndPenalty #####///

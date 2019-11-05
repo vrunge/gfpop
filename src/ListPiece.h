@@ -23,6 +23,8 @@ public:
   void setNewBounds(Interval newBounds);
 
   void reset();
+  void copy(ListPiece  const& LP_edge);
+
   void reverseAndCount(unsigned int& length);
   void reverseAndSetTrackPosition(unsigned int length);
 
@@ -31,7 +33,6 @@ public:
 
   void addCurrentPiecePlus1NotMove(Piece* newPiece);
   void addFirstPiece(Piece* newPiece);
-  void copy(ListPiece  const& LP_edge);
 
   void shift(double parameter);
   void expDecay(double gamma);

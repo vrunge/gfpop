@@ -27,10 +27,11 @@ Omega::~Omega()
 {
   if(LP_ts != NULL)
   {
-    for(unsigned int i = 0; i < n + 1; i++)
-      {delete[] LP_ts[i]; LP_ts[i] = NULL;}
+    for(unsigned int i = 0; i < (n + 1); i++){delete [] (LP_ts[i]);}
+    delete LP_ts;
+    LP_ts = NULL;
   }
-  delete[] LP_edges;
+  delete [] LP_edges;
   LP_edges = NULL;
 }
 
@@ -57,8 +58,8 @@ void Omega::initialize_LP_ts(unsigned int n)
   double maxi = inter.getb();
   unsigned int nbR = m_graph.nb_rows();
 
-  LP_ts = new ListPiece*[n+1];
-  for(unsigned int i = 0; i < (n + 1); i++){LP_ts[i] = new ListPiece[p];}
+  LP_ts = new ListPiece*[n + 1];
+  for(unsigned int i = 0; i < (n + 1); i++){LP_ts[i] = new ListPiece[p]; for(unsigned int j = 0; j < p; j++){LP_ts[i][j] = ListPiece();}}
 
   ///REVEAL NODE BOUNDARIES IF ANY
   ///REVEAL NODE BOUNDARIES IF ANY
@@ -107,14 +108,13 @@ void Omega::gfpop(Data const& data)
   n = data.getn(); // data length
 	initialize_LP_ts(n); // Initialize LP_ts Piece : size LP_ts (n+1) x p
 
-	for(unsigned int t = 0; t < 1; t++) // loop for all data point (except the first one)
+	for(unsigned int t = 0; t < n; t++) // loop for all data point
 	{
 	  LP_edges_operators(t); // fill_LP_edges. t = newLabel to consider
-	  LP_edges_addPointAndPenalty(myData[t]); // Add new data point and penalty
-	  LP_t_new_multipleMinimization(t); // multiple_minimization
+	  //LP_edges_addPointAndPenalty(myData[t]); // Add new data point and penalty
+	  //LP_t_new_multipleMinimization(t); // multiple_minimization
 	}
-
-	backtracking();
+	//backtracking();
 }
 
 //####### gfpop END #######// //####### gfpop END #######// //####### gfpop END #######//
@@ -122,18 +122,17 @@ void Omega::gfpop(Data const& data)
 //####### gfpop END #######// //####### gfpop END #######// //####### gfpop END #######//
 //####### gfpop END #######// //####### gfpop END #######// //####### gfpop END #######//
 
-
-
 //##### LP_edges_operators #####//////##### LP_edges_operators #####//////##### LP_edges_operators #####///
 //##### LP_edges_operators #####//////##### LP_edges_operators #####//////##### LP_edges_operators #####///
 
-void Omega::LP_edges_operators(unsigned int newLabel)
+void Omega::LP_edges_operators(unsigned int t)
 {
   for(unsigned int i = 0 ; i < q ; i++) /// loop for all q edges
   {
     // COMMENT: i-th edge = m_graph.getEdge(i)
     // COMMENT: starting state = m_graph.getEdge(i).getState1()
-    LP_edges[i].LP_edges_constraint(LP_ts[newLabel][m_graph.getEdge(i).getState1()], m_graph.getEdge(i), newLabel);
+    // COMMENT: t is the label to associate to the constraint
+    LP_edges[i].LP_edges_constraint(LP_ts[t][m_graph.getEdge(i).getState1()], m_graph.getEdge(i), t);
   }
 }
 
