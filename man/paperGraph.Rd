@@ -5,7 +5,7 @@
 \title{Graphs of our paper in jss}
 \usage{
 paperGraph(nb, penalty = 0, decay = 1, gap = 0, oneValue = 0,
-  K = Inf)
+  K = Inf, a = Inf)
 }
 \arguments{
 \item{nb}{the number of the Figure in paper}
@@ -19,6 +19,8 @@ paperGraph(nb, penalty = 0, decay = 1, gap = 0, oneValue = 0,
 \item{oneValue}{the value for parameter when we consider the collective anomalies problem}
 
 \item{K}{a positive number. Threshold for the Biweight robust loss}
+
+\item{a}{a positive number. Slope for the Huber robust loss}
 }
 \value{
 a dataframe with 9 variables (columns are named "state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max") with additional "graph" class.

@@ -1,3 +1,7 @@
+//  GPL-3 License
+// Copyright (c) 2019 Vincent Runge
+
+
 #ifndef GRAPH_H
 #define GRAPH_H
 

@@ -10,9 +10,10 @@
 #' @param gap a nonnegative number to constrain the size of the gap in the change of state
 #' @param oneValue the value for parameter when we consider the collective anomalies problem
 #' @param K a positive number. Threshold for the Biweight robust loss
+#' @param a a positive number. Slope for the Huber robust loss
 #' @return a dataframe with 9 variables (columns are named "state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max") with additional "graph" class.
 #'
-paperGraph <- function(nb, penalty = 0, decay = 1, gap = 0, oneValue = 0, K = Inf)
+paperGraph <- function(nb, penalty = 0, decay = 1, gap = 0, oneValue = 0, K = Inf, a = Inf)
 {
   mygraph <- NULL
   if(nb == 4)
@@ -35,7 +36,7 @@ paperGraph <- function(nb, penalty = 0, decay = 1, gap = 0, oneValue = 0, K = In
   }
   if(nb == 7)
   {
-    mygraph <- graph(type = "isotonic", decay = decay, gap = gap, penalty = penalty, K = Inf)
+    mygraph <- graph(type = "isotonic", decay = decay, gap = gap, penalty = penalty, K = K, a = a)
   }
   if(nb == 8)
   {
@@ -100,7 +101,7 @@ paperGraph <- function(nb, penalty = 0, decay = 1, gap = 0, oneValue = 0, K = In
       Edge("mu0", "Coll", type = "std", penalty = penalty),
       Edge("Coll", "Coll", type = "null"),
       Edge("Coll", "mu0", type = "std",  K = K),
-      StartEnd(start = "mu0", end = c("mu0","Dw")),
+      StartEnd(start = "mu0"),
       Node("mu0", min = oneValue, max = oneValue)
     )
   }

@@ -14,7 +14,7 @@
 #' @param a a positive number. Slope for the Huber robust loss
 #' @return a one-row dataframe with 9 variables
 #' @examples
-#' Edge("D", "U", "up", gap = 1, penalty = 10)
+#' Edge("Dw", "Up", "up", gap = 1, penalty = 10, K = 3)
 Edge <- function(state1, state2, type = "null", decay = 1, gap = 0, penalty = 0, K = Inf, a = Inf)
 {
   ############
@@ -117,13 +117,15 @@ Node <- function(state = NULL, min = -Inf, max = Inf)
 #' @param decay a nonnegative number to give the strength of the exponential decay into the segment
 #' @param gap a nonnegative number to constrain the size of the gap in the change of state
 #' @param penalty a nonnegative number equals to the common penalty to use for all edges
+#' @param K a positive number. Threshold for the Biweight robust loss
+#' @param a a positive number. Slope for the Huber robust loss
 #' @return a dataframe with 9 variables (columns are named "state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max") with additional "graph" class.
 #' @examples
 #' UpDownGraph <- graph(type = "updown", gap = 1.3, penalty = 10)
 #' MyGraph <- graph(Edge(0,0), Edge(1,1), Edge(0,1,"up", gap = 0.5, penalty = 10),
 #' Edge(1,0,"down"), StartEnd(0,0), Node(0,0,1), Node(1,0,1))
 
-graph <- function(..., type = "empty", decay = 1, gap = 0, penalty = 0)
+graph <- function(..., type = "empty", decay = 1, gap = 0, penalty = 0, K = Inf, a = Inf)
 {
   myNewGraph <- rbind(...)
 
@@ -148,27 +150,27 @@ graph <- function(..., type = "empty", decay = 1, gap = 0, penalty = 0)
     if(type == "std")
     {
       myNewGraph[1, ] <- Edge("Std", "Std", "null", decay = decay)
-      myNewGraph[2, ] <- Edge("Std", "Std", "std", penalty = penalty)
+      myNewGraph[2, ] <- Edge("Std", "Std", "std", penalty = penalty, K = K, a = a)
     }
 
     if(type == "isotonic")
     {
       myNewGraph[1, ] <- Edge("Iso", "Iso", "null", decay = decay)
-      myNewGraph[2, ] <- Edge("Iso", "Iso", "up", gap = gap, penalty = penalty)
+      myNewGraph[2, ] <- Edge("Iso", "Iso", "up", gap = gap, penalty = penalty, K = K, a = a)
     }
 
     if(type == "updown")
     {
       myNewGraph[1, ] <- Edge("Dw", "Dw", "null", decay = decay)
       myNewGraph[2, ] <- Edge("Up", "Up", "null", decay = decay)
-      myNewGraph[3, ] <- Edge("Dw", "Up", "up", gap = gap, penalty = penalty)
-      myNewGraph[4, ] <- Edge("Up", "Dw", "down", gap = gap, penalty = penalty)
+      myNewGraph[3, ] <- Edge("Dw", "Up", "up", gap = gap, penalty = penalty, K = K, a = a)
+      myNewGraph[4, ] <- Edge("Up", "Dw", "down", gap = gap, penalty = penalty, K = K, a = a)
     }
 
     if(type == "relevant")
     {
       myNewGraph[1, ] <- Edge("Std", "Std", "null", decay = decay)
-      myNewGraph[2, ] <- Edge("Std", "Std", "abs", gap = gap, penalty = penalty)
+      myNewGraph[2, ] <- Edge("Std", "Std", "abs", gap = gap, penalty = penalty, K = K, a = a)
     }
   }
   class(myNewGraph) <- c("data.frame", "graph")
@@ -197,12 +199,12 @@ typeOfGraph <- function(mygraph)
 graphReorder <- function(mygraph)
 {
   ### BUILD an ordered Graph : myOrderedGraph ###
-  ##separate startend from vertices
+  ##separate start, end, node from vertices
   graphNA <- mygraph[is.na(mygraph[,5]),] ## Start End nodes and range values nodes
   graphVtemp <-  mygraph[!is.na(mygraph[,5]),] ## Edges of the graph
-
   myVertices <- unique(c(graphVtemp[,1], graphVtemp[,2]))
 
+  if(!all(is.element(mygraph[is.na(mygraph[,5]), 1], myVertices))){stop("Some start-end-node names not related to edges")}
 
   ###transform the abs edge into two edges (up and down)
   absEdge <- graphVtemp[,3] == "abs"
@@ -213,18 +215,15 @@ graphReorder <- function(mygraph)
     addToGraphVV <- graphVtemp[absEdge,]
     addToGraphVV[,3] <- "up"
     graphV <- rbind(graphVtemp, addToGraphVV)
-  }
-  else
+  }else
   {
     graphV <- graphVtemp
   }
 
   ##create a new graph
   myNewGraph <- graph()
-
   selectNull <- graphV[, 3] == "null" ### => penalty = 0
   graphV[selectNull, 5] <- -1 #set penalty to -1
-
 
   for(vertex in myVertices)
   {
@@ -237,7 +236,6 @@ graphReorder <- function(mygraph)
   myNewGraph <- rbind(myNewGraph, graphNA)
   selectNull <- myNewGraph[, 3] == "null"
   myNewGraph[selectNull, 5] <- 0 #for ordering
-
 
   ###Label the vertices with integers from 0 to nbVertices
   for(i in 1:dim(myNewGraph)[1])
