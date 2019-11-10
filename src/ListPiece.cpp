@@ -232,16 +232,12 @@ void ListPiece::expDecay(double gamma)
 
 void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge, unsigned int newLabel)
 {
-  /// build a new LP_edges from scratch
-  reset();
+  reset(); /// build a new LP_edges from scratch
 
   /// only 4 types of edges : null, std, up, down
-  ///
   /// EDGE PARAMETERS
-  ///
   std::string edge_ctt = edge.getConstraint();
   double edge_parameter = edge.getParameter(); /// always positive
-  double edge_beta = edge.getBeta();
   unsigned int parentState = edge.getState1(); ///parentState = state to associate
 
   //################
@@ -276,23 +272,18 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     onePiece -> m_info = Track(newLabel, parentState, positionMin);
     onePiece -> m_interval = Interval(LP_state.head -> m_interval.geta(), LP_state.lastPiece -> m_interval.getb());
     std::cout << "TTTTTTTTTTTTTTTTTTTT " << LP_state.head << "   "<< LP_state.lastPiece << std::endl;
-
     std::cout << "TTTTTTTTTTTTTTTTTTTT " << LP_state.head -> m_interval.geta() << "   "<< LP_state.lastPiece -> m_interval.getb() << std::endl;
-    onePiece -> addCostAndPenalty(Cost(), globalMin + edge_beta); /// Cost() = 0
+    onePiece -> addCostAndPenalty(Cost(), globalMin); /// Cost() = 0
     addFirstPiece(onePiece);
   }
 
-
-
   /*
-
   //################
   if(edge_ctt == "up")
   {
     operatorUp(LP_state, newLabel, parentState);
     if(edge_parameter > 0){shift(edge_parameter);} ///edge_parameter = right decay
   }
-
 
   //################
   if(edge_ctt == "down")
@@ -317,7 +308,7 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
   /// get edge data ///
   double K = edge.getKK();
   double a = edge.getAA();
-  double penalty = edge.getBeta();
+  double edge_beta = edge.getBeta();
   /// get pt cost ///
   double* coeff = cost_coeff(pt);
   Cost costPt = Cost(coeff);
@@ -329,7 +320,7 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
   {
     while(currentPiece != NULL)
     {
-      currentPiece -> addCostAndPenalty(costPt, penalty);
+      currentPiece -> addCostAndPenalty(costPt, edge_beta);
       currentPiece = currentPiece -> nxt;
     }
   }
@@ -369,11 +360,11 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
 
       switch(cas)
       {
-        case 0 : currentPiece -> addCostAndPenalty(slopeLeftCost, penalty);
+        case 0 : currentPiece -> addCostAndPenalty(slopeLeftCost, edge_beta);
           break;
-        case 1 : currentPiece -> addCostAndPenalty(slopeRightCost, penalty);
+        case 1 : currentPiece -> addCostAndPenalty(slopeRightCost, edge_beta);
           break;
-        case 2 : currentPiece -> addCostAndPenalty(costPt, penalty);
+        case 2 : currentPiece -> addCostAndPenalty(costPt, edge_beta);
           break;
         case 3 :
         {
@@ -382,7 +373,7 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
           nextPiece3 -> m_interval.seta(BK); // changing interval bounds
           addCurrentPiecePlus1NotMove(nextPiece3);
           // B) update currentPiece cost and bound right
-          currentPiece -> addCostAndPenalty(costPt, penalty); // adding costPt on the left
+          currentPiece -> addCostAndPenalty(costPt, edge_beta); // adding costPt on the left
           currentPiece -> m_interval.setb(BK); // changing interval bounds
           break;
         }
@@ -393,7 +384,7 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
           nextPiece4 -> m_interval.seta(AK); // changing interval bounds
           addCurrentPiecePlus1NotMove(nextPiece4);
           // B) update currentPiece cost and bound right
-          currentPiece -> addCostAndPenalty(slopeLeftCost, penalty); // adding slopeLeftCost on the left
+          currentPiece -> addCostAndPenalty(slopeLeftCost, edge_beta); // adding slopeLeftCost on the left
           currentPiece -> m_interval.setb(AK); // changing interval bounds
           break;
         }
@@ -444,7 +435,7 @@ void ListPiece::LP_ts_Minimization(ListPiece& LP_edge)
       /// right bound
       if(Q1 -> m_interval.getb() < Q2 -> m_interval.getb()){Bound_Q2_Minus_Q1 = 1;}
       if(Q1 -> m_interval.getb() == Q2 -> m_interval.getb()){Bound_Q2_Minus_Q1 = 0;}
-      //Q12 = Q12 -> pieceGenerator(Q1, Q2, Bound_Q2_Minus_Q1, M); ///add new Piece(s) to Q12
+      Q12 = Q12 -> pieceGenerator(Q1, Q2, Bound_Q2_Minus_Q1, M); ///add new Piece(s) to Q12
       if(Bound_Q2_Minus_Q1 < 1){Q2 = Q2 -> nxt;}
     }
     Q1 = Q1 -> nxt;

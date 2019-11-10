@@ -332,7 +332,7 @@ Piece* Piece::piece0(Piece* Q1, Piece* Q2, Interval interToPaste, int& Q2_Minus_
     Cost testCost = BUILD -> m_cost;
     if(Q2_Minus_Q1 == 1){test = isEqual(testCost, Q1 -> m_cost);}
     if(Q2_Minus_Q1 == -1){test = isEqual(testCost, Q2 -> m_cost);}
-    std::cout << "test " << test << " ----------------- " << Q2_Minus_Q1 << std::endl;
+    std::cout << "    test " << test << " ----------------- " << Q2_Minus_Q1 << std::endl;
 
     if (test == true) ///Prolongation
     {
@@ -466,7 +466,7 @@ void Piece::show()
     std::cout << " #INTERVAL# "<< tmp -> m_interval.geta() << " to " << tmp -> m_interval.getb() << " ";
     showCost(tmp -> m_cost);
   }
-  if(tmp -> nxt != NULL){tmp -> nxt -> show();}else{std::cout << "    THE-END" << std::endl;}
+  if(tmp -> nxt != NULL){tmp -> nxt -> show();}
 }
 
 

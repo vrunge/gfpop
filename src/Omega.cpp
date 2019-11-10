@@ -108,21 +108,43 @@ void Omega::gfpop(Data const& data)
 
 	for(unsigned int t = 0; t < 1; t++) // loop for all data point
 	{
-	  std::cout << t << std::endl;
+	  std::cout << t << "-----------------------------------------------------------------------------------------------------------------------" << std::endl;
 	  LP_edges_operators(t); // fill_LP_edges. t = newLabel to consider
     LP_edges_addPointAndPenalty(myData[t]); // Add new data point and penalty
 
-    std::cout << "    LP_edgesLP_edgesLP_edgesLP_edgesLP_edgesLP_edges "<< t<< std::endl;
-    for(unsigned int i = 0 ; i < q ; i++) /// loop for all q edges
+    ////////////////
+    ////////////////
+    std::cout << "  LP_edgesLP_edgesLP_edgesLP_edgesLP_edgesLP_edges "<< t<< std::endl;
+    for(unsigned int i = 0; i < q; i++) /// loop for all q edges
     {
-      std::cout << m_graph.getEdge(i).getConstraint() << std::endl;
-      std::cout << m_graph.getEdge(i).getState1() << " " << m_graph.getEdge(i).getState2() << std::endl;
+      std::cout << "  type " << m_graph.getEdge(i).getConstraint() << std::endl;
+      std::cout << "  states " << m_graph.getEdge(i).getState1() << " and " << m_graph.getEdge(i).getState2() << std::endl;
       LP_edges[i].show();
     }
+    ////////////////
+    ////////////////
 
 	  LP_t_new_multipleMinimization(t); // multiple_minimization
-
 	}
+
+	////////////////
+	////////////////
+	int t = 1;
+	std::cout << t << "-----------------------------------------------------------------------------------------------------------------------" << std::endl;
+	LP_edges_operators(t); // fill_LP_edges. t = newLabel to consider
+	LP_edges_addPointAndPenalty(myData[t]); // Add new data point and penalty
+
+	////////////////
+	////////////////
+	std::cout << "  LP_edgesLP_edgesLP_edgesLP_edgesLP_edgesLP_edges "<< t<< std::endl;
+	for(unsigned int i = 0; i < q; i++) /// loop for all q edges
+	{
+	  std::cout << "  type " << m_graph.getEdge(i).getConstraint() << std::endl;
+	  std::cout << "  states " << m_graph.getEdge(i).getState1() << " and " << m_graph.getEdge(i).getState2() << std::endl;
+	  LP_edges[i].show();
+	}
+	////////////////
+	////////////////
 	std::cout << "FINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFIN"<< std::endl;
 
 	backtracking();
@@ -171,8 +193,10 @@ void Omega::LP_t_new_multipleMinimization(unsigned int t)
   {
     while((k < q) && (m_graph.getEdge(k).getState2() == j))
     {
-      std::cout << "    LP_t_new_multipleMinimization IN PROGRESS" << " before edge nb "<< k << " state " << j << std::endl;
+      std::cout << "  LP_t_new_multipleMinimization IN PROGRESS" << " before edge nb "<< k << " state " << j << std::endl;
       LP_ts[t + 1][j].show();
+      std::cout << "    +++++++++++++MINIMUM2LP++++++++++++++" << std::endl;
+      LP_edges[k].show();
       LP_ts[t + 1][j].LP_ts_Minimization(LP_edges[k]);
       k = k + 1;
     }
