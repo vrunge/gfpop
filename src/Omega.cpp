@@ -108,39 +108,19 @@ void Omega::gfpop(Data const& data)
 
 	for(unsigned int t = 0; t < 1; t++) // loop for all data point
 	{
-	  std::cout << termcolor::blue << "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR" << std::endl;
-	  std::cout << "gfpopgfpopgfpop "<< t<< termcolor::reset << std::endl;
+	  std::cout << t << std::endl;
 	  LP_edges_operators(t); // fill_LP_edges. t = newLabel to consider
     LP_edges_addPointAndPenalty(myData[t]); // Add new data point and penalty
-	  LP_t_new_multipleMinimization(t); // multiple_minimization
 
-	  std::cout << "LP_edgesLP_edgesLP_edgesLP_edgesLP_edgesLP_edges "<< t<< std::endl;
-    for(unsigned int i = 0 ; i < q ; i++) /// loop for all q edges
-	  {
-      std::cout << m_graph.getEdge(i).getConstraint() << std::endl;
-      std::cout << m_graph.getEdge(i).getState1() << " " << m_graph.getEdge(i).getState2() << std::endl;
-	    LP_edges[i].show();
-	  }
-
-    std::cout << "LP_tsLP_tsLP_tsLP_tsLP_tsLP_tsLP_tsLP_tsLP_ts "<< t<< std::endl;
-    for(unsigned int i = 0 ; i < p ; i++) /// loop for all p states
-    {
-      LP_ts[t+1][i].show();
-    }
-
-    std::cout << termcolor::blue << "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR" << std::endl;
-    std::cout << "gfpopgfpopgfpop "<< 1 << termcolor::reset << std::endl;
-    LP_edges_operators(1); // fill_LP_edges. t = newLabel to consider
-    LP_edges_addPointAndPenalty(myData[1]); // Add new data point and penalty
-    //LP_t_new_multipleMinimization(1); // multiple_minimization
-
-    std::cout << "LP_edgesLP_edgesLP_edgesLP_edgesLP_edgesLP_edges "<< 1 << std::endl;
+    std::cout << "    LP_edgesLP_edgesLP_edgesLP_edgesLP_edgesLP_edges "<< t<< std::endl;
     for(unsigned int i = 0 ; i < q ; i++) /// loop for all q edges
     {
       std::cout << m_graph.getEdge(i).getConstraint() << std::endl;
       std::cout << m_graph.getEdge(i).getState1() << " " << m_graph.getEdge(i).getState2() << std::endl;
       LP_edges[i].show();
     }
+
+	  LP_t_new_multipleMinimization(t); // multiple_minimization
 
 	}
 	std::cout << "FINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFIN"<< std::endl;
@@ -191,14 +171,15 @@ void Omega::LP_t_new_multipleMinimization(unsigned int t)
   {
     while((k < q) && (m_graph.getEdge(k).getState2() == j))
     {
-      std::cout << "nbnbnbnbnbnbnbnbnbnbnbnbnbnbnbnb " << k << " state " << j << std::endl;
+      std::cout << "    LP_t_new_multipleMinimization IN PROGRESS" << " before edge nb "<< k << " state " << j << std::endl;
       LP_ts[t + 1][j].show();
       LP_ts[t + 1][j].LP_ts_Minimization(LP_edges[k]);
       k = k + 1;
     }
   }
-  std::cout << "nbnbnbnbnbnbnbnbnbnbnbnbnbnbnbnb FIN " << std::endl;
+  std::cout << "    LP_t_new_multipleMinimization RESULT " << std::endl;
   LP_ts[t + 1][0].show();
+  std::cout << "    LP_t_new_multipleMinimization FIN " << std::endl;
 }
 
 

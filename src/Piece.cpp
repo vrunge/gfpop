@@ -463,10 +463,10 @@ void Piece::show()
   {
     std::cout << "          " << tmp;
     std::cout << " #LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " << tmp -> m_info.getPosition() << " ";
-    std::cout << "#INTERVAL# "<< tmp -> m_interval.geta() << " to " << tmp -> m_interval.getb() << " ";
+    std::cout << " #INTERVAL# "<< tmp -> m_interval.geta() << " to " << tmp -> m_interval.getb() << " ";
     showCost(tmp -> m_cost);
   }
-  if(tmp -> nxt != NULL){tmp -> nxt -> show();}else{std::cout << "THE-END" << std::endl;}
+  if(tmp -> nxt != NULL){tmp -> nxt -> show();}else{std::cout << "    THE-END" << std::endl;}
 }
 
 

@@ -275,6 +275,9 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     Piece* onePiece = new Piece();
     onePiece -> m_info = Track(newLabel, parentState, positionMin);
     onePiece -> m_interval = Interval(LP_state.head -> m_interval.geta(), LP_state.lastPiece -> m_interval.getb());
+    std::cout << "TTTTTTTTTTTTTTTTTTTT " << LP_state.head << "   "<< LP_state.lastPiece << std::endl;
+
+    std::cout << "TTTTTTTTTTTTTTTTTTTT " << LP_state.head -> m_interval.geta() << "   "<< LP_state.lastPiece -> m_interval.getb() << std::endl;
     onePiece -> addCostAndPenalty(Cost(), globalMin + edge_beta); /// Cost() = 0
     addFirstPiece(onePiece);
   }
@@ -411,7 +414,11 @@ void ListPiece::LP_ts_Minimization(ListPiece& LP_edge)
 {
   // Initialize LP_edge -> same range as this
   Interval newBounds = Interval(this -> head -> m_interval.geta(), this -> lastPiece -> m_interval.getb());
+  //std::cout << "newBoundsnewBoundsnewBoundsnewBoundsnewBoundsnewBoundsnewBounds" << std::endl;
+  //head -> show();
   LP_edge.setNewBounds(newBounds);
+  //head -> show();
+
 
   //"MOST OF THE TIME" : Q2 > Q1
   Piece* Q1 = head;  /// first Piece to compare
@@ -437,7 +444,7 @@ void ListPiece::LP_ts_Minimization(ListPiece& LP_edge)
       /// right bound
       if(Q1 -> m_interval.getb() < Q2 -> m_interval.getb()){Bound_Q2_Minus_Q1 = 1;}
       if(Q1 -> m_interval.getb() == Q2 -> m_interval.getb()){Bound_Q2_Minus_Q1 = 0;}
-      Q12 = Q12 -> pieceGenerator(Q1, Q2, Bound_Q2_Minus_Q1, M); ///add new Piece(s) to Q12
+      //Q12 = Q12 -> pieceGenerator(Q1, Q2, Bound_Q2_Minus_Q1, M); ///add new Piece(s) to Q12
       if(Bound_Q2_Minus_Q1 < 1){Q2 = Q2 -> nxt;}
     }
     Q1 = Q1 -> nxt;
@@ -643,8 +650,8 @@ double* ListPiece::get_min_argmin_label_state_position_onePiece(unsigned int pos
 
 void ListPiece::show()
 {
-  std::cout << "HEAD      " << head << std::endl;
-  std::cout << "CURRENTPI " << currentPiece << std::endl;
-  std::cout << "LASTPIECE " << lastPiece << std::endl;
+  std::cout << "    HEAD      " << head << std::endl;
+  std::cout << "    CURRENTPI " << currentPiece << std::endl;
+  std::cout << "    LASTPIECE " << lastPiece << std::endl;
   head -> show();
 }
