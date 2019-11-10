@@ -8,7 +8,10 @@
 %\VignetteIndexEntry{An Introduction to gfpop}
 --> 
 
-DANGER : code broken in October in preparation for big update! The new implementation makes possible the use of non-gaussian cost functions.
+DANGER : code broken in November in preparation for big update! The new implementation makes possible the use of non-gaussian cost functions.
+
+GFPOP WITH GAUSSIAN COST: A stable implementation is available [here](https://github.com/vrunge/gfpop/tree/747862d953dd9fed0cea01c4f3ea806e12ea9ca4)
+
 
 
 # gfpop Vignette
