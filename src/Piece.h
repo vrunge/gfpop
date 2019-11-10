@@ -49,7 +49,6 @@ class Piece
 
     void show();
 
-
 };
 
 std::ostream &operator>>(std::ostream &flux, Piece* piece);

@@ -33,7 +33,6 @@ Piece::~Piece()
 }
 
 
-
 //####### copy #######////####### copy #######////####### copy #######//
 //####### copy #######////####### copy #######////####### copy #######//
 
@@ -41,7 +40,6 @@ Piece* Piece::copy()
 {
   return(new Piece(this));
 }
-
 
 
 //####### getMin #######////####### getMin #######////####### getMin #######//
@@ -463,11 +461,12 @@ void Piece::show()
   if(tmp == NULL){std::cout << "#NULL EMPTY POINTER# "<< std::endl;}
   else
   {
-    std::cout << tmp;
+    std::cout << "          " << tmp;
     std::cout << " #LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " << tmp -> m_info.getPosition() << " ";
     std::cout << "#INTERVAL# "<< tmp -> m_interval.geta() << " to " << tmp -> m_interval.getb() << " ";
     showCost(tmp -> m_cost);
   }
+  if(tmp -> nxt != NULL){tmp -> nxt -> show();}else{std::cout << "THE-END" << std::endl;}
 }
 
 
