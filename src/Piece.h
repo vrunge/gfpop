@@ -43,7 +43,7 @@ class Piece
     Piece* piece1(Piece* Q1, Piece* Q2, Interval interToPaste, Interval interRoots, int& Q2_Minus_Q1);
     Piece* piece2(Piece* Q1, Piece* Q2, Interval interToPaste, Interval interRoots, int& Q2_Minus_Q1);
 
-    double* get_min_argmin_label_state_position();
+    void get_min_argmin_label_state_position(double* response);
     ///
     ///
 

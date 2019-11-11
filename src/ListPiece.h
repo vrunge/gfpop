@@ -47,8 +47,8 @@ public:
   void operatorDw(ListPiece const& LP_edge, unsigned int newLabel, unsigned int parentState);
 
   ///////  get info ///////
-  double* get_min_argmin_label_state_position_ListPiece();
-  double* get_min_argmin_label_state_position_onePiece(unsigned int position, Interval constrainedInterval, bool& forced);
+  void get_min_argmin_label_state_position_ListPiece(double* response);
+  void get_min_argmin_label_state_position_onePiece(double* response, unsigned int position, Interval constrainedInterval, bool& forced);
 
   void show();
 

@@ -106,51 +106,27 @@ void Omega::gfpop(Data const& data)
   n = data.getn(); // data length
 	initialize_LP_ts(n); // Initialize LP_ts Piece : size LP_ts (n+1) x p
 
-	for(unsigned int t = 0; t < 1; t++) // loop for all data point
+	for(unsigned int t = 0; t < n; t++) // loop for all data point
 	{
-	  std::cout << t << "-----------------------------------------------------------------------------------------------------------------------" << std::endl;
+	  //std::cout << t << "-----------------------------------------------------------------------------------------------------------------------" << std::endl;
 	  LP_edges_operators(t); // fill_LP_edges. t = newLabel to consider
     LP_edges_addPointAndPenalty(myData[t]); // Add new data point and penalty
 
     ////////////////
     ////////////////
-    std::cout << std::endl;
-    std::cout << "  LP_edgesLP_edgesLP_edgesLP_edgesLP_edgesLP_edges "<< t<< std::endl;
-    for(unsigned int i = 0; i < q; i++) /// loop for all q edges
-    {
-      std::cout << "  type " << m_graph.getEdge(i).getConstraint() << std::endl;
-      std::cout << "  states " << m_graph.getEdge(i).getState1() << " and " << m_graph.getEdge(i).getState2() << std::endl;
-      LP_edges[i].show();
-    }
+    //std::cout << std::endl;
+    //std::cout << "  LP_edgesLP_edgesLP_edgesLP_edgesLP_edgesLP_edges "<< t<< std::endl;
+    //for(unsigned int i = 0; i < q; i++) /// loop for all q edges
+    //{
+    //  std::cout << "  type " << m_graph.getEdge(i).getConstraint() << std::endl;
+    //  std::cout << "  states " << m_graph.getEdge(i).getState1() << " and " << m_graph.getEdge(i).getState2() << std::endl;
+    //  LP_edges[i].show();
+    //}
     ////////////////
     ////////////////
 
 	  LP_t_new_multipleMinimization(t); // multiple_minimization
 	}
-
-	////////////////
-	////////////////
-	int t = 1;
-	std::cout << t << "-----------------------------------------------------------------------------------------------------------------------" << std::endl;
-	LP_edges_operators(t); // fill_LP_edges. t = newLabel to consider
-	LP_edges_addPointAndPenalty(myData[t]); // Add new data point and penalty
-
-	////////////////
-	////////////////
-	std::cout << std::endl;
-	std::cout << "  LP_edgesLP_edgesLP_edgesLP_edgesLP_edgesLP_edges "<< t<< std::endl;
-	for(unsigned int i = 0; i < q; i++) /// loop for all q edges
-	{
-	  std::cout << "  type " << m_graph.getEdge(i).getConstraint() << std::endl;
-	  std::cout << "  states " << m_graph.getEdge(i).getState1() << " and " << m_graph.getEdge(i).getState2() << std::endl;
-	  LP_edges[i].show();
-	}
-	////////////////
-	////////////////
-
-	LP_t_new_multipleMinimization(t); // multiple_minimization
-
-	std::cout << "FINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFINFIN"<< std::endl;
 
 	backtracking();
 }
@@ -198,18 +174,10 @@ void Omega::LP_t_new_multipleMinimization(unsigned int t)
   {
     while((k < q) && (m_graph.getEdge(k).getState2() == j))
     {
-      std::cout << std::endl;
-      std::cout << "  LP_t_new_multipleMinimization IN PROGRESS" << " before edge nb "<< k << " state " << j << std::endl;
-      LP_ts[t + 1][j].show();
-      std::cout << "    +++++++++++++MINIMUM2LP++++++++++++++" << std::endl;
-      LP_edges[k].show();
       LP_ts[t + 1][j].LP_ts_Minimization(LP_edges[k]);
       k = k + 1;
     }
   }
-  std::cout << "    LP_t_new_multipleMinimization RESULT " << std::endl;
-  LP_ts[t + 1][0].show();
-  std::cout << "    LP_t_new_multipleMinimization FIN " << std::endl;
 }
 
 
@@ -219,14 +187,17 @@ void Omega::LP_t_new_multipleMinimization(unsigned int t)
 void Omega::backtracking()
 {
   Interval constrainedInterval; // Interval to fit the constraints
-  double* malsp = LP_ts[n][0].get_min_argmin_label_state_position_ListPiece();
+
+  double* malsp = new double[5];
   double* malsp_temp = new double[5];
+  LP_ts[n][0].get_min_argmin_label_state_position_ListPiece(malsp);
 
   ///////////////////
   /// FINAL STATE ///
   ///////////////////
   unsigned int CurrentState = 0; // Current state
   unsigned int CurrentChgpt = n; // data(1)....data(n). Last data index in each segment
+  double CurrentGlobalCost;
   std::vector<unsigned int> endState = m_graph.getEndState();
 
   // IF no endState, all the states are endstates.
@@ -234,7 +205,7 @@ void Omega::backtracking()
   {
     for (unsigned int j = 1 ; j < p ; j++) // for all p states
     {
-      malsp_temp = LP_ts[n][j].get_min_argmin_label_state_position_ListPiece();
+      LP_ts[n][j].get_min_argmin_label_state_position_ListPiece(malsp_temp);
       if(malsp_temp[0] < malsp[0]){CurrentState = j; malsp[0] = malsp_temp[0];}
     }
   }
@@ -242,14 +213,14 @@ void Omega::backtracking()
   {
     for (unsigned int j = 0 ; j < endState.size() ; j++) // for all endState available
     {
-      malsp_temp = LP_ts[n][endState[j]].get_min_argmin_label_state_position_ListPiece();
+      LP_ts[n][endState[j]].get_min_argmin_label_state_position_ListPiece(malsp_temp);
       if(malsp_temp[0] < malsp[0]){CurrentState = endState[j]; malsp[0] = malsp_temp[0];}
     }
   }
 
   ///// with the best state
-  malsp = LP_ts[n][CurrentState].get_min_argmin_label_state_position_ListPiece();
-  globalCost = malsp[0];
+  LP_ts[n][CurrentState].get_min_argmin_label_state_position_ListPiece(malsp);
+  CurrentGlobalCost = malsp[0];
   parameters.push_back(malsp[1]); // = argmin
   changepoints.push_back(CurrentChgpt); // = n
   states.push_back(CurrentState); // = the best state
@@ -274,7 +245,8 @@ void Omega::backtracking()
     CurrentChgpt = malsp[2];
 
     //TO UPDATE: malsp[4] = position
-    malsp = LP_ts[(int) malsp[2]][(int) malsp[3]].get_min_argmin_label_state_position_onePiece((int) malsp[4], constrainedInterval, boolForced); ///update boolForced
+    LP_ts[(int) malsp[2]][(int) malsp[3]].get_min_argmin_label_state_position_onePiece(malsp, (int) malsp[4], constrainedInterval, boolForced); ///update boolForced
+    CurrentGlobalCost = CurrentGlobalCost - m_graph.findBeta(malsp[3], CurrentState);
 
     parameters.push_back(malsp[1]);
     changepoints.push_back(CurrentChgpt);
@@ -282,6 +254,7 @@ void Omega::backtracking()
     forced.push_back(boolForced);
   }
 
+  globalCost = CurrentGlobalCost;
   delete(malsp);
   delete(malsp_temp);
 }

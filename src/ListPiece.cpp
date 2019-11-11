@@ -271,8 +271,6 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     Piece* onePiece = new Piece();
     onePiece -> m_info = Track(newLabel, parentState, positionMin);
     onePiece -> m_interval = Interval(LP_state.head -> m_interval.geta(), LP_state.lastPiece -> m_interval.getb());
-    std::cout << "TTTTTTTTTTTTTTTTTTTT " << LP_state.head << "   "<< LP_state.lastPiece << std::endl;
-    std::cout << "TTTTTTTTTTTTTTTTTTTT " << LP_state.head -> m_interval.geta() << "   "<< LP_state.lastPiece -> m_interval.getb() << std::endl;
     onePiece -> addCostAndPenalty(Cost(), globalMin); /// Cost() = 0
     addFirstPiece(onePiece);
   }
@@ -405,11 +403,7 @@ void ListPiece::LP_ts_Minimization(ListPiece& LP_edge)
 {
   // Initialize LP_edge -> same range as this
   Interval newBounds = Interval(this -> head -> m_interval.geta(), this -> lastPiece -> m_interval.getb());
-  //std::cout << "newBoundsnewBoundsnewBoundsnewBoundsnewBoundsnewBoundsnewBounds" << std::endl;
-  //head -> show();
   LP_edge.setNewBounds(newBounds);
-  //head -> show();
-
 
   //"MOST OF THE TIME" : Q2 > Q1
   Piece* Q1 = head;  /// first Piece to compare
@@ -441,8 +435,7 @@ void ListPiece::LP_ts_Minimization(ListPiece& LP_edge)
     Q1 = Q1 -> nxt;
   }
 
-  ///UPDATE ListPiece LP_ts[t + 1][i]
-  reset();
+  reset(); ///UPDATE ListPiece LP_ts[t + 1][i]
   head = newHead;
   currentPiece = newHead;
   lastPiece = Q12;
@@ -588,13 +581,12 @@ void ListPiece::operatorDw(ListPiece const& LP_state, unsigned int newLabel, uns
 //####### min_argmin_label_state_position_final #######// //####### min_argmin_label_state_position_final #######// //####### min_argmin_label_state_position_final #######//
 ///We test all the Piece
 
-double* ListPiece::get_min_argmin_label_state_position_ListPiece()
+void ListPiece::get_min_argmin_label_state_position_ListPiece(double* response)
 {
-  double* response = new double[5];
   Piece* tmp = head;
 
   ///INITIALIZATION
-  double* currentResponse = tmp -> get_min_argmin_label_state_position();
+  tmp -> get_min_argmin_label_state_position(response);
   double current_min;
 
   tmp = tmp -> nxt;
@@ -603,37 +595,31 @@ double* ListPiece::get_min_argmin_label_state_position_ListPiece()
   while(tmp != NULL)
   {
     current_min = cost_minInterval(tmp -> m_cost, tmp -> m_interval);
-    if(current_min < currentResponse[0])
+    if(current_min < response[0])
     {
-      currentResponse = tmp -> get_min_argmin_label_state_position();
+      tmp -> get_min_argmin_label_state_position(response);
     }
     tmp = tmp -> nxt;
   }
-
-  response = currentResponse;
-
-  return(response);
 }
 
 //####### get_min_argmin_label_state_position_onePiece #######// //####### get_min_argmin_label_state_position_onePiece #######// //####### get_min_argmin_label_state_position_onePiece #######//
 //####### get_min_argmin_label_state_position_onePiece #######// //####### get_min_argmin_label_state_position_onePiece #######// //####### get_min_argmin_label_state_position_onePiece #######//
 ///We test all the Piece
 
-double* ListPiece::get_min_argmin_label_state_position_onePiece(unsigned int position, Interval constrainedInterval, bool& forced)
+void ListPiece::get_min_argmin_label_state_position_onePiece(double* response, unsigned int position, Interval constrainedInterval, bool& forced)
 {
-  double* response = new double[5];
   Piece* tmp = head;
   unsigned int nb = 1;
   while(nb < position){tmp = tmp -> nxt; nb = nb + 1;}
-  response = tmp -> get_min_argmin_label_state_position();
-  forced = true;
+  tmp -> get_min_argmin_label_state_position(response);
+  forced = false;
 
   if(constrainedInterval.isInside(response[1]) == false)
   {
     if(response[1] > constrainedInterval.getb()){response[1] = constrainedInterval.getb(); forced = true;}
     if(response[1] < constrainedInterval.geta()){response[1] = constrainedInterval.geta(); forced = true;}
   }
-  return(response);
 }
 
 /////////////////////////////////////////

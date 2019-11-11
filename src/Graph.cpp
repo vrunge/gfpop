@@ -88,6 +88,26 @@ double Graph::recursiveState(unsigned int s) const
   return(response);
 }
 
+
+// ### findBeta ### /// /// ### findBeta ### /// /// ### findBeta ### /// /// ### findBeta ### ///
+// ### findBeta ### /// /// ### findBeta ### /// /// ### findBeta ### /// /// ### findBeta ### ///
+
+double Graph::findBeta(unsigned int state1, unsigned int state2)
+{
+  double response = 0;
+  for (unsigned int i = 0 ; i < edges.size() ; i++)
+  {
+    if((edges[i].getState1() == state1) && (edges[i].getState2() == state2) && (edges[i].getConstraint() != "node"))
+    {
+      response = edges[i].getBeta();
+    }
+  }
+  return(response);
+}
+
+
+
+
 // ### show ### /// /// ### show ### /// /// ### show ### /// /// ### show ### ///
 // ### show ### /// /// ### show ### /// /// ### show ### /// /// ### show ### ///
 
