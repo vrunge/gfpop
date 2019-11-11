@@ -275,7 +275,7 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     addFirstPiece(onePiece);
   }
 
-  /*
+
   //################
   if(edge_ctt == "up")
   {
@@ -294,7 +294,7 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     reverseAndSetTrackPosition(length); ///reverse result
     if(edge_parameter > 0){shift(-edge_parameter);} ///edge_parameter = left decay
   }
-  */
+
 }
 
 //##### LP_edges_addPointAndPenalty #####//////##### LP_edges_addPointAndPenalty #####//////##### LP_edges_addPointAndPenalty #####///
@@ -509,6 +509,7 @@ void ListPiece::operatorUp(ListPiece const& LP_state, unsigned int newLabel, uns
     tmp = tmp -> nxt;
     counter = counter + 1;
   }
+  lastPiece = currentPiece;
 }
 
 
@@ -573,6 +574,7 @@ void ListPiece::operatorDw(ListPiece const& LP_state, unsigned int newLabel, uns
     tmp = tmp -> nxt;
     counter = counter + 1;
   }
+  lastPiece = currentPiece;
 }
 
 
