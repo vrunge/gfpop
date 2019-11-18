@@ -123,46 +123,36 @@ Node <- function(state = NULL, min = -Inf, max = Inf)
 
 graph <- function(..., type = "empty", decay = 1, gap = 0, penalty = 0, K = Inf, a = Inf, all.null.edges=TRUE)
 {
-  myNewGraph <- rbind(...)
-  if(is.null(myNewGraph)){
-    if(!is.double(penalty)){stop('penalty is not a double.')}
-    if(penalty < 0){stop('penalty must be nonnegative')}
-    myNewGraph <- data.frame(character(), character(), character(), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), stringsAsFactors = FALSE)
-    names(myNewGraph) <- c("state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max")
-
-    if(type == "std")
-    {
-      myNewGraph[1, ] <- Edge("Std", "Std", "null", decay = decay)
-      myNewGraph[2, ] <- Edge("Std", "Std", "std", penalty = penalty, K = K, a = a)
+  if(!is.double(penalty)){stop('penalty is not a double.')}
+  if(penalty < 0){stop('penalty must be nonnegative')}
+  myNewGraph <- if(type == "std"){
+    Edge("Std", "Std", "std", penalty = penalty, K = K, a = a)
+  }else if(type == "isotonic"){
+    Edge("Iso", "Iso", "up", gap = gap, penalty = penalty, K = K, a = a)
+  }else if(type == "updown"){
+    rbind(
+      Edge("Dw", "Up", "up", gap = gap, penalty = penalty, K = K, a = a),
+      Edge("Up", "Dw", "down", gap = gap, penalty = penalty, K = K, a = a))
+  }else if(type == "relevant"){
+    Edge("Std", "Std", "abs", gap = gap, penalty = penalty, K = K, a = a)
+  }else{#user-provided graph.
+    no.edge <- Edge(NA_character_, NA_character_)[0,]
+    dots.list <- list(...)
+    is.ok <- sapply(dots.list, function(df)identical(names(df), names(no.edge)))
+    i.bad <- which(!is.ok)
+    if(length(i.bad)){
+      stop(
+        "please use gfpop::Edge to specify graph, problem arguments: ",
+        paste(i.bad, collapse=", "))
     }
-
-    if(type == "isotonic")
-    {
-      myNewGraph[1, ] <- Edge("Iso", "Iso", "null", decay = decay)
-      myNewGraph[2, ] <- Edge("Iso", "Iso", "up", gap = gap, penalty = penalty, K = K, a = a)
-    }
-
-    if(type == "updown")
-    {
-      myNewGraph[1, ] <- Edge("Dw", "Dw", "null", decay = decay)
-      myNewGraph[2, ] <- Edge("Up", "Up", "null", decay = decay)
-      myNewGraph[3, ] <- Edge("Dw", "Up", "up", gap = gap, penalty = penalty, K = K, a = a)
-      myNewGraph[4, ] <- Edge("Up", "Dw", "down", gap = gap, penalty = penalty, K = K, a = a)
-    }
-
-    if(type == "relevant")
-    {
-      myNewGraph[1, ] <- Edge("Std", "Std", "null", decay = decay)
-      myNewGraph[2, ] <- Edge("Std", "Std", "abs", gap = gap, penalty = penalty, K = K, a = a)
-    }
-    myNewGraph <- type.list[[type]]
+    rbind(no.edge, ...)
   }
-  not.null <- subset(myNewGraph, ! type %in% c("null", "start", "end"))
-  if(isTRUE(all.null.edges) && 0<nrow(not.null)){
-    u.states <- with(not.null, unique(c(state1, state2)))
+  not.special <- subset(myNewGraph, ! type %in% c("null", "start", "end"))
+  if(isTRUE(all.null.edges) && 0<nrow(not.special)){
+    u.states <- with(not.special, unique(c(state1, state2)))
     myNewGraph <- rbind(
-      myNewGraph,
-      Edge(u.states, u.states, "null"))
+      subset(not.special, type != "null"),
+      Edge(u.states, u.states, "null", decay=decay))
   }
   class(myNewGraph) <- c("graph", "data.frame")
   myNewGraph

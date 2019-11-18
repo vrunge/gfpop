@@ -9,22 +9,30 @@ test_that("graph ok with no args", {
   expect_identical(nrow(g), 0L)
 })
 
+test_that("error for non-graph args", {
+  expect_error({
+    graph(data.frame(state1="foo", state2="bar"))
+  }, error="please use gfpop::Edge to specify graph, problem arguments: 1")
+})
+
 test_that("graph type=updown ok", {
   pen.val <- 1.1
   g <- graph(type="updown", penalty=pen.val)
   expect_is(g, "graph")
   expect_is(g, "data.frame")
-  expect_identical(g$state1, c("D", "U", "D", "U"))
-  expect_identical(g$state2, c("U", "D", "D", "U"))
+  D <- "Dw"
+  U <- "Up"
+  expect_identical(g$state1, c(D, U, D, U))
+  expect_identical(g$state2, c(U, D, D, U))
   expect_identical(g$type, c("up", "down", "null", "null"))
   expect_identical(g$penalty, c(pen.val, pen.val, 0, 0))
 })
 
 test_that("custom 3 state graph ok, default all null edges", {
   g <- graph(
-    Edge("Q", "R", "up",   1.5,  gap=1000),
-    Edge("R", "S", "down", 0,    gap=5000),
-    Edge("S", "Q", "up",   0,    gap=2000))
+    Edge("Q", "R", "up",   penalty=1.5,  gap=1000),
+    Edge("R", "S", "down", penalty=0,    gap=5000),
+    Edge("S", "Q", "up",   penalty=0,    gap=2000))
   expect_is(g, "graph")
   expect_is(g, "data.frame")
   expect_identical(g$state1, c("Q", "R", "S", "Q", "R", "S"))
@@ -36,9 +44,9 @@ test_that("custom 3 state graph ok, default all null edges", {
 
 test_that("custom 3 state graph with no null edges", {
   g <- graph(
-    Edge("Q", "R", "up",   1.5,  gap=1000),
-    Edge("R", "S", "down", 0,    gap=5000),
-    Edge("S", "Q", "up",   0,    gap=2000),
+    Edge("Q", "R", "up",   penalty=1.5,  gap=1000),
+    Edge("R", "S", "down", penalty=0,    gap=5000),
+    Edge("S", "Q", "up",   penalty=0,    gap=2000),
     all.null.edges=FALSE)
   expect_is(g, "graph")
   expect_is(g, "data.frame")
