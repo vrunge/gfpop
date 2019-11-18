@@ -33,7 +33,6 @@ Piece::~Piece()
 }
 
 
-
 //####### copy #######////####### copy #######////####### copy #######//
 //####### copy #######////####### copy #######////####### copy #######//
 
@@ -41,7 +40,6 @@ Piece* Piece::copy()
 {
   return(new Piece(this));
 }
-
 
 
 //####### getMin #######////####### getMin #######////####### getMin #######//
@@ -177,7 +175,7 @@ Piece* Piece::pastePieceUp(const Piece* NXTPiece, Interval const& decrInter, Tra
     {
       double outputValue = cost_eval(NXTPiece -> m_cost, decrInter.getb());
       Piece* PieceOut = new Piece(newTrack, Interval(decrInter.getb(), NXTPiece -> m_interval.getb()), Cost());
-      addmyConstant(PieceOut -> m_cost, outputValue);
+      addConstant(PieceOut -> m_cost, outputValue);
       BUILD -> nxt = PieceOut;
       BUILD = PieceOut;
     }
@@ -226,7 +224,7 @@ Piece* Piece::pastePieceDw(const Piece* NXTPiece, Interval const& decrInter, Tra
     {
       double outputValue = cost_eval(NXTPiece -> m_cost, decrInter.geta());
       Piece* PieceOut = new Piece(newTrack, Interval(decrInter.geta(), NXTPiece -> m_interval.geta()), Cost());
-      addmyConstant(PieceOut -> m_cost, outputValue);
+      addConstant(PieceOut -> m_cost, outputValue);
       BUILD -> nxt = PieceOut;
       BUILD = PieceOut;
     }
@@ -263,6 +261,8 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
   if((interRoots.geta() > interToPaste.geta() + 1e-12)&&(interRoots.geta() + 1e-12 < interToPaste.getb())){change = change + 1;}
   if((interRoots.getb() > interToPaste.geta() + 1e-12)&&(interRoots.getb() + 1e-12 < interToPaste.getb())){change = change + 1;}
 
+
+
   ///Security steps: length interRoots very small < 1e-12
   if(interRoots.getb() - interRoots.geta() < 1e-12)
   {
@@ -295,8 +295,7 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
 
   //CONSTRUCTION outPiece
   ///Need of a last "OUT" Piece if we have reached the end of the Piece Q1 or Piece Q2
-  if((((Q2_Minus_Q1 == 1) && (Bound_Q2_Minus_Q1 >= 0))
-   || ((Q2_Minus_Q1 == -1) && (Bound_Q2_Minus_Q1 <= 0)))
+  if((((Q2_Minus_Q1 == 1) && (Bound_Q2_Minus_Q1 >= 0)) || ((Q2_Minus_Q1 == -1) && (Bound_Q2_Minus_Q1 <= 0)))
        && (interToPaste.getb() != M))
   {
     Piece* outPiece = new Piece();
@@ -334,7 +333,6 @@ Piece* Piece::piece0(Piece* Q1, Piece* Q2, Interval interToPaste, int& Q2_Minus_
     Cost testCost = BUILD -> m_cost;
     if(Q2_Minus_Q1 == 1){test = isEqual(testCost, Q1 -> m_cost);}
     if(Q2_Minus_Q1 == -1){test = isEqual(testCost, Q2 -> m_cost);}
-    std::cout << "test " << test << " ----------------- " << Q2_Minus_Q1 << std::endl;
 
     if (test == true) ///Prolongation
     {
@@ -403,16 +401,17 @@ Piece* Piece::piece1(Piece* Q1, Piece* Q2, Interval interToPaste, Interval inter
 
 Piece* Piece::piece2(Piece* Q1, Piece* Q2, Interval interToPaste, Interval interRoots, int& Q2_Minus_Q1)
 {
-  Piece* BUILD;
+  Piece* BUILD = this;
+
   //PROLONGATION theChangePoint
   //FIND the winner on the newpiece1 (the central piece defined on interval interRoots)
   double centerPoint = interRoots.internPoint();
   Cost costDiff = minusCost(Q2 -> m_cost, Q1 -> m_cost);
-  Q2_Minus_Q1 = -signValue(cost_eval(costDiff, centerPoint));///INVERSION!!!
+  Q2_Minus_Q1 = signValue(cost_eval(costDiff, centerPoint));///INVERSION!!!
 
+  Q2_Minus_Q1 = -Q2_Minus_Q1; ///INVERSION!!!
   if(Q2_Minus_Q1 == 1){BUILD -> m_cost = Q1 -> m_cost; BUILD -> m_info = Q1 -> m_info;}
   if(Q2_Minus_Q1 == -1){BUILD -> m_cost = Q2 -> m_cost; BUILD -> m_info = Q2 -> m_info;}
-
   BUILD -> m_interval.setb(interRoots.geta());
 
   //CONSTRUCTION newPiece1
@@ -424,7 +423,7 @@ Piece* Piece::piece2(Piece* Q1, Piece* Q2, Interval interToPaste, Interval inter
   BUILD -> nxt = newPiece1;
   BUILD = newPiece1;
 
-  Q2_Minus_Q1 = -Q2_Minus_Q1;
+  Q2_Minus_Q1 = -Q2_Minus_Q1;  ///INVERSION!!!
   //CONSTRUCTION newPiece2
   Piece* newPiece2 = new Piece();
   newPiece2 -> m_interval = Interval(interRoots.getb(), interToPaste.getb());
@@ -440,15 +439,13 @@ Piece* Piece::piece2(Piece* Q1, Piece* Q2, Interval interToPaste, Interval inter
 //####### get_min_argmin_label_state_position #######// //####### get_min_argmin_label_state_position #######// //####### get_min_argmin_label_state_position #######//
 //####### get_min_argmin_label_state_position #######// //####### get_min_argmin_label_state_position #######// //####### get_min_argmin_label_state_position #######//
 
-double* Piece::get_min_argmin_label_state_position()
+void Piece::get_min_argmin_label_state_position(double* response)
 {
-  double* response = new double[5];
   response[0] = cost_minInterval(this -> m_cost, this -> m_interval);
   response[1] = cost_argmin(this -> m_cost);
   response[2] = this -> m_info.getLabel();
   response[3] = this -> m_info.getState();
   response[4] = this -> m_info.getPosition();
-  return(response);
 }
 
 
@@ -463,11 +460,12 @@ void Piece::show()
   if(tmp == NULL){std::cout << "#NULL EMPTY POINTER# "<< std::endl;}
   else
   {
-    std::cout << tmp;
+    std::cout << "          " << tmp;
     std::cout << " #LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " << tmp -> m_info.getPosition() << " ";
-    std::cout << "#INTERVAL# "<< tmp -> m_interval.geta() << " to " << tmp -> m_interval.getb() << " ";
-    showCost(tmp ->m_cost);
+    std::cout << " #INTERVAL# "<< tmp -> m_interval.geta() << " to " << tmp -> m_interval.getb() << " ";
+    showCost(tmp -> m_cost);
   }
+  if(tmp -> nxt != NULL){tmp -> nxt -> show();}
 }
 
 

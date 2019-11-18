@@ -1,4 +1,4 @@
-//#include <iostream>
+#include <iostream>
 #include <string>
 #include<math.h>
 
@@ -91,7 +91,7 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   Rcpp::NumericVector maxx = mygraph["max"];
 
   for(int i = 0 ; i < mygraph.nrow(); i++)
-  {graph << Edge(state1[i], state2[i], typeEdge[i], fabs(parameter[i]), penalty[i], fabs(KK[i]), fabs(aa[i]), minn[i], maxx[i]);}
+    {graph << Edge(state1[i], state2[i], typeEdge[i], fabs(parameter[i]), penalty[i], fabs(KK[i]), fabs(aa[i]), minn[i], maxx[i]);}
 
 
   //graph.show();
@@ -136,7 +136,7 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
     _["forced"] = omega.GetForced(),
     _["param"] = omega.GetParameters(),
     _["cost"] = omega.GetGlobalCost()
-  );
+);
 
   return res;
 }

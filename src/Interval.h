@@ -1,3 +1,6 @@
+//  GPL-3 License
+// Copyright (c) 2019 Vincent Runge
+
 #ifndef INTERVAL_H
 #define INTERVAL_H
 

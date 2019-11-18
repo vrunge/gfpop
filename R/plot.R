@@ -10,7 +10,7 @@ plot.gfpop <- function(x, ..., data)
   n <- 1:length(data)
   p <- length(x$changepoints)
   xbis <- c(1, x$changepoints)
-  y <- x$means
+  y <- x$parameters
 
   plot(1:length(data), data, pch = '+')
   for(i in 1:p)

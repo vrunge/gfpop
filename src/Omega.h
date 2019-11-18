@@ -28,8 +28,8 @@ class Omega
     void gfpop(Data const& data);
 
     ///////////////
-    void LP_edges_operators(unsigned int newLabel);
-    void LP_edges_addPointAndPenalty(Point  const& pt);
+    void LP_edges_operators(unsigned int t);
+    void LP_edges_addPointAndPenalty(Point const& pt);
     void LP_t_new_multipleMinimization(unsigned int t);
     void backtracking();
     void show();

@@ -4,7 +4,8 @@
 \alias{graph}
 \title{Graph generation}
 \usage{
-graph(..., type = "empty", decay = 1, gap = 0, penalty = 0)
+graph(..., type = "empty", decay = 1, gap = 0, penalty = 0,
+  K = Inf, a = Inf)
 }
 \arguments{
 \item{...}{This is a list of edges definied by functions "Edge", "StartEnd" and "Node"}
@@ -16,6 +17,10 @@ graph(..., type = "empty", decay = 1, gap = 0, penalty = 0)
 \item{gap}{a nonnegative number to constrain the size of the gap in the change of state}
 
 \item{penalty}{a nonnegative number equals to the common penalty to use for all edges}
+
+\item{K}{a positive number. Threshold for the Biweight robust loss}
+
+\item{a}{a positive number. Slope for the Huber robust loss}
 }
 \value{
 a dataframe with 9 variables (columns are named "state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max") with additional "graph" class.

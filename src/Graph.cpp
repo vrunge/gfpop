@@ -62,7 +62,7 @@ std::vector<unsigned int> Graph::getEndState() const {return(endState);}
 
 Interval Graph::buildInterval(double argmin, unsigned int s1, unsigned int s2) const
 {
-  Interval response = Interval(-INFINITY, INFINITY);
+  Interval response = cost_interval();
 
   for (unsigned int i = 0 ; i < edges.size() ; i++)
   {
@@ -70,11 +70,11 @@ Interval Graph::buildInterval(double argmin, unsigned int s1, unsigned int s2) c
     {
       if(edges[i].getConstraint() == "up"){response.setb(argmin - edges[i].getParameter());}
       if(edges[i].getConstraint()  == "down"){response.seta(argmin + edges[i].getParameter());}
+      if(edges[i].getConstraint()  == "node"){response = response.intersection(Interval(edges[i].getMinn(), edges[i].getMaxx()));}
     }
   }
   return(response);
 }
-
 
 
 // ### recursiveState ### /// /// ### recursiveState ### /// /// ### recursiveState ### /// /// ### recursiveState ### ///
@@ -83,13 +83,32 @@ Interval Graph::buildInterval(double argmin, unsigned int s1, unsigned int s2) c
 double Graph::recursiveState(unsigned int s) const
 {
   double response =  1;
-  for (int i = edges.size() - 1 ; i > -1; i--)
+  for(unsigned int i = 0; i < edges.size(); i++)
   {
     if((edges[i].getState1() == s) && (edges[i].getState2() == s)){response = edges[i].getParameter();}
   }
-
   return(response);
 }
+
+
+// ### findBeta ### /// /// ### findBeta ### /// /// ### findBeta ### /// /// ### findBeta ### ///
+// ### findBeta ### /// /// ### findBeta ### /// /// ### findBeta ### /// /// ### findBeta ### ///
+
+double Graph::findBeta(unsigned int state1, unsigned int state2)
+{
+  double response = 0;
+  for (unsigned int i = 0 ; i < edges.size() ; i++)
+  {
+    if((edges[i].getState1() == state1) && (edges[i].getState2() == state2) && (edges[i].getConstraint() != "node"))
+    {
+      response = edges[i].getBeta();
+    }
+  }
+  return(response);
+}
+
+
+
 
 // ### show ### /// /// ### show ### /// /// ### show ### /// /// ### show ### ///
 // ### show ### /// /// ### show ### /// /// ### show ### /// /// ### show ### ///

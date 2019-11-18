@@ -1,8 +1,12 @@
+//  GPL-3 License
+// Copyright (c) 2019 Vincent Runge
+
 #ifndef GRAPH_H
 #define GRAPH_H
 
 #include"Edge.h"
 #include"Interval.h"
+#include"ExternFunctions.h"
 
 #include<vector>
 #include<string>
@@ -26,6 +30,7 @@ class Graph
 
     Interval buildInterval(double argmin, unsigned int s1, unsigned int s2) const;
     double recursiveState(unsigned int s) const;
+    double findBeta(unsigned int state1, unsigned int state2);
 
     void show() const;
 

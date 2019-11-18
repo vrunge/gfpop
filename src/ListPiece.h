@@ -23,15 +23,16 @@ public:
   void setNewBounds(Interval newBounds);
 
   void reset();
+  void copy(ListPiece  const& LP_edge);
+
   void reverseAndCount(unsigned int& length);
   void reverseAndSetTrackPosition(unsigned int length);
 
   void move();
   void initializeCurrentPiece();
 
-  void addCurrentPiecePlus1(Piece* newPiece);
+  void addCurrentPiecePlus1NotMove(Piece* newPiece);
   void addFirstPiece(Piece* newPiece);
-  void copy(ListPiece  const& LP_edge);
 
   void shift(double parameter);
   void expDecay(double gamma);
@@ -41,10 +42,13 @@ public:
   void LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt);
   void LP_ts_Minimization(ListPiece& LP_edge);
 
+  ///////  operators up and down ///////
   void operatorUp(ListPiece const& LP_edge, unsigned int newLabel, unsigned int parentState);
   void operatorDw(ListPiece const& LP_edge, unsigned int newLabel, unsigned int parentState);
 
-  double* get_min_argmin_label_state_position_ListPiece();
+  ///////  get info ///////
+  void get_min_argmin_label_state_position_ListPiece(double* response);
+  void get_min_argmin_label_state_position_onePiece(double* response, unsigned int position, Interval constrainedInterval, bool& forced);
 
   void show();
 
