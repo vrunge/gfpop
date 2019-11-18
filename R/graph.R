@@ -190,17 +190,9 @@ typeOfGraph <- function(mygraph)
 graphReorder <- function(mygraph)
 {
   ### BUILD an ordered Graph : myOrderedGraph ###
-<<<<<<< HEAD
-  ##separate startend from vertices
-  is.edge <- !is.na(mygraph$penalty)
-  graphNA <- mygraph[!is.edge,] ## Start End nodes and range values nodes
-  graphVtemp <-  mygraph[is.edge,] ## Edges of the graph
-
-=======
   ##separate start, end, node from vertices
   graphNA <- mygraph[is.na(mygraph[,5]),] ## Start End nodes and range values nodes
   graphVtemp <-  mygraph[!is.na(mygraph[,5]),] ## Edges of the graph
->>>>>>> c96e84296e13478f4b846e569bf01fe7b9eec267
   myVertices <- unique(c(graphVtemp[,1], graphVtemp[,2]))
 
   if(!all(is.element(mygraph[is.na(mygraph[,5]), 1], myVertices))){stop("Some start-end-node names not related to edges")}
@@ -221,17 +213,7 @@ graphReorder <- function(mygraph)
 
   ##create a new graph
   myNewGraph <- graph()
-<<<<<<< HEAD
-
-  selectNull <- graphV$type == "null" ### => penalty = 0
-
-  ## tdhock 17 Oct 2019: vrunge can you please clarify the code below
-  ## by changing the numeric column index to a name? penalty is column
-  ## 4, and parameter is column 5... which one do you want to set
-  ## here?
-=======
   selectNull <- graphV[, 3] == "null" ### => penalty = 0
->>>>>>> c96e84296e13478f4b846e569bf01fe7b9eec267
   graphV[selectNull, 5] <- -1 #set penalty to -1
 
   for(vertex in myVertices)
