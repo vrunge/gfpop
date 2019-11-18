@@ -15,17 +15,29 @@ test_that("error for non-graph args", {
   }, error="please use gfpop::Edge to specify graph, problem arguments: 1")
 })
 
+D <- "Dw"
+U <- "Up"
+pen.val <- 1.1
 test_that("graph type=updown ok", {
-  pen.val <- 1.1
   g <- graph(type="updown", penalty=pen.val)
   expect_is(g, "graph")
   expect_is(g, "data.frame")
-  D <- "Dw"
-  U <- "Up"
   expect_identical(g$state1, c(D, U, D, U))
   expect_identical(g$state2, c(U, D, D, U))
   expect_identical(g$type, c("up", "down", "null", "null"))
   expect_identical(g$penalty, c(pen.val, pen.val, 0, 0))
+})
+
+test_that("graph type=updown with StartEnd ok", {
+  g <- rbind(
+    graph(type="updown", penalty=pen.val),
+    StartEnd(D, D))
+  expect_is(g, "graph")
+  expect_is(g, "data.frame")
+  expect_identical(g$state1, c(D, U, D, U, D, D))
+  expect_identical(g$state2, c(U, D, D, U, NA, NA))
+  expect_identical(g$type, c("up", "down", "null", "null", "start", "end"))
+  expect_identical(g$penalty, c(pen.val, pen.val, 0, 0, NA, NA))
 })
 
 test_that("custom 3 state graph ok, default all null edges", {

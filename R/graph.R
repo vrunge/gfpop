@@ -17,24 +17,25 @@
 #' Edge("Dw", "Up", "up", gap = 1, penalty = 10, K = 3)
 Edge <- function(state1, state2, type = "null", decay = 1, gap = 0, penalty = 0, K = Inf, a = Inf)
 {
-  ############
-  ### STOP ###
-  ############
-  if(type != "null" && type != "std" && type != "up" && type != "down" && type != "abs")
-  {stop('type=', type, ' but must be one of "null", "std", "up", "down", "abs".')}
+  allowed.types <- c("null", "std", "up", "down", "abs", "start", "end")
+  if(!type %in% allowed.types){
+    stop(
+      'type must be one of: ',
+      paste(allowed.types, collapse=", "))
+  }
   if(!is.double(penalty)){stop('penalty is not a double.')}
   if(!is.double(decay)){stop('decay is not a double.')}
   if(!is.double(gap)){stop('gap is not a double.')}
   if(!is.double(penalty)){stop('penalty is not a double.')}
   if(!is.double(K)){stop('K is not a double.')}
   if(!is.double(a)){stop('a is not a double.')}
-  if(penalty < 0){stop('penalty must be nonnegative')}
-  if(decay < 0){stop('decay must be nonnegative')}
-  if(type == "null"){if(decay == 0){stop('decay must be non-zero')}}
-  if(gap < 0){stop('gap must be nonnegative')}
-  if(penalty < 0){stop('penalty must be nonnegative')}
-  if(K <= 0){stop('K must be positive')}
-  if(a < 0){stop('a must be nonnegative')}
+  if(any(penalty < 0, na.rm=TRUE)){stop('penalty must be nonnegative')}
+  if(any(decay < 0, na.rm=TRUE)){stop('decay must be nonnegative')}
+  if(any(type == "null" && decay == 0, na.rm=TRUE))stop(
+    'decay must be non-zero')
+  if(any(gap < 0, na.rm=TRUE)){stop('gap must be nonnegative')}
+  if(any(K <= 0, na.rm=TRUE)){stop('K must be positive')}
+  if(any(a < 0, na.rm=TRUE)){stop('a must be nonnegative')}
   if(type == "null"){parameter <- decay}else{parameter <- gap}
   data.frame(
     state1, state2, type, penalty, parameter, K, a,
@@ -58,20 +59,9 @@ StartEnd <- function(start = NULL, end = NULL)
   ### delete repetitions if any
   start <- unique(start)
   end <- unique(end)
-
-  df <- data.frame(character(), character(), character(), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), stringsAsFactors = FALSE)
-  colnames(df) <- c("state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max")
-  if(length(start) != 0)
-  {
-    for(i in 1:length(start))
-      {df[i,] <- list(start[i], NA, "start", NA, NA, NA, NA, NA, NA)}
-  }
-  if(length(end) != 0)
-  {
-    for(i in 1:length(end))
-      {df[i + length(start),] <- list(end[i], NA, "end", NA, NA, NA, NA, NA, NA)}
-  }
-  return(df)
+  rbind(
+    Edge(start, NA, "start", decay=NA_real_, gap=NA_real_, penalty=NA_real_, K=NA_real_, a=NA_real_),
+    Edge(end, NA, "end", decay=NA_real_, gap=NA_real_, penalty=NA_real_, K=NA_real_, a=NA_real_))
 }
 
 
