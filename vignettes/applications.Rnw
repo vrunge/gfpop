@@ -28,7 +28,6 @@ knitr::opts_chunk$set(
 <<ecg, results="asis">>=
 
 data(ECG, package="gfpop")
-
 arg.list <- list(
   list("b", "Q",      "down", 8000000, gap=0),
   list("Q",       "R",      "up",   0,        gap=2000),
@@ -44,6 +43,10 @@ arg.list <- list(
   list("y4",  "y5",   "down",   0,        gap=0, model=1),
   list("y5",    "b","up",   0,        gap=0))
 library(data.table)
+m <- function(x){
+  factor(x, c("previous", "changepoint"), c(
+    "Previous model", "Proposed models"))
+}
 model.dt.list <- list(
   previous=ECG$PanTompkins[, data.table(
     n.states=NA, 
@@ -85,10 +88,6 @@ for(states in names(select.vec.list)){
     states,
     time=as.numeric(rbind(timeStart-0.5, timeEnd+0.5)),
     mean=as.numeric(rbind(mean, mean)))]
-  m <- function(x){
-    factor(x, c("previous", "changepoint"), c(
-      "Previous model", "Proposed models"))
-  }
   model.dt.list[[states]] <- segments.dt[, data.table(
     n.states, 
     states,
@@ -214,9 +213,9 @@ tall.dt <- melt(
   over.dt,
   measure.vars=c("Multimodal", "AR1"),
   variable.name="model")
-tall.dt[, change.after := c(diff(value), NA)]
-tall.dt[, seconds.after := c(start.seconds[-1], NA)]
-tall.dt[, spike.i := cumsum(change.after < 0)]
+tall.dt[, change.after := c(diff(value), NA), by=model]
+tall.dt[, seconds.after := c(start.seconds[-1], NA), by=model]
+tall.dt[, spike.i := cumsum(change.after > 0), by=model]
 tall.dt[, thresh := ifelse(model=="Multimodal", 0, 0)]
 m <- function(model){
   factor(
@@ -291,10 +290,6 @@ gg.out <- ggplot()+
       type="model",
       tall.dt[xmin < start.seconds & start.seconds < xmax]),
     size=0.5)+
-  geom_point(aes(
-    mid.seconds, spike.y, color=type),
-    shape=1,
-    data=data.table(type="model", show.spikes))+
   scale_y_continuous(
     "Fluorescence intensity
 (Measure of neural activity)",
@@ -314,6 +309,13 @@ gg.out <- ggplot()+
         hjust=1, x=169.5, y=5, label="Mean model", type="model"),
       data.table(
         hjust=1, x=169.4, y=spike.y, label="Predicted spikes", type="model"))))
+if(nrow(show.spikes)){
+  gg.out <- gg.out+
+    geom_point(aes(
+      mid.seconds, spike.y, color=type),
+      shape=1,
+      data=data.table(type="model", show.spikes))
+}    
 ##png("figure-AR1-multimodal.png", 7, 2.5, units="in", res=300)
 print(gg.out)
 ##dev.off()
@@ -326,14 +328,15 @@ print(gg.out)
 
 library(data.table)
 data(profile614chr2, package="gfpop")
-profile614chr2$probes[, change.after := floor(c(diff(position)/2+position[-.N], NA)) ]
+profile614chr2$probes[, change.after := floor(
+  c(diff(position)/2+position[-.N], NA)) ]
 sngraph <- function(n.segs, type, gap){
   stopifnot(is.integer(n.segs), length(n.segs)==1, n.segs >= 1)
   s <- n.segs-1
   seg.vec <- 1:s
   gfpop::graph(
     gfpop::StartEnd(start=0, end=s),
-    if(1 < n.segs)gfpop::Edge(seg.vec-1, seg.vec, type, gap=gap))
+    gfpop::Edge(seg.vec-1, seg.vec, type, gap=gap))
 }
 select.dt <- rbind(
   data.table(n.segments=c(3, 7, 13), graph.name="std", gap=0),
@@ -364,15 +367,18 @@ some.change[, change := segStart]
 err.dt <- some.segs[, {
   change.dt <- .SD[min(segStart) < segStart]
   change.dt[, change := segStart]
-  model.dt <- .SD[min(segStart)==segStart]
+  change.dt[, prob := 1]
+  change.dt[, nseg := n.segments]
+  model.dt <- data.table(nseg=n.segments, prob=1)
   penaltyLearning::labelError(
-    data.table(prob=1, model.dt),
+    model.dt,
     data.table(prob=1, profile614chr2$labels),
-    data.table(prob=1, change.dt),
+    change.dt,
     change.var="change",
+    model.vars="nseg",
     label.vars=c("labelStart", "labelEnd"),
     problem.vars="prob")$label.errors
-}, by=list(graph.name)]
+}, by=list(graph.name, n.segments)]
 
 err.dt[, list(
   fp=sum(fp),
