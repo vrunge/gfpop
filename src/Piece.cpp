@@ -96,7 +96,14 @@ Interval Piece::intervalMinLessUp(double bound, double currentValue, bool constP
       }
     }
   }
-
+  if(currentValue == mini)
+  {
+    if(isConstant(m_cost) == true)
+    {
+      response.seta(bound);
+      response.setb(INFINITY);
+    }
+  }
   return(response);
 }
 
@@ -104,7 +111,6 @@ Interval Piece::intervalMinLessUp(double bound, double currentValue, bool constP
 
 //####### intervalMinLessDw #######////####### intervalMinLessDw #######////####### intervalMinLessDw #######//
 //####### intervalMinLessDw #######////####### intervalMinLessDw #######////####### intervalMinLessDw #######//
-
 
 Interval Piece::intervalMinLessDw(double bound, double currentValue, bool constPiece)
 {
@@ -114,7 +120,7 @@ Interval Piece::intervalMinLessDw(double bound, double currentValue, bool constP
   if(currentValue > mini) /// otherwise currentValue constant doesn't intersect Piece cost
   {
     double argmini = cost_argmin(m_cost);
-    if(bound < argmini) /// otherwise currentValue constant doesn't intersect Piece cost
+    if(bound > argmini) /// otherwise currentValue constant doesn't intersect Piece cost
     {
       if(constPiece == true)
       {
@@ -134,7 +140,14 @@ Interval Piece::intervalMinLessDw(double bound, double currentValue, bool constP
       }
     }
   }
-
+  if(currentValue == mini) /// otherwise currentValue constant doesn't intersect Piece cost
+  {
+    if(isConstant(m_cost) == true)
+    {
+      response.seta(INFINITY);
+      response.setb(bound);
+    }
+  }
   return(response);
 }
 
@@ -223,7 +236,7 @@ Piece* Piece::pastePieceDw(const Piece* NXTPiece, Interval const& decrInter, Tra
     if(!((NXTPiece -> nxt == NULL) && (decrInter.geta() == NXTPiece -> m_interval.geta())))
     {
       double outputValue = cost_eval(NXTPiece -> m_cost, decrInter.geta());
-      Piece* PieceOut = new Piece(newTrack, Interval(decrInter.geta(), NXTPiece -> m_interval.geta()), Cost());
+      Piece* PieceOut = new Piece(newTrack, Interval(NXTPiece -> m_interval.geta(), decrInter.geta()), Cost());
       addConstant(PieceOut -> m_cost, outputValue);
       BUILD -> nxt = PieceOut;
       BUILD = PieceOut;
@@ -442,7 +455,7 @@ Piece* Piece::piece2(Piece* Q1, Piece* Q2, Interval interToPaste, Interval inter
 void Piece::get_min_argmin_label_state_position(double* response)
 {
   response[0] = cost_minInterval(this -> m_cost, this -> m_interval);
-  response[1] = cost_argmin(this -> m_cost);
+  response[1] = cost_argminBacktrack(this -> m_cost);
   response[2] = this -> m_info.getLabel();
   response[3] = this -> m_info.getState();
   response[4] = this -> m_info.getPosition();

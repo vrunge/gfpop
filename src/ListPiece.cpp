@@ -191,16 +191,17 @@ void ListPiece::initializeCurrentPiece()
 
 void ListPiece::shift(double parameter)
 {
-  currentPiece = head;
+  Interval inter;
+  initializeCurrentPiece();
   while(currentPiece != NULL)
   {
     ///MOVE bounds
-    Interval inter = currentPiece -> m_interval;
+    inter = currentPiece -> m_interval;
     currentPiece -> m_interval.seta(cost_interShift(inter.geta(), parameter));
     currentPiece -> m_interval.setb(cost_interShift(inter.getb(), parameter));
     ///MOVE Cost
     cost_shift(currentPiece -> m_cost, parameter);
-    currentPiece = currentPiece -> nxt;
+    move();
   }
 }
 
@@ -210,16 +211,17 @@ void ListPiece::shift(double parameter)
 
 void ListPiece::expDecay(double gamma)
 {
-  currentPiece = head;
+  Interval inter;
+  initializeCurrentPiece();
   while(currentPiece != NULL)
   {
     ///MOVE bounds
-    Interval inter = currentPiece -> m_interval;
+    inter = currentPiece -> m_interval;
     currentPiece -> m_interval.seta(cost_interExpDecay(inter.geta(), gamma));
     currentPiece -> m_interval.setb(cost_interExpDecay(inter.getb(), gamma));
     ///MOVE Cost
     cost_expDecay(currentPiece -> m_cost, gamma);
-    currentPiece = currentPiece -> nxt;
+    move();
   }
 }
 
@@ -279,7 +281,20 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
   //################
   if(edge_ctt == "up")
   {
+    //std::cout << std::endl;
+    //std::cout << std::endl;
+    //std::cout << "UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 " << std::endl;
+    //std::cout << "UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 " << std::endl;
+    //LP_state.show();
     operatorUp(LP_state, newLabel, parentState);
+    //std::cout << "UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 " << std::endl;
+    //std::cout << "UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 " << std::endl;
+    //show();
+    //std::cout << "UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 " << std::endl;
+    //std::cout << "UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 " << std::endl;
+    //std::cout << std::endl;
+    //std::cout << std::endl;
+
     if(edge_parameter > 0){shift(edge_parameter);} ///edge_parameter = right decay
   }
 
@@ -290,8 +305,23 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     LP_stateCopy.copy(LP_state);
     unsigned int length = 0;
     LP_stateCopy.reverseAndCount(length); ///reverse LP_stateCopy
-    operatorUp(LP_stateCopy, newLabel, parentState); ///down operations
+
+    //std::cout << std::endl;
+    //std::cout << std::endl;
+    //std::cout << "DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 " << std::endl;
+    //std::cout << "DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 " << std::endl;
+    //LP_stateCopy.show();
+    operatorDw(LP_stateCopy, newLabel, parentState); ///down operations
+    //std::cout << "DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 " << std::endl;
+    //std::cout << "DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 " << std::endl;
+    //show();
+    //std::cout << "DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 " << std::endl;
+    //std::cout << "DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 " << std::endl;
+    //std::cout << std::endl;
+    //std::cout << std::endl;
+
     reverseAndSetTrackPosition(length); ///reverse result
+
     if(edge_parameter > 0){shift(-edge_parameter);} ///edge_parameter = left decay
   }
 
@@ -455,14 +485,13 @@ void ListPiece::LP_ts_Minimization(ListPiece& LP_edge)
 void ListPiece::operatorUp(ListPiece const& LP_state, unsigned int newLabel, unsigned int parentState)
 {
   /// variable definition
-  Piece* tmp; ///to follow LP_edge List
+  Piece* tmp; ///to follow LP_state List
   double currentValue; ///for the ListPiece to build, last current value
   double rightBound; ///value at the (right) bound of the last build interval. Up case
   bool constPiece; ///has the Piece to build constant cost?
   unsigned int counter = 1; ///number of the considered Piece in LP_edge
   Track trackUp = Track(newLabel, parentState, counter);
-  Interval decreasingInterval = Interval(); /// for interval building
-
+  Interval decreasingInterval; /// for interval building
 
   //////////////////
   ///First Piece head
@@ -483,10 +512,10 @@ void ListPiece::operatorUp(ListPiece const& LP_state, unsigned int newLabel, uns
   addConstant(head -> m_cost, currentValue);
 
   /// bool constPiece : is the first Piece constant? If cost increasing at bound, constPiece = true
-  if(cost_argmin(tmp -> m_cost) <= rightBound){constPiece = true;}else{constPiece = false;}
+
+  if(cost_argmin(tmp -> m_cost) <= rightBound && isConstant(tmp -> m_cost) == false){constPiece = true;}else{constPiece = false;}
 
   initializeCurrentPiece(); ///currentPiece = head
-
   ///////////////////////////
 
   while(tmp != NULL)
@@ -520,7 +549,7 @@ void ListPiece::operatorUp(ListPiece const& LP_state, unsigned int newLabel, uns
 void ListPiece::operatorDw(ListPiece const& LP_state, unsigned int newLabel, unsigned int parentState)
 {
   /// variable definition
-  Piece* tmp; ///to follow LP_edge List
+  Piece* tmp; ///to follow LP_state List
   double currentValue; ///for the ListPiece to build, last current value
   double leftBound; ///value at the (left) bound of the last build interval. Down case
   bool constPiece; ///has the Piece to build constant cost?
@@ -548,7 +577,7 @@ void ListPiece::operatorDw(ListPiece const& LP_state, unsigned int newLabel, uns
   addConstant(head -> m_cost, currentValue);
 
   /// bool constPiece : is the first Piece constant? If cost increasing at bound, constPiece = true
-  if(cost_argmin(tmp -> m_cost) <= leftBound){constPiece = true;}else{constPiece = false;}
+  if(cost_argmin(tmp -> m_cost) >= leftBound && isConstant(tmp -> m_cost) == false){constPiece = true;}else{constPiece = false;}
 
   initializeCurrentPiece(); ///currentPiece = head
 
@@ -558,6 +587,8 @@ void ListPiece::operatorDw(ListPiece const& LP_state, unsigned int newLabel, uns
   {
     ///decreasingInterval for currentPiece to create based on current tmp
     decreasingInterval = tmp -> intervalMinLessDw(leftBound, currentValue, constPiece); ///"decreasing" interval
+    //std::cout << leftBound << " " << currentValue << " " << constPiece << std::endl;
+    //decreasingInterval.show();
     decreasingInterval = decreasingInterval.intersection(tmp -> m_interval); ///decreasingInterval = intersection of decreasingInterval (=intervalMinLess) and interval of  tmp
     if(decreasingInterval.isEmpty() == false){trackUp.setPosition(counter);}
 
@@ -627,7 +658,7 @@ void ListPiece::get_min_argmin_label_state_position_onePiece(double* response, u
 /////////////////////////////////////////
 /////////////////////////////////////////
 
-void ListPiece::show()
+void ListPiece::show() const
 {
   std::cout << "    HEAD      " << head << std::endl;
   std::cout << "    CURRENTPI " << currentPiece << std::endl;
