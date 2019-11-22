@@ -50,7 +50,7 @@ dataGenerator <- function(n, changepoints, parameters, type = "mean", sigma = 1,
   if(type == "variance"){vectData <- rnorm(n, 0, rep(sqrt(parameters), SegLength))}
   if(type == "poisson"){vectData <- rpois(n, rep(parameters, SegLength))}
   if(type == "exp"){vectData <- rexp(n, rep(parameters, SegLength))}
-  if(type == "negbin"){vectData <-rnbinom(n, size = 10, prob = rep(parameters, SegLength))}
+  if(type == "negbin"){vectData <-rnbinom(n, size = size, prob = rep(parameters, SegLength))}
 
   return(vectData)
 }

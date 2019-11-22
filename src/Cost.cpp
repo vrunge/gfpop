@@ -21,7 +21,6 @@ Cost::Cost(double* coeff)
 }
 
 void addConstant(Cost& cost, double& cst){cost.constant = cost.constant + cst;}
-
 void addCost(Cost& cost1, const Cost& cost2)
 {
   cost1.m_A = cost1.m_A + cost2.m_A;
@@ -75,14 +74,8 @@ double log_factorial(double n)
 
 double log_choose(double x, double n)
 {
-  if(n == x){
-    return 0;
-  } else if (x == 0 && n != 0){
-    return 0;
-  } else if(x == 1)
-  {
-    return log(n);
-  }
+  if(n == x){return(0);}else if(x == 0 && n != 0){return(0);}
+  else if(x == 1){return(log(n));}
   else
   {
     return(log_factorial(n) - log_factorial(x) - log_factorial(n - x));
@@ -91,7 +84,7 @@ double log_choose(double x, double n)
 
 //////////////
 //////////////
-//////////////
+////////////// COEFF + EVAL
 //////////////
 //////////////
 
@@ -102,7 +95,7 @@ double log_choose(double x, double n)
 ///variance cost = m_A*THETA - m_B*log(THETA) + constant
 /// poisson cost = m_A*THETA - m_B*log(THETA) + constant
 /// exp cost = m_A*THETA - m_B*log(THETA) + constant
-/// negbin cost = -m_A*log(THETA) - m_B*log(1-THETA) + constant
+/// negbin cost = - m_A*log(THETA) - m_B*log(1-THETA) + constant
 
 double* mean_coeff(Point const& pt)
 {
@@ -118,7 +111,7 @@ double* variance_coeff(Point const& pt)
   double* coeff = new double[3];
   coeff[0] = pt.w * pt.y * pt.y;
   coeff[1] = pt.w;
-  //coeff[2] = log(2*M_PI);
+  //coeff[2] = log(2 * M_PI);
   coeff[2] = 0;
   return(coeff);
 }
@@ -156,25 +149,26 @@ double* negbin_coeff(Point const& pt)
 
 double mean_eval(const Cost& cost, double value)
 {
-  double res = INFINITY;
+  double res = INFINITY; ///default case
   if(value != -INFINITY && value != INFINITY){res = cost.m_A * value * value + cost.m_B * value + cost.constant;}
-  if(cost.m_A == 0 && cost.m_B == 0){res = cost.constant;}
+  else if(cost.m_A == 0 && cost.m_B == 0){res = cost.constant;}
   return(res);
 }
 
 double variance_eval(const Cost& cost, double value)
 {
-  double res = INFINITY;
+  double res = INFINITY; ///default case
   if(value != 0 && value != INFINITY){res = cost.m_A * value - cost.m_B * log(value) + cost.constant;}
-  if(cost.m_A == 0 && cost.m_B == 0){res = cost.constant;}
+  else if(value == 0 && cost.m_B == 0){res = cost.constant;}
+  else if(cost.m_A == 0 && cost.m_B == 0){res = cost.constant;}
   return(res);
 }
 
 double negbin_eval(const Cost& cost, double value)
 {
-  double res = INFINITY;
+  double res = INFINITY; ///default case
   if(value != 0 && value != 1){res = - cost.m_A * log(value) - cost.m_B * log(1 - value) + cost.constant;}
-  if(cost.m_A == 0 && cost.m_B == 0){res = cost.constant;}
+  else if(cost.m_A == 0 && cost.m_B == 0){res = cost.constant;}
   return(res);
 }
 
@@ -190,24 +184,24 @@ double negbin_eval(const Cost& cost, double value)
 double mean_min(const Cost& cost)
 {
   double res = -INFINITY;
-  if(cost.m_A > 0){res = -(cost.m_B * cost.m_B/(4 * cost.m_A)) + cost.constant;}
-  if(cost.m_A == 0 && cost.m_B == 0){res = cost.constant;}
+  if(cost.m_A > 0){res = - (cost.m_B * cost.m_B/(4 * cost.m_A)) + cost.constant;}
+  else if(cost.m_A == 0 && cost.m_B == 0){res = cost.constant;}
   return(res);
 }
 
 double variance_min(const Cost& cost)
 {
   double res = -INFINITY;
-  if(cost.m_A != 0 && cost.m_B != 0){res = cost.m_B - cost.m_B * log(cost.m_B/cost.m_A) + cost.constant;}
-  if(cost.m_A == 0 && cost.m_B == 0){res = cost.constant;}
+  if(cost.m_A > 0 && cost.m_B > 0){res = cost.m_B - cost.m_B * log(cost.m_B/cost.m_A) + cost.constant;}
+  else if(cost.m_A >= 0 && cost.m_B == 0){res = cost.constant;}
   return(res);
 }
 
 double negbin_min(const Cost& cost)
 {
   double res = -INFINITY;
-  if(cost.m_A != 0 && cost.m_B != 0){res = - cost.m_A * log(cost.m_A/(cost.m_A + cost.m_B)) - cost.m_B * log(cost.m_B/(cost.m_A + cost.m_B)) + cost.constant;}
-  if(cost.m_A == 0 && cost.m_B == 0){res = cost.constant;}
+  if(cost.m_A > 0 && cost.m_B > 0){res = - cost.m_A * log(cost.m_A/(cost.m_A + cost.m_B)) - cost.m_B * log(cost.m_B/(cost.m_A + cost.m_B)) + cost.constant;}
+  else if(cost.m_A == 0 || cost.m_B == 0){res = cost.constant;}
   return(res);
 }
 
@@ -221,20 +215,20 @@ double mean_minInterval(const Cost& cost, Interval inter)
   //case m_A > 0
   if(cost.m_A > 0)
   {
-    minimum = -(cost.m_B * cost.m_B/(4 * cost.m_A)) + cost.constant;
-    double argmin = -cost.m_B/(2 * cost.m_A);
+    minimum = - (cost.m_B * cost.m_B/(4 * cost.m_A)) + cost.constant;
+    double argmin = - cost.m_B/(2 * cost.m_A);
     if(argmin < inter.geta()){minimum = cost.m_A * inter.geta() * inter.geta() + cost.m_B * inter.geta() + cost.constant;}
     if(argmin > inter.getb()){minimum = cost.m_A * inter.getb() * inter.getb() + cost.m_B * inter.getb() + cost.constant;}
   }
 
   //case m_A = 0 & m_B != 0
-  if((cost.m_A == 0) && (cost.m_B != 0))
+  else if((cost.m_A == 0) && (cost.m_B != 0))
   {
     if(cost.m_B > 0){minimum = cost.m_B * inter.geta() + cost.constant;}
       else{minimum = cost.m_B * inter.getb() + cost.constant;}
   }
   //case m_A = 0 & m_B = 0
-  if((cost.m_A == 0) && (cost.m_B == 0)){minimum = cost.constant;}
+  else if((cost.m_A == 0) && (cost.m_B == 0)){minimum = cost.constant;}
 
   return(minimum);
 }
@@ -252,14 +246,13 @@ double variance_minInterval(const Cost& cost, Interval inter)
     if(argmin > inter.getb()){minimum = cost.m_A * inter.getb() - cost.m_B * log(inter.getb()) + cost.constant;}
   }
   //case m_A != 0 & m_B = 0
-  if((cost.m_A != 0) && (cost.m_B == 0))
+  else if((cost.m_A != 0) && (cost.m_B == 0))
   {
     if(cost.m_A > 0){minimum = cost.m_A * inter.geta() + cost.constant;}
       else{minimum = cost.m_A * inter.getb() + cost.constant;}
   }
-
   //case m_A = 0 & m_B = 0
-  if((cost.m_A == 0) && (cost.m_B == 0)){minimum = cost.constant;}
+  else if((cost.m_A == 0) && (cost.m_B == 0)){minimum = cost.constant;}
 
   return(minimum);
 }
@@ -273,10 +266,11 @@ double negbin_minInterval(const Cost& cost, Interval inter)
   {
     minimum = - cost.m_A * log(cost.m_A/(cost.m_A + cost.m_B)) - cost.m_B * log(cost.m_B/(cost.m_A + cost.m_B)) + cost.constant;
     double argmin = cost.m_A/(cost.m_A + cost.m_B);
-    if(argmin < inter.geta()){minimum = cost.m_A * log(inter.geta()) - cost.m_B * log(1 - inter.geta()) + cost.constant;}
-    if(argmin > inter.getb()){minimum = cost.m_A * log(inter.getb()) - cost.m_B * log(1 - inter.getb()) + cost.constant;}
+    if(argmin < inter.geta()){minimum = - cost.m_A * log(inter.geta()) - cost.m_B * log(1 - inter.geta()) + cost.constant;}
+    if(argmin > inter.getb()){minimum = - cost.m_A * log(inter.getb()) - cost.m_B * log(1 - inter.getb()) + cost.constant;}
   }
-  //case m_A = 0 & m_B = 0
+  else if(cost.m_A > 0 && cost.m_B == 0){minimum = - cost.m_A * log(inter.getb()) + cost.constant;}
+  else if(cost.m_A == 0 && cost.m_B > 0){minimum = - cost.m_B * log(1 - inter.geta()) + cost.constant;}
   if((cost.m_A == 0) && (cost.m_B == 0)){minimum = cost.constant;}
 
   return(minimum);
@@ -295,7 +289,7 @@ double mean_argmin(const Cost& cost)
   }
   else
   {
-    argmin = -cost.m_B/(2*cost.m_A);
+    argmin = - cost.m_B/(2 * cost.m_A);
   }
   return(argmin);
 }
@@ -306,7 +300,7 @@ double variance_argmin(const Cost& cost)
   if(cost.m_B == 0)
   {
     //if(m_A <= 0){argmin = INFINITY;}
-    if(cost.m_A > 0){argmin = -INFINITY;}
+    if(cost.m_A > 0){argmin = 0;}
   }
   else
   {
@@ -322,11 +316,11 @@ double poisson_argmin(const Cost& cost)
   if(cost.m_B == 0)
   {
     //if(m_A <= 0){argmin = INFINITY;}
-    if(cost.m_A > 0){argmin = -INFINITY;}
+    if(cost.m_A > 0){argmin = 0;}
   }
   else
   {
-    argmin = cost.m_B/cost.m_A; ///for the variance parameter
+    argmin = cost.m_B/cost.m_A; ///for the functional cost parameter
   }
   return(argmin);
 }
@@ -334,11 +328,12 @@ double poisson_argmin(const Cost& cost)
 
 double negbin_argmin(const Cost& cost)
 {
-  double argmin = INFINITY;
+  double argmin = 0;
   if(cost.m_A != 0 && cost.m_B != 0){argmin = cost.m_A/(cost.m_A + cost.m_B);}
+  else if(cost.m_A > 0 && cost.m_B == 0){argmin = 1;}
+  else if(cost.m_A == 0 && cost.m_B > 0){argmin = 0;}
   return(argmin);
 }
-
 
 //////////////
 //////////////
@@ -423,12 +418,12 @@ double negbin_interExpDecay(double bound, double gamma){return(bound);}
 Interval mean_intervalInterRoots(const Cost& cost, double& level)
 {
   Interval newElement = Interval();
-  double Delta = cost.m_B*cost.m_B - 4*cost.m_A*(cost.constant - level);
+  double Delta = cost.m_B * cost.m_B - 4 * cost.m_A * (cost.constant - level);
 
   if(Delta > 0)
   {
     double R = sqrt(Delta);
-    newElement = Interval((-cost.m_B - R)/(2 * cost.m_A), (-cost.m_B + R)/(2 * cost.m_A));
+    newElement = Interval((- cost.m_B - R)/(2 * cost.m_A), (- cost.m_B + R)/(2 * cost.m_A));
   }
 
   return(newElement);
@@ -587,8 +582,7 @@ int mean_age(const Cost& cost){return((int) cost.m_A);}
 int variance_age(const Cost& cost){return((int) cost.m_B);}
 int poisson_age(const Cost& cost){return((int) cost.m_A);}
 int exp_age(const Cost& cost){return((int) cost.m_B);}
-int negbin_age(const Cost& cost){return((int) cost.m_B);}
-
+int negbin_age(const Cost& cost){return((int) cost.m_A);}
 
 
 //####### intervals #######////####### intervals #######////####### intervals #######//
