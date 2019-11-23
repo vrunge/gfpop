@@ -146,6 +146,7 @@ double* negbin_coeff(Point const& pt)
 
 //####### eval #######////####### eval #######////####### eval #######//
 //####### eval #######////####### eval #######////####### eval #######//
+/// NEVER = - INFINITY by construction
 
 double mean_eval(const Cost& cost, double value)
 {
@@ -168,6 +169,8 @@ double negbin_eval(const Cost& cost, double value)
 {
   double res = INFINITY; ///default case
   if(value != 0 && value != 1){res = - cost.m_A * log(value) - cost.m_B * log(1 - value) + cost.constant;}
+  else if(value == 0 && cost.m_A == 0){res = cost.constant;}
+  else if(value  == 1 && cost.m_B == 0){res = cost.constant;}
   else if(cost.m_A == 0 && cost.m_B == 0){res = cost.constant;}
   return(res);
 }
@@ -318,7 +321,7 @@ double poisson_argmin(const Cost& cost)
     //if(m_A <= 0){argmin = INFINITY;}
     if(cost.m_A > 0){argmin = 0;}
   }
-  else
+  else if(cost.m_A != 0)
   {
     argmin = cost.m_B/cost.m_A; ///for the functional cost parameter
   }

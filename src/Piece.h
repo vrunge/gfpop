@@ -25,9 +25,7 @@ class Piece
     Piece(Track const& info, Interval const& inter = Interval(), Cost const& cost = Cost());
     Piece(const Piece* piece); ///COPY CONSTRUCTOR => copy only the first Piece. piece -> nxt = NULL
     ~Piece();
-
     Piece* copy();
-    double getMin();
 
     void addCostAndPenalty(Cost const& cost, double penalty);
 
