@@ -236,22 +236,24 @@ void Omega::backtracking()
   /// previous to FINAL STATE ///
   ///////////////////////////////
 
+  bool out;
   bool boolForced;
   double decay = 0;
   double correction = 1;
 
   while(malsp[2] > 0) ///while Label > 0
   {
+    out = false;
     boolForced = false;
     decay = m_graph.recursiveState(CurrentState);
     if(decay != 1){correction = std::pow(decay, parameters.back() - malsp[2] + 1);}else{correction = 1;}
 
-    constrainedInterval = m_graph.buildInterval(malsp[1]*correction, malsp[3], CurrentState);
+    constrainedInterval = m_graph.buildInterval(malsp[1]*correction, malsp[3], CurrentState, out); ///update out
     CurrentState = malsp[3];
     CurrentChgpt = malsp[2];
 
     //TO UPDATE: malsp[4] = position
-    LP_ts[(int) malsp[2]][(int) malsp[3]].get_min_argmin_label_state_position_onePiece(malsp, (int) malsp[4], constrainedInterval, boolForced); ///update boolForced
+    LP_ts[(int) malsp[2]][(int) malsp[3]].get_min_argmin_label_state_position_onePiece(malsp, (int) malsp[4], constrainedInterval, out, boolForced); ///update boolForced
 
 
 

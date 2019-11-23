@@ -640,7 +640,7 @@ void ListPiece::get_min_argmin_label_state_position_ListPiece(double* response)
 //####### get_min_argmin_label_state_position_onePiece #######// //####### get_min_argmin_label_state_position_onePiece #######// //####### get_min_argmin_label_state_position_onePiece #######//
 ///We test all the Piece
 
-void ListPiece::get_min_argmin_label_state_position_onePiece(double* response, unsigned int position, Interval constrainedInterval, bool& forced)
+void ListPiece::get_min_argmin_label_state_position_onePiece(double* response, unsigned int position, Interval constrainedInterval, bool out, bool& forced)
 {
   Piece* tmp = head;
   unsigned int nb = 1;
@@ -648,10 +648,26 @@ void ListPiece::get_min_argmin_label_state_position_onePiece(double* response, u
   tmp -> get_min_argmin_label_state_position(response);
   forced = false;
 
-  if(constrainedInterval.isInside(response[1]) == false)
+  /// argmin correction
+  /// argmin correction
+  /// argmin correction
+  if(out == false)
   {
-    if(response[1] > constrainedInterval.getb()){response[1] = constrainedInterval.getb(); forced = true;}
-    if(response[1] < constrainedInterval.geta()){response[1] = constrainedInterval.geta(); forced = true;}
+    if(constrainedInterval.isInside(response[1]) == false)
+    {
+      if(response[1] > constrainedInterval.getb()){response[1] = constrainedInterval.getb(); forced = true;}
+      if(response[1] < constrainedInterval.geta()){response[1] = constrainedInterval.geta(); forced = true;}
+    }
+  }
+
+  if(out == true)
+  {
+    if((constrainedInterval.geta() < response[1]) && (response[1] < constrainedInterval.getb()))
+    {
+      forced = true;
+      if(response[1] - constrainedInterval.geta() < constrainedInterval.getb() - response[1]){response[1] = constrainedInterval.geta();}
+      else{response[1] = constrainedInterval.getb();}
+    }
   }
 }
 

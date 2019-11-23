@@ -58,19 +58,33 @@ std::vector<unsigned int> Graph::getEndState() const {return(endState);}
 // ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### ///
 // ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### /// /// ### buildInterval ### ///
 
-Interval Graph::buildInterval(double argmin, unsigned int s1, unsigned int s2) const
+Interval Graph::buildInterval(double argmin, unsigned int s1, unsigned int s2, bool& out) const
 {
   Interval response = cost_interval();
+  unsigned int nb = 0;
+  unsigned int edgeIndex;
+  Interval inter = cost_interval();
 
   for (unsigned int i = 0 ; i < edges.size() ; i++)
   {
     if((edges[i].getState1() == s1) && (edges[i].getState2() == s2))
     {
-      if(edges[i].getConstraint() == "up"){response.setb(argmin - edges[i].getParameter());}
-      if(edges[i].getConstraint()  == "down"){response.seta(argmin + edges[i].getParameter());}
-      if(edges[i].getConstraint()  == "node"){response = response.intersection(Interval(edges[i].getMinn(), edges[i].getMaxx()));}
+      if(edges[i].getConstraint() == "up"){response.setb(argmin - edges[i].getParameter()); nb = nb + 1; edgeIndex = i;}
+      if(edges[i].getConstraint()  == "down"){response.seta(argmin + edges[i].getParameter()); nb = nb + 1;  edgeIndex = i;}
+      if(edges[i].getConstraint()  == "node"){inter = Interval(edges[i].getMinn(), edges[i].getMaxx());}
     }
   }
+
+  if(nb == 2) /// abs (= up + down edges) case
+  {
+    out = true;
+    response.seta(argmin - edges[edgeIndex].getParameter());
+    response.setb(argmin + edges[edgeIndex].getParameter());
+  }
+
+  response.seta(std::max(inter.geta(), response.geta()));
+  response.setb(std::min(inter.getb(), response.getb()));
+
   return(response);
 }
 
