@@ -5,7 +5,7 @@
 \title{Graph generation}
 \usage{
 graph(..., type = "empty", decay = 1, gap = 0, penalty = 0,
-  K = Inf, a = Inf)
+  K = Inf, a = 0)
 }
 \arguments{
 \item{...}{This is a list of edges definied by functions "Edge", "StartEnd" and "Node"}

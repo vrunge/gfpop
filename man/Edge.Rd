@@ -5,7 +5,7 @@
 \title{Edge generation}
 \usage{
 Edge(state1, state2, type = "null", decay = 1, gap = 0,
-  penalty = 0, K = Inf, a = Inf)
+  penalty = 0, K = Inf, a = 0)
 }
 \arguments{
 \item{state1}{a string defining the starting state of the edge}

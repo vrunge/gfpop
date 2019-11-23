@@ -121,11 +121,17 @@ void Omega::gfpop(Data const& data)
     //  std::cout << "  type " << m_graph.getEdge(i).getConstraint() << std::endl;
     //  std::cout << "  states " << m_graph.getEdge(i).getState1() << " and " << m_graph.getEdge(i).getState2() << std::endl;
     //  LP_edges[i].show();
-    //}
-    ////////////////
-    ////////////////
 
+    ////////////////
+    ////////////////
+    //}
+    //std::cout << "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"<< t<< std::endl;
+    //LP_ts[t+1][0].show();
 	  LP_t_new_multipleMinimization(t); // multiple_minimization
+	  //std::cout << "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"<< t<< std::endl;
+	  //LP_ts[t+1][0].show();
+	  //std::cout << "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"<< t<< std::endl;
+
 	}
 
 	backtracking();
@@ -240,12 +246,15 @@ void Omega::backtracking()
     decay = m_graph.recursiveState(CurrentState);
     if(decay != 1){correction = std::pow(decay, parameters.back() - malsp[2] + 1);}else{correction = 1;}
 
-    constrainedInterval = m_graph.buildInterval(malsp[1]*correction, malsp[3], CurrentState); ///update out
+    constrainedInterval = m_graph.buildInterval(malsp[1]*correction, malsp[3], CurrentState);
     CurrentState = malsp[3];
     CurrentChgpt = malsp[2];
 
     //TO UPDATE: malsp[4] = position
     LP_ts[(int) malsp[2]][(int) malsp[3]].get_min_argmin_label_state_position_onePiece(malsp, (int) malsp[4], constrainedInterval, boolForced); ///update boolForced
+
+
+
     CurrentGlobalCost = CurrentGlobalCost - m_graph.findBeta(malsp[3], CurrentState);
 
     parameters.push_back(malsp[1]);
