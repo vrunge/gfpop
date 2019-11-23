@@ -209,8 +209,8 @@ double negbin_min(const Cost& cost)
 }
 
 
-//####### minimumInter #######////####### minimumInter #######////####### minimumInter #######//
-//####### minimumInter #######////####### minimumInter #######////####### minimumInter #######//
+//####### minInterval #######////####### minInterval #######////####### minInterval #######//
+//####### minInterval #######////####### minInterval #######////####### minInterval #######//
 
 double mean_minInterval(const Cost& cost, Interval inter)
 {
@@ -274,13 +274,13 @@ double negbin_minInterval(const Cost& cost, Interval inter)
   }
   else if(cost.m_A > 0 && cost.m_B == 0){minimum = - cost.m_A * log(inter.getb()) + cost.constant;}
   else if(cost.m_A == 0 && cost.m_B > 0){minimum = - cost.m_B * log(1 - inter.geta()) + cost.constant;}
-  if((cost.m_A == 0) && (cost.m_B == 0)){minimum = cost.constant;}
+  else if((cost.m_A == 0) && (cost.m_B == 0)){minimum = cost.constant;}
 
   return(minimum);
 }
 
-//####### argminimum #######////####### argminimum #######////####### argminimum #######//
-//####### argminimum #######////####### argminimum #######////####### argminimum #######//
+//####### argmin #######////####### argmin #######////####### argmin #######//
+//####### argmin #######////####### argmin #######////####### argmin #######//
 
 double mean_argmin(const Cost& cost)
 {
@@ -307,9 +307,9 @@ double variance_argmin(const Cost& cost)
   }
   else
   {
-    argmin = cost.m_A/cost.m_B; ///for the variance parameter
+    argmin = cost.m_B/cost.m_A;
   }
-  return(argmin);
+  return(1/argmin); ///for the variance parameter
 }
 
 
@@ -331,13 +331,84 @@ double poisson_argmin(const Cost& cost)
 
 double negbin_argmin(const Cost& cost)
 {
-  double argmin = 0;
-  if(cost.m_A != 0 && cost.m_B != 0){argmin = cost.m_A/(cost.m_A + cost.m_B);}
+  double argmin = 0.5;
+  if(cost.m_A > 0 && cost.m_B > 0){argmin = cost.m_A/(cost.m_A + cost.m_B);}
   else if(cost.m_A > 0 && cost.m_B == 0){argmin = 1;}
   else if(cost.m_A == 0 && cost.m_B > 0){argmin = 0;}
   return(argmin);
 }
 
+//####### argminInterval #######////####### argminInterval #######////####### argminInterval #######//
+//####### argminInterval #######////####### argminInterval #######////####### argminInterval #######//
+
+double mean_argminInterval(const Cost& cost, Interval inter)
+{
+  double argmin = inter.getb();
+  if(cost.m_A == 0)
+  {
+    if(cost.m_B == 0){argmin = (inter.geta() + inter.getb())/2;}
+    else if(cost.m_B > 0){argmin = inter.geta();}
+  }
+  else
+  {
+    argmin = - cost.m_B/(2 * cost.m_A);
+    if(argmin < inter.geta()){argmin = inter.geta();}
+    else if(argmin > inter.getb()){argmin = inter.getb();}
+  }
+  return(argmin);
+}
+
+double variance_argminInterval(const Cost& cost, Interval inter)
+{
+  double argmin = inter.getb();
+  if(cost.m_B == 0)
+  {
+    if(cost.m_A == 0){argmin = (inter.geta() + inter.getb())/2;}
+    else if(cost.m_A > 0){argmin = inter.geta();}
+  }
+  else
+  {
+    argmin = cost.m_B/cost.m_A;
+    if(argmin < inter.geta()){argmin = inter.geta();}
+    else if(argmin > inter.getb()){argmin = inter.getb();}
+  }
+  return(1/argmin); ///for the variance parameter
+}
+
+
+double poisson_argminInterval(const Cost& cost, Interval inter)
+{
+  double argmin = inter.getb();
+  if(cost.m_B == 0)
+  {
+    if(cost.m_A == 0){argmin = (inter.geta() + inter.getb())/2;}
+    else if(cost.m_A > 0){argmin = inter.geta();}
+  }
+  else
+  {
+    argmin = cost.m_B/cost.m_A;
+    if(argmin < inter.geta()){argmin = inter.geta();}
+    else if(argmin > inter.getb()){argmin = inter.getb();}
+  }
+  return(argmin);
+}
+
+
+double negbin_argminInterval(const Cost& cost, Interval inter)
+{
+  double argmin = inter.getb();
+  if(cost.m_A > 0 && cost.m_B > 0)
+  {
+    argmin = cost.m_A/(cost.m_A + cost.m_B);
+    if(argmin < inter.geta()){argmin = inter.geta();}
+    else if(argmin > inter.getb()){argmin = inter.getb();}
+  }
+
+  else if(cost.m_A > 0 && cost.m_B == 0){argmin = inter.getb();}
+  else if(cost.m_A == 0 && cost.m_B > 0){argmin = inter.geta();}
+  else if(cost.m_A == 0 && cost.m_B == 0){argmin = (inter.geta() + inter.getb())/2;}
+  return(argmin);
+}
 //////////////
 //////////////
 ////////////// TRANSFORMATIONS
@@ -668,6 +739,17 @@ std::function<double(const Cost&)> argmin_factory(const std::string& type)
   return(fct);
 }
 
+
+std::function<double(const Cost&, Interval inter)> argminInterval_factory(const std::string& type)
+{
+  std::function<double(const Cost&, Interval inter)> fct;
+  if(type == "mean"){fct = std::function<double(const Cost&, Interval inter)>(mean_argminInterval);}
+  if(type == "variance"){fct = std::function<double(const Cost&, Interval inter)>(poisson_argminInterval);}
+  if(type == "poisson"){fct = std::function<double(const Cost&, Interval inter)>(poisson_argminInterval);}
+  if(type == "exp"){fct = std::function<double(const Cost&, Interval inter)>(poisson_argminInterval);}
+  if(type == "negbin"){fct = std::function<double(const Cost&, Interval inter)>(negbin_argminInterval);}
+  return(fct);
+}
 
 std::function<double(const Cost&)> argminBacktrack_factory(const std::string& type)
 {

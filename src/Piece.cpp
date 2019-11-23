@@ -78,16 +78,16 @@ Interval Piece::intervalMinLessUp(double bound, double currentValue, bool constP
         response.seta(cost_intervalInterRoots(costInter, currentValue).geta());
         delete(coeff);
       }
-      else /// i.e. cost_eval(bound) == current_min : continuity condition
+      else
       {
-        response.seta(bound);
+        response.seta(bound); /// i.e. cost_eval(bound) == mini : continuity condition
       }
     response.setb(argmini);
     }
   }
   else if(currentValue == mini)
   {
-    response.seta(bound);
+    response.seta(bound); /// i.e. cost_eval(bound) == mini : continuity condition
     response.setb(m_interval.getb());
   }
   return(response);
@@ -122,17 +122,17 @@ Interval Piece::intervalMinLessDw(double bound, double currentValue, bool constP
         response.setb(cost_intervalInterRoots(costInter, currentValue).getb());
         delete(coeff);
       }
-      else /// i.e. point_eval(bound) == current_min : continuity condition
+      else
       {
-        response.setb(bound);
+        response.setb(bound); /// i.e. cost_eval(bound) == mini : continuity condition
       }
     response.seta(argmini);
     }
   }
-  else if(currentValue == mini) /// otherwise currentValue constant doesn't intersect Piece cost
+  else if(currentValue == mini)
   {
     response.seta(m_interval.geta());
-    response.setb(bound);
+    response.setb(bound); /// i.e. cost_eval(bound) == mini : continuity condition
   }
   return(response);
 }
@@ -178,7 +178,6 @@ Piece* Piece::pastePieceUp(const Piece* NXTPiece, Interval const& decrInter, Tra
       BUILD -> nxt = PieceOut;
       BUILD = PieceOut;
     }
-
   }
 
   return(BUILD);

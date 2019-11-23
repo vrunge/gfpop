@@ -37,6 +37,7 @@ std::function<double(const Cost&, double value)> eval_factory(const std::string&
 std::function<double(const Cost&)> min_factory(const std::string& type);
 std::function<double(const Cost&, Interval inter)> minInterval_factory(const std::string& type);
 std::function<double(const Cost&)> argmin_factory(const std::string& type);
+std::function<double(const Cost&, Interval inter)> argminInterval_factory(const std::string& type);
 std::function<double(const Cost&)> argminBacktrack_factory(const std::string& type);
 
 ///transformations

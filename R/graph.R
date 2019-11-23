@@ -15,7 +15,7 @@
 #' @return a one-row dataframe with 9 variables
 #' @examples
 #' Edge("Dw", "Up", "up", gap = 1, penalty = 10, K = 3)
-Edge <- function(state1, state2, type = "null", decay = 1, gap = 0, penalty = 0, K = Inf, a = Inf)
+Edge <- function(state1, state2, type = "null", decay = 1, gap = 0, penalty = 0, K = Inf, a = 0)
 {
   ############
   ### STOP ###
@@ -125,7 +125,7 @@ Node <- function(state = NULL, min = -Inf, max = Inf)
 #' MyGraph <- graph(Edge(0,0), Edge(1,1), Edge(0,1,"up", gap = 0.5, penalty = 10),
 #' Edge(1,0,"down"), StartEnd(0,0), Node(0,0,1), Node(1,0,1))
 
-graph <- function(..., type = "empty", decay = 1, gap = 0, penalty = 0, K = Inf, a = Inf)
+graph <- function(..., type = "empty", decay = 1, gap = 0, penalty = 0, K = Inf, a = 0)
 {
   myNewGraph <- rbind(...)
 
@@ -149,27 +149,27 @@ graph <- function(..., type = "empty", decay = 1, gap = 0, penalty = 0, K = Inf,
 
     if(type == "std")
     {
-      myNewGraph[1, ] <- Edge("Std", "Std", "null", decay = decay)
+      myNewGraph[1, ] <- Edge("Std", "Std", "null", decay = decay, K = K, a = a)
       myNewGraph[2, ] <- Edge("Std", "Std", "std", penalty = penalty, K = K, a = a)
     }
 
     if(type == "isotonic")
     {
-      myNewGraph[1, ] <- Edge("Iso", "Iso", "null", decay = decay)
+      myNewGraph[1, ] <- Edge("Iso", "Iso", "null", decay = decay, K = K, a = a)
       myNewGraph[2, ] <- Edge("Iso", "Iso", "up", gap = gap, penalty = penalty, K = K, a = a)
     }
 
     if(type == "updown")
     {
-      myNewGraph[1, ] <- Edge("Dw", "Dw", "null", decay = decay)
-      myNewGraph[2, ] <- Edge("Up", "Up", "null", decay = decay)
+      myNewGraph[1, ] <- Edge("Dw", "Dw", "null", decay = decay, K = K, a = a)
+      myNewGraph[2, ] <- Edge("Up", "Up", "null", decay = decay, K = K, a = a)
       myNewGraph[3, ] <- Edge("Dw", "Up", "up", gap = gap, penalty = penalty, K = K, a = a)
       myNewGraph[4, ] <- Edge("Up", "Dw", "down", gap = gap, penalty = penalty, K = K, a = a)
     }
 
     if(type == "relevant")
     {
-      myNewGraph[1, ] <- Edge("Std", "Std", "null", decay = decay)
+      myNewGraph[1, ] <- Edge("Std", "Std", "null", decay = decay, K = K, a = a)
       myNewGraph[2, ] <- Edge("Std", "Std", "abs", gap = gap, penalty = penalty, K = K, a = a)
     }
   }
