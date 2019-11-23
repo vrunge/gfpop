@@ -7,7 +7,7 @@ export(plot.gfpop)
 export(paperGraph)
 
 importFrom(Rcpp, evalCpp)
-importFrom("stats", "rnorm", "rexp", "rpois", "mad", "sd")
+importFrom("stats", "rnorm", "rexp", "rpois", "rnbinom", "mad", "sd")
 importFrom("graphics", "plot", "segments")
 
 
