@@ -426,8 +426,16 @@ void mean_shift(Cost& cost, double parameter)
 
 void variance_shift(Cost& cost, double parameter)
 {
-  cost.m_A = cost.m_A * parameter;
-  cost.constant = cost.constant - cost.m_B * log(parameter);
+  if(parameter > 0)
+  {
+    cost.m_A = cost.m_A / parameter;
+    cost.constant = cost.constant + cost.m_B * log(parameter);
+  }
+  if(parameter < 0)
+  {
+    cost.m_A = cost.m_A * fabs(parameter);
+    cost.constant = cost.constant - cost.m_B * log(fabs(parameter));
+  }
 }
 
 void negbin_shift(Cost& cost, double parameter){}
@@ -443,7 +451,10 @@ double mean_interShift(double bound, double parameter)
 
 double variance_interShift(double bound, double parameter)
 {
-  return(bound/parameter);
+  double res = bound;
+  if(parameter > 0){res = bound * parameter;}
+  if(parameter < 0){res = bound / fabs(parameter);}
+  return(res);
 }
 
 double negbin_interShift(double bound, double parameter){return(bound);}

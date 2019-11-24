@@ -281,20 +281,7 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
   //################
   if(edge_ctt == "up")
   {
-    //std::cout << std::endl;
-    //std::cout << std::endl;
-    //std::cout << "UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 " << std::endl;
-    //std::cout << "UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 " << std::endl;
-    //LP_state.show();
     operatorUp(LP_state, newLabel, parentState);
-    //std::cout << "UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 " << std::endl;
-    //std::cout << "UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 " << std::endl;
-    //show();
-    //std::cout << "UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 " << std::endl;
-    //std::cout << "UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 UP 0 " << std::endl;
-    //std::cout << std::endl;
-    //std::cout << std::endl;
-
     if(edge_parameter > 0){shift(edge_parameter);} ///edge_parameter = right decay
   }
 
@@ -306,20 +293,7 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     unsigned int length = 0;
     LP_stateCopy.reverseAndCount(length); ///reverse LP_stateCopy
 
-    //std::cout << std::endl;
-    //std::cout << std::endl;
-    //std::cout << "DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 " << std::endl;
-    //std::cout << "DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 DOWN 0 " << std::endl;
-    //LP_stateCopy.show();
     operatorDw(LP_stateCopy, newLabel, parentState); ///down operations
-    //std::cout << "DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 " << std::endl;
-    //std::cout << "DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 DOWN 1 " << std::endl;
-    //show();
-    //std::cout << "DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 " << std::endl;
-    //std::cout << "DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 DOWN 2 " << std::endl;
-    //std::cout << std::endl;
-    //std::cout << std::endl;
-
     reverseAndSetTrackPosition(length); ///reverse result
 
     if(edge_parameter > 0){shift(-edge_parameter);} ///edge_parameter = left decay

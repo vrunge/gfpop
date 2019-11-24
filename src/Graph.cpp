@@ -69,8 +69,9 @@ Interval Graph::buildInterval(double argmin, unsigned int s1, unsigned int s2, b
   {
     if((edges[i].getState1() == s1) && (edges[i].getState2() == s2))
     {
-      if(edges[i].getConstraint() == "up"){response.setb(argmin - edges[i].getParameter()); nb = nb + 1; edgeIndex = i;}
-      if(edges[i].getConstraint()  == "down"){response.seta(argmin + edges[i].getParameter()); nb = nb + 1;  edgeIndex = i;}
+      cost_interShift(argmin, - edges[i].getParameter());
+      if(edges[i].getConstraint() == "up"){response.setb(cost_interShift(argmin, -edges[i].getParameter())); nb = nb + 1; edgeIndex = i;}
+      if(edges[i].getConstraint()  == "down"){response.seta(cost_interShift(argmin, edges[i].getParameter())); nb = nb + 1;  edgeIndex = i;}
       if(edges[i].getConstraint()  == "node"){inter = Interval(edges[i].getMinn(), edges[i].getMaxx());}
     }
   }
@@ -78,8 +79,8 @@ Interval Graph::buildInterval(double argmin, unsigned int s1, unsigned int s2, b
   if(nb == 2) /// abs (= up + down edges) case
   {
     out = true;
-    response.seta(argmin - edges[edgeIndex].getParameter());
-    response.setb(argmin + edges[edgeIndex].getParameter());
+    response.seta(cost_interShift(argmin, - edges[edgeIndex].getParameter()));
+    response.setb(cost_interShift(argmin, edges[edgeIndex].getParameter()));
   }
 
   response.seta(std::max(inter.geta(), response.geta()));
