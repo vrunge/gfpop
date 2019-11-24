@@ -762,14 +762,14 @@ std::function<double(const Cost&, Interval inter)> argminInterval_factory(const 
   return(fct);
 }
 
-std::function<double(const Cost&)> argminBacktrack_factory(const std::string& type)
+std::function<double(const Cost&, Interval inter)> argminBacktrack_factory(const std::string& type)
 {
-  std::function<double(const Cost&)> fct;
-  if(type == "mean"){fct = std::function<double(const Cost&)>(mean_argmin);}
-  if(type == "variance"){fct = std::function<double(const Cost&)>(variance_argmin);}
-  if(type == "poisson"){fct = std::function<double(const Cost&)>(poisson_argmin);}
-  if(type == "exp"){fct = std::function<double(const Cost&)>(poisson_argmin);}
-  if(type == "negbin"){fct = std::function<double(const Cost&)>(negbin_argmin);}
+  std::function<double(const Cost&, Interval inter)> fct;
+  if(type == "mean"){fct = std::function<double(const Cost&, Interval inter)>(mean_argminInterval);}
+  if(type == "variance"){fct = std::function<double(const Cost&, Interval inter)>(variance_argminInterval);}
+  if(type == "poisson"){fct = std::function<double(const Cost&, Interval inter)>(poisson_argminInterval);}
+  if(type == "exp"){fct = std::function<double(const Cost&, Interval inter)>(poisson_argminInterval);}
+  if(type == "negbin"){fct = std::function<double(const Cost&, Interval inter)>(negbin_argminInterval);}
   return(fct);
 }
 

@@ -196,6 +196,8 @@ void Omega::backtracking()
 
   double* malsp = new double[5];
   double* malsp_temp = new double[5];
+  //Interval* nodeConstr = m_graph.nodeConstraints();
+
   LP_ts[n][0].get_min_argmin_label_state_position_ListPiece(malsp);
 
   ///////////////////
@@ -231,6 +233,7 @@ void Omega::backtracking()
   changepoints.push_back(CurrentChgpt); // = n
   states.push_back(CurrentState); // = the best state
 
+
   /// BACKTRACK
   ///////////////////////////////
   /// previous to FINAL STATE ///
@@ -249,15 +252,16 @@ void Omega::backtracking()
     if(decay != 1){correction = std::pow(decay, parameters.back() - malsp[2] + 1);}else{correction = 1;}
 
     constrainedInterval = m_graph.buildInterval(malsp[1]*correction, malsp[3], CurrentState, out); ///update out
+
     CurrentState = malsp[3];
     CurrentChgpt = malsp[2];
 
     //TO UPDATE: malsp[4] = position
     LP_ts[(int) malsp[2]][(int) malsp[3]].get_min_argmin_label_state_position_onePiece(malsp, (int) malsp[4], constrainedInterval, out, boolForced); ///update boolForced
 
-
-
+    //update CurrentGlobalCost and boolForced if argmin on a bound
     CurrentGlobalCost = CurrentGlobalCost - m_graph.findBeta(malsp[3], CurrentState);
+    //if(malsp[1] == nodeConstr[CurrentState].geta() || malsp[1] == nodeConstr[CurrentState].getb()){boolForced = true;}
 
     parameters.push_back(malsp[1]);
     changepoints.push_back(CurrentChgpt);
@@ -268,6 +272,7 @@ void Omega::backtracking()
   globalCost = CurrentGlobalCost;
   delete(malsp);
   delete(malsp_temp);
+  //delete(nodeConstr);
 }
 
 

@@ -98,7 +98,7 @@ double Graph::recursiveState(unsigned int s) const
   double response =  1;
   for(unsigned int i = 0; i < edges.size(); i++)
   {
-    if((edges[i].getState1() == s) && (edges[i].getState2() == s)){response = edges[i].getParameter();}
+    if((edges[i].getState1() == s) && (edges[i].getState2() == s) && (edges[i].getConstraint()  == "null")){response = edges[i].getParameter();}
   }
   return(response);
 }
@@ -121,6 +121,23 @@ double Graph::findBeta(unsigned int state1, unsigned int state2)
 }
 
 
+
+// ### nodeConstraints ### /// /// ### nodeConstraints ### /// /// ### nodeConstraints ### /// /// ### nodeConstraints ### ///
+// ### nodeConstraints ### /// /// ### nodeConstraints ### /// /// ### nodeConstraints ### /// /// ### nodeConstraints ### ///
+
+Interval* Graph::nodeConstraints()
+{
+  Interval* inter = new Interval[nb_states()];
+  for (unsigned int i = 0 ; i < nb_states(); i++)
+  {
+    inter[i] = cost_interval();
+  }
+  for (unsigned int i = 0 ; i < edges.size(); i++)
+  {
+    if(edges[i].getConstraint() == "node"){inter[edges[i].getState1()] = Interval(edges[i].getMinn(), edges[i].getMaxx());}
+  }
+  return(inter);
+}
 
 
 // ### show ### /// /// ### show ### /// /// ### show ### /// /// ### show ### ///

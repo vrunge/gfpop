@@ -9,7 +9,7 @@ std::function<double(const Cost&)> cost_min;
 std::function<double(const Cost&, Interval inter)> cost_minInterval;
 std::function<double(const Cost&)> cost_argmin;
 std::function<double(const Cost&, Interval inter)> cost_argminInterval;
-std::function<double(const Cost&)> cost_argminBacktrack;
+std::function<double(const Cost&, Interval inter)> cost_argminBacktrack;
 
 std::function<void(Cost& cost, double parameter)> cost_shift;
 std::function<double(double bound, double parameter)> cost_interShift;

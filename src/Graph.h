@@ -31,6 +31,7 @@ class Graph
     Interval buildInterval(double argmin, unsigned int s1, unsigned int s2, bool& out) const;
     double recursiveState(unsigned int s) const;
     double findBeta(unsigned int state1, unsigned int state2);
+    Interval* nodeConstraints();
 
     void show() const;
 

@@ -11,7 +11,7 @@ extern std::function<double(const Cost&)> cost_min;
 extern std::function<double(const Cost&, Interval inter)> cost_minInterval;
 extern std::function<double(const Cost&)> cost_argmin;
 extern std::function<double(const Cost&, Interval inter)> cost_argminInterval;
-extern std::function<double(const Cost&)> cost_argminBacktrack;
+extern std::function<double(const Cost&, Interval inter)> cost_argminBacktrack;
 
 extern std::function<void(Cost& cost, double parameter)> cost_shift;
 extern std::function<double(double bound, double parameter)> cost_interShift;

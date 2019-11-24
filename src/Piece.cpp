@@ -440,7 +440,7 @@ Piece* Piece::piece2(Piece* Q1, Piece* Q2, Interval interToPaste, Interval inter
 void Piece::get_min_argmin_label_state_position(double* response)
 {
   response[0] = cost_minInterval(this -> m_cost, this -> m_interval);
-  response[1] = cost_argminBacktrack(this -> m_cost);
+  response[1] = cost_argminBacktrack(this -> m_cost, this -> m_interval);
   response[2] = this -> m_info.getLabel();
   response[3] = this -> m_info.getState();
   response[4] = this -> m_info.getPosition();
