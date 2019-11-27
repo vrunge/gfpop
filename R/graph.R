@@ -15,7 +15,7 @@
 #' @return a one-row dataframe with 9 variables
 #' @examples
 #' Edge("Dw", "Up", "up", gap = 1, penalty = 10, K = 3)
-Edge <- function(state1, state2, type = "null", decay = 1, gap = 0, penalty = 0, K = Inf, a = Inf)
+Edge <- function(state1, state2, type = "null", decay = 1, gap = 0, penalty = 0, K = Inf, a = 0)
 {
   allowed.types <- c("null", "std", "up", "down", "abs", "start", "end")
   if(!type %in% allowed.types){
@@ -134,6 +134,7 @@ graph <- function(..., type = "empty", decay = 1, gap = 0, penalty = 0, K = Inf,
       stop(
         "please use gfpop::Edge to specify graph, problem arguments: ",
         paste(i.bad, collapse=", "))
+
     }
     rbind(no.edge, ...)
   }

@@ -48,9 +48,9 @@ public:
 
   ///////  get info ///////
   void get_min_argmin_label_state_position_ListPiece(double* response);
-  void get_min_argmin_label_state_position_onePiece(double* response, unsigned int position, Interval constrainedInterval, bool& forced);
+  void get_min_argmin_label_state_position_onePiece(double* response, unsigned int position, Interval constrainedInterval, bool out, bool& forced);
 
-  void show();
+  void show() const;
 
 };
 

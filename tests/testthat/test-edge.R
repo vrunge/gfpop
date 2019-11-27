@@ -27,3 +27,4 @@ test_that("StartEnd is vectorized", {
   expect_identical(start.rows$state1, start.vec)
   expect_identical(end.rows$state1, end.vec)
 })
+

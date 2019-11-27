@@ -30,14 +30,14 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
     for(int i = 0; i < vectData.size(); i++){vectData[i] = vectData[i] - mean; if(vectData[i] == 0){vectData[i] = epsilon;}}
   }
 
-  if(type == "exp")
-  {
-    for(int i = 0; i < vectData.size(); i++){if(vectData[i] <= 0){throw std::range_error("Data has to be all positive");}}
-  }
-
   if(type == "poisson")
   {
     for(int i = 0; i < vectData.size(); i++){if(vectData[i] < 0 || (vectData[i]  > floor(vectData[i]))){throw std::range_error("There are some non-integer data");}}
+  }
+
+  if(type == "exp")
+  {
+    for(int i = 0; i < vectData.size(); i++){if(vectData[i] <= 0){throw std::range_error("Data has to be all positive");}}
   }
 
   if(type == "negbin")
@@ -93,9 +93,6 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   for(int i = 0 ; i < mygraph.nrow(); i++)
     {graph << Edge(state1[i], state2[i], typeEdge[i], fabs(parameter[i]), penalty[i], fabs(KK[i]), fabs(aa[i]), minn[i], maxx[i]);}
 
-
-  //graph.show();
-
   // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects
   // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects
 
@@ -109,6 +106,8 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   cost_min = min_factory(type);
   cost_minInterval = minInterval_factory(type);
   cost_argmin = argmin_factory(type);
+  cost_argminInterval = argminInterval_factory(type);
+  cost_argminBacktrack = argminBacktrack_factory(type);
 
   cost_shift = shift_factory(type);
   cost_interShift = interShift_factory(type);

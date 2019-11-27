@@ -6,6 +6,7 @@
 #include<iostream>
 
 Piece::Piece(){m_info = Track(); m_interval = Interval(); m_cost = Cost(); nxt = NULL;}
+
 Piece::Piece(Track const& info, Interval const& inter, Cost const& cost)
 {
   m_info = info;
@@ -36,21 +37,7 @@ Piece::~Piece()
 //####### copy #######////####### copy #######////####### copy #######//
 //####### copy #######////####### copy #######////####### copy #######//
 
-Piece* Piece::copy()
-{
-  return(new Piece(this));
-}
-
-
-//####### getMin #######////####### getMin #######////####### getMin #######//
-//####### getMin #######////####### getMin #######////####### getMin #######//
-
-double Piece::getMin()
-{
-  return(cost_minInterval(m_cost, m_interval));
-}
-
-
+Piece* Piece::copy(){return(new Piece(this));}
 
 //####### addCostAndPenalty #######////####### addCostAndPenalty #######////####### addCostAndPenalty #######//
 //####### addCostAndPenalty #######////####### addCostAndPenalty #######////####### addCostAndPenalty #######//
@@ -63,15 +50,18 @@ void Piece::addCostAndPenalty(Cost const& cost, double penalty)
 }
 
 
-
 //####### intervalMinLessUp #######////####### intervalMinLessUp #######////####### intervalMinLessUp #######//
 //####### intervalMinLessUp #######////####### intervalMinLessUp #######////####### intervalMinLessUp #######//
 
 
 Interval Piece::intervalMinLessUp(double bound, double currentValue, bool constPiece)
 {
+  //
+  // (bound, currentValue) VERSUS (argmin, min)
+  //
+
   Interval response = Interval(); /// Interval = (INFINITY, INFINITY)
-  double mini = cost_min(m_cost);
+  double mini = cost_minInterval(m_cost, m_interval); /// It was: double mini = cost_min(m_cost);
 
   if(currentValue > mini) /// otherwise currentValue constant doesn't intersect Piece cost
   {
@@ -85,18 +75,21 @@ Interval Piece::intervalMinLessUp(double bound, double currentValue, bool constP
         coeff[1] = m_cost.m_B;
         coeff[2] = m_cost.constant;
         Cost costInter = Cost(coeff);
-        response = cost_intervalInterRoots(costInter, currentValue);
-        response.setb(argmini);
+        response.seta(cost_intervalInterRoots(costInter, currentValue).geta());
         delete(coeff);
       }
-      else /// i.e. point_eval(bound) == current_min : continuity condition
+      else
       {
-        response.seta(bound);
-        response.setb(argmini);
+        response.seta(bound); /// i.e. cost_eval(bound) == mini : continuity condition
       }
+    response.setb(argmini);
     }
   }
-
+  else if(currentValue == mini)
+  {
+    response.seta(bound); /// i.e. cost_eval(bound) == mini : continuity condition
+    response.setb(m_interval.getb());
+  }
   return(response);
 }
 
@@ -105,16 +98,19 @@ Interval Piece::intervalMinLessUp(double bound, double currentValue, bool constP
 //####### intervalMinLessDw #######////####### intervalMinLessDw #######////####### intervalMinLessDw #######//
 //####### intervalMinLessDw #######////####### intervalMinLessDw #######////####### intervalMinLessDw #######//
 
-
 Interval Piece::intervalMinLessDw(double bound, double currentValue, bool constPiece)
 {
+  //
+  // (bound, currentValue) VERSUS (argmin, min)
+  //
+
   Interval response = Interval(); /// Interval = (INFINITY, INFINITY)
-  double mini = cost_min(m_cost);
+  double mini = cost_minInterval(m_cost, m_interval); /// It was: double mini = cost_min(m_cost);
 
   if(currentValue > mini) /// otherwise currentValue constant doesn't intersect Piece cost
   {
     double argmini = cost_argmin(m_cost);
-    if(bound < argmini) /// otherwise currentValue constant doesn't intersect Piece cost
+    if(bound > argmini) /// otherwise currentValue constant doesn't intersect Piece cost
     {
       if(constPiece == true)
       {
@@ -123,18 +119,21 @@ Interval Piece::intervalMinLessDw(double bound, double currentValue, bool constP
         coeff[1] = m_cost.m_B;
         coeff[2] = m_cost.constant;
         Cost costInter = Cost(coeff);
-        response = cost_intervalInterRoots(costInter, currentValue);
-        response.seta(argmini);
+        response.setb(cost_intervalInterRoots(costInter, currentValue).getb());
         delete(coeff);
       }
-      else /// i.e. point_eval(bound) == current_min : continuity condition
+      else
       {
-        response.seta(argmini);
-        response.setb(bound);
+        response.setb(bound); /// i.e. cost_eval(bound) == mini : continuity condition
       }
+    response.seta(argmini);
     }
   }
-
+  else if(currentValue == mini)
+  {
+    response.seta(m_interval.geta());
+    response.setb(bound); /// i.e. cost_eval(bound) == mini : continuity condition
+  }
   return(response);
 }
 
@@ -179,7 +178,6 @@ Piece* Piece::pastePieceUp(const Piece* NXTPiece, Interval const& decrInter, Tra
       BUILD -> nxt = PieceOut;
       BUILD = PieceOut;
     }
-
   }
 
   return(BUILD);
@@ -223,7 +221,7 @@ Piece* Piece::pastePieceDw(const Piece* NXTPiece, Interval const& decrInter, Tra
     if(!((NXTPiece -> nxt == NULL) && (decrInter.geta() == NXTPiece -> m_interval.geta())))
     {
       double outputValue = cost_eval(NXTPiece -> m_cost, decrInter.geta());
-      Piece* PieceOut = new Piece(newTrack, Interval(decrInter.geta(), NXTPiece -> m_interval.geta()), Cost());
+      Piece* PieceOut = new Piece(newTrack, Interval(NXTPiece -> m_interval.geta(), decrInter.geta()), Cost());
       addConstant(PieceOut -> m_cost, outputValue);
       BUILD -> nxt = PieceOut;
       BUILD = PieceOut;
@@ -442,7 +440,7 @@ Piece* Piece::piece2(Piece* Q1, Piece* Q2, Interval interToPaste, Interval inter
 void Piece::get_min_argmin_label_state_position(double* response)
 {
   response[0] = cost_minInterval(this -> m_cost, this -> m_interval);
-  response[1] = cost_argmin(this -> m_cost);
+  response[1] = cost_argminBacktrack(this -> m_cost, this -> m_interval);
   response[2] = this -> m_info.getLabel();
   response[3] = this -> m_info.getState();
   response[4] = this -> m_info.getPosition();
