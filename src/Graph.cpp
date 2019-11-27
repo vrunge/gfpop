@@ -1,3 +1,5 @@
+/* -*- compile-command: "R CMD INSTALL .." -*- */
+
 #include "Graph.h"
 
 #include<iostream>
@@ -12,10 +14,10 @@ void Graph::newEdge(Edge const& edge){edges.push_back(edge);}
 unsigned int Graph::nb_states() const
 {
   std::vector<unsigned int> temp;
-  for (unsigned int i = 0 ; i < edges.size() ; i++)
+  for (std::vector<Edge>::const_iterator it=edges.begin() ; it < edges.end() ; it++)
   {
-    temp.push_back(edges[i].getState1());
-    temp.push_back(edges[i].getState2());
+    temp.push_back(it->getState1());
+    temp.push_back(it->getState2());
   }
   sort(temp.begin(), temp.end());
 
@@ -145,7 +147,6 @@ Interval* Graph::nodeConstraints()
 
 void Graph::show() const
 {
-  std::cout << "GRAPH" << std::endl;
   for (unsigned int i = 0 ; i < edges.size() ; i++)
   {
     edges[i].show();
