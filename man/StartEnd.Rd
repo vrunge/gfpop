@@ -2,21 +2,21 @@
 % Please edit documentation in R/graph.R
 \name{StartEnd}
 \alias{StartEnd}
-\title{Constraint the starting and ending states of a graph}
+\title{Start and End nodes for the graph}
 \usage{
 StartEnd(start = NULL, end = NULL)
 }
 \arguments{
-\item{start}{a vector of nonnegative integers. The starting vertices in the changepoint inference}
+\item{start}{a vector of states. The beginning nodes for the changepoint inference}
 
-\item{end}{a vector of nonnegative integers. The ending vertices in the changepoint inference}
+\item{end}{a vector of states. The ending nodes for the changepoint inference}
 }
 \value{
-a dataframe with five components (as for edge) with only `state1`` and `type` = start or end defined.
+dataframe with 9 variables with only `state1` and `type` = start or end defined.
 }
 \description{
-Adding constraints on the starting and ending states of a graph
+Defining the beginning and ending states of a graph
 }
 \examples{
-StartEnd(start = 0, end = c(1,2))
+StartEnd(start = "A", end = c("A","B"))
 }

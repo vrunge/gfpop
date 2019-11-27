@@ -4,22 +4,32 @@
 \alias{graph}
 \title{Graph generation}
 \usage{
-graph(..., penalty = 0, type = "empty")
+graph(..., type = "empty", decay = 1, gap = 0, penalty = 0,
+  K = Inf, a = 0)
 }
 \arguments{
-\item{...}{This is a list of edges definied by functions edge and StartEnd}
+\item{...}{This is a list of edges definied by functions "Edge", "StartEnd" and "Node"}
+
+\item{type}{a string equal to "std", "isotonic", "updown", "relevant". to build a predefined classic graph}
+
+\item{decay}{a nonnegative number to give the strength of the exponential decay into the segment}
+
+\item{gap}{a nonnegative number to constrain the size of the gap in the change of state}
 
 \item{penalty}{a nonnegative number equals to the common penalty to use for all edges}
 
-\item{type}{a string equal to "std", "isotonic", "updown", "infsup". to build a predefined classic graph}
+\item{K}{a positive number. Threshold for the Biweight robust loss}
+
+\item{a}{a positive number. Slope for the Huber robust loss}
 }
 \value{
-a dataframe with edges in rows (columns are named "state1", "state2", "type", "penalty", "parameter") with additional "graph" class.
+a dataframe with 9 variables (columns are named "state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max") with additional "graph" class.
 }
 \description{
-Graph creation
+Graph creation using component functions "Edge", "StartEnd" and "Node"
 }
 \examples{
-UpDownGraph <- graph(penalty = 10, type = "updown")
-MyGraph <- graph(edge(0,0), edge(1,1), edge(0,1,"up",10,gap=0.5), edge(1,0,"down"), StartEnd(0,0))
+UpDownGraph <- graph(type = "updown", gap = 1.3, penalty = 10)
+MyGraph <- graph(Edge(0,0), Edge(1,1), Edge(0,1,"up", gap = 0.5, penalty = 10),
+Edge(1,0,"down"), StartEnd(0,0), Node(0,0,1), Node(1,0,1))
 }

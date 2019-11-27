@@ -2,36 +2,29 @@
 % Please edit documentation in R/gfpop.R
 \name{gfpop}
 \alias{gfpop}
-\title{Graph-constrained functional pruning optimal partitioning}
+\title{Graph-Constrained Functional Pruning Optimal Partitioning}
 \usage{
-gfpop(vectData = c(0), vectWeight = c(0), mygraph, type = "gauss",
-  K = Inf, a = 0, min = -Inf, max = Inf)
+gfpop(data, mygraph, type = "mean", weights = NULL)
 }
 \arguments{
-\item{vectData}{vector of data to segment}
+\item{data}{vector of data to segment}
 
-\item{vectWeight}{vector of weights (positive numbers) same size as vectData}
+\item{mygraph}{dataframe of class "graph" to constrain the changepoint inference}
 
-\item{mygraph}{dataframe of class graph to constraint the changepoint dynamic programming algorithm}
+\item{type}{a string defining the cost model to use: "mean", "variance", "poisson", "exp", "negbin"}
 
-\item{type}{a string defining the type of cost to use. "gauss", "poisson" or "binomial"}
-
-\item{K}{a positive number. Threshold for the Biweight robust loss}
-
-\item{a}{a positive number. Slope for the Huber robust loss}
-
-\item{min}{minimal bound for the infered means}
-
-\item{max}{maximal bound for the infered means}
+\item{weights}{vector of weights (positive numbers), same size as data}
 }
 \value{
-a gfpop object = (changepoints, states, forced, means).
-'changepoints' is the vector of changepoints (we give the last element of each segment).
-'states' is the vector giving the state of each segment
-'forced' is the vector specifying whether the constraints of the graph are active (=1) or not (=0)
-'means' is the vector of successive means of each segment
-'cost' is a number equal to the global cost of the graph-constrained segmentation
+a gfpop object = (changepoints, states, forced, parameters, globalCost)
+\describe{
+\item{\code{changepoints}}{is the vector of changepoints (we give the last element of each segment)}
+\item{\code{states}}{is the vector giving the state of each segment}
+\item{\code{forced}}{is the vector specifying whether the constraints of the graph are active (=1) or not (=0)}
+\item{\code{parameters}}{is the vector of successive parameters of each segment}
+\item{\code{globalCost}}{is a number equal to the global cost of the graph-constrained changepoint optimization problem}
+ }
 }
 \description{
-Graph-contstrained functional pruning optimal partitionning
+Functional pruning optimal partitioning with a graph structure to take into account constraints on consecutive segment parameters. The user has to specify the graph he wants to use (see the graph function) and a type of cost funcion. This is the main function of the gfpop package.
 }

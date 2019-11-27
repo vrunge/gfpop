@@ -4,40 +4,33 @@
 \alias{itergfpop}
 \title{Graph-constrained functional pruning optimal partitioning iterated}
 \usage{
-itergfpop(vectData = c(0), vectWeight = c(0), mygraph,
-  type = "gauss", K = Inf, a = 0, min = -Inf, max = Inf,
+itergfpop(data, mygraph, type = "mean", weights = NULL,
   iter.max = 100, D.init = 1)
 }
 \arguments{
-\item{vectData}{vector of data to segment}
+\item{data}{vector of data to segment}
 
-\item{vectWeight}{vector of weights (positive numbers) same size as vectData}
+\item{mygraph}{dataframe of class graph to constrain the changepoint inference}
 
-\item{mygraph}{dataframe of class graph to constraint the changepoint dynamic programming algorithm}
+\item{type}{a string defining the cost model to use: "gauss", "variance", "poisson", "exp", "negbin"}
 
-\item{type}{a string defining the type of cost to use. "gauss", "poisson" or "binomial"}
-
-\item{K}{a positive number. Threshold for the Biweight robust loss}
-
-\item{a}{a positive number. Slope for the Huber robust loss}
-
-\item{min}{minimal bound for the infered means}
-
-\item{max}{maximal bound for the infered means}
+\item{weights}{vector of weights (positive numbers), same size as data}
 
 \item{iter.max}{maximal number of iteration of the gfpop function}
 
 \item{D.init}{initialisation of the number of segments}
 }
 \value{
-a gfpop object = (changepoints, states, forced, means).
-'changepoints' is the vector of changepoints (we give the last element of each segment).
-'states' is the vector giving the state of each segment
-'forced' is the vector specifying whether the constraints of the graph are active (=1) or not (=0)
-'means' is the vector of successive means of each segment
-'cost' is a number equal to the global cost of the graph-constrained segmentation
-'Dvect' is a vector of integers. The successive tested D in the Birgé Massart penalty until convergence
+a gfpop object = (changepoints, states, forced, parameters, globalCost, Dvect)
+\describe{
+\item{\code{changepoints}}{is the vector of changepoints (we give the last element of each segment)}
+\item{\code{states}}{is the vector giving the state of each segment}
+\item{\code{forced}}{is the vector specifying whether the constraints of the graph are active (=1) or not (=0)}
+\item{\code{parameters}}{is the vector of successive parameters of each segment}
+\item{\code{globalCost}}{is a number equal to the global cost of the graph-constrained changepoint optimization problem}
+\item{\code{Dvect}}{is a vector of integers. The successive tested D in the Birgé Massart penalty until convergence}
+ }
 }
 \description{
-Graph-contstrained functional pruning optimal partitionning iterated with a Birgé Massart like penalty
+Functional pruning optimal partitioning with a graph structure to take into account constraints on consecutive segment parameters. This is an iterated version of the main gfpop function using a Birgé Massart like penalty
 }

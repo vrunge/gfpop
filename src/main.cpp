@@ -1,113 +1,141 @@
-//#include <iostream>
+#include <iostream>
 #include <string>
 #include<math.h>
 
 #include<Rcpp.h>
 
 #include"Omega.h"
+#include"Cost.h"
+#include"ExternFunctions.h"
 
 #include"Data.h"
 #include"Graph.h"
 #include"Edge.h"
-#include"Bound.h"
-#include"Robust.h"
 
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List gfpopTransfer(NumericVector vectData, NumericVector vectWeight, DataFrame mygraph, std::string type, double K, double a, double min, double max)
+List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, NumericVector vectWeight)
 {
-  // BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT
-  // BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT// BEGIN TRANSFERT
+  ///////////////////////////////////////////
+  /////////// DATA TRANSFORMATION ///////////
+  ///////////////////////////////////////////
+  double epsilon = pow(10,-12);
 
-  // BEGIN TRANSFERT INTO C++ OBJETS
-  // DATA (vectDATA, vectWeight, fileData) + GRAPH(mygraph) + ROBUST(K, a) + BOUND(min, max)
+  if(type == "variance")
+  {
+    double mean = 0;
+    for(int i = 0; i < vectData.size(); i++){mean = mean + vectData[i];}
+    mean = mean/vectData.size();
+    for(int i = 0; i < vectData.size(); i++){vectData[i] = vectData[i] - mean; if(vectData[i] == 0){vectData[i] = epsilon;}}
+  }
 
-  ///////////
-  /////////// DATA LOADING
-  ///////////
-  Data data = Data(); // in any case, add a file name. by default = "nofile"
-  int n = vectData.length();
-  int nw = vectWeight.length();
-  data.copy(vectData, vectWeight, n, nw);
-  //data.show(false);
+  if(type == "poisson")
+  {
+    for(int i = 0; i < vectData.size(); i++){if(vectData[i] < 0 || (vectData[i]  > floor(vectData[i]))){throw std::range_error("There are some non-integer data");}}
+  }
 
-  ///////////
-  /////////// GRAPH
-  ///////////
+  if(type == "exp")
+  {
+    for(int i = 0; i < vectData.size(); i++){if(vectData[i] <= 0){throw std::range_error("Data has to be all positive");}}
+  }
+
+  if(type == "negbin")
+  {
+    unsigned int windowSize = 100;
+    unsigned int k = vectData.size() / windowSize;
+    double mean = 0;
+    double variance = 0;
+    double disp = 0;
+
+    for(unsigned int j = 0; j < k; j++)
+    {
+      mean = 0;
+      variance = 0;
+      for(unsigned int i = j * windowSize; i < (j + 1)*windowSize; i++){mean = mean + vectData[i];}
+      mean = mean/windowSize;
+      for(unsigned int i =  j * windowSize; i < (j + 1)*windowSize; i++){variance = variance + (vectData[i] - mean) * (vectData[i] - mean);}
+      variance = variance/(windowSize - 1);
+      disp = disp  + (mean * mean / (variance - mean));
+    }
+    disp = disp/k;
+    for(int i = 0; i < vectData.size(); i++){vectData[i] = vectData[i]/disp; if(vectData[i] == 0){vectData[i] = epsilon/(1- epsilon);}}
+  }
+
+  // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects
+  // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects  // BEGIN TRANSFERT into C++ objects
+  // DATA AND GRAPH
+
+  /////////////////////////////////
+  /////////// DATA COPY ///////////
+  /////////////////////////////////
+  Data data = Data();
+  data.copy(vectData, vectWeight, vectData.length(), vectWeight.length());
+
+  //////////////////////////////////
+  /////////// GRAPH COPY ///////////
+  //////////////////////////////////
 
   Graph graph = Graph();
   Edge newedge;
 
+  ///9 variables in mygraph
   Rcpp::IntegerVector state1 = mygraph["state1"];
   Rcpp::IntegerVector state2 = mygraph["state2"];
   Rcpp::CharacterVector typeEdge = mygraph["type"];
-  Rcpp::NumericVector penalty = mygraph["penalty"];
   Rcpp::NumericVector parameter = mygraph["parameter"];
+  Rcpp::NumericVector penalty = mygraph["penalty"];
+  Rcpp::NumericVector KK = mygraph["K"];
+  Rcpp::NumericVector aa = mygraph["a"];
+  Rcpp::NumericVector minn = mygraph["min"];
+  Rcpp::NumericVector maxx = mygraph["max"];
 
-  for (int i = 0 ; i < mygraph.nrow(); i++)
-    {graph << Edge(penalty[i], state1[i], state2[i], typeEdge[i], parameter[i]);}
-  ///Include start and end states if specified
+  for(int i = 0 ; i < mygraph.nrow(); i++)
+    {graph << Edge(state1[i], state2[i], typeEdge[i], fabs(parameter[i]), penalty[i], fabs(KK[i]), fabs(aa[i]), minn[i], maxx[i]);}
 
-  std::string graphType = graph.getType();
-  //Rcout << "graphType : " << graphType << std::endl;
-  //graph.show();
-  if(graph.AreVerticesCompatible() == false){Rcout << "The vertices must be labeled by integers from 0 to S (an integer)" << std::endl; return(0);}
+  // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects
+  // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects
 
-  ///////////
-  /////////// BOUND: MIN - MAX constraints
-  ///////////
+  /////////////////////////////////////////////
+  /////////// COST FUNCTION LOADING ///////////
+  /////////////////////////////////////////////
 
-  double m = data.getm();
-  double M = data.getM();
-  bool isConstr = false;
-  if(m < min){m = min; isConstr = true;}
-  if(max < M){M = max; isConstr = true;}
-  Bound bound = Bound(m, M, isConstr);
+  cost_coeff = coeff_factory(type);
+  cost_eval = eval_factory(type);
 
-  ///////////
-  /////////// ROBUST : K and a parameter. Defining deferent robust loss. Biweight, Huber, L1
-  ///////////
+  cost_min = min_factory(type);
+  cost_minInterval = minInterval_factory(type);
+  cost_argmin = argmin_factory(type);
+  cost_argminInterval = argminInterval_factory(type);
+  cost_argminBacktrack = argminBacktrack_factory(type);
 
-  Robust robust = Robust(K, a);
-  robust.findRobustType();
-  robust.show();
+  cost_shift = shift_factory(type);
+  cost_interShift = interShift_factory(type);
+  cost_expDecay = expDecay_factory(type);
+  cost_interExpDecay = interExpDecay_factory(type);
 
-  // END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT
-  // END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT// END TRANSFERT
+  cost_intervalInterRoots = intervalInterRoots_factory(type);
+  cost_age = age_factory(type);
+  cost_interval = interval_factory(type);
 
-  ///////////
-  /////////// EXCEPTIONS
-  ///////////
+  /////////////////////////////
+  /////////// OMEGA ///////////
+  /////////////////////////////
 
-  if(m == M){Rcout << "min data = max data. Data can not be segmented." << std::endl; return(0);}
-  if(data.getn() < 1){Rcout << "No data" << std::endl;  return(0);}
+  Omega omega(graph);
+  omega.gfpop(data);
 
-  ///////////
-  /////////// OMEGA
-  ///////////
-
-  Omega omega(graph, bound, robust);
-
-  /// FPOP 1D GRAPH ALGORITHM. Different call with respect to the complexity of the graph.
-  if(graphType == "std"){omega.fpop1d_graph_std(data);}
-  if(graphType == "isotonic"){omega.fpop1d_graph_isotonic(data);}
-  if(graphType == "pava"){omega.pava(data);}
-  if(graphType == "complex"){omega.fpop1d_graph_complex(data);}
-
-  ///////////
-  /////////// RETURN
-  ///////////
+  /////////////////////////////
+  /////////// RETURN //////////
+  /////////////////////////////
 
   List res = List::create(
     _["changepoints"] = omega.GetChangepoints(),
     _["states"] = omega.GetStates(),
     _["forced"] = omega.GetForced(),
-    _["means"] = omega.GetMeans(),
+    _["param"] = omega.GetParameters(),
     _["cost"] = omega.GetGlobalCost()
-  );
+);
 
   return res;
 }
-
-

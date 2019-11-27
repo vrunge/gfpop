@@ -3,27 +3,36 @@
 
 #include<string>
 #include "Rcpp.h"
+#include "math.h" //to use INFINITY
 
 class Edge
 {
   public:
     Edge();
-    Edge(double b, int s1 = 0, int s2 = 0, Rcpp::String cstt = "std", double param = 0);
+    Edge(unsigned int s1, unsigned int s2, Rcpp::String cstt = "std", double param = 0, double b = 0, double K = INFINITY, double a = 0, double mini = -INFINITY, double maxi = INFINITY);
 
     double getBeta() const;
-    int getState1() const;
-    int getState2() const;
+    unsigned int getState1() const;
+    unsigned int getState2() const;
     std::string getConstraint() const;
     double getParameter() const;
+    double getKK() const;
+    double getAA() const;
+    double getMinn() const;
+    double getMaxx() const;
 
     void show() const;
 
   private:
-    double beta;
-    int state1;
-    int state2;
+    unsigned int state1;
+    unsigned int state2;
     std::string constraint;
     double parameter;
+    double beta;
+    double KK;
+    double aa;
+    double minn;
+    double maxx;
 };
 
 #endif // EDGE_H
