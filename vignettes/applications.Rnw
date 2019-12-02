@@ -8,6 +8,7 @@
 \DeclareMathOperator*{\minimize}{minimize}
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 
 \title{Applications of GFPOP}
 \author{Toby Dylan Hocking}
@@ -21,7 +22,7 @@ knitr::opts_chunk$set(
   fig.align = "center",
   comment = "#>"
 )
-@ 
+@
 
 \section{Multi-state model for QRS complex detection in electrocardiogram (ECG) data}
 
@@ -49,7 +50,7 @@ m <- function(x){
 }
 model.dt.list <- list(
   previous=ECG$PanTompkins[, data.table(
-    n.states=NA, 
+    n.states=NA,
     states=NA,
     model=m("previous"),
     time,
@@ -84,12 +85,12 @@ for(states in names(select.vec.list)){
     mean=fit$parameters))
   ## to show vertical lines connecting the horizontal segment means:
   mean.dt.list[[states]] <- segments.dt[, data.table(
-    n.states, 
+    n.states,
     states,
     time=as.numeric(rbind(timeStart-0.5, timeEnd+0.5)),
     mean=as.numeric(rbind(mean, mean)))]
   model.dt.list[[states]] <- segments.dt[, data.table(
-    n.states, 
+    n.states,
     states,
     model=m("changepoint"),
     time=ifelse(state=="Q", timeEnd, (timeStart+timeEnd)/2),
@@ -274,7 +275,7 @@ gg.out <- ggplot()+
     data=err.list$label.errors)+
   scale_linetype_manual(
     "error type",
-    limits=c("correct", 
+    limits=c("correct",
              "false negative",
              "false positive"),
     values=c(correct=0,
@@ -315,7 +316,7 @@ if(nrow(show.spikes)){
       mid.seconds, spike.y, color=type),
       shape=1,
       data=data.table(type="model", show.spikes))
-}    
+}
 ##png("figure-AR1-multimodal.png", 7, 2.5, units="in", res=300)
 print(gg.out)
 ##dev.off()
@@ -444,7 +445,7 @@ gg.out <- ggplot()+
     data=join.list$errors)+
   scale_linetype_manual(
     "error type",
-    limits=c("correct", 
+    limits=c("correct",
              "false negative",
              "false positive"),
     values=c(correct=0,

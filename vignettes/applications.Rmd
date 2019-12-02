@@ -22,18 +22,18 @@ knitr::opts_chunk$set(
 data(ECG, package="gfpop")
 
 myGraph <- gfpop::graph(
-  gfpop::edge(0, 1, "down", 80000000, gap=0),
-  gfpop::edge(1, 2, "up",   0,        gap=2000),
-  gfpop::edge(2, 3, "down", 0,        gap=5000),
-  gfpop::edge(3, 4, "up",   0,        gap=2000),
-  gfpop::edge(4, 5, "up",   0,        gap=1000),
-  gfpop::edge(5, 6, "up",   0,        gap=0),
-  gfpop::edge(6, 7, "down", 0,        gap=0),
-  gfpop::edge(7, 8, "down", 0,        gap=0),
-  gfpop::edge(8, 0, "up",   0,        gap=0),
-  gfpop::edge(0:8, 0:8, "null", 0,    gap=0))
+  gfpop::Edge(0, 1, "down", penalty = 800000, gap=0),
+  gfpop::Edge(1, 2, "up", penalty =  1,      gap=2000),
+  gfpop::Edge(2, 3, "down", penalty = 1,    gap=5000),
+  gfpop::Edge(3, 4, "up", penalty = 1,      gap=2000),
+  gfpop::Edge(4, 5, "up", penalty = 1,      gap=1000),
+  gfpop::Edge(5, 6, "up", penalty = 1,      gap=0),
+  gfpop::Edge(6, 7, "down", penalty = 1,    gap=0),
+  gfpop::Edge(7, 8, "down", penalty = 1,    gap=0),
+  gfpop::Edge(8, 0, "up", penalty =1,        gap=0),
+  gfpop::Edge(0:8, 0:8, "null", penalty =0,  gap=0))
 
-fit <- gfpop::gfpop(vectData = ECG$data$millivolts, mygraph = myGraph, type = "gauss")
+fit <- gfpop::gfpop(data = ECG$data$millivolts, mygraph = myGraph, type = "mean")
 
 library(data.table)
 end.i <- fit$changepoints
@@ -42,7 +42,7 @@ segments.dt <- with(ECG$data, data.table(
   timeStart=time[start.i],
   timeEnd=time[end.i],
   state=fit$states,
-  mean=fit$means))
+  mean=fit$parameters))
 
 segments.dt[, letter := c("beforeQ", "Q", "R", "S", "S1", "S2", "peak", "afterPeak", "foo")[state+1] ]
 mean.dt <- segments.dt[, data.table(
@@ -79,7 +79,7 @@ gg <- ggplot()+
     data=data.table(
       x=208.5, y=6500, hjust=1, label="True R", model=m("changepoint")))+
   theme_bw()+
-  theme(panel.margin=grid::unit(0, "lines"))+
+  theme(panel.spacing=grid::unit(0, "lines"))+
   facet_grid(model ~ .)+
   geom_line(aes(
     time/samples.per.second, millivolts),
@@ -131,14 +131,14 @@ fit.state.list <- list()
 for(pen.i in seq_along(pen.vec)){
   penalty <- as.numeric(pen.vec[[pen.i]])
   myGraph <- gfpop::graph(
-    gfpop::edge(0, 0, "down", 0),
-    gfpop::edge(1, 1, "up",   0),
-    gfpop::edge(0, 1, "up",   penalty),
-    gfpop::edge(1, 0, "down", 0),
-    gfpop::edge(0:1, 0:1, "null"))
+    gfpop::Edge(0, 0, "down", penalty = 0),
+    gfpop::Edge(1, 1, "up",   penalty = 0),
+    gfpop::Edge(0, 1, "up",   penalty = penalty),
+    gfpop::Edge(1, 0, "down", penalty = 0),
+    gfpop::Edge(0:1, 0:1, "null"))
   fit <- gfpop::gfpop(
-    vectData = Mono27ac$coverage$count,
-    mygraph = myGraph, type = "gauss")
+    data = Mono27ac$coverage$count,
+    mygraph = myGraph, type = "mean")
   end.i <- fit$changepoints
   start.i <- c(1, end.i[-length(end.i)]+1)
   diff.status <- c(0, diff(fit$states==1))
@@ -147,7 +147,7 @@ for(pen.i in seq_along(pen.vec)){
     segEnd=chromEnd[end.i],
     peak.i=cumsum(diff.status>0),
     annotation=ifelse(fit$states==1, "peakStart", "peakEnd"),
-    mean=fit$means))
+    mean=fit$parameters))
   state.dt <- sorted.segs[, {
     extreme <-.SD[which.max(segEnd)]
     list(
@@ -374,7 +374,7 @@ myGraph <- gfpop::graph(
   gfpop::edge(0:1, 0:1, "null"))
 
 fit <- gfpop::gfpop(
-  vectData = neuroSpike$calcium, mygraph = myGraph, type = "gauss")
+  data = neuroSpike$calcium, mygraph = myGraph, type = "gauss")
 
 end.i <- fit$changepoints
 start.i <- c(1, end.i[-length(end.i)]+1)
@@ -382,7 +382,7 @@ res.dt <- with(neuroSpike, data.table(
   start.seconds=seconds[start.i],
   end.seconds=seconds[end.i],
   state=fit$states,
-  mean=fit$means))
+  mean=fit$parameters))
 res.dt[, Multimodal := ifelse(mean<0.1, 0, mean) ]
 over.dt <- res.dt[neuroSpike, on=list(
   start.seconds <= seconds, end.seconds >= seconds)]
