@@ -45,7 +45,7 @@ paperGraph <- function(nb, penalty = 0, decay = 1, gap = 0, oneValue = 0, K = In
       Edge("2", "3", type = "std", penalty = 0),
       Edge("1", "1", type = "null", penalty = 0),
       Edge("2", "2", type = "null", penalty = 0),
-      Edge("2", "3", type = "null", penalty = 0),
+      Edge("3", "3", type = "null", penalty = 0),
       StartEnd(start = "1", end = "3")
     )
   }
@@ -103,6 +103,17 @@ paperGraph <- function(nb, penalty = 0, decay = 1, gap = 0, oneValue = 0, K = In
       Edge("Coll", "mu0", type = "std",  K = K),
       StartEnd(start = "mu0"),
       Node("mu0", min = oneValue, max = oneValue)
+    )
+  }
+  if(nb == 21)
+  {
+    mygraph <- graph(
+      Edge("1", "2", type = "abs", penalty = 0, gap = 1),
+      Edge("2", "3", type = "abs", penalty = 0, gap = 1),
+      Edge("1", "1", type = "null", penalty = 0),
+      Edge("2", "2", type = "null", penalty = 0),
+      Edge("3", "3", type = "null", penalty = 0),
+      StartEnd(start = "1", end = "3")
     )
   }
   return(mygraph)

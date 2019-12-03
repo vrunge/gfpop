@@ -636,7 +636,7 @@ void ListPiece::get_min_argmin_label_state_position_onePiece(double* response, u
 
   if(out == true)
   {
-    if((constrainedInterval.geta() < response[1]) && (response[1] < constrainedInterval.getb()))
+    if((constrainedInterval.geta() <= response[1]) && (response[1] <= constrainedInterval.getb()))
     {
       forced = true;
       if(response[1] - constrainedInterval.geta() < constrainedInterval.getb() - response[1]){response[1] = constrainedInterval.geta();}

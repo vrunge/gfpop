@@ -17,29 +17,27 @@
 #' Edge("Dw", "Up", "up", gap = 1, penalty = 10, K = 3)
 Edge <- function(state1, state2, type = "null", decay = 1, gap = 0, penalty = 0, K = Inf, a = 0)
 {
-  allowed.types <- c("null", "std", "up", "down", "abs", "start", "end")
-  if(!type %in% allowed.types){
-    stop(
-      'type must be one of: ',
-      paste(allowed.types, collapse=", "))
-  }
-  if(!is.double(penalty)){stop('penalty is not a double.')}
+  allowed.types <- c("null", "std", "up", "down", "abs")
+  if(!type %in% allowed.types){stop('type must be one of: ', paste(allowed.types, collapse=", "))}
   if(!is.double(decay)){stop('decay is not a double.')}
   if(!is.double(gap)){stop('gap is not a double.')}
   if(!is.double(penalty)){stop('penalty is not a double.')}
   if(!is.double(K)){stop('K is not a double.')}
   if(!is.double(a)){stop('a is not a double.')}
-  if(any(penalty < 0, na.rm=TRUE)){stop('penalty must be nonnegative')}
+
+  if(any(type == "null" && decay == 0, na.rm=TRUE))stop('decay must be non-zero')
   if(any(decay < 0, na.rm=TRUE)){stop('decay must be nonnegative')}
-  if(any(type == "null" && decay == 0, na.rm=TRUE))stop(
-    'decay must be non-zero')
   if(any(gap < 0, na.rm=TRUE)){stop('gap must be nonnegative')}
+  if(any(penalty < 0, na.rm=TRUE)){stop('penalty must be nonnegative')}
   if(any(K <= 0, na.rm=TRUE)){stop('K must be positive')}
   if(any(a < 0, na.rm=TRUE)){stop('a must be nonnegative')}
+
+  #fill parameter variable
+
   if(type == "null"){parameter <- decay}else{parameter <- gap}
-  data.frame(
-    state1, state2, type, penalty, parameter, K, a,
-    min=NA, max=NA, stringsAsFactors = FALSE)
+
+  data.frame(state1, state2, type, parameter, penalty, K, a, min=NA, max=NA, stringsAsFactors = FALSE)
+
 }
 
 
@@ -59,9 +57,20 @@ StartEnd <- function(start = NULL, end = NULL)
   ### delete repetitions if any
   start <- unique(start)
   end <- unique(end)
-  rbind(
-    Edge(start, NA, "start", decay=NA_real_, gap=NA_real_, penalty=NA_real_, K=NA_real_, a=NA_real_),
-    Edge(end, NA, "end", decay=NA_real_, gap=NA_real_, penalty=NA_real_, K=NA_real_, a=NA_real_))
+
+  df <- data.frame(character(), character(), character(), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), stringsAsFactors = FALSE)
+  colnames(df) <- c("state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max")
+  if(length(start) != 0)
+  {
+    for(i in 1:length(start))
+      {df[i,] <- list(start[i], NA, "start", NA, NA, NA, NA, NA, NA)}
+  }
+  if(length(end) != 0)
+  {
+    for(i in 1:length(end))
+      {df[i + length(start),] <- list(end[i], NA, "end", NA, NA, NA, NA, NA, NA)}
+  }
+  return(df)
 }
 
 
@@ -75,15 +84,12 @@ StartEnd <- function(start = NULL, end = NULL)
 #' @param max maximal value for the inferred parameter
 #' @return a dataframe with 9 variables with only `state1`, `min` and `max` defined.
 #' @examples
-#' Node(state = "S", min = 0, max = 2)
+#' Node(state = "s0", min = 0, max = 2)
 
 Node <- function(state = NULL, min = -Inf, max = Inf)
 {
-  ############
-  ### STOP ###
-  ############
-  if(!is.double(min)){stop('max is not a double.')}
-  if(!is.double(max)){stop('min is not a double.')}
+  if(!is.double(min)){stop('min is not a double.')}
+  if(!is.double(max)){stop('max is not a double.')}
   if(min > max){stop('min is greater than max')}
 
   df <- data.frame(character(), character(), character(), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), stringsAsFactors = FALSE)
@@ -105,48 +111,69 @@ Node <- function(state = NULL, min = -Inf, max = Inf)
 #' @param penalty a nonnegative number equals to the common penalty to use for all edges
 #' @param K a positive number. Threshold for the Biweight robust loss
 #' @param a a positive number. Slope for the Huber robust loss
+#' @param all.null.edges a boolean. Add null edges to all nodes automatically
 #' @return a dataframe with 9 variables (columns are named "state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max") with additional "graph" class.
 #' @examples
 #' UpDownGraph <- graph(type = "updown", gap = 1.3, penalty = 10)
-#' MyGraph <- graph(Edge(0,0), Edge(1,1), Edge(0,1,"up", gap = 0.5, penalty = 10),
-#' Edge(1,0,"down"), StartEnd(0,0), Node(0,0,1), Node(1,0,1))
+#' MyGraph <- graph(Edge("Dw","Dw"), Edge("Up","Up"), Edge("Dw","Up","up", gap = 0.5, penalty = 10),
+#' Edge("Up","Dw","down"), StartEnd("Dw","Dw"), Node("Dw",0,1), Node("Up",0,1))
 
-graph <- function(..., type = "empty", decay = 1, gap = 0, penalty = 0, K = Inf, a = Inf, all.null.edges=TRUE)
+graph <- function(..., type = "empty", decay = 1, gap = 0, penalty = 0, K = Inf, a = 0, all.null.edges = FALSE)
 {
-  if(!is.double(penalty)){stop('penalty is not a double.')}
-  if(penalty < 0){stop('penalty must be nonnegative')}
-  myNewGraph <- if(type == "std"){
-    Edge("Std", "Std", "std", penalty = penalty, K = K, a = a)
-  }else if(type == "isotonic"){
-    Edge("Iso", "Iso", "up", gap = gap, penalty = penalty, K = K, a = a)
-  }else if(type == "updown"){
-    rbind(
-      Edge("Dw", "Up", "up", gap = gap, penalty = penalty, K = K, a = a),
-      Edge("Up", "Dw", "down", gap = gap, penalty = penalty, K = K, a = a))
-  }else if(type == "relevant"){
-    Edge("Std", "Std", "abs", gap = gap, penalty = penalty, K = K, a = a)
-  }else{#user-provided graph.
-    no.edge <- Edge(NA_character_, NA_character_)[0,]
-    dots.list <- list(...)
-    is.ok <- sapply(dots.list, function(df)identical(names(df), names(no.edge)))
-    i.bad <- which(!is.ok)
-    if(length(i.bad)){
-      stop(
-        "please use gfpop::Edge to specify graph, problem arguments: ",
-        paste(i.bad, collapse=", "))
-
+  #### build the graph with the collection ... of edges
+  myNewGraph <- rbind(...)
+  if(is.null(myNewGraph) == FALSE)
+  {
+    not.special <- subset(myNewGraph, ! type %in% c("node", "null", "start", "end"))
+    if(isTRUE(all.null.edges) && nrow(not.special > 0))
+    {
+      myNewGraph <- subset(myNewGraph, type != "null")
+      u.states <- with(not.special, unique(c(state1, state2)))
+      for(i in u.states){myNewGraph <- rbind(Edge(i, i, "null", decay = decay), myNewGraph)}
     }
-    rbind(no.edge, ...)
   }
-  not.special <- subset(myNewGraph, ! type %in% c("null", "start", "end"))
-  if(isTRUE(all.null.edges) && 0<nrow(not.special)){
-    u.states <- with(not.special, unique(c(state1, state2)))
-    myNewGraph <- rbind(
-      subset(not.special, type != "null"),
-      Edge(u.states, u.states, "null", decay=decay))
+
+  #### user specified graph
+  if(is.null(myNewGraph) == TRUE)
+  {
+    allowed.graphs <- c("empty", "std", "isotonic", "updown", "relevant")
+    if(!type %in% allowed.graphs){stop('type must be one of: ', paste(allowed.graphs, collapse=", "))}
+
+    if(!is.double(decay)){stop('decay is not a double.')}
+    if(!is.double(gap)){stop('gap is not a double.')}
+    if(decay < 0){stop('decay must be nonnegative')}
+    if(gap < 0){stop('gap must be nonnegative')}
+    if(!is.double(penalty)){stop('penalty is not a double.')}
+    if(penalty < 0){stop('penalty must be nonnegative')}
+
+    myNewGraph <- data.frame(character(), character(), character(), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), stringsAsFactors = FALSE)
+    names(myNewGraph) <- c("state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max")
+
+    if(type == "std")
+    {
+      myNewGraph[1, ] <- Edge("Std", "Std", "null", decay = decay, K = K, a = a)
+      myNewGraph[2, ] <- Edge("Std", "Std", "std", penalty = penalty, K = K, a = a)
+    }
+    else if(type == "isotonic")
+    {
+      myNewGraph[1, ] <- Edge("Iso", "Iso", "null", decay = decay, K = K, a = a)
+      myNewGraph[2, ] <- Edge("Iso", "Iso", "up", gap = gap, penalty = penalty, K = K, a = a)
+    }
+    else if(type == "updown")
+    {
+      myNewGraph[1, ] <- Edge("Dw", "Dw", "null", decay = decay, K = K, a = a)
+      myNewGraph[2, ] <- Edge("Up", "Up", "null", decay = decay, K = K, a = a)
+      myNewGraph[3, ] <- Edge("Dw", "Up", "up", gap = gap, penalty = penalty, K = K, a = a)
+      myNewGraph[4, ] <- Edge("Up", "Dw", "down", gap = gap, penalty = penalty, K = K, a = a)
+    }
+    else if(type == "relevant")
+    {
+      myNewGraph[1, ] <- Edge("Std", "Std", "null", decay = decay, K = K, a = a)
+      myNewGraph[2, ] <- Edge("Std", "Std", "abs", gap = gap, penalty = penalty, K = K, a = a)
+    }
   }
-  class(myNewGraph) <- c("graph", "data.frame")
-  myNewGraph
+  class(myNewGraph) <- c("data.frame", "graph")
+  return(myNewGraph)
 }
 
 
@@ -219,7 +246,8 @@ graphReorder <- function(mygraph)
   class(myNewGraph$state1) <- "numeric"
   class(myNewGraph$state2) <- "numeric"
 
-  list(graph = myNewGraph, vertices = myVertices)
+  response <- list(graph = myNewGraph, vertices = myVertices)
+  return(response)
 }
 
 

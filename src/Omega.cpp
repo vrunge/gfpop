@@ -108,32 +108,10 @@ void Omega::gfpop(Data const& data)
 
 	for(unsigned int t = 0; t < n; t++) // loop for all data point
 	{
-	  //std::cout << t << "-----------------------------------------------------------------------------------------------------------------------" << std::endl;
 	  LP_edges_operators(t); // fill_LP_edges. t = newLabel to consider
     LP_edges_addPointAndPenalty(myData[t]); // Add new data point and penalty
-
-    ////////////////
-    ////////////////
-    //std::cout << std::endl;
-    //std::cout << "  LP_edgesLP_edgesLP_edgesLP_edgesLP_edgesLP_edges "<< t<< std::endl;
-    //for(unsigned int i = 0; i < q; i++) /// loop for all q edges
-    //{
-    //  std::cout << "  type " << m_graph.getEdge(i).getConstraint() << std::endl;
-    //  std::cout << "  states " << m_graph.getEdge(i).getState1() << " and " << m_graph.getEdge(i).getState2() << std::endl;
-    //  LP_edges[i].show();
-
-    ////////////////
-    ////////////////
-    //}
-    //std::cout << "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"<< t<< std::endl;
-    //LP_ts[t+1][0].show();
-	  LP_t_new_multipleMinimization(t); // multiple_minimization
-	  //std::cout << "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"<< t<< std::endl;
-	  //LP_ts[t+1][0].show();
-	  //std::cout << "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"<< t<< std::endl;
-
+    LP_t_new_multipleMinimization(t); // multiple_minimization
 	}
-
 	backtracking();
 }
 
@@ -233,7 +211,6 @@ void Omega::backtracking()
   changepoints.push_back(CurrentChgpt); // = n
   states.push_back(CurrentState); // = the best state
 
-
   /// BACKTRACK
   ///////////////////////////////
   /// previous to FINAL STATE ///
@@ -282,10 +259,10 @@ void Omega::backtracking()
 
 void Omega::show()
 {
-  for(unsigned char i = 0; i < q; i++)
+  for(unsigned int i = 0; i < q; i++) /// loop for all q edges
   {
-    std::cout << "s1: " << m_graph.getEdge(i).getState1() + 1;
-    std::cout << " s2: " << m_graph.getEdge(i).getState2() + 1 << " ";
+    std::cout << "  type " << m_graph.getEdge(i).getConstraint() << std::endl;
+    std::cout << "  states " << m_graph.getEdge(i).getState1() << " and " << m_graph.getEdge(i).getState2() << std::endl;
     LP_edges[i].show();
   }
 }

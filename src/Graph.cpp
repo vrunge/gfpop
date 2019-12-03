@@ -14,7 +14,7 @@ void Graph::newEdge(Edge const& edge){edges.push_back(edge);}
 unsigned int Graph::nb_states() const
 {
   std::vector<unsigned int> temp;
-  for (std::vector<Edge>::const_iterator it=edges.begin() ; it < edges.end() ; it++)
+  for (std::vector<Edge>::const_iterator it=edges.begin(); it < edges.end(); it++)
   {
     temp.push_back(it->getState1());
     temp.push_back(it->getState2());
@@ -151,16 +151,16 @@ void Graph::show() const
   {
     edges[i].show();
   }
-  std::cout<< "Start state (+1): ";
+  std::cout << "Start state (+1): ";
   for (unsigned int i = 0 ; i < startState.size() ; i++)
   {
-    std::cout<< startState[i] + 1 << " ";
+    std::cout << startState[i] << " ";
   }
   std::cout << std::endl;
   std::cout<< "End state (+1): ";
   for (unsigned int i = 0 ; i < endState.size() ; i++)
   {
-    std::cout<< endState[i] + 1 << " ";
+    std::cout << endState[i] << " ";
   }
   std::cout << std::endl;
   std::cout<< "nb states : " << nb_states() << std::endl;
