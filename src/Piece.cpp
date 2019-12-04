@@ -1,3 +1,4 @@
+/* -*- compile-command: "R CMD INSTALL .." -*- */
 #include "Piece.h"
 #include"ExternFunctions.h"
 
@@ -317,7 +318,7 @@ Piece* Piece::piece0(Piece* Q1, Piece* Q2, Interval interToPaste, int& Q2_Minus_
   double centerPoint = interToPaste.internPoint();
   Cost costDiff = minusCost(Q2 -> m_cost, Q1 -> m_cost);
   Q2_Minus_Q1 = signValue(cost_eval(costDiff, centerPoint));
-  bool test;
+  bool test = false;
 
   if (BUILD -> m_interval.isEmpty() == true) /// IF BUILD interval = empty
   {

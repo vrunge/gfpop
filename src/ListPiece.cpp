@@ -1,3 +1,4 @@
+/* -*- compile-command: "R CMD INSTALL .." -*- */
 #include "ListPiece.h"
 
 #include "Piece.h"
@@ -255,7 +256,7 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     ///variable definition
     Piece* tmp = LP_state.head;
     double globalMin = INFINITY;
-    unsigned int positionMin;
+    unsigned int positionMin = -5;
     unsigned int currentCounter = 0;
     double currentMin;
 
@@ -306,7 +307,6 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
 
 void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
 {
-  Piece* current;
   /// get edge data ///
   double K = edge.getKK();
   double a = edge.getAA();

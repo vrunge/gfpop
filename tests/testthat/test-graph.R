@@ -11,7 +11,8 @@ test_that("graph ok with no args", {
 
 test_that("error for non-graph args", {
   expect_error({
-    graph(data.frame(state1="foo", state2="bar"))
+    g <- graph(data.frame(state1="foo", state2="bar"))
+    fit <- gfpop::gfpop(1:10, g)
   }, error="please use gfpop::Edge to specify graph, problem arguments: 1")
 })
 
