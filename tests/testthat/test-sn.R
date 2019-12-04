@@ -5,6 +5,10 @@ context("sn")
 library(data.table)
 data(profile614chr2, package="gfpop")
 
+### reduce data size
+profile614chr2$probes <- profile614chr2$probes[1:10000,]
+
+
 g <- gfpop::graph(type="std")
 x <- rnorm(10)
 gfpop::gfpop(x, g)

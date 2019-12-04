@@ -17,12 +17,10 @@ knitr::opts_chunk$set(
 ```
 
 
-
-
 ## Multi-modal regression for neuro spike train data set 
 
 ```{r Mono27ac, fig.width=10}
-
+library(PeakSegOptimal)
 
 library(data.table)
 data(profile614chr2, package="gfpop")
