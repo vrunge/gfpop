@@ -34,6 +34,7 @@ gfpop <- function(data, mygraph, type = "mean", weights = NULL)
   }
   else{weights <- 0} #to send a double in gfpopTransfer
   if(length(data) < 2){stop('data vector length is less than 2...')}
+  if(any(is.na(data)))stop("data has missing values, please remove them")
 
   ######################
   ### GRAPH ANALYSIS ###
