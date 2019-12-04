@@ -44,16 +44,16 @@ test_that("abs model with 1 segment returned", {
   expect_identical(fit1$states, "seg0")
 })
 
-test_that("abs model with 2 segments returned", {
-  g2 <- sngraph(2L, "abs", 1)
-  fit2 <- gfpop::gfpop(
-    profile614chr2$probes$logratio,
-    mygraph = g2, type = "mean")
-  expect_identical(length(fit2$changepoints), 2L)
-  expect_identical(fit2$changepoints[2], nrow(profile614chr2$probes))
-  expect_identical(length(fit2$parameters), 2L)
-  expect_identical(fit2$states, c("seg0", "seg1"))
-})
+#test_that("abs model with 2 segments returned", {
+#  g2 <- sngraph(2L, "abs", 1)
+#  fit2 <- gfpop::gfpop(
+#    profile614chr2$probes$logratio,
+#    mygraph = g2, type = "mean")
+#  expect_identical(length(fit2$changepoints), 2L)
+#  expect_identical(fit2$changepoints[2], nrow(profile614chr2$probes))
+#  expect_identical(length(fit2$parameters), 2L)
+#  expect_identical(fit2$states, c("seg0", "seg1"))
+#})
 
 test_that("abs model with 3 segments returned", {
   g3 <- sngraph(3L, "abs", 1)

@@ -5,7 +5,7 @@
 \title{Graph generation}
 \usage{
 graph(..., type = "empty", decay = 1, gap = 0, penalty = 0,
-  K = Inf, a = Inf, all.null.edges = TRUE)
+  K = Inf, a = 0, all.null.edges = FALSE)
 }
 \arguments{
 \item{...}{This is a list of edges definied by functions "Edge", "StartEnd" and "Node"}
@@ -21,6 +21,8 @@ graph(..., type = "empty", decay = 1, gap = 0, penalty = 0,
 \item{K}{a positive number. Threshold for the Biweight robust loss}
 
 \item{a}{a positive number. Slope for the Huber robust loss}
+
+\item{all.null.edges}{a boolean. Add null edges to all nodes automatically}
 }
 \value{
 a dataframe with 9 variables (columns are named "state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max") with additional "graph" class.
@@ -30,6 +32,6 @@ Graph creation using component functions "Edge", "StartEnd" and "Node"
 }
 \examples{
 UpDownGraph <- graph(type = "updown", gap = 1.3, penalty = 10)
-MyGraph <- graph(Edge(0,0), Edge(1,1), Edge(0,1,"up", gap = 0.5, penalty = 10),
-Edge(1,0,"down"), StartEnd(0,0), Node(0,0,1), Node(1,0,1))
+MyGraph <- graph(Edge("Dw","Dw"), Edge("Up","Up"), Edge("Dw","Up","up", gap = 0.5, penalty = 10),
+Edge("Up","Dw","down"), StartEnd("Dw","Dw"), Node("Dw",0,1), Node("Up",0,1))
 }
