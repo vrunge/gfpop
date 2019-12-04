@@ -20,5 +20,5 @@ a dataframe with 9 variables with only `state1`, `min` and `max` defined.
 Constrain the range of values to consider at a node
 }
 \examples{
-Node(state = "S", min = 0, max = 2)
+Node(state = "s0", min = 0, max = 2)
 }
