@@ -24,9 +24,9 @@ test_that("graph type=updown ok", {
   expect_is(g, "graph")
   expect_is(g, "data.frame")
   expect_identical(g$state1, c(D, U, D, U))
-  expect_identical(g$state2, c(U, D, D, U))
-  expect_identical(g$type, c("up", "down", "null", "null"))
-  expect_identical(g$penalty, c(pen.val, pen.val, 0, 0))
+  expect_identical(g$state2, c(D, U, U, D))
+  expect_identical(g$type, c("null", "null", "up", "down"))
+  expect_identical(g$penalty, c(0, 0, pen.val, pen.val))
 })
 
 test_that("graph type=updown with StartEnd ok", {
@@ -36,23 +36,23 @@ test_that("graph type=updown with StartEnd ok", {
   expect_is(g, "graph")
   expect_is(g, "data.frame")
   expect_identical(g$state1, c(D, U, D, U, D, D))
-  expect_identical(g$state2, c(U, D, D, U, NA, NA))
-  expect_identical(g$type, c("up", "down", "null", "null", "start", "end"))
-  expect_identical(g$penalty, c(pen.val, pen.val, 0, 0, NA, NA))
+  expect_identical(g$state2, c(D, U, U, D, NA, NA))
+  expect_identical(g$type, c("null", "null", "up", "down", "start", "end"))
+  expect_identical(g$penalty, c(0, 0, pen.val, pen.val, NA, NA))
 })
 
 test_that("custom 3 state graph ok, default all null edges", {
   g <- graph(
     Edge("Q", "R", "up",   penalty=1.5,  gap=1000),
     Edge("R", "S", "down", penalty=0,    gap=5000),
-    Edge("S", "Q", "up",   penalty=0,    gap=2000))
+    Edge("S", "Q", "up",   penalty=0,    gap=2000), all.null.edges = TRUE)
   expect_is(g, "graph")
   expect_is(g, "data.frame")
-  expect_identical(g$state1, c("Q", "R", "S", "Q", "R", "S"))
-  expect_identical(g$state2, c("R", "S", "Q", "Q", "R", "S"))
-  expect_identical(g$type, c("up", "down", "up", "null", "null", "null"))
-  expect_identical(g$penalty, c(1.5, 0, 0, 0, 0, 0))
-  expect_identical(g$parameter, c(1000, 5000, 2000, 1, 1, 1))
+  expect_identical(g$state1, c( "S", "R", "Q", "Q", "R", "S"))
+  expect_identical(g$state2, c("S", "R", "Q", "R", "S", "Q"))
+  expect_identical(g$type, c("null", "null", "null", "up", "down", "up"))
+  expect_identical(g$penalty, c(0, 0, 0, 1.5, 0, 0))
+  expect_identical(g$parameter, c(1, 1, 1, 1000, 5000, 2000))
 })
 
 test_that("custom 3 state graph with no null edges", {
