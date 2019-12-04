@@ -13,7 +13,8 @@ test_that("gfpop returns character states", {
     Edge("S2",      "peak",   "up",   0,        gap=0),
     Edge("peak",    "after",  "down", 0,        gap=0),
     Edge("after",   "last",   "down", 0,        gap=0),
-    Edge("last",    "beforeQ","up",   0,        gap=0))
+    Edge("last",    "beforeQ","up",   0,        gap=0),
+    all.null.edges=TRUE)
   fit <- gfpop(ECG$data$millivolts, mygraph = myGraph, type = "mean")
   expect_true(all(fit$states %in% myGraph$state1))
 })
