@@ -256,7 +256,7 @@ void ListPiece::LP_edges_constraint(ListPiece const& LP_state, Edge const& edge,
     ///variable definition
     Piece* tmp = LP_state.head;
     double globalMin = INFINITY;
-    unsigned int positionMin = -5;
+    unsigned int positionMin = 0;
     unsigned int currentCounter = 0;
     double currentMin;
 
