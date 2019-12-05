@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```
 
 
-## Multi-modal regression for neuro spike train data set 
+## Relevant changes model for DNA copy number data
 
 ```{r Mono27ac, fig.width=10, eval=FALSE}
 
@@ -342,7 +342,8 @@ myGraph <- gfpop::graph(
   gfpop::Edge(8, 0, "up", penalty =0, gap=0),
                       all.null.edges = TRUE)
 
-fit <- gfpop::gfpop(data = ECG$data$millivolts, mygraph = myGraph, type = "mean")
+fit <- gfpop::gfpop(
+  data = ECG$data$millivolts, mygraph = myGraph, type = "mean")
 
 library(data.table)
 end.i <- fit$changepoints
@@ -416,3 +417,118 @@ print(gg)
 ```
 
 
+### Multi-modal regression and peak model with poisson loss
+
+
+```r
+
+library(data.table)
+data(Mono27ac, package="gfpop")
+pen.vec <- c(40, 100)
+Mono27ac$labels[, chromStart1 := chromStart + 1L]
+lab <- function(chromStart, chromEnd, annotation){
+  data.table(chrom="chr11", chromStart, chromEnd, annotation)
+}
+my.labels <- rbind(
+  lab(175000, 2e5, "noPeaks"),
+  lab(3e5, 32e4, "peaks"))
+my.labels[, chromStart1 := chromStart + 1L]
+state.labels <- my.labels[annotation %in% c("peakStart", "peakEnd")]
+summit.labels <- my.labels[annotation %in% c("noPeaks", "peaks")]
+lab.err.list <- list()
+fit.segs.list <- list()
+fit.state.list <- list()
+for(pen.i in seq_along(pen.vec)){
+  penalty <- as.numeric(pen.vec[[pen.i]])
+  myGraph <- gfpop::graph(
+    gfpop::Edge("peakEnd",   "peakEnd",   "down", 0),
+    gfpop::Edge("peakEnd",   "peakStart", "up",   penalty=penalty),
+    gfpop::Edge("peakStart", "peakStart", "up",   0),
+    gfpop::Edge("peakStart", "peakEnd",   "down", penalty=penalty),
+    all.null.edges=TRUE)
+  fit <- gfpop::gfpop(
+    Mono27ac$coverage$count,
+    myGraph, type = "poisson")
+  end.i <- fit$changepoints
+  start.i <- c(1, end.i[-length(end.i)]+1)
+  diff.status <- c(0, diff(fit$states=="peakStart"))
+  sorted.segs <- with(Mono27ac$coverage, data.table(
+    segStart=chromStart[start.i],
+    segEnd=chromEnd[end.i],
+    peak.i=cumsum(diff.status>0),
+    annotation=fit$states,
+    mean=fit$parameters))
+  state.dt <- sorted.segs[, {
+    extreme <- .SD[which.max(segEnd)]
+    list(
+      stateStart=min(segStart),
+      stateEnd=max(segEnd),
+      extremeMid=extreme[, as.integer((segEnd+segStart)/2)],
+      extremeMean=extreme$mean
+    )}, by=list(peak.i, annotation)]
+  state.dt[, stateStart1 := stateStart + 1L]
+  setkey(state.dt, annotation, stateStart1, stateEnd)
+  setkey(state.labels, annotation, chromStart1, chromEnd)
+  state.over <- foverlaps(state.labels, state.dt)
+  state.err <- state.over[, {
+    states <- sum(!is.na(peak.i))
+    list(
+      fp=as.integer(1 < states),
+      fn=as.integer(0 == states)
+    )}, by=list(chrom, chromStart, chromEnd, annotation)]
+  summit.dt <- state.dt[annotation=="peakStart", list(extremeMid)]
+  summit.dt[, extremeMid0 := extremeMid]
+  setkey(summit.dt, extremeMid, extremeMid0)
+  setkey(summit.labels, chromStart1, chromEnd)
+  summit.over <- foverlaps(summit.labels, summit.dt)
+  summit.err <- summit.over[, {
+    summits <- sum(!is.na(extremeMid))
+    if(annotation=="noPeaks"){
+      list(fp=as.integer(0<summits), fn=0L)
+    }else{#peaks
+      list(fp=0L, fn=as.integer(0==summits))
+    }
+  }, by=list(chrom, chromStart, chromEnd, annotation)]
+  l <- function(pname){
+    sprintf("penalty=%s\n%s", pen.vec[pname], pname)
+  }
+  peaks.int <- max(state.dt$peak.i+1)
+  lab.err.list[[paste(peaks.int)]] <- data.table(
+    peaks.int, rbind(state.err, summit.err))
+  fit.state.list[[paste(peaks.int)]] <- data.table(
+    peaks.int, state.dt)
+  fit.segs.list[[paste(peaks.int)]] <- data.table(
+    peaks.int, sorted.segs)
+}
+lab.err <- do.call(rbind, lab.err.list)
+lab.err[, status := ifelse(
+  0 < fp, "false positive", ifelse(
+    0 < fn, "false negative", "correct"))]
+fit.state <- do.call(rbind, fit.state.list)
+fit.segs <- do.call(rbind, fit.segs.list)
+library(ggplot2)
+gg <- ggplot()+
+  theme_bw()+
+  theme(panel.margin=grid::unit(0, "lines"))+
+  facet_grid(peaks.int ~ .)+
+  geom_step(aes(
+    chromStart, count),
+    color="grey50",
+    data=Mono27ac$coverage)+
+  geom_segment(aes(
+    segStart, mean,
+    xend=segEnd, yend=mean),
+    color="green",
+    size=1,
+    data=fit.segs)+
+  geom_point(aes(
+    extremeMid, extremeMean),
+    data=fit.state[annotation=="peakStart"],
+    shape=21,
+    color="black",
+    fill="green")+
+  xlab("Position on chromosome")+
+  ylab("Number of aligned reads")
+print(gg)
+
+```
