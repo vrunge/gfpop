@@ -90,7 +90,7 @@ void Omega::initialize_LP_ts(unsigned int n)
     for(unsigned int j = 0; j < p; j++)
     {
       if(std::find(startState.begin(), startState.end(), j) == startState.end())
-        {LP_ts[0][j].setUniquePieceCostToInfinity();}
+      {LP_ts[0][j].setUniquePieceCostToInfinity();}
     }
   }
 }
@@ -108,9 +108,48 @@ void Omega::gfpop(Data const& data)
 
 	for(unsigned int t = 0; t < n; t++) // loop for all data point
 	{
+	  /* std::cout << t << "-----------------------------------------------------------------------------------------------------------------------" << std::endl;
+
+	  for(unsigned int i = 0; i < p; i++)
+	  {
+	    std::cout << "position "<< t << "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" << std::endl;
+	    std::cout << "state "<< i << std::endl;
+	    LP_ts[t][i].show();
+	    std::cout << "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"<< std::endl;
+	  }
+    */
+
 	  LP_edges_operators(t); // fill_LP_edges. t = newLabel to consider
     LP_edges_addPointAndPenalty(myData[t]); // Add new data point and penalty
+
+    ////////////////
+    ////////////////
+    /* std::cout << std::endl;
+    std::cout << "  LP_edgesLP_edgesLP_edgesLP_edgesLP_edgesLP_edges "<< t<< std::endl;
+    for(unsigned int i = 0; i < q; i++) /// loop for all q edges
+    {
+      std::cout << i << "  type " << m_graph.getEdge(i).getConstraint() << "  states " << m_graph.getEdge(i).getState1() << " and " << m_graph.getEdge(i).getState2() << std::endl;
+      LP_edges[i].show();
+    ////////////////
+    ////////////////
+    }
+    std::cout << "----------------------------------------------------------------------------------------------------------------------------------"<< std::endl;
+    for(unsigned int i = 0; i < p; i++)
+    {
+      std::cout << "position "<< t << " ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"<< std::endl;
+      std::cout << "state "<< i << std::endl;
+      LP_ts[t][i].show();
+    }
+     */
     LP_t_new_multipleMinimization(t); // multiple_minimization
+    /*
+    for(unsigned int i = 0; i < p; i++)
+    {
+      std::cout << "position "<< t + 1 << " ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"<< std::endl;
+      std::cout << "state "<< i << std::endl;
+      LP_ts[t+1][i].show();
+    }
+     */
 	}
 	backtracking();
 }
@@ -259,10 +298,11 @@ void Omega::backtracking()
 
 void Omega::show()
 {
-  for(unsigned int i = 0; i < q; i++) /// loop for all q edges
+  for(unsigned int i = 0; i < p; i++) /// loop for all q edges
   {
     std::cout << "  type " << m_graph.getEdge(i).getConstraint() << std::endl;
     std::cout << "  states " << m_graph.getEdge(i).getState1() << " and " << m_graph.getEdge(i).getState2() << std::endl;
     LP_edges[i].show();
   }
+
 }

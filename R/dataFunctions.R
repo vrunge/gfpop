@@ -20,10 +20,13 @@ dataGenerator <- function(n, changepoints, parameters, type = "mean", sigma = 1,
   if(is.numeric(changepoints) == FALSE){stop('changepoints is not a numeric vector')}
   if(!all(changepoints <= 1) || !all(changepoints > 0)){stop('changepoints has values outside (0,1]')}
   if(changepoints[length(changepoints)] != 1){stop('the last value in changepoints vector is not 1')}
-  for(i in 1:(length(changepoints)-1)){if(changepoints[i+1] <= changepoints[i]){stop('changepoints not an increasing vector')}}
+  if(length(changepoints) > 1)
+  {
+    for(i in 1:(length(changepoints)-1)){if(changepoints[i+1] <= changepoints[i]){stop('changepoints not an increasing vector')}}
+  }
 
-  if(type != "mean" && type != "variance" && type != "poisson" && type != "exp" && type != "negbin")
-  {stop('Argument "type" not appropriate. Choose among "mean", "variance", "poisson", "exp", "negbin"')}
+  allowed.types <- c("mean", "variance", "poisson", "exp", "negbin")
+  if(!type %in% allowed.types){stop('type must be one of: ', paste(allowed.types, collapse=", "))}
 
   if(sigma < 0){stop('sigma is a nonnegative value')}
   if(gamma > 1 || gamma <= 0){stop('gamma is not between 0 and 1 (0 excluded)')}

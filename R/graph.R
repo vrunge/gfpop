@@ -168,8 +168,8 @@ graph <- function(..., type = "empty", decay = 1, gap = 0, penalty = 0, K = Inf,
     }
     else if(type == "relevant")
     {
-      myNewGraph[1, ] <- Edge("Std", "Std", "null", decay = decay, K = K, a = a)
-      myNewGraph[2, ] <- Edge("Std", "Std", "abs", gap = gap, penalty = penalty, K = K, a = a)
+      myNewGraph[1, ] <- Edge("Abs", "Abs", "null", decay = decay, K = K, a = a)
+      myNewGraph[2, ] <- Edge("Abs", "Abs", "abs", gap = gap, penalty = penalty, K = K, a = a)
     }
   }
   class(myNewGraph) <- c("data.frame", "graph")
