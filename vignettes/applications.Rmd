@@ -186,7 +186,7 @@ print(gg.out)
 
 ## Multi-modal regression for neuro spike train data set 
 
-```{r neuroSpike, fig.width=10}
+```{r neuroSpike, fig.width=10, eval=FALSE}
 
 library(data.table)
 data(neuroSpike, package="gfpop")
@@ -419,8 +419,7 @@ print(gg)
 
 ### Multi-modal regression and peak model with poisson loss
 
-
-```r
+```{r}
 
 library(data.table)
 data(Mono27ac, package="gfpop")
@@ -509,7 +508,7 @@ fit.segs <- do.call(rbind, fit.segs.list)
 library(ggplot2)
 gg <- ggplot()+
   theme_bw()+
-  theme(panel.margin=grid::unit(0, "lines"))+
+  theme(panel.spacing=grid::unit(0, "lines"))+
   facet_grid(peaks.int ~ .)+
   geom_step(aes(
     chromStart, count),

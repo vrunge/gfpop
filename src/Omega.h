@@ -24,7 +24,7 @@ class Omega
     double GetGlobalCost() const;
 
     ///////////////
-    void initialize_LP_ts(unsigned int n);
+    void initialize_LP_ts(Point firstData, unsigned int n);
     void gfpop(Data const& data);
 
     ///////////////

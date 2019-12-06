@@ -186,6 +186,16 @@ void ListPiece::initializeCurrentPiece()
   currentPiece = head;
 }
 
+//##### initializeHeadWithFirstPoint #####//////##### initializeHeadWithFirstPoint #####//////##### initializeHeadWithFirstPoint #####///
+//##### initializeHeadWithFirstPoint #####//////##### initializeHeadWithFirstPoint #####//////##### initializeHeadWithFirstPoint #####///
+
+void ListPiece::initializeHeadWithFirstPoint(Point const& pt)
+{
+  double* coeff = cost_coeff(pt);
+  Cost costPt = Cost(coeff);
+  head -> addCostAndPenalty(costPt, 0);
+  delete(coeff);
+}
 
 //##### shift #####//////##### shift #####//////##### shift #####///
 //##### shift #####//////##### shift #####//////##### shift #####///

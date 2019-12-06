@@ -49,7 +49,7 @@ double Omega::GetGlobalCost() const{return(globalCost);}
 // t = 0 for all s : LP_ts[0][s] = addFirstPiece(new Piece(Track(), Interval(mini, maxi), 0 or +INFINITY));
 // t > 1 for all s : LP_ts[t][s] = addFirstPiece(new Piece(Track(), Interval(mini, maxi), +INFINITY));
 
-void Omega::initialize_LP_ts(unsigned int n)
+void Omega::initialize_LP_ts(Point firstData, unsigned int n)
 {
   Interval inter = cost_interval(); ///get the cost-dependent interval
   double mini = inter.geta();
@@ -71,9 +71,9 @@ void Omega::initialize_LP_ts(unsigned int n)
         maxi = m_graph.getEdge(k).getMaxx();
       }
     }
-    LP_ts[0][j].addFirstPiece(new Piece(Track(), Interval(mini, maxi), Cost()));
+    LP_ts[1][j].addFirstPiece(new Piece(Track(), Interval(mini, maxi), Cost()));
 
-    for(unsigned int i = 1; i < (n + 1); i++)
+    for(unsigned int i = 2; i < (n + 1); i++)
     {
       LP_ts[i][j].addFirstPiece(new Piece(Track(), Interval(mini, maxi), Cost()));
       LP_ts[i][j].setUniquePieceCostToInfinity();
@@ -82,17 +82,31 @@ void Omega::initialize_LP_ts(unsigned int n)
     maxi = inter.getb();
   }
 
-  ///START STATE CONSTRAINT
-  ///START STATE CONSTRAINT
+  ///START STATE CONSTRAINT + add FirstPoint to LP_ts[1]
+  ///START STATE CONSTRAINT + add FirstPoint to LP_ts[1]
   std::vector<unsigned int> startState = m_graph.getStartState();
   if(startState.size() != 0)
   {
     for(unsigned int j = 0; j < p; j++)
     {
       if(std::find(startState.begin(), startState.end(), j) == startState.end())
-      {LP_ts[0][j].setUniquePieceCostToInfinity();}
+        {LP_ts[1][j].setUniquePieceCostToInfinity();}
+      else{LP_ts[1][j].initializeHeadWithFirstPoint(firstData);}
     }
   }
+  else
+  {
+    for(unsigned int j = 0; j < p; j++)
+      {LP_ts[1][j].initializeHeadWithFirstPoint(firstData);}
+  }
+  /* for(unsigned int i = 0; i < p; i++)
+  {
+    std::cout << "position "<< 0 << "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" << std::endl;
+    std::cout << "state "<< i << std::endl;
+    LP_ts[1][i].show();
+    std::cout << "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"<< std::endl;
+  }
+   // */
 }
 
 //####### gfpop BEGIN #######// //####### gfpop BEGIN #######// //####### gfpop BEGIN #######//
@@ -104,12 +118,12 @@ void Omega::gfpop(Data const& data)
 {
 	Point* myData = data.getVecPt(); // GET the data = vector of Point = myData
   n = data.getn(); // data length
-	initialize_LP_ts(n); // Initialize LP_ts Piece : size LP_ts (n+1) x p
+	initialize_LP_ts(myData[0], n); // Initialize LP_ts Piece : size LP_ts (n+1) x p + add first data point
 
-	for(unsigned int t = 0; t < n; t++) // loop for all data point
+	for(unsigned int t = 1; t < n; t++) // loop for all data point
 	{
-	  /* std::cout << t << "-----------------------------------------------------------------------------------------------------------------------" << std::endl;
-
+	  /*
+	   std::cout << t << "-----------------------------------------------------------------------------------------------------------------------" << std::endl;
 	  for(unsigned int i = 0; i < p; i++)
 	  {
 	    std::cout << "position "<< t << "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" << std::endl;
@@ -117,31 +131,22 @@ void Omega::gfpop(Data const& data)
 	    LP_ts[t][i].show();
 	    std::cout << "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"<< std::endl;
 	  }
-    */
-
+	  // */
 	  LP_edges_operators(t); // fill_LP_edges. t = newLabel to consider
     LP_edges_addPointAndPenalty(myData[t]); // Add new data point and penalty
 
-    ////////////////
-    ////////////////
-    /* std::cout << std::endl;
+    /*
+    std::cout << std::endl;
     std::cout << "  LP_edgesLP_edgesLP_edgesLP_edgesLP_edgesLP_edges "<< t<< std::endl;
     for(unsigned int i = 0; i < q; i++) /// loop for all q edges
     {
       std::cout << i << "  type " << m_graph.getEdge(i).getConstraint() << "  states " << m_graph.getEdge(i).getState1() << " and " << m_graph.getEdge(i).getState2() << std::endl;
       LP_edges[i].show();
-    ////////////////
-    ////////////////
     }
     std::cout << "----------------------------------------------------------------------------------------------------------------------------------"<< std::endl;
-    for(unsigned int i = 0; i < p; i++)
-    {
-      std::cout << "position "<< t << " ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"<< std::endl;
-      std::cout << "state "<< i << std::endl;
-      LP_ts[t][i].show();
-    }
-     */
+    // */
     LP_t_new_multipleMinimization(t); // multiple_minimization
+
     /*
     for(unsigned int i = 0; i < p; i++)
     {
@@ -149,7 +154,8 @@ void Omega::gfpop(Data const& data)
       std::cout << "state "<< i << std::endl;
       LP_ts[t+1][i].show();
     }
-     */
+    // */
+
 	}
 	backtracking();
 }
@@ -236,6 +242,7 @@ void Omega::backtracking()
   }
   else
   {
+    malsp[0] = INFINITY;
     for (unsigned int j = 0 ; j < endState.size() ; j++) // for all endState available
     {
       LP_ts[n][endState[j]].get_min_argmin_label_state_position_ListPiece(malsp_temp);

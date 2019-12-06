@@ -30,6 +30,7 @@ public:
 
   void move();
   void initializeCurrentPiece();
+  void initializeHeadWithFirstPoint(Point const& pt);
 
   void addCurrentPiecePlus1NotMove(Piece* newPiece);
   void addFirstPiece(Piece* newPiece);
