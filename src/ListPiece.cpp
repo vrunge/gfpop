@@ -658,6 +658,44 @@ void ListPiece::get_min_argmin_label_state_position_onePiece(double* response, u
 /////////////////////////////////////////
 /////////////////////////////////////////
 
+
+void ListPiece::operatorSum(ListPiece& LP1, ListPiece& LP2)
+{
+  //LP1 and LP2 must have the same bounds (min and max for parameter range)
+  reset(); /// build a new ListPiece sum of LP1 and LP2
+  LP1.initializeCurrentPiece();
+  LP2.initializeCurrentPiece();
+
+  ///BUILDING head pointer
+  head = new Piece();
+  currentPiece = head;
+  currentPiece -> m_cost = addCost(LP1.currentPiece -> m_cost, LP2.currentPiece -> m_cost);
+  currentPiece -> m_interval = LP1.currentPiece -> m_interval.intersection(LP2.currentPiece -> m_interval);
+  //currentPiece -> m_info =
+
+  if(LP1.currentPiece -> m_interval.getb() == LP2.currentPiece -> m_interval.getb()){LP1.move(); LP2.move();}
+  if(LP1.currentPiece -> m_interval.getb() < LP2.currentPiece -> m_interval.getb()){LP1.move();}
+  if(LP1.currentPiece -> m_interval.getb() > LP2.currentPiece -> m_interval.getb()){LP2.move();}
+
+  while(LP1.currentPiece != NULL) // the  LP1 and LP2 currentPiece will be NULL at the same loop step
+  {
+    currentPiece -> nxt = new Piece();
+    currentPiece = currentPiece -> nxt;
+
+    currentPiece -> m_cost = addCost(LP1.currentPiece -> m_cost, LP2.currentPiece -> m_cost);
+    currentPiece -> m_interval = LP1.currentPiece -> m_interval.intersection(LP2.currentPiece -> m_interval);
+    //currentPiece -> m_info =
+
+    if(LP1.currentPiece -> m_interval.getb() == LP2.currentPiece -> m_interval.getb()){LP1.move(); LP2.move();}
+    if(LP1.currentPiece -> m_interval.getb() < LP2.currentPiece -> m_interval.getb()){LP1.move();}
+    if(LP1.currentPiece -> m_interval.getb() > LP2.currentPiece -> m_interval.getb()){LP2.move();}
+
+  }
+  lastPiece = currentPiece;
+}
+
+
+
 void ListPiece::show() const
 {
   std::cout << "    HEAD      " << head << std::endl;

@@ -17,7 +17,7 @@ struct Cost
 };
 
 void addConstant(Cost& cost, double& cst);
-void addCost(Cost& cost1, const Cost& cost2);
+Cost addCost(Cost& cost1, const Cost& cost2);
 Cost minusCost(Cost& cost1, const Cost& cost2);
 bool isEqual(Cost const& cost1, Cost const& cost2);
 bool isConstant(Cost const& cost);

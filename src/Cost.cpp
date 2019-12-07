@@ -21,11 +21,13 @@ Cost::Cost(double* coeff)
 }
 
 void addConstant(Cost& cost, double& cst){cost.constant = cost.constant + cst;}
-void addCost(Cost& cost1, const Cost& cost2)
+Cost addCost(Cost& cost1, const Cost& cost2)
 {
+  Cost res = Cost();
   cost1.m_A = cost1.m_A + cost2.m_A;
   cost1.m_B = cost1.m_B + cost2.m_B;
   cost1.constant = cost1.constant + cost2.constant;
+  return(res);
 }
 
 Cost minusCost(Cost& cost1, const Cost& cost2)

@@ -47,6 +47,8 @@ public:
   void operatorUp(ListPiece const& LP_edge, unsigned int newLabel, unsigned int parentState);
   void operatorDw(ListPiece const& LP_edge, unsigned int newLabel, unsigned int parentState);
 
+  void operatorSum(ListPiece& LP1, ListPiece& LP2);
+
   ///////  get info ///////
   void get_min_argmin_label_state_position_ListPiece(double* response);
   void get_min_argmin_label_state_position_onePiece(double* response, unsigned int position, Interval constrainedInterval, bool out, bool& forced);
