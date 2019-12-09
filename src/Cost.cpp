@@ -510,7 +510,13 @@ Interval mean_intervalInterRoots(const Cost& cost, double& level)
   if(Delta > 0)
   {
     double R = sqrt(Delta);
-    newElement = Interval((- cost.m_B - R)/(2 * cost.m_A), (- cost.m_B + R)/(2 * cost.m_A));
+    if(cost.m_A > 0){newElement = Interval((- cost.m_B - R)/(2 * cost.m_A), (- cost.m_B + R)/(2 * cost.m_A));}
+    if(cost.m_A < 0){newElement = Interval((- cost.m_B + R)/(2 * cost.m_A), (- cost.m_B - R)/(2 * cost.m_A));}
+  }
+  if(cost.m_A == 0)
+  {
+    if(cost.m_B > 0){newElement = Interval(-INFINITY, -cost.constant/cost.m_B);}
+    if(cost.m_B < 0){newElement = Interval(-cost.constant/cost.m_B, INFINITY);}
   }
 
   return(newElement);

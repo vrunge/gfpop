@@ -125,8 +125,7 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   /////////////////////////////
 
   Omega omega(graph);
-  if(testMode == FALSE){omega.gfpop(data);}
-    else{omega.gfpopTestMode(data);}
+  if(testMode == FALSE){omega.gfpop(data);}else{omega.gfpopTestMode(data);}
 
   /////////////////////////////
   /////////// RETURN //////////

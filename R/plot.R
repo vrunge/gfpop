@@ -11,8 +11,9 @@ plot.gfpop <- function(x, ..., data)
   p <- length(x$changepoints)
   xbis <- c(1, x$changepoints)
   y <- x$parameters
+  lim <- c(min(min(x$parameters,data)), max(max(x$parameters,data)))
 
-  plot(1:length(data), data, pch = '+')
+  plot(1:length(data), data, pch = '+', ylim = lim)
   for(i in 1:p)
   {
     segments(xbis[i], y[i], xbis[i+1], y[i], col= 2, lty = 1, lwd = 5)

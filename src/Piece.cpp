@@ -260,8 +260,6 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
   if((interRoots.geta() > interToPaste.geta() + 1e-12)&&(interRoots.geta() + 1e-12 < interToPaste.getb())){change = change + 1;}
   if((interRoots.getb() > interToPaste.geta() + 1e-12)&&(interRoots.getb() + 1e-12 < interToPaste.getb())){change = change + 1;}
 
-
-
   ///Security steps: length interRoots very small < 1e-12
   if(interRoots.getb() - interRoots.geta() < 1e-12)
   {
@@ -302,7 +300,6 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
     BUILD -> nxt = outPiece;
     BUILD = outPiece;
   }
-
   return(BUILD);
 }
 

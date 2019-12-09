@@ -419,9 +419,10 @@ void ListPiece::LP_ts_Minimization(ListPiece& LP_edge)
   Interval newBounds = Interval(this -> head -> m_interval.geta(), this -> lastPiece -> m_interval.getb());
   LP_edge.setNewBounds(newBounds);
 
-  //"MOST OF THE TIME" : Q2 > Q1
+    //"MOST OF THE TIME" : Q2 > Q1
   Piece* Q1 = head;  /// first Piece to compare
   Piece* Q2 = LP_edge.head;  /// first Piece to compare
+
   Piece* Q12 = new Piece();
   Q12 -> m_interval = Interval(Q1 -> m_interval.geta(), Q1 -> m_interval.geta());
   int Bound_Q2_Minus_Q1 = 0;
@@ -454,7 +455,6 @@ void ListPiece::LP_ts_Minimization(ListPiece& LP_edge)
   currentPiece = newHead;
   lastPiece = Q12;
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -728,7 +728,7 @@ void ListPiece::test()
     {
       rightEval = cost_eval(currentPiece -> m_cost, currentPiece -> m_interval.getb());
       leftEval = cost_eval(currentPiece -> nxt -> m_cost, currentPiece -> nxt -> m_interval.geta());
-      if(fabs(rightEval - leftEval) > pow10(-6))
+      if(fabs(rightEval - leftEval) > pow10(-10))
       {
         std::cout << std::endl;
         std::cout << "          " << currentPiece;
@@ -746,7 +746,6 @@ void ListPiece::test()
 
     currentPiece = currentPiece -> nxt;
   }
-
 
   std::cout << "nb: " << t << std::endl;
 }
