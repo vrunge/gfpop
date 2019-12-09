@@ -4,6 +4,8 @@ export(gfpop)
 export(Edge, StartEnd, Node, graph)
 export(dataGenerator, sdDiff)
 export(plot.gfpop)
+S3method(plot, gfpop)
+
 export(paperGraph)
 
 importFrom(Rcpp, evalCpp)
