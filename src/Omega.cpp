@@ -99,14 +99,6 @@ void Omega::initialize_LP_ts(Point firstData, unsigned int n)
     for(unsigned int j = 0; j < p; j++)
       {LP_ts[1][j].initializeHeadWithFirstPoint(firstData);}
   }
-  /* for(unsigned int i = 0; i < p; i++)
-  {
-    std::cout << "position "<< 0 << "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" << std::endl;
-    std::cout << "state "<< i << std::endl;
-    LP_ts[1][i].show();
-    std::cout << "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"<< std::endl;
-  }
-   // */
 }
 
 //####### gfpop BEGIN #######// //####### gfpop BEGIN #######// //####### gfpop BEGIN #######//
@@ -122,40 +114,9 @@ void Omega::gfpop(Data const& data)
 
 	for(unsigned int t = 1; t < n; t++) // loop for all data point
 	{
-	  /*
-	   std::cout << t << "-----------------------------------------------------------------------------------------------------------------------" << std::endl;
-	  for(unsigned int i = 0; i < p; i++)
-	  {
-	    std::cout << "position "<< t << "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" << std::endl;
-	    std::cout << "state "<< i << std::endl;
-	    LP_ts[t][i].show();
-	    std::cout << "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"<< std::endl;
-	  }
-	  // */
 	  LP_edges_operators(t); // fill_LP_edges. t = newLabel to consider
-    LP_edges_addPointAndPenalty(myData[t]); // Add new data point and penalty
-
-    /*
-    std::cout << std::endl;
-    std::cout << "  LP_edgesLP_edgesLP_edgesLP_edgesLP_edgesLP_edges "<< t<< std::endl;
-    for(unsigned int i = 0; i < q; i++) /// loop for all q edges
-    {
-      std::cout << i << "  type " << m_graph.getEdge(i).getConstraint() << "  states " << m_graph.getEdge(i).getState1() << " and " << m_graph.getEdge(i).getState2() << std::endl;
-      LP_edges[i].show();
-    }
-    std::cout << "----------------------------------------------------------------------------------------------------------------------------------"<< std::endl;
-    // */
+	  LP_edges_addPointAndPenalty(myData[t]); // Add new data point and penalty
     LP_t_new_multipleMinimization(t); // multiple_minimization
-
-    /*
-    for(unsigned int i = 0; i < p; i++)
-    {
-      std::cout << "position "<< t + 1 << " ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"<< std::endl;
-      std::cout << "state "<< i << std::endl;
-      LP_ts[t+1][i].show();
-    }
-    // */
-
 	}
 	backtracking();
 }
@@ -164,6 +125,67 @@ void Omega::gfpop(Data const& data)
 //####### gfpop END #######// //####### gfpop END #######// //####### gfpop END #######//
 //####### gfpop END #######// //####### gfpop END #######// //####### gfpop END #######//
 //####### gfpop END #######// //####### gfpop END #######// //####### gfpop END #######//
+
+//####### gfpopTestMode BEGIN #######// //####### gfpopTestMode BEGIN #######// //####### gfpopTestMode BEGIN #######//
+//####### gfpopTestMode BEGIN #######// //####### gfpopTestMode BEGIN #######// //####### gfpopTestMode BEGIN #######//
+
+void Omega::gfpopTestMode(Data const& data)
+{
+
+  Point* myData = data.getVecPt(); // GET the data = vector of Point = myData
+  n = data.getn(); // data length
+  initialize_LP_ts(myData[0], n); // Initialize LP_ts Piece : size LP_ts (n+1) x p + add first data point
+
+  for(unsigned int i = 0; i < p; i++)
+  {
+    std::cout << "position "<< 1 << " ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"<< std::endl;
+    std::cout << "state "<< i << std::endl;
+    LP_ts[1][i].show();
+    std::cout << " TEST ";
+    LP_ts[1][i].test();
+  }
+
+  for(unsigned int t = 1; t < n; t++) // loop for all data point
+  {
+    // /*
+    std::cout << std::endl;
+    std::cout << t << "  &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << std::endl;
+    // */
+    LP_edges_operators(t); // fill_LP_edges. t = newLabel to consider
+    LP_edges_addPointAndPenalty(myData[t]); // Add new data point and penalty
+
+    // /*
+    std::cout << "  LP_edgesLP_edgesLP_edgesLP_edgesLP_edgesLP_edges "<< t<< std::endl;
+    for(unsigned int i = 0; i < q; i++) /// loop for all q edges
+    {
+      std::cout << i << "  type " << m_graph.getEdge(i).getConstraint() << "  states " << m_graph.getEdge(i).getState1() << " and " << m_graph.getEdge(i).getState2() << std::endl;
+      LP_edges[i].show();
+      std::cout << " TEST ";
+      LP_edges[i].test();
+    }
+    std::cout << "----------------------------------------------------------------------------------------------------------------------------------"<< std::endl;
+    // */
+    LP_t_new_multipleMinimization(t); // multiple_minimization
+
+    // /*
+    for(unsigned int i = 0; i < p; i++)
+    {
+      std::cout << "position "<< t + 1 << " ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"<< std::endl;
+      std::cout << "state "<< i << std::endl;
+      LP_ts[t+1][i].show();
+      std::cout << t << " state "<< i << " ";
+      LP_ts[t+1][i].test();
+    }
+    Rcpp::checkUserInterrupt();
+    // */
+
+  }
+  backtracking();
+}
+
+//####### gfpopTestMode END #######// //####### gfpopTestMode END #######// //####### gfpopTestMode END #######//
+//####### gfpopTestMode END #######// //####### gfpopTestMode END #######// //####### gfpopTestMode END #######//
+
 
 //##### LP_edges_operators #####//////##### LP_edges_operators #####//////##### LP_edges_operators #####///
 //##### LP_edges_operators #####//////##### LP_edges_operators #####//////##### LP_edges_operators #####///
@@ -313,3 +335,4 @@ void Omega::show()
   }
 
 }
+

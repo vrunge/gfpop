@@ -422,8 +422,8 @@ double negbin_argminInterval(const Cost& cost, Interval inter)
 
 void mean_shift(Cost& cost, double parameter)
 {
-  cost.m_B = cost.m_B - 2 * cost.m_A * parameter;
   cost.constant = cost.constant + parameter * (cost.m_A * parameter - cost.m_B);
+  cost.m_B = cost.m_B - 2 * cost.m_A * parameter;
 }
 
 void variance_shift(Cost& cost, double parameter)
@@ -433,7 +433,7 @@ void variance_shift(Cost& cost, double parameter)
     cost.m_A = cost.m_A / parameter;
     cost.constant = cost.constant + cost.m_B * log(parameter);
   }
-  if(parameter < 0)
+  else if(parameter < 0)
   {
     cost.m_A = cost.m_A * fabs(parameter);
     cost.constant = cost.constant - cost.m_B * log(fabs(parameter));
@@ -455,7 +455,7 @@ double variance_interShift(double bound, double parameter)
 {
   double res = bound;
   if(parameter > 0){res = bound * parameter;}
-  if(parameter < 0){res = bound / fabs(parameter);}
+  else if(parameter < 0){res = bound / fabs(parameter);}
   return(res);
 }
 

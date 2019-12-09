@@ -15,7 +15,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, NumericVector vectWeight)
+List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, NumericVector vectWeight, bool testMode)
 {
   ///////////////////////////////////////////
   /////////// DATA TRANSFORMATION ///////////
@@ -93,6 +93,8 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   for(int i = 0 ; i < mygraph.nrow(); i++)
     {graph << Edge(state1[i], state2[i], typeEdge[i], fabs(parameter[i]), penalty[i], fabs(KK[i]), fabs(aa[i]), minn[i], maxx[i]);}
 
+  if(testMode == TRUE){graph.show();}
+
   // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects
   // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects
 
@@ -123,7 +125,8 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   /////////////////////////////
 
   Omega omega(graph);
-  omega.gfpop(data);
+  if(testMode == FALSE){omega.gfpop(data);}
+    else{omega.gfpopTestMode(data);}
 
   /////////////////////////////
   /////////// RETURN //////////

@@ -54,6 +54,8 @@ public:
   void get_min_argmin_label_state_position_onePiece(double* response, unsigned int position, Interval constrainedInterval, bool out, bool& forced);
 
   void show() const;
+  void test();
+
 
 };
 

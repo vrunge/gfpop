@@ -8,6 +8,7 @@
 #' @param mygraph dataframe of class "graph" to constrain the changepoint inference
 #' @param type a string defining the cost model to use: "mean", "variance", "poisson", "exp", "negbin"
 #' @param weights vector of weights (positive numbers), same size as data
+#' @param testMode boolean. False by default. Used to debug the code
 #' @return a gfpop object = (changepoints, states, forced, parameters, globalCost)
 #' \describe{
 #' \item{\code{changepoints}}{is the vector of changepoints (we give the last element of each segment)}
@@ -16,7 +17,7 @@
 #' \item{\code{parameters}}{is the vector of successive parameters of each segment}
 #' \item{\code{globalCost}}{is a number equal to the global cost of the graph-constrained changepoint optimization problem}
 #'  }
-gfpop <- function(data, mygraph, type = "mean", weights = NULL)
+gfpop <- function(data, mygraph, type = "mean", weights = NULL, testMode = FALSE)
 {
   ############
   ### STOP ###
@@ -56,7 +57,7 @@ gfpop <- function(data, mygraph, type = "mean", weights = NULL)
 
   if(graphType == "std"){}
   if(graphType == "isotonic"){}
-  if(graphType == "gfpop"){res <- gfpopTransfer(data, newGraph, type, weights)}
+  if(graphType == "gfpop"){res <- gfpopTransfer(data, newGraph, type, weights, testMode)}
 
   ############################
   ### Response class gfpop ###

@@ -4,7 +4,7 @@
 \alias{gfpop}
 \title{Graph-Constrained Functional Pruning Optimal Partitioning}
 \usage{
-gfpop(data, mygraph, type = "mean", weights = NULL)
+gfpop(data, mygraph, type = "mean", weights = NULL, testMode = FALSE)
 }
 \arguments{
 \item{data}{vector of data to segment}
@@ -14,6 +14,8 @@ gfpop(data, mygraph, type = "mean", weights = NULL)
 \item{type}{a string defining the cost model to use: "mean", "variance", "poisson", "exp", "negbin"}
 
 \item{weights}{vector of weights (positive numbers), same size as data}
+
+\item{testMode}{boolean. False by default. Used to debug the code}
 }
 \value{
 a gfpop object = (changepoints, states, forced, parameters, globalCost)

@@ -6,8 +6,8 @@
 using namespace Rcpp;
 
 // gfpopTransfer
-List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, NumericVector vectWeight);
-RcppExport SEXP _gfpop_gfpopTransfer(SEXP vectDataSEXP, SEXP mygraphSEXP, SEXP typeSEXP, SEXP vectWeightSEXP) {
+List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, NumericVector vectWeight, bool testMode);
+RcppExport SEXP _gfpop_gfpopTransfer(SEXP vectDataSEXP, SEXP mygraphSEXP, SEXP typeSEXP, SEXP vectWeightSEXP, SEXP testModeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -15,13 +15,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< DataFrame >::type mygraph(mygraphSEXP);
     Rcpp::traits::input_parameter< std::string >::type type(typeSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type vectWeight(vectWeightSEXP);
-    rcpp_result_gen = Rcpp::wrap(gfpopTransfer(vectData, mygraph, type, vectWeight));
+    Rcpp::traits::input_parameter< bool >::type testMode(testModeSEXP);
+    rcpp_result_gen = Rcpp::wrap(gfpopTransfer(vectData, mygraph, type, vectWeight, testMode));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_gfpop_gfpopTransfer", (DL_FUNC) &_gfpop_gfpopTransfer, 4},
+    {"_gfpop_gfpopTransfer", (DL_FUNC) &_gfpop_gfpopTransfer, 5},
     {NULL, NULL, 0}
 };
 

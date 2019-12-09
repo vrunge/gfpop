@@ -26,6 +26,7 @@ class Omega
     ///////////////
     void initialize_LP_ts(Point firstData, unsigned int n);
     void gfpop(Data const& data);
+    void gfpopTestMode(Data const& data);
 
     ///////////////
     void LP_edges_operators(unsigned int t);

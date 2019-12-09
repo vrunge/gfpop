@@ -703,3 +703,51 @@ void ListPiece::show() const
   std::cout << "    LASTPIECE " << lastPiece << std::endl;
   head -> show();
 }
+
+
+void ListPiece::test()
+{
+  unsigned int t = 0;
+  currentPiece = head;
+  double leftEval;
+  double rightEval;
+
+  while(currentPiece != NULL)
+  {
+    t = t + 1;
+    /// TEST INTERVAL
+    if(currentPiece -> m_interval.getb() <= currentPiece -> m_interval.geta())
+    {
+      std::cout << "DANGER DANGER DANGER DANGER DANGER DANGER" << std::endl;
+      std::cout << currentPiece -> m_interval.getb() << "  " << currentPiece -> m_interval.geta() << std::endl;
+      Rcpp::stop("Unexpected condition occurred: interval bounds");
+    }
+
+    /// TEST CONTINUITY
+    if(currentPiece -> nxt != NULL)
+    {
+      rightEval = cost_eval(currentPiece -> m_cost, currentPiece -> m_interval.getb());
+      leftEval = cost_eval(currentPiece -> nxt -> m_cost, currentPiece -> nxt -> m_interval.geta());
+      if(fabs(rightEval - leftEval) > pow10(-6))
+      {
+        std::cout << std::endl;
+        std::cout << "          " << currentPiece;
+        std::cout << " #LABEL# "<< currentPiece -> m_info.getLabel() << " #STATE# " <<  currentPiece -> m_info.getState() << " POSITION " << currentPiece -> m_info.getPosition() << " ";
+        std::cout << " #INTERVAL# "<< currentPiece -> m_interval.geta() << " to " << currentPiece -> m_interval.getb() << " ";
+        showCost(currentPiece -> m_cost);
+        std::cout << "          " << currentPiece -> nxt;
+        std::cout << " #LABEL# "<< currentPiece -> nxt -> m_info.getLabel() << " #STATE# " <<  currentPiece -> nxt -> m_info.getState() << " POSITION " << currentPiece -> nxt -> m_info.getPosition() << " ";
+        std::cout << " #INTERVAL# "<< currentPiece -> nxt -> m_interval.geta() << " to " << currentPiece -> nxt -> m_interval.getb() << " ";
+        showCost(currentPiece -> nxt -> m_cost);
+        std::cout << " #rightEval# "<< rightEval << " #leftEval# " << leftEval << " #DIFF# " << leftEval - rightEval << std::endl;
+        Rcpp::stop("Unexpected condition occurred: continuity error");
+      }
+    }
+
+    currentPiece = currentPiece -> nxt;
+  }
+
+
+  std::cout << "nb: " << t << std::endl;
+}
+
