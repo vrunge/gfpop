@@ -24,7 +24,7 @@ a gfpop object = (changepoints, states, forced, parameters, globalCost)
 \item{\code{states}}{is the vector giving the state of each segment}
 \item{\code{forced}}{is the vector specifying whether the constraints of the graph are active (=1) or not (=0)}
 \item{\code{parameters}}{is the vector of successive parameters of each segment}
-\item{\code{globalCost}}{is a number equal to the global cost of the graph-constrained changepoint optimization problem}
+\item{\code{globalCost}}{is a number equal to the total loss: the minimal cost for the optimization problem with all penalty values excluded}
  }
 }
 \description{
