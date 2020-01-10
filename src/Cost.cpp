@@ -579,6 +579,7 @@ Interval poisson_intervalInterRoots(const Cost& cost, double& level)
     //roots of A THETA - B log THETA + C = 0
     // <=> roots of THETA - log THETA = 1 + a
     double U = cost.m_A/cost.m_B;
+    //std::cout << "UUUUUUUUUUUUUUUUUUUUUUUUUU  " << U << std::endl;
     double a = -(((cost.constant - level)/cost.m_B) + log(U) + 1);
 
     if(a > 0)

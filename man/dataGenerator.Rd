@@ -14,7 +14,7 @@ dataGenerator(n, changepoints, parameters, type = "mean", sigma = 1,
 
 \item{parameters}{vector of means for the consecutive segments (same length as changepoints)}
 
-\item{type}{a string defining the cost model to use: "mean", "variance", "poisson", "exp"}
+\item{type}{a string defining the cost model to use: "mean", "variance", "poisson", "exp", "negbin"}
 
 \item{sigma}{a positive number = the standard deviation of the data}
 

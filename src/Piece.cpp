@@ -252,6 +252,9 @@ Piece* Piece::pieceGenerator(Piece* Q1, Piece* Q2, int Bound_Q2_Minus_Q1, double
   // Interval interRoots (Q1 - Q2)
   Cost costDiff = minusCost(Q1 -> m_cost, Q2 -> m_cost);
   Interval interRoots = cost_intervalInterRoots(costDiff, zero);
+  //std::cout << "interRoots ";
+  //interRoots.show();
+  //showCost(costDiff);
 
   //// INFORMATION change
   // int change = 0, 1 or 2 change-points

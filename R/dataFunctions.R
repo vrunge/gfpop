@@ -4,7 +4,7 @@
 #' @param n number of data points to generate
 #' @param changepoints vector of position of the changepoints in (0,1] (last element is always 1).
 #' @param parameters vector of means for the consecutive segments (same length as changepoints)
-#' @param type a string defining the cost model to use: "mean", "variance", "poisson", "exp"
+#' @param type a string defining the cost model to use: "mean", "variance", "poisson", "exp", "negbin"
 #' @param sigma a positive number = the standard deviation of the data
 #' @param gamma a number between 0 and 1 : the coefficient of the exponential decay (by default = 1 for piecewise constant signals)
 #' @param size parameter of the rnbinom function
@@ -53,7 +53,11 @@ dataGenerator <- function(n, changepoints, parameters, type = "mean", sigma = 1,
   if(type == "variance"){vectData <- rnorm(n, 0, rep(sqrt(parameters), SegLength))}
   if(type == "poisson"){vectData <- rpois(n, rep(parameters, SegLength))}
   if(type == "exp"){vectData <- rexp(n, rep(parameters, SegLength))}
-  if(type == "negbin"){vectData <-rnbinom(n, size = size, prob = rep(parameters, SegLength))}
+  if(type == "negbin")
+  {
+    if(any(parameters > 1) || any(parameters <= 0)){stop('parameters for negbin type should be positive probabilities')}
+    vectData <- rnbinom(n, size = size, prob = rep(parameters, SegLength))
+  }
 
   return(vectData)
 }

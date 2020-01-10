@@ -735,7 +735,7 @@ void ListPiece::test()
     {
       rightEval = cost_eval(currentPiece -> m_cost, currentPiece -> m_interval.getb());
       leftEval = cost_eval(currentPiece -> nxt -> m_cost, currentPiece -> nxt -> m_interval.geta());
-      if(fabs(rightEval - leftEval) > pow(10,-10))
+      if(fabs(rightEval - leftEval) > pow(10,-6))
       {
         std::cout << std::endl;
         std::cout << "          " << currentPiece;

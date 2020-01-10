@@ -227,6 +227,12 @@ void Omega::LP_t_new_multipleMinimization(unsigned int t)
     {
       LP_ts[t + 1][j].LP_ts_Minimization(LP_edges[k]);
       k = k + 1;
+      /*
+      std::cout << " SHOW ";
+      LP_ts[t + 1][j].show();
+      std::cout << " TEST ";
+      LP_ts[t + 1][j].test();
+       */
     }
   }
 }
