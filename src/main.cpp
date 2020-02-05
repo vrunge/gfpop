@@ -32,7 +32,8 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
 
   if(type == "poisson")
   {
-    for(int i = 0; i < vectData.size(); i++){if(vectData[i] < 0 || (vectData[i]  > floor(vectData[i]))){throw std::range_error("There are some non-integer data");}}
+    for(int i = 0; i < vectData.size(); i++){if(vectData[i] < 0){throw std::range_error("There are some negative data");}}
+    //for(int i = 0; i < vectData.size(); i++){if(vectData[i]  > floor(vectData[i])){throw std::range_error("There are some non-integer data");}}
   }
 
   if(type == "exp")
