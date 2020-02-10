@@ -548,18 +548,17 @@ myGraph
 ## 3     Up     Up node        NA      NA  NA  NA   0   1
 ```
 
-
 <a id="suppl"></a>
 
 ## Supplementary R functions
 
 ### Data generator function
 
-dataGenerator
+the `dataGenerator` function is used to simulate $n$ data-points from a distribution of `type` equal to “mean”, “poisson”, “exp”, “variance” or “negbin”. Standard deviation parameter `sigma` and decay `gamma` are specific to the Gaussian mean model. `size` is linked to the R “rnbinom” function from R stats package.
 
 ### Standard deviation estimation
 
-sdDiff
+We often need to estimate the standard deviation from the observed data to normalize the data or choose the edge penalties. The `sdDiff` returns such an estimation with the default HALL method [Hall et al., 1990] well suited for time series with change-points.
 
 <a id="gfpop"></a>
 
