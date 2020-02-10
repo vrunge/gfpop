@@ -17,7 +17,7 @@ A previous version with only Gaussian cost function is available [here](https://
 #### LaMME, Evry University
 ### August 22, 2019 (version 2)
 
-> [The Graph-constrained Change-point problemn](#intro)
+> [The Graph-constrained Change-point problem](#intro)
 
 > [Quick Start](#qs)
 
