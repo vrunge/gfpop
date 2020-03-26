@@ -17,7 +17,7 @@ Authors@R: c(person("Vincent", "Runge", email = "vincent.runge@univ-evry.fr",
          person("Michel", "Koskas",
                   role = c("ctb")),
          person("Arnaud", "Liehrmann",
-                  role = c("ctb")),
+                  role = c("ctb"))
 )
 Maintainer: Vincent Runge <vincent.runge@univ-evry.fr>
 Description: Penalized parametric changepoint detection by functional pruning dynamic programming algorithm. The successive means can be constrained using a graph structure with edge of type null, up, down, std or absSup. To each edge we can use an additional nonnegative parameter allowing us to force a minimal gap between two successive means. The user can also constraint the infered means to lie between some minimal and maximal values. Data is modelized by a quadratic cost with possible use of a robust loss, biweight and Huber. In a next version of this package, other parametric losses will be available (L1, Poisson, binomial). 
