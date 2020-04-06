@@ -1,9 +1,9 @@
 ##  GPL-3 License
 ## Copyright (c) 2019 Vincent Runge
 
-#' Graph-Constrained Functional Pruning Optimal Partitioning
+#' Graph-Constrained Functional Pruning Optimal Partitioning (gfpop)
 #'
-#' @description Functional pruning optimal partitioning with a graph structure to take into account constraints on consecutive segment parameters. The user has to specify the graph he wants to use (see the graph function) and a type of cost funcion. This is the main function of the gfpop package.
+#' @description Functional pruning optimal partitioning with a graph structure to take into account constraints on consecutive segment parameters. The user has to specify the graph he wants to use (see the graph function) and a type of cost function. This is the main function of the gfpop package.
 #' @param data vector of data to segment
 #' @param mygraph dataframe of class "graph" to constrain the changepoint inference
 #' @param type a string defining the cost model to use: "mean", "variance", "poisson", "exp", "negbin"
@@ -22,10 +22,10 @@ gfpop <- function(data, mygraph, type = "mean", weights = NULL, testMode = FALSE
   ############
   ### STOP ###
   ############
-  if(!any(class(mygraph) == "graph")){stop('Your graph is not a graph created with the graph function in gfpop package...')}
+  if(!any(class(mygraph) == "graph")){stop('Your graph is not a graph created with the graph function of the gfpop package.')}
 
-  if(type != "mean" && type != "variance" && type != "poisson" && type != "exp" && type != "negbin")
-      {stop('Argument "type" not appropriate. Choose among "mean", "variance", "poisson", "exp" or "negbin"')}
+  allowed.types <- c("mean", "variance", "poisson", "exp", "negbin")
+  if(!type %in% allowed.types){stop('type must be one of: ', paste(allowed.types, collapse=", "))}
 
   ### if we have weights
   if(!is.null(weights))
