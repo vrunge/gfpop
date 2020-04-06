@@ -184,17 +184,6 @@ graph <- function(..., type = "empty", decay = 1, gap = 0, penalty = 0, K = Inf,
 #Order the graph and create integer state values
 
 
-###############################################
-# invisible function for the user
-
-typeOfGraph <- function(mygraph)
-{
-  return("gfpop")
-}
-
-
-###############################################
-
 graphReorder <- function(mygraph)
 {
   ### BUILD an ordered Graph : myOrderedGraph ###

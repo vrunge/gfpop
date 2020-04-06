@@ -46,18 +46,15 @@ gfpop <- function(data, mygraph, type = "mean", weights = NULL, testMode = FALSE
   newGraph <- mynewgraph$graph
   vertices <- mynewgraph$vertices
 
+  ########## MULTIPLE OUTPUT
+  multiple <- FALSE
+  if(sum(newGraph$type == "end") > 1){multiple <- TRUE}
+
   ###########################
   ### CALL Rcpp functions ###
   ###########################
 
-  useThePackage <- "gfpop"
-
-  ###Dispatch to 3 packages ### for future packages : fpop and ifpop
-  graphType <- typeOfGraph(newGraph) #("std", "isotonic" or "gfpop")
-
-  if(graphType == "std"){}
-  if(graphType == "isotonic"){}
-  if(graphType == "gfpop"){res <- gfpopTransfer(data, newGraph, type, weights, testMode)}
+  res <- gfpopTransfer(data, newGraph, type, weights, testMode)
 
   ############################
   ### Response class gfpop ###
@@ -96,8 +93,8 @@ itergfpop <- function(data, mygraph, type = "mean", weights = NULL, iter.max = 1
   ############
   if(!any(class(mygraph) == "graph")){stop('Your graph is not a graph created with the graph function in gfpop package...')}
 
-  if(type != "mean" && type != "variance" && type != "poisson" && type != "exp" && type != "negbin")
-  {stop('Argument "type" not appropriate. Choose among "mean", "variance", "poisson", "exp" or "negbin"')}
+  allowed.types <- c("mean", "variance", "poisson", "exp", "negbin")
+  if(!type %in% allowed.types){stop('type must be one of: ', paste(allowed.types, collapse=", "))}
 
   ### if we have weights
   if(!is.null(weights))
