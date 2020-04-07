@@ -94,7 +94,7 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   for(int i = 0 ; i < mygraph.nrow(); i++)
     {graph << Edge(state1[i], state2[i], typeEdge[i], fabs(parameter[i]), penalty[i], fabs(KK[i]), fabs(aa[i]), minn[i], maxx[i]);}
 
-  if(testMode == TRUE){graph.show();}
+  if(testMode == TRUE){graph.show();} ///TESTMODE
 
   // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects
   // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects  // END TRANSFERT into C++ objects

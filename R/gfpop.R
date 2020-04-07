@@ -46,10 +46,6 @@ gfpop <- function(data, mygraph, type = "mean", weights = NULL, testMode = FALSE
   newGraph <- mynewgraph$graph
   vertices <- mynewgraph$vertices
 
-  ########## MULTIPLE OUTPUT
-  multiple <- FALSE
-  if(sum(newGraph$type == "end") > 1){multiple <- TRUE}
-
   ###########################
   ### CALL Rcpp functions ###
   ###########################
@@ -59,7 +55,31 @@ gfpop <- function(data, mygraph, type = "mean", weights = NULL, testMode = FALSE
   ############################
   ### Response class gfpop ###
   ############################
-  response <- list(changepoints = c(rev(res$changepoints[-1]), length(data)), states = vertices[rev(res$states)+1], forced = rev(res$forced), parameters = rev(res$param), globalCost = res$cost)
+
+  if(length(res$changepoints) == 1) ##### best output state
+  {
+    response <- list(changepoints = c(rev(res$changepoints[[1]][-1]), length(data)), states = vertices[rev(res$states[[1]])+1], forced = rev(res$forced[[1]]), parameters = rev(res$param[[1]]), globalCost = res$cost[[1]])
+  }
+  else  ##### multiple output state
+  {
+    p <- length(res$changepoints)
+    lastStates <- NULL
+    for(i in 1:p)
+    {
+      res$changepoints[[i]] <- c(rev(res$changepoints[[i]][-1]), length(data))
+      res$states[[i]] <- vertices[rev(res$states[[i]])+1]
+      lastStates <- c(lastStates, rev(res$states[[i]])[1])
+      res$forced[[i]] <- rev(res$forced[[i]])
+      res$param[[i]] <- rev(res$param[[i]])
+    }
+    names(res$changepoints) <- lastStates
+    names(res$states) <- lastStates
+    names(res$forced) <- lastStates
+    names(res$param) <- lastStates
+    names(res$cost) <- lastStates
+    response <- list(changepoints = res$changepoints, states = res$states, forced = res$forced, parameters = res$param, globalCost = res$cost)
+  }
+
   attr(response, "class") <- "gfpop"
   return(response)
 }

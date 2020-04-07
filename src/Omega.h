@@ -9,6 +9,7 @@
 
 #include <math.h>
 #include<vector>
+
 #include <stdlib.h>
 
 class Omega
@@ -17,11 +18,11 @@ class Omega
     Omega(Graph graph);
     ~Omega();
 
-    std::vector< int > GetChangepoints() const;
-    std::vector< double > GetParameters() const;
-    std::vector< int > GetStates() const;
-    std::vector< int > GetForced() const;
-    double GetGlobalCost() const;
+    std::vector< std::vector< int > > GetChangepoints() const;
+    std::vector< std::vector< double > > GetParameters() const;
+    std::vector< std::vector< int > > GetStates() const;
+    std::vector< std::vector< int > > GetForced() const;
+    std::vector< double > GetGlobalCost() const;
 
     ///////////////
     void initialize_LP_ts(Point firstData, unsigned int n);
@@ -44,11 +45,11 @@ class Omega
     ListPiece* LP_edges; /// transformed cost by the operators for each edge (size 1 x q)
     ListPiece** LP_ts;  ///cost function Q with respect to position t and state s (size t x p), t = vector size.
 
-    std::vector< int > changepoints; ///vector of changepoints build by fpop (first index of each segment). size c
-    std::vector< double > parameters; ///vector of means build by fpop. size c
-    std::vector< int > states; ///vector of states build by fpop. size c
-    std::vector< int > forced; ///vector of forced = 0 or 1. 1 = forced value. size c-1
-    double globalCost;
+    std::vector< std::vector< int > > changepoints; ///vector of changepoints build by fpop (first index of each segment). size c
+    std::vector< std::vector< double > > parameters; ///vector of means build by fpop. size c
+    std::vector< std::vector< int > > states; ///vector of states build by fpop. size c
+    std::vector< std::vector< int > > forced; ///vector of forced = 0 or 1. 1 = forced value. size c-1
+    std::vector< double > globalCost;
 };
 
 std::ostream &operator<<(std::ostream &s, const Omega &om);

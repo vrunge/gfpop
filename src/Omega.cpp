@@ -36,12 +36,11 @@ Omega::~Omega()
 
 //####### accessors #######////####### accessors #######////####### accessors #######//
 //####### accessors #######////####### accessors #######////####### accessors #######//
-
-std::vector< int > Omega::GetChangepoints() const{return(changepoints);}
-std::vector< double > Omega::GetParameters() const{return(parameters);}
-std::vector< int > Omega::GetStates() const{return(states);}
-std::vector< int > Omega::GetForced() const{return(forced);}
-double Omega::GetGlobalCost() const{return(globalCost);}
+std::vector< std::vector< int > > Omega::GetChangepoints() const{return(changepoints);}
+std::vector< std::vector< double > > Omega::GetParameters() const{return(parameters);}
+std::vector< std::vector< int > > Omega::GetStates() const{return(states);}
+std::vector< std::vector< int > > Omega::GetForced() const{return(forced);}
+std::vector< double > Omega::GetGlobalCost() const{return(globalCost);}
 
 //####### initialize_LP_ts #######// //####### initialize_LP_ts #######// //####### initialize_LP_ts #######//
 //####### initialize_LP_ts #######// //####### initialize_LP_ts #######// //####### initialize_LP_ts #######//
@@ -243,6 +242,11 @@ void Omega::LP_t_new_multipleMinimization(unsigned int t)
 
 void Omega::backtracking()
 {
+  std::vector< int > changepoints1;
+  std::vector< double > parameters1;
+  std::vector< int > states1;
+  std::vector< int > forced1;
+
   Interval constrainedInterval; // Interval to fit the constraints
 
   double* malsp = new double[5];
@@ -250,6 +254,7 @@ void Omega::backtracking()
   //Interval* nodeConstr = m_graph.nodeConstraints();
 
   LP_ts[n][0].get_min_argmin_label_state_position_ListPiece(malsp);
+
 
   ///////////////////
   /// FINAL STATE ///
@@ -259,7 +264,7 @@ void Omega::backtracking()
   double CurrentGlobalCost;
   std::vector<unsigned int> endState = m_graph.getEndState();
 
-  // IF no endState, all the states are endstates.
+  // IF no endState, all the states are endstates => we select the best one
   if(endState.size() == 0)
   {
     for (unsigned int j = 1 ; j < p ; j++) // for all p states
@@ -268,7 +273,7 @@ void Omega::backtracking()
       if(malsp_temp[0] < malsp[0]){CurrentState = j; malsp[0] = malsp_temp[0];}
     }
   }
-  else
+  else ///=> multiple output //to be done
   {
     malsp[0] = INFINITY;
     for (unsigned int j = 0 ; j < endState.size() ; j++) // for all endState available
@@ -281,9 +286,9 @@ void Omega::backtracking()
   ///// with the best state
   LP_ts[n][CurrentState].get_min_argmin_label_state_position_ListPiece(malsp);
   CurrentGlobalCost = malsp[0];
-  parameters.push_back(malsp[1]); // = argmin
-  changepoints.push_back(CurrentChgpt); // = n
-  states.push_back(CurrentState); // = the best state
+  parameters1.push_back(malsp[1]); // = argmin
+  changepoints1.push_back(CurrentChgpt); // = n
+  states1.push_back(CurrentState); // = the best state
 
   /// BACKTRACK
   ///////////////////////////////
@@ -300,7 +305,7 @@ void Omega::backtracking()
     out = false;
     boolForced = false;
     decay = m_graph.recursiveState(CurrentState);
-    if(decay != 1){correction = std::pow(decay, parameters.back() - malsp[2] + 1);}else{correction = 1;}
+    if(decay != 1){correction = std::pow(decay, parameters1.back() - malsp[2] + 1);}else{correction = 1;}
 
     constrainedInterval = m_graph.buildInterval(malsp[1]*correction, malsp[3], CurrentState, out); ///update out
 
@@ -314,13 +319,20 @@ void Omega::backtracking()
     CurrentGlobalCost = CurrentGlobalCost - m_graph.findBeta(malsp[3], CurrentState);
     //if(malsp[1] == nodeConstr[CurrentState].geta() || malsp[1] == nodeConstr[CurrentState].getb()){boolForced = true;}
 
-    parameters.push_back(malsp[1]);
-    changepoints.push_back(CurrentChgpt);
-    states.push_back(CurrentState);
-    forced.push_back(boolForced);
+    parameters1.push_back(malsp[1]);
+    changepoints1.push_back(CurrentChgpt);
+    states1.push_back(CurrentState);
+    forced1.push_back(boolForced);
   }
 
-  globalCost = CurrentGlobalCost;
+  globalCost.push_back(CurrentGlobalCost);
+
+  ////
+  parameters.push_back(parameters1);
+  changepoints.push_back(changepoints1);
+  states.push_back(states1);
+  forced.push_back(forced1);
+
   delete(malsp);
   delete(malsp_temp);
   //delete(nodeConstr);

@@ -2,7 +2,7 @@
 % Please edit documentation in R/gfpop.R
 \name{gfpop}
 \alias{gfpop}
-\title{Graph-Constrained Functional Pruning Optimal Partitioning}
+\title{Graph-Constrained Functional Pruning Optimal Partitioning (gfpop)}
 \usage{
 gfpop(data, mygraph, type = "mean", weights = NULL, testMode = FALSE)
 }
@@ -28,5 +28,5 @@ a gfpop object = (changepoints, states, forced, parameters, globalCost)
  }
 }
 \description{
-Functional pruning optimal partitioning with a graph structure to take into account constraints on consecutive segment parameters. The user has to specify the graph he wants to use (see the graph function) and a type of cost funcion. This is the main function of the gfpop package.
+Functional pruning optimal partitioning with a graph structure to take into account constraints on consecutive segment parameters. The user has to specify the graph he wants to use (see the graph function) and a type of cost function. This is the main function of the gfpop package.
 }
