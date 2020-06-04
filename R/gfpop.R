@@ -19,9 +19,15 @@
 #'  }
 gfpop <- function(data, mygraph, type = "mean", weights = NULL, testMode = FALSE)
 {
+  #enforce factor to string if necessary
+  mygraph$state1 <- as.character(mygraph$state1)
+  mygraph$state2 <- as.character(mygraph$state2)
+  mygraph$type <- as.character(mygraph$type)
+
   ############
   ### STOP ###
   ############
+
   if(!any(class(mygraph) == "graph")){stop('Your graph is not a graph created with the graph function of the gfpop package.')}
 
   allowed.types <- c("mean", "variance", "poisson", "exp", "negbin")
