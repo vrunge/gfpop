@@ -17,3 +17,24 @@ test_that("gfpop returns character states", {
   fit <- gfpop(ECG$data$millivolts, mygraph = myGraph, type = "mean")
   expect_true(all(fit$states %in% myGraph$state1))
 })
+
+test_that("gfpop runs on a graph imported from csv with stringsAsFactors=T", {
+  # The following structure was produced from creating a a standard 'std' graph,
+  # exporting to csv, re-importing, and using dput to make portable.
+  test_graph <- structure(list(
+    state1 = structure(c(1L, 1L), .Label = "Iso", class = "factor"),
+    state2 = structure(c(1L, 1L), .Label = "Iso", class = "factor"),
+    type = structure(1:2, .Label = c("null", "up"), class = "factor"),
+    parameter = 1:0, penalty = c(0L, 15L), K = c(Inf, Inf), a = c(
+      0L,
+      0L
+    ), min = c(NA, NA), max = c(NA, NA)
+  ), row.names = c(
+    NA,
+    -2L
+  ), class = c("data.frame", "graph"))
+
+  # Test that the imported graph can be used to run gfpop
+  test_data <- gfpop::dataGenerator(50, changepoints = c(1), parameters = c(1))
+  expect_equal(gfpop(data = test_data, mygraph = test_graph)$changepoints, 50)
+})
