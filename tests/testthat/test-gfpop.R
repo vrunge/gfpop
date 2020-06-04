@@ -19,7 +19,7 @@ test_that("gfpop returns character states", {
 })
 
 test_that("gfpop runs on a graph imported from csv with stringsAsFactors=T", {
-  # The following structure was produced from creating a a standard 'std' graph,
+  # The following structure was produced from creating a a standard 'isotonic' graph,
   # exporting to csv, re-importing, and using dput to make portable.
   test_graph <- structure(list(
     state1 = structure(c(1L, 1L), .Label = "Iso", class = "factor"),
