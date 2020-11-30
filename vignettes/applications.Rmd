@@ -4,7 +4,7 @@ author: "Toby Dylan Hocking"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Three argument syntax}
+  %\VignetteIndexEntry{Applications of GFPOP}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
