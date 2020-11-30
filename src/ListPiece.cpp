@@ -194,7 +194,7 @@ void ListPiece::initializeHeadWithFirstPoint(Point const& pt)
   double* coeff = cost_coeff(pt);
   Cost costPt = Cost(coeff);
   head -> addCostAndPenalty(costPt, 0);
-  delete(coeff);
+  delete[] coeff;
 }
 
 //##### shift #####//////##### shift #####//////##### shift #####///
@@ -405,7 +405,7 @@ void ListPiece::LP_edges_addPointAndPenalty(Edge const& edge, Point const& pt)
       move();
     }
   }
-  delete(coeff);
+  delete[] coeff;
 }
 
 
