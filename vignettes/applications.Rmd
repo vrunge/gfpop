@@ -3,7 +3,7 @@ title: "Applications of GFPOP"
 author: "Toby Dylan Hocking"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
-vignette: 
+vignette: >
   %\VignetteIndexEntry{Three argument syntax}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
