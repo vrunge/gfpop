@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 ## Relevant changes model for DNA copy number data
 
 ```{r Mono27ac, fig.width=10}
-
+library(gfpop)
 library(data.table)
 data(profile614chr2, package="gfpop")
 profile614chr2$probes[, change.after := floor(
@@ -186,7 +186,7 @@ print(gg.out)
 
 ## Multi-modal regression for neuro spike train data set 
 
-```{r neuroSpike, fig.width=10, eval=FALSE}
+```{r neuroSpike, fig.width=10}
 
 library(data.table)
 data(neuroSpike, package="gfpop")
