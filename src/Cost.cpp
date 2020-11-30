@@ -54,7 +54,7 @@ bool isConstant(Cost const& cost)
 
 void showCost(const Cost& cost)
 {
-  std::cout << " A: " << cost.m_A << " B: " << cost.m_B << " C: " << cost.constant << std::endl;
+  //std::cout << " A: " << cost.m_A << " B: " << cost.m_B << " C: " << cost.constant << std::endl;
 }
 
 //####### simplefunctions #######////####### simplefunctions #######////####### simplefunctions #######//
@@ -70,7 +70,7 @@ int signValue(double value)
 double log_factorial(double n)
 {
   double res = 0;
-  for(int i = 2; i < floor(n) + 1; i++){res = res + log(i);}
+  for(int i = 2; i < floor(n) + 1; i++){res = res + log((double)(i));}
   return(res);
 }
 

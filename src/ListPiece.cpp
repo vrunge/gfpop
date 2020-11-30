@@ -702,9 +702,9 @@ void ListPiece::operatorSum(ListPiece& LP1, ListPiece& LP2)
 
 void ListPiece::show() const
 {
-  std::cout << "    HEAD      " << head << std::endl;
-  std::cout << "    CURRENTPI " << currentPiece << std::endl;
-  std::cout << "    LASTPIECE " << lastPiece << std::endl;
+  //std::cout << "    HEAD      " << head << std::endl;
+  //std::cout << "    CURRENTPI " << currentPiece << std::endl;
+  //std::cout << "    LASTPIECE " << lastPiece << std::endl;
   head -> show();
 }
 
@@ -725,9 +725,9 @@ void ListPiece::test()
     /// TEST INTERVAL
     if(currentPiece -> m_interval.getb() <= currentPiece -> m_interval.geta())
     {
-      std::cout << "DANGER DANGER DANGER DANGER DANGER DANGER" << std::endl;
-      std::cout << currentPiece -> m_interval.getb() << "  " << currentPiece -> m_interval.geta() << std::endl;
-      Rcpp::stop("Unexpected condition occurred: interval bounds");
+      //std::cout << "DANGER DANGER DANGER DANGER DANGER DANGER" << std::endl;
+      //std::cout << currentPiece -> m_interval.getb() << "  " << currentPiece -> m_interval.geta() << std::endl;
+      //Rcpp::stop("Unexpected condition occurred: interval bounds");
     }
 
     /// TEST CONTINUITY
@@ -737,16 +737,16 @@ void ListPiece::test()
       leftEval = cost_eval(currentPiece -> nxt -> m_cost, currentPiece -> nxt -> m_interval.geta());
       if(fabs(rightEval - leftEval) > pow(10,-6))
       {
-        std::cout << std::endl;
-        std::cout << "          " << currentPiece;
-        std::cout << " #LABEL# "<< currentPiece -> m_info.getLabel() << " #STATE# " <<  currentPiece -> m_info.getState() << " POSITION " << currentPiece -> m_info.getPosition() << " ";
-        std::cout << " #INTERVAL# "<< currentPiece -> m_interval.geta() << " to " << currentPiece -> m_interval.getb() << " ";
+        //std::cout << std::endl;
+        //std::cout << "          " << currentPiece;
+        //std::cout << " #LABEL# "<< currentPiece -> m_info.getLabel() << " #STATE# " <<  currentPiece -> m_info.getState() << " POSITION " << currentPiece -> m_info.getPosition() << " ";
+        //std::cout << " #INTERVAL# "<< currentPiece -> m_interval.geta() << " to " << currentPiece -> m_interval.getb() << " ";
         showCost(currentPiece -> m_cost);
-        std::cout << "          " << currentPiece -> nxt;
-        std::cout << " #LABEL# "<< currentPiece -> nxt -> m_info.getLabel() << " #STATE# " <<  currentPiece -> nxt -> m_info.getState() << " POSITION " << currentPiece -> nxt -> m_info.getPosition() << " ";
-        std::cout << " #INTERVAL# "<< currentPiece -> nxt -> m_interval.geta() << " to " << currentPiece -> nxt -> m_interval.getb() << " ";
+        //std::cout << "          " << currentPiece -> nxt;
+        //std::cout << " #LABEL# "<< currentPiece -> nxt -> m_info.getLabel() << " #STATE# " <<  currentPiece -> nxt -> m_info.getState() << " POSITION " << currentPiece -> nxt -> m_info.getPosition() << " ";
+        //std::cout << " #INTERVAL# "<< currentPiece -> nxt -> m_interval.geta() << " to " << currentPiece -> nxt -> m_interval.getb() << " ";
         showCost(currentPiece -> nxt -> m_cost);
-        std::cout << " #rightEval# "<< rightEval << " #leftEval# " << leftEval << " #DIFF# " << leftEval - rightEval << std::endl;
+        //std::cout << " #rightEval# "<< rightEval << " #leftEval# " << leftEval << " #DIFF# " << leftEval - rightEval << std::endl;
         Rcpp::stop("Unexpected condition occurred: continuity error");
       }
     }
@@ -754,6 +754,6 @@ void ListPiece::test()
     currentPiece = currentPiece -> nxt;
   }
 
-  std::cout << "nb: " << t << std::endl;
+  //std::cout << "nb: " << t << std::endl;
 }
 

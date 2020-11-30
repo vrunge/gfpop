@@ -77,7 +77,7 @@ Interval Piece::intervalMinLessUp(double bound, double currentValue, bool constP
         coeff[2] = m_cost.constant;
         Cost costInter = Cost(coeff);
         response.seta(cost_intervalInterRoots(costInter, currentValue).geta());
-        delete(coeff);
+        delete[] coeff;
       }
       else
       {
@@ -121,7 +121,7 @@ Interval Piece::intervalMinLessDw(double bound, double currentValue, bool constP
         coeff[2] = m_cost.constant;
         Cost costInter = Cost(coeff);
         response.setb(cost_intervalInterRoots(costInter, currentValue).getb());
-        delete(coeff);
+        delete[] coeff;
       }
       else
       {
@@ -456,13 +456,13 @@ void Piece::get_min_argmin_label_state_position(double* response)
 void Piece::show()
 {
   Piece* tmp = this;
-  if(tmp == NULL){std::cout << "#NULL EMPTY POINTER# "<< std::endl;}
-  else
+  //if(tmp == NULL){std::cout << "#NULL EMPTY POINTER# "<< std::endl;}
+  //else
   {
-    std::cout << "          " << tmp;
-    std::cout << " #LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " << tmp -> m_info.getPosition() << " ";
-    std::cout << " #INTERVAL# "<< tmp -> m_interval.geta() << " to " << tmp -> m_interval.getb() << " ";
-    showCost(tmp -> m_cost);
+    //std::cout << "          " << tmp;
+    //std::cout << " #LABEL# "<< tmp -> m_info.getLabel() << " #STATE# " <<  tmp -> m_info.getState() << " POSITION " << tmp -> m_info.getPosition() << " ";
+    //std::cout << " #INTERVAL# "<< tmp -> m_interval.geta() << " to " << tmp -> m_interval.getb() << " ";
+    //showCost(tmp -> m_cost);
   }
   if(tmp -> nxt != NULL){tmp -> nxt -> show();}
 }

@@ -4,8 +4,16 @@
 \alias{graph}
 \title{Graph generation}
 \usage{
-graph(..., type = "empty", decay = 1, gap = 0, penalty = 0,
-  K = Inf, a = 0, all.null.edges = FALSE)
+graph(
+  ...,
+  type = "empty",
+  decay = 1,
+  gap = 0,
+  penalty = 0,
+  K = Inf,
+  a = 0,
+  all.null.edges = FALSE
+)
 }
 \arguments{
 \item{...}{This is a list of edges definied by functions "Edge", "StartEnd" and "Node"}

@@ -4,8 +4,15 @@
 \alias{dataGenerator}
 \title{Data Generator}
 \usage{
-dataGenerator(n, changepoints, parameters, type = "mean", sigma = 1,
-  gamma = 1, size = 10)
+dataGenerator(
+  n,
+  changepoints,
+  parameters,
+  type = "mean",
+  sigma = 1,
+  gamma = 1,
+  size = 10
+)
 }
 \arguments{
 \item{n}{number of data points to generate}

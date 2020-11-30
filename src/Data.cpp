@@ -5,7 +5,7 @@ Data::~Data()
 {
   if (vecPt != NULL)
   {
-    delete [] vecPt;
+    delete[] vecPt;
   }
 }
 
