@@ -2,7 +2,6 @@
 #include "Piece.h"
 #include"ExternFunctions.h"
 
-#include <math.h>
 #include <stdlib.h>
 #include<iostream>
 

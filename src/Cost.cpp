@@ -4,8 +4,6 @@
 #include <iostream>
 #include <string>
 
-#include"math.h"
-
 Cost::Cost()
 {
   m_A = 0;

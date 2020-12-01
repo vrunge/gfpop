@@ -7,6 +7,7 @@
 #include "Track.h"
 #include "Interval.h"
 #include "Cost.h"
+#include <math.h>
 
 #include<vector>
 #include<string>

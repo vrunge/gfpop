@@ -4,7 +4,6 @@
 #include "Piece.h"
 #include "Edge.h"
 #include "ExternFunctions.h"
-
 #include <math.h>
 
 class ListPiece

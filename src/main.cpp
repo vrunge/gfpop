@@ -20,7 +20,7 @@ List gfpopTransfer(NumericVector vectData, DataFrame mygraph, std::string type, 
   ///////////////////////////////////////////
   /////////// DATA TRANSFORMATION ///////////
   ///////////////////////////////////////////
-  double epsilon = pow(10,-12);
+  double epsilon = std::pow(10.0,-12.0);
 
   if(type == "variance")
   {

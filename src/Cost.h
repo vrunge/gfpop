@@ -6,7 +6,6 @@
 #include "Interval.h"
 #include "Data.h"
 
-
 struct Cost
 {
   double m_A;

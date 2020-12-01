@@ -304,7 +304,7 @@ void Omega::backtracking()
     out = false;
     boolForced = false;
     decay = m_graph.recursiveState(CurrentState);
-    if(decay != 1){correction = std::pow(decay, parameters1.back() - malsp[2] + 1);}else{correction = 1;}
+    if(decay != 1){correction = std::pow(1.0*decay, 1.0*(parameters1.back() - malsp[2] + 1));}else{correction = 1;}
 
     constrainedInterval = m_graph.buildInterval(malsp[1]*correction, malsp[3], CurrentState, out); ///update out
 
