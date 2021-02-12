@@ -1,9 +1,10 @@
 library(gfpop)
+library(gfpop.data)
 library(testthat)
 context("sn")
 
 library(data.table)
-data(profile614chr2, package="gfpop")
+data(profile614chr2, package="gfpop.data")
 
 ### reduce data size
 profile614chr2$probes <- profile614chr2$probes[1:10000,]

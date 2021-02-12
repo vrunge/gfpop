@@ -16,13 +16,22 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r}
+devtools::install_github("vrunge/gfpop")
+devtools::install_github("vrunge/gfpop.data")
+
+library(gfpop.data)
+library(gfpop)
+
+library(data.table)
+library(penaltyLearning)
+```
+
 
 ## Relevant changes model for DNA copy number data
 
 ```{r Mono27ac, fig.width=10}
-library(gfpop)
-library(data.table)
-data(profile614chr2, package="gfpop")
+data(profile614chr2, package="gfpop.data")
 profile614chr2$probes[, change.after := floor(
   c(diff(position)/2+position[-.N], NA)) ]
 sngraph <- function(n.segs, type, gap){
@@ -187,9 +196,7 @@ print(gg.out)
 ## Multi-modal regression for neuro spike train data set 
 
 ```{r neuroSpike, fig.width=10}
-
-library(data.table)
-data(neuroSpike, package="gfpop")
+data(neuroSpike, package="gfpop.data")
 fps <- 100
 seconds.between.data <- 1/fps
 sec.w <- seconds.between.data/3
@@ -328,7 +335,7 @@ print(gg.out)
 ## Nine-state model for QRS complex detection in electrocardiogram (ECG) data
 
 ```{r ECG, fig.width=10}
-data(ECG, package="gfpop")
+data(ECG, package="gfpop.data")
 
 myGraph <- gfpop::graph(
   gfpop::Edge(0, 1, "down", penalty = 8e7, gap=0),
@@ -420,9 +427,7 @@ print(gg)
 ### Multi-modal regression and peak model with poisson loss
 
 ```{r}
-
-library(data.table)
-data(Mono27ac, package="gfpop")
+data(Mono27ac, package="gfpop.data")
 pen.vec <- c(40, 100)
 Mono27ac$labels[, chromStart1 := chromStart + 1L]
 lab <- function(chromStart, chromEnd, annotation){

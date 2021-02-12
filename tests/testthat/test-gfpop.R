@@ -1,8 +1,9 @@
 library(testthat)
 library(gfpop)
+library(gfpop.data)
 context("graph")
 
-data(ECG, package="gfpop")
+data(ECG, package="gfpop.data")
 test_that("gfpop returns character states", {
   myGraph <- graph(
     Edge("beforeQ", "Q",      "down", penalty = 80000000, gap=0),

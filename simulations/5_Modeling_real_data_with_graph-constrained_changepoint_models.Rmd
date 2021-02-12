@@ -12,9 +12,12 @@ knitr::opts_chunk$set(
 ```
 
 ```{r}
-#If an error occurs delete 00LOCK-gfpop directory
-#install.packages("gfpop")
+#devtools::install_github("vrunge/gfpop")
+devtools::install_github("vrunge/gfpop.data")
+
+library(gfpop.data)
 library(gfpop)
+
 library(penaltyLearning)
 library(data.table)
 library(ggplot2)
