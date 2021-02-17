@@ -1,11 +1,12 @@
 Package: gfpop
 Type: Package
 Title: Graph-Constrained Functional Pruning Optimal Partitioning 
-Version: 1.0.2
+Version: 1.0.3
 Authors@R: c(
 	person("Vincent", "Runge", email = "vincent.runge@univ-evry.fr", role = c("aut", "cre")),
 	person("Toby", "Hocking", role = c("aut")),
 	person("Guillem", "Rigaill", role = c("aut")),
+	person("Daniel", "Grose", role = c("aut")),
 	person("Gaetano", "Romano", role = c("aut")),
 	person("Fatemeh", "Afghah", role = c("aut")),
 	person("Paul", "Fearnhead", role = c("aut")),
