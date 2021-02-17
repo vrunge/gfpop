@@ -1,0 +1,673 @@
+
+R version 3.6.3 (2020-02-29) -- "Holding the Windsock"
+Copyright (C) 2020 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R est un logiciel libre livré sans AUCUNE GARANTIE.
+Vous pouvez le redistribuer sous certaines conditions.
+Tapez 'license()' ou 'licence()' pour plus de détails.
+
+R est un projet collaboratif avec de nombreux contributeurs.
+Tapez 'contributors()' pour plus d'information et
+'citation()' pour la façon de le citer dans les publications.
+
+Tapez 'demo()' pour des démonstrations, 'help()' pour l'aide
+en ligne ou 'help.start()' pour obtenir l'aide au format HTML.
+Tapez 'q()' pour quitter R.
+
+[Sauvegarde de la session précédente restaurée]
+
+> 
+> #number of simulations reduced to 20 to reduce time execution of this script
+> nbSimu <- 20
+> #nbSimu <- 100 #number of simulations
+> 
+> #data length reduced to 1000 to reduce time execution of this script
+> my_n = 10^3  #time-series data length
+> #my_n = 10^4  #time-series data length
+> 
+> ###
+> ### How to install the gfpop PACKAGE
+> ###
+> 
+> #(method 1) ON GITHUB 
+> #devtools::install_github("vrunge/gfpop", force = TRUE)
+> 
+> #(method 2) ON CRAN
+> install.packages("gfpop")
+Installation du package dans ‘/home/vrunge/R/x86_64-pc-linux-gnu-library/3.6’
+(car ‘lib’ n'est pas spécifié)
+essai de l'URL 'https://cloud.r-project.org/src/contrib/gfpop_1.0.3.tar.gz'
+Content type 'application/x-gzip' length 32866 bytes (32 KB)
+==================================================
+downloaded 32 KB
+
+* installing *source* package ‘gfpop’ ...
+** package ‘gfpop’ correctement décompressé et sommes MD5 vérifiées
+** using staged installation
+** libs
+g++ -std=gnu++11 -I"/usr/share/R/include" -DNDEBUG  -I"/home/vrunge/R/x86_64-pc-linux-gnu-library/3.6/Rcpp/include"   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c Cost.cpp -o Cost.o
+g++ -std=gnu++11 -I"/usr/share/R/include" -DNDEBUG  -I"/home/vrunge/R/x86_64-pc-linux-gnu-library/3.6/Rcpp/include"   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c Data.cpp -o Data.o
+g++ -std=gnu++11 -I"/usr/share/R/include" -DNDEBUG  -I"/home/vrunge/R/x86_64-pc-linux-gnu-library/3.6/Rcpp/include"   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c Edge.cpp -o Edge.o
+g++ -std=gnu++11 -I"/usr/share/R/include" -DNDEBUG  -I"/home/vrunge/R/x86_64-pc-linux-gnu-library/3.6/Rcpp/include"   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c ExternFunctions.cpp -o ExternFunctions.o
+g++ -std=gnu++11 -I"/usr/share/R/include" -DNDEBUG  -I"/home/vrunge/R/x86_64-pc-linux-gnu-library/3.6/Rcpp/include"   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c Graph.cpp -o Graph.o
+g++ -std=gnu++11 -I"/usr/share/R/include" -DNDEBUG  -I"/home/vrunge/R/x86_64-pc-linux-gnu-library/3.6/Rcpp/include"   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c Interval.cpp -o Interval.o
+g++ -std=gnu++11 -I"/usr/share/R/include" -DNDEBUG  -I"/home/vrunge/R/x86_64-pc-linux-gnu-library/3.6/Rcpp/include"   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c ListPiece.cpp -o ListPiece.o
+g++ -std=gnu++11 -I"/usr/share/R/include" -DNDEBUG  -I"/home/vrunge/R/x86_64-pc-linux-gnu-library/3.6/Rcpp/include"   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c Omega.cpp -o Omega.o
+g++ -std=gnu++11 -I"/usr/share/R/include" -DNDEBUG  -I"/home/vrunge/R/x86_64-pc-linux-gnu-library/3.6/Rcpp/include"   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c Piece.cpp -o Piece.o
+g++ -std=gnu++11 -I"/usr/share/R/include" -DNDEBUG  -I"/home/vrunge/R/x86_64-pc-linux-gnu-library/3.6/Rcpp/include"   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c RcppExports.cpp -o RcppExports.o
+g++ -std=gnu++11 -I"/usr/share/R/include" -DNDEBUG  -I"/home/vrunge/R/x86_64-pc-linux-gnu-library/3.6/Rcpp/include"   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c Track.cpp -o Track.o
+g++ -std=gnu++11 -I"/usr/share/R/include" -DNDEBUG  -I"/home/vrunge/R/x86_64-pc-linux-gnu-library/3.6/Rcpp/include"   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c main.cpp -o main.o
+g++ -std=gnu++11 -shared -L/usr/lib/R/lib -Wl,-Bsymbolic-functions -Wl,-z,relro -o gfpop.so Cost.o Data.o Edge.o ExternFunctions.o Graph.o Interval.o ListPiece.o Omega.o Piece.o RcppExports.o Track.o main.o -L/usr/lib/R/lib -lR
+installing to /home/vrunge/R/x86_64-pc-linux-gnu-library/3.6/00LOCK-gfpop/00new/gfpop/libs
+** R
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded from temporary location
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (gfpop)
+
+Les packages source téléchargés sont dans
+	‘/tmp/Rtmp0Ml2T3/downloaded_packages’
+> library(gfpop)
+> 
+> library(ggplot2)
+> 
+> ############################################################################
+> ## (SECTION 6. JSS PAPER) Utility of penalized isotonic regression models ## 
+> ############################################################################
+> 
+> #-----------------------------------------------------#
+> ## DATA SIMULATION FUNCTION for ISOTONIC SIMULATIONS ##
+> #-----------------------------------------------------#
+> 
+> simuData <- function(n = 10^3, 
++                      D = 10, 
++                      type = "isostep", 
++                      noise = "student", 
++                      dfree = 3, 
++                      pcorr = 0.3, 
++                      sigma = 10, 
++                      min.length = 10)
++ {
++   # n = nb points
++   # k = nb steps
++   # type = isostep OR isolinear
++   # noise = student OR corrupted
++   # dfree = for student distribution : degree of freedom
++   # pcorr = percent of corrupted data
++   ###
++   ### ALL signals between 0 and 100 !
++   ###
++ 
++   if(type == "isostep")
++   {
++     data <- list()
++     data$signal <- (floor(seq(from = 0, to = D-0.000001, length.out = n)))*100/D
++     data$signal <-  data$signal - mean(data$signal)
++     data$y <- data$signal ## modified later
++     data$w <- rep(1, length(data$y))
++     data$D <- D
++   }
++   if(type == "isolinear")
++   {
++     data <- list()
++     data$signal <- (0:(n-1))*(100/n)
++     data$signal <-  data$signal - mean(data$signal)
++     data$y <- data$signal ## modified later
++     data$w <- rep(1, length(data$y))
++     data$D <- D
++   }
++   
++   ### noise
++   if(noise == "gauss")
++   {
++     data$y <- data$y + sigma*rnorm(length(data$y)) #gaussian distribution
++   }
++   if(noise == "student")
++   {
++     data$y <- data$y + sigma*sqrt((dfree-2)/dfree)*rt(length(data$y), df = dfree) #Student t distribution (!= gauss; heavy tails)
++   }
++   
++   if(noise == "corrupted")
++   {
++     data$y <- data$y + sigma*rnorm(length(data$y)) #gaussian distribution
++     isp <- sample(1:n, trunc(pcorr*n))
++     data$y[isp] <- -data$y[isp] #opposition for data indices in isp
++   }
++ 
++   return(data)
++ }
+> 
+> 
+> #-----------------#
+> ## ESTIMATE FIT  ##
+> #-----------------#
+> 
+> 
+> estimateAllSeg <- function(simuData, type = "mean", K = 2, pen = 2)
++ {
++   response <- list()
++   
++   response[[1]] <- isoreg(simuData$y)$yf
++   response[[2]] <- reg_1d(simuData$y, simuData$w, metric = 2, unimodal = FALSE, decreasing = FALSE)
++   response[[3]] <- reg_1d(simuData$y, simuData$w, metric = 1, unimodal = FALSE, decreasing = FALSE)
++   
++   isoFpop4 <- gfpop(data = simuData$y, weights = simuData$w, mygraph = graph(penalty = 0, type = "isotonic"), type = type)
++   isoFpop5 <- gfpop(data = simuData$y, weights = simuData$w, mygraph = graph(penalty = 0, type = "isotonic", K = K), type = type)
++   isoFpop6 <- gfpop(data = simuData$y, weights = simuData$w, mygraph = graph(penalty = pen, type = "isotonic"), type = type)
++   isoFpop7 <- gfpop(data = simuData$y, weights = simuData$w, mygraph = graph(penalty = pen, type = "isotonic", K = K), type = type)
++   
++   response[[4]] <- rep(isoFpop4$parameters, diff(c(0, isoFpop4$changepoints)))
++   response[[5]] <- rep(isoFpop5$parameters, diff(c(0, isoFpop5$changepoints)))
++   response[[6]] <- rep(isoFpop6$parameters, diff(c(0, isoFpop6$changepoints)))
++   response[[7]] <- rep(isoFpop7$parameters, diff(c(0, isoFpop7$changepoints)))
++   
++   return(response)
++ }
+> 
+> #----------------------------#
+> ## Compute MSE of 7 methods ##
+> #----------------------------#
+> 
+> MSEall <- function(data, estimate)
++ {
++   n <- length(data$signal)
++   res <- data.frame(matrix(0, nrow = 1, ncol = 7))
++   
++   for(i in 1:7)
++   {
++     u <- data$signal - estimate[[i]]
++     res[1,i] <- (1/n)*(t(u)%*%u)
++   }
++   return(res)
++ }
+> 
+> #-----------------#
+> ## MSEdataSignal ##
+> #-----------------#
+> 
+> MSEdataSignal <- function(data, signal, method = "NONE")
++ {
++   if(method == "NONE")
++   {
++     n <- length(data)
++     u <- data - signal
++     res <- (1/n)*(t(u)%*%u)
++   }
++   if(method == "linear")
++   {
++     n <- length(data)
++     x <- 1:n
++     linearMod <- lm(data ~ x)
++     line <- linearMod$coefficients[1] + linearMod$coefficients[2]*x
++     u <- line - signal
++     res <- (1/n)*(t(u)%*%u)
++   }
++   return(res)
++ }
+> 
+> ####################################################################################################
+> 
+> #--------------------------#
+> ## get number of segments ##
+> #--------------------------#
+> 
+> getD <- function(estimate)
++ {
++   res <- sapply(estimate, FUN = function(x) sum(diff(x) != 0))
++   return(res + 1)
++ }
+> 
+> #-----------#
+> ## varDiff ##
+> #-----------#
+> 
+> varDiff <- function(x, method = 'HALL')
++ {
++   if(method == "SD")
++   {
++     return(sd(diff(x)/sqrt(2)))
++   }
++   if(method == "MAD")
++   {
++     return(mad(diff(x)/sqrt(2)))
++   }
++   if(method == "HALL")
++   {
++     n = length(x)
++     wei <- c(0.1942, 0.2809, 0.3832, -0.8582)
++     mat <- wei %*% t(x)
++     
++     mat[2, -n] = mat[2, -1]
++     mat[3, -c(n-1, n)] = mat[3, -c(1, 2)]
++     mat[4, -c(n-2, n-1, n)] = mat[4, -c(1, 2, 3)]
++     return(sqrt(sum(apply(mat[, -c(n-2, n-1, n)], 2, sum)^2) / (n-3)))
++   }
++ }
+> 
+> 
+> #--------------#
+> ## plotAllSeg ##
+> #--------------#
+> 
+> plotAllSeg <- function(data, estimate)
++ {
++   plot(data$y, pch = "+", cex = 1.8) #cex = 1.2
++   lty <- c(1, 2, 3, 4, 5, 6, 7)
++   col <- c("black", "blue", "red", "yellow", "orange", "magenta", "green")
++   for(i in 1:7) lines(estimate[[i]], lty = lty[i], lwd = 2, col = col[i])
++ }
+> 
+> 
+> #--------------#
+> ##  plotSeg   ##
+> #--------------#
+> 
+> plotSeg <- function(data, estimate)
++ {
++   plot(data$y, pch = ".", cex = 1) #cex = 1.2
++   lty <- c(1, 3, 7)
++   col <- c("red", "magenta", "blue")
++   ttype <- c(4, 1, 5)
++   lines(data$signal, lwd = 1.9, col = "black")
++   for(i in 1:3) lines(estimate[[lty[i]]], lwd = 2, lty = ttype[i], col = col[i])
++   legend("bottomright", legend=c("true signal", "isoreg", "reg_1d L1", "gfpop4"),
++          col=c("black",col), lty=c(1,ttype), lwd = 2, cex=1.5)
++ }
+> 
+> 
+> 
+> 
+> #############
+> ############# one.simu
+> #############
+> 
+> one.simu <- function(i,
++                      n = 10^2,
++                      D = 10,
++                      type = "isolinear",
++                      noise = "gauss",
++                      sigma = 10,
++                      df = 3,
++                      pcorr = 0.3,
++                      estimating = "MSE",
++                      sigma.estimate = FALSE)
++ {
++   # PENALTY + K
++   myK <- 3 * sigma
++   myPen <- 2 * sigma * sigma * log(n)
++   
++   #DATA
++   data <- simuData(n, D = D, type = type, noise = noise, 
++                    pcorr = pcorr, df = df, sigma = sigma)
++   if(sigma.estimate == TRUE){sigma <- sdDiff(data$y)}#SIGMA ESTIMATION
++   
++   #Estimation signal
++   estim <- estimateAllSeg(data, K = myK, pen = myPen)
++  
++   #----------------------------------#
++   if(estimating == "MSE")
++   {
++     #all MSE (x9)
++     ref <- MSEdataSignal(data$y, data$signal)
++     ref_lin <- MSEdataSignal(data$y, data$signal, method = "linear")
++     mseAll <- MSEall(data, estim)
++     #ind, method, mse, beta, K
++     df <- data.frame(numeric(0), character(), numeric(0), numeric(0), numeric(0), stringsAsFactors = FALSE)
++     colnames(df) <- c("index", "method", "MSE", "penalty", "K")
++     df[1,] <- c(i,"MSE", ref, 0, Inf)
++     df[2,] <- c(i,"MSE_linearFit", ref_lin, 0, Inf)
++     df[3,] <- c(i,"isoreg", mseAll[1], 0, Inf)
++     df[4,] <- c(i,"reg_1d_L2", mseAll[2], 0, Inf)
++     df[5,] <- c(i,"reg_1d_L1", mseAll[3], 0, Inf)
++     df[6,] <- c(i,"gfpop", mseAll[4], 0, Inf)
++     df[7,] <- c(i,"gfpop", mseAll[5], 0, myK)
++     df[8,] <- c(i,"gfpop", mseAll[6], myPen, Inf)
++     df[9,] <- c(i,"gfpop", mseAll[7], myPen, myK)
++     return(df)
++   }
++   #----------------------------------#
++   if(estimating == "D")
++   {
++     #all D (x7)
++     myD <- getD(estim)
++     #ind, method, mse, beta, K
++     df <- data.frame(numeric(0), character(), numeric(0), numeric(0), numeric(0), stringsAsFactors = FALSE)
++     colnames(df) <- c("index", "method", "D", "penalty", "K")
++     df[1,] <- c(i,"isoreg", myD[1], 0, Inf)
++     df[2,] <- c(i,"reg_1d_L2", myD[2], 0, Inf)
++     df[3,] <- c(i,"reg_1d_L1", myD[3], 0, Inf)
++     df[4,] <- c(i,"gfpop", myD[4], 0, Inf)
++     df[5,] <- c(i,"gfpop", myD[5], 0, myK)
++     df[6,] <- c(i,"gfpop", myD[6], myPen, Inf)
++     df[7,] <- c(i,"gfpop", myD[7], myPen, myK)
++     return(df)
++   }
++ }
+> 
+> 
+> 
+> #------------------------------------------------------
+> ##### ISOTONIC REGRESSION ##### 
+> 
+> library(isotone) ## slow but more general
+> library(UniIsoRegression)
+> library(stats)
+> #https://www.sciencedirect.com/science/article/pii/S0167947308003964?via%3Dihub
+> ## noise = corrupted simular to figure in https://arxiv.org/pdf/1707.09157.pdf
+> #reg_1d -> package UniIsoRegression
+> #isoreg -> package stats
+> 
+> 
+> 
+> #----------------------------------#
+> ##            Figure 16           ##
+> #----------------------------------#
+> n = 10^4
+> sigma = 10
+> myK <- (2 * sigma) ^ 2
+> myPen <- 2 * sigma * sigma * log(n)
+> #DATA
+> data <- simuData(n, 
++                  D= 10, 
++                  type = "isostep", 
++                  noise = "corrupted", 
++                  pcorr = 0.3, 
++                  sigma = sigma)
+> 
+> estim <- estimateAllSeg(data, K = myK, pen = myPen)
+> 
+> 
+> pdf( "figure16.pdf" )
+> 
+> plot(data$y, pch = ".", cex = 1) #cex = 1.2
+> lty <- c(1, 3, 7)
+> col <- c("red", "magenta", "blue")
+> ttype <- c(4, 1, 5)
+> lines(data$signal, lwd = 1.9, col = "black")
+> for(i in 1:3){lines(estim[[lty[i]]], lwd = 2, lty = ttype[i], col = col[i])}
+> 
+> legend("bottomright", 
++        legend=c("true signal", "isoreg", "reg_1d L1", "gfpop4"),
++        col=c("black",col), 
++        lty=c(1,ttype), 
++        lwd = 2, 
++        cex=1.5)
+> 
+> dev.off()
+null device 
+          1 
+> 
+> ######### ######### ######### ######### ######### 
+> ######### ######### ######### ######### ######### 
+> ######### ######### ######### ######### ######### 
+> 
+> 
+> library(parallel)
+> cores <- detectCores()
+> cores <- 1 ### for windows user only
+> #cores <- 50
+> 
+> 
+> #########################################################################
+> #nbSimu <- 100 #number of simulations
+> #my_n = 10^4  #time-series data length
+> ########################################################################
+> 
+> #############################
+> ### SIMULATION FOR TABLE 1
+> lres1_lin <- mclapply(1:nbSimu, FUN = one.simu,
++                       n = my_n,
++                       type = "isolinear",
++                       noise = "gauss",
++                       sigma = 1,
++                       estimating = "MSE",
++                       mc.cores = cores)
+> 
+> lres2_lin <- mclapply(1:nbSimu, FUN = one.simu,
++                       n = my_n,
++                       type = "isolinear",
++                       noise = "student",
++                       sigma = 1,
++                       df = 3,
++                       estimating = "MSE",
++                       mc.cores = cores)
+> 
+> lres3_lin <- mclapply(1:nbSimu, FUN = one.simu,
++                       n = my_n,
++                       type = "isolinear",
++                       noise = "corrupted",
++                       sigma = 1,
++                       pcorr = 0.3,
++                       estimating = "MSE",
++                       mc.cores = cores)
+> 
+> df_linear_gauss <- do.call(rbind, lres1_lin)
+> df_linear_student <- do.call(rbind, lres2_lin)
+> df_linear_corrupted <- do.call(rbind, lres3_lin)
+> 
+> #############################
+> ### SIMULATION FOR TABLE 2
+> lres1_step <- mclapply(1:nbSimu, FUN = one.simu,
++                        n = my_n,
++                        type = "isostep",
++                        noise = "gauss",
++                        sigma = 1,
++                        estimating = "MSE",
++                        mc.cores = cores)
+> 
+> lres2_step <- mclapply(1:nbSimu, FUN = one.simu,
++                        n = my_n,
++                        type = "isostep",
++                        noise = "student",
++                        sigma = 1,
++                        df = 3,
++                        estimating = "MSE",
++                        mc.cores = cores)
+> 
+> lres3_step <- mclapply(1:nbSimu, FUN = one.simu,
++                        n = my_n,
++                        type = "isostep",
++                        noise = "corrupted",
++                        sigma = 1,
++                        pcorr = 0.3,
++                        estimating = "MSE",
++                        mc.cores = cores)
+> 
+> 
+> df_step_gauss <- do.call(rbind, lres1_step)
+> df_step_student <- do.call(rbind, lres2_step)
+> df_step_corrupted <- do.call(rbind, lres3_step)
+> 
+> 
+> #############################
+> ### SIMULATION FOR TABLE 3
+> lres1_stepD <- mclapply(1:nbSimu, FUN = one.simu,
++                         n = my_n,
++                         D = 10,
++                         type = "isostep",
++                         noise = "gauss",
++                         sigma = 1,
++                         estimating = "D",
++                         mc.cores = cores)
+> 
+> lres2_stepD <- mclapply(1:nbSimu, FUN = one.simu,
++                         n = my_n,
++                         D = 10,
++                         type = "isostep",
++                         noise = "student",
++                         sigma = 1,
++                         df = 3,
++                         estimating = "D",
++                         mc.cores = cores)
+> 
+> lres3_stepD <- mclapply(1:nbSimu, FUN = one.simu,
++                         n = my_n,
++                         D = 10,
++                         type = "isostep",
++                         noise = "corrupted",
++                         sigma = 1,
++                         pcorr = 0.3,
++                         estimating = "D",
++                         mc.cores = cores)
+> 
+> df_D_gauss <- do.call(rbind, lres1_stepD)
+> df_D_student <- do.call(rbind, lres2_stepD)
+> df_D_corrupted <- do.call(rbind, lres3_stepD)
+> 
+> 
+> ##########################################
+> #----------------------#
+> ## TABLE 2: isolinear ##
+> #----------------------#
+> 
+> meth <- c(df_linear_gauss[1:5,2],"gfpop1","gfpop2","gfpop3","gfpop4")
+> df_linear_gauss[,2] <- rep(meth, nbSimu)
+> df_linear_student[,2] <-  rep(meth, nbSimu)
+> df_linear_corrupted[,2] <-  rep(meth, nbSimu)
+> 
+> df_linear_gauss$MSE <- as.numeric(df_linear_gauss$MSE)
+> df_linear_student$MSE <- as.numeric(df_linear_student$MSE)
+> df_linear_corrupted$MSE <- as.numeric(df_linear_corrupted$MSE)
+> 
+> with(df_linear_gauss, tapply(MSE, method, mean))
+       gfpop1        gfpop2        gfpop3        gfpop4        isoreg 
+  0.149926446   0.178570489   0.482282875   0.649796618   0.144832846 
+          MSE MSE_linearFit     reg_1d_L1     reg_1d_L2 
+  1.013158440   0.001912936   0.189193696   0.144777452 
+> with(df_linear_student, tapply(MSE, method, mean))
+       gfpop1        gfpop2        gfpop3        gfpop4        isoreg 
+  0.131028474   0.102579302   0.479359007   0.508163323   0.130015400 
+          MSE MSE_linearFit     reg_1d_L1     reg_1d_L2 
+  0.947091718   0.001469753   0.107449541   0.129699626 
+> with(df_linear_corrupted, tapply(MSE, method, mean))
+       gfpop1        gfpop2        gfpop3        gfpop4        isoreg 
+   304.108079    896.610350    305.818100    965.568096    305.539757 
+          MSE MSE_linearFit     reg_1d_L1     reg_1d_L2 
+  1011.082271    307.310510      1.057656    306.724054 
+> with(df_linear_gauss, tapply(MSE, method, sd))
+       gfpop1        gfpop2        gfpop3        gfpop4        isoreg 
+  0.011288533   0.016706723   0.026400048   0.040415152   0.010941891 
+          MSE MSE_linearFit     reg_1d_L1     reg_1d_L2 
+  0.036170167   0.001526582   0.011744594   0.010964638 
+> with(df_linear_student, tapply(MSE, method, sd))
+       gfpop1        gfpop2        gfpop3        gfpop4        isoreg 
+  0.016032561   0.008953868   0.031485708   0.031145836   0.016478982 
+          MSE MSE_linearFit     reg_1d_L1     reg_1d_L2 
+  0.220294015   0.001432769   0.010378945   0.016398689 
+> with(df_linear_corrupted, tapply(MSE, method, sd))
+       gfpop1        gfpop2        gfpop3        gfpop4        isoreg 
+   27.2430422  1256.0752559    26.5070278  1351.2093171    26.4872536 
+          MSE MSE_linearFit     reg_1d_L1     reg_1d_L2 
+   46.3517962    29.0132544     0.2162202    26.8102605 
+> 
+> 
+> 
+> #--------------------#
+> ## TABLE 2: isostep ##
+> #--------------------#
+> 
+> meth <- c(df_step_gauss[1:5,2],"gfpop1","gfpop2","gfpop3","gfpop4")
+> df_step_gauss[,2] <- rep(meth, nbSimu)
+> df_step_student[,2] <-  rep(meth, nbSimu)
+> df_step_corrupted[,2] <-  rep(meth, nbSimu)
+> 
+> df_step_gauss$MSE <- as.numeric(df_step_gauss$MSE)
+> df_step_student$MSE <- as.numeric(df_step_student$MSE)
+> df_step_corrupted$MSE <- as.numeric(df_step_corrupted$MSE)
+> 
+> with(df_step_gauss, tapply(MSE, method, mean))
+       gfpop1        gfpop2        gfpop3        gfpop4        isoreg 
+   0.07539416    0.17858449    0.01068722    0.07191356    0.05319777 
+          MSE MSE_linearFit     reg_1d_L1     reg_1d_L2 
+   0.99648060    8.25102193    0.08264152    0.05302273 
+> with(df_step_student, tapply(MSE, method, mean))
+       gfpop1        gfpop2        gfpop3        gfpop4        isoreg 
+   0.06543791    0.08778531    0.01649874    0.05071635    0.05162283 
+          MSE MSE_linearFit     reg_1d_L1     reg_1d_L2 
+   1.04575797    8.25002361    0.03761344    0.05147357 
+> with(df_step_corrupted, tapply(MSE, method, mean))
+       gfpop1        gfpop2        gfpop3        gfpop4        isoreg 
+   304.135965           Inf    308.353859    820.342151    308.088931 
+          MSE MSE_linearFit     reg_1d_L1     reg_1d_L2 
+  1003.184753    312.118619      3.074335    309.128833 
+> with(df_step_gauss, tapply(MSE, method, sd))
+       gfpop1        gfpop2        gfpop3        gfpop4        isoreg 
+  0.030100175   0.107099863   0.005224846   0.077187256   0.011241359 
+          MSE MSE_linearFit     reg_1d_L1     reg_1d_L2 
+  0.052966309   0.001625677   0.019547825   0.011330454 
+> with(df_step_student, tapply(MSE, method, sd))
+       gfpop1        gfpop2        gfpop3        gfpop4        isoreg 
+ 0.0347114425  0.0574807835  0.0267161112  0.0499424481  0.0245999281 
+          MSE MSE_linearFit     reg_1d_L1     reg_1d_L2 
+ 0.3460539141  0.0007312756  0.0119226260  0.0245309259 
+> with(df_step_corrupted, tapply(MSE, method, sd))
+       gfpop1        gfpop2        gfpop3        gfpop4        isoreg 
+    34.316323           NaN     31.625785   1029.933568     31.636478 
+          MSE MSE_linearFit     reg_1d_L1     reg_1d_L2 
+    57.191007     33.400569      1.606942     32.075577 
+> 
+> #------------------#
+> ## TABLE 3: D HAT ##
+> #------------------#
+> 
+> meth <- c(df_D_gauss[1:3,2],"gfpop1","gfpop2","gfpop3","gfpop4")
+> df_D_gauss[,2] <- rep(meth, nbSimu)
+> df_D_student[,2] <-  rep(meth, nbSimu)
+> df_D_corrupted[,2] <-  rep(meth, nbSimu)
+> 
+> df_D_gauss$D <- as.numeric(df_D_gauss$D)
+> df_D_student$D <- as.numeric(df_D_student$D)
+> df_D_corrupted$D <- as.numeric(df_D_corrupted$D)
+> 
+> with(df_D_gauss, tapply(D, method, mean))
+   gfpop1    gfpop2    gfpop3    gfpop4    isoreg reg_1d_L1 reg_1d_L2 
+    50.25     54.05     10.00     10.00     51.00     51.90     50.85 
+> with(df_D_student, tapply(D, method, mean))
+   gfpop1    gfpop2    gfpop3    gfpop4    isoreg reg_1d_L1 reg_1d_L2 
+    49.60     52.25     10.05     10.00     51.75     52.05     51.65 
+> with(df_D_corrupted, tapply(D, method, mean))
+   gfpop1    gfpop2    gfpop3    gfpop4    isoreg reg_1d_L1 reg_1d_L2 
+    23.85     43.75     16.10      8.35     23.45     42.45     23.40 
+> with(df_D_gauss, tapply(D, method, sd))
+   gfpop1    gfpop2    gfpop3    gfpop4    isoreg reg_1d_L1 reg_1d_L2 
+ 5.138861  5.995393  0.000000  0.000000  5.109331  5.025200  5.029126 
+> with(df_D_student, tapply(D, method, sd))
+   gfpop1    gfpop2    gfpop3    gfpop4    isoreg reg_1d_L1 reg_1d_L2 
+7.7350875 7.2320558 0.2236068 0.0000000 7.7790204 5.8712054 7.8958683 
+> with(df_D_corrupted, tapply(D, method, sd))
+   gfpop1    gfpop2    gfpop3    gfpop4    isoreg reg_1d_L1 reg_1d_L2 
+ 3.513508 18.643116  2.198085  3.391553  3.456116  5.165421  3.530320 
+> 
+> 
+> 
+> #---------------------------------------------------------------#
+> ## Figure 17: Violin plots of the MSE for iso-step simulations ##
+> #---------------------------------------------------------------#
+> 
+> #create factor
+> df_step_student$method <- as.factor(df_step_student$method)
+> 
+> #force numeric values
+> df_step_student$MSE <- as.numeric(df_step_student$MSE)
+> 
+> #partial plot
+> me <- c("isoreg", "reg_1d_L1", "gfpop2", "gfpop3", "gfpop4")
+> df <- df_step_student[which(df_step_student$method %in% me),]
+> p <- ggplot(df, aes(x = method, y = MSE, color=method)) + geom_violin()
+> 
+> 
+> pdf( "figure17.pdf" )
+> print(p)
+> dev.off()
+null device 
+          1 
+> 
+> proc.time()
+utilisateur     système      écoulé 
+    236.735       3.498     240.595 

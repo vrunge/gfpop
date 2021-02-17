@@ -1,7 +1,11 @@
-
-### How to get the gfpop PACKAGE
+#(method 1) ON GITHUB 
 #devtools::install_github("vrunge/gfpop", force = TRUE)
-library(gfpop) #PACKAGE AVAILABLE ON CRAN
+
+#(method 2) ON CRAN
+install.packages("gfpop")
+library(gfpop)
+
+library(ggplot2)
 
 ### ### ### ### ### ### ### ### 
 ###  4. The gfpop package   ### 
@@ -33,7 +37,7 @@ graph(
 graph(type = "isotonic", penalty = 12)
 
 ## chunk 4 : Gaussian model with an up-down graph
-set.seed(1)
+set.seed(75)
 n <- 1000
 myData <- dataGenerator(n, c(0.1, 0.3, 0.5, 0.8, 1), c(1, 2, 1, 3, 1), sigma = 1)
 myGraph <- graph(penalty = 2 * log(n), type = "updown")
@@ -81,9 +85,15 @@ gfpop(data, mygraph, type = "negbin")
 ## chunk 8 : A plotting function ###################
 #--------------------------------------------------#
 
+
+pdf( "figure10.pdf" )
+
 data <- dataGenerator(1000, c(0.4, 0.8, 1), c(1, 2, 1), "mean", sigma = 3)
 g <- gfpop(data, 
            graph(type = "std", penalty = 2*sdDiff(data)^2*log(1000)), 
            type = "mean")
-plot(x = g, data = data)
+res <- plot(x = g, data = data)
+print(res)
 
+# Close device
+dev.off()

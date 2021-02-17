@@ -1,4 +1,12 @@
 
+#number of simulations reduced to 20 to reduce time execution of this script
+nbSimu <- 20
+#nbSimu <- 100 #number of simulations
+
+#data length reduced to 1000 to reduce time execution of this script
+my_n = 10^3  #time-series data length
+#my_n = 10^4  #time-series data length
+
 ###
 ### How to install the gfpop PACKAGE
 ###
@@ -8,7 +16,9 @@
 
 #(method 2) ON CRAN
 install.packages("gfpop")
-library(gfpop) 
+library(gfpop)
+
+library(ggplot2)
 
 ############################################################################
 ## (SECTION 6. JSS PAPER) Utility of penalized isotonic regression models ## 
@@ -315,6 +325,9 @@ data <- simuData(n,
 
 estim <- estimateAllSeg(data, K = myK, pen = myPen)
 
+
+pdf( "figure16.pdf" )
+
 plot(data$y, pch = ".", cex = 1) #cex = 1.2
 lty <- c(1, 3, 7)
 col <- c("red", "magenta", "blue")
@@ -329,6 +342,8 @@ legend("bottomright",
        lwd = 2, 
        cex=1.5)
 
+dev.off()
+
 ######### ######### ######### ######### ######### 
 ######### ######### ######### ######### ######### 
 ######### ######### ######### ######### ######### 
@@ -341,8 +356,8 @@ cores <- 1 ### for windows user only
 
 
 #########################################################################
-nbSimu <- 100 #number of simulations
-my_n = 10^4  #time-series data length
+#nbSimu <- 100 #number of simulations
+#my_n = 10^4  #time-series data length
 ########################################################################
 
 #############################
@@ -422,7 +437,7 @@ lres1_stepD <- mclapply(1:nbSimu, FUN = one.simu,
                         estimating = "D",
                         mc.cores = cores)
 
-lres2_stepD <- mclapply(1:nbSimu, FUN = one.simu.getD,
+lres2_stepD <- mclapply(1:nbSimu, FUN = one.simu,
                         n = my_n,
                         D = 10,
                         type = "isostep",
@@ -432,7 +447,7 @@ lres2_stepD <- mclapply(1:nbSimu, FUN = one.simu.getD,
                         estimating = "D",
                         mc.cores = cores)
 
-lres3_stepD <- mclapply(1:nbSimu, FUN = one.simu.getD,
+lres3_stepD <- mclapply(1:nbSimu, FUN = one.simu,
                         n = my_n,
                         D = 10,
                         type = "isostep",
@@ -516,8 +531,6 @@ with(df_D_corrupted, tapply(D, method, sd))
 ## Figure 17: Violin plots of the MSE for iso-step simulations ##
 #---------------------------------------------------------------#
 
-library(ggplot2)
-
 #create factor
 df_step_student$method <- as.factor(df_step_student$method)
 
@@ -528,4 +541,8 @@ df_step_student$MSE <- as.numeric(df_step_student$MSE)
 me <- c("isoreg", "reg_1d_L1", "gfpop2", "gfpop3", "gfpop4")
 df <- df_step_student[which(df_step_student$method %in% me),]
 p <- ggplot(df, aes(x = method, y = MSE, color=method)) + geom_violin()
-p
+
+
+pdf( "figure17.pdf" )
+print(p)
+dev.off()
