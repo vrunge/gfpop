@@ -11,7 +11,8 @@
 #' @param oneValue the value for parameter when we consider the collective anomalies problem
 #' @param K a positive number. Threshold for the Biweight robust loss
 #' @param a a positive number. Slope for the Huber robust loss
-#' @return a dataframe with 9 variables (columns are named \code{"state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max"}) with additional \code{"graph"} class.
+#' @return a dataframe with 9 variables :
+#' columns are named \code{"state1"}, \code{"state2"}, \code{"type"}, \code{"parameter"}, \code{"penalty"}, \code{"K"}, \code{"a"}, \code{"min"}, \code{"max"} with additional \code{"graph"} class.
 #'
 paperGraph <- function(nb, penalty = 0, decay = 1, gap = 0, oneValue = 0, K = Inf, a = 0)
 {

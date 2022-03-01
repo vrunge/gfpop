@@ -131,7 +131,8 @@ Node <- function(state = NULL, min = -Inf, max = Inf)
 #' @param K a positive number. Threshold for the Biweight robust loss
 #' @param a a positive number. Slope for the Huber robust loss
 #' @param all.null.edges a boolean. Add null edges to all nodes automatically
-#' @return a dataframe with 9 variables (columns are named \code{"state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max"}) with additional \code{"graph"} class.
+#' @return a dataframe with 9 variables :
+#' columns are named \code{"state1"}, \code{"state2"}, \code{"type"}, \code{"parameter"}, \code{"penalty"}, \code{"K"}, \code{"a"}, \code{"min"}, \code{"max"} with additional \code{"graph"} class.
 #' @examples
 #' graph(type = "updown", gap = 1.3, penalty = 5)
 #'

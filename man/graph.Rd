@@ -33,7 +33,8 @@ graph(
 \item{all.null.edges}{a boolean. Add null edges to all nodes automatically}
 }
 \value{
-a dataframe with 9 variables (columns are named \code{"state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max"}) with additional \code{"graph"} class.
+a dataframe with 9 variables :
+columns are named \code{"state1"}, \code{"state2"}, \code{"type"}, \code{"parameter"}, \code{"penalty"}, \code{"K"}, \code{"a"}, \code{"min"}, \code{"max"} with additional \code{"graph"} class.
 }
 \description{
 Graph creation using component functions \code{Edge}, \code{StartEnd} and \code{Node}
