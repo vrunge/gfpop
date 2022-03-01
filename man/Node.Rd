@@ -14,11 +14,17 @@ Node(state = NULL, min = -Inf, max = Inf)
 \item{max}{maximal value for the inferred parameter}
 }
 \value{
-a dataframe with 9 variables with only `state1`, `min` and `max` defined.
+a dataframe with 9 variables with only \code{state1}, \code{min} and \code{max} defined (not \code{NA}).
 }
 \description{
 Constrain the range of values to consider at a node
 }
 \examples{
 Node(state = "s0", min = 0, max = 2)
+
+Node(state = 0, min = -1, max = 1)
+
+Node(state = "positive", min = 0)
+
+Node(state = "mu0", min = 0.5, max = 0.5)
 }

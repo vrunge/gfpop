@@ -1,12 +1,13 @@
 ##  GPL-3 License
-## Copyright (c) 2019 Vincent Runge
+## Copyright (c) 2022 Vincent Runge
 
 #' Edge generation
 #'
-#' @description Edge creation for graph
+#' @description Edge creation for gfpop-R-Package graph
 #' @param state1 a string defining the starting state of the edge
 #' @param state2 a string defining the ending state of the edge
-#' @param type a string equal to "null", "std", "up", "down" or "abs"
+#' @param type a string equal to \code{"null"}, \code{"std"}, \code{"up"}, \code{"down"} or \code{"abs"}. Default type is \code{"null"},
+#' the transition to stay on the same segment.
 #' @param decay a nonnegative number to give the strength of the exponential decay into the segment
 #' @param gap a nonnegative number to constrain the size of the gap in the change of state
 #' @param penalty a nonnegative number. The penality associated to this state transition
@@ -15,6 +16,12 @@
 #' @return a one-row dataframe with 9 variables
 #' @examples
 #' Edge("Dw", "Up", "up", gap = 1, penalty = 10, K = 3)
+#'
+#' Edge(0, 1, "abs", penalty = 2, gap = 1)
+#'
+#' Edge(0, 0, "null", penalty = 0, K = 2, a = 1)
+#'
+#' Edge("Dw", "Dw", type = "null", decay = 0.997)
 Edge <- function(state1, state2, type = "null", decay = 1, gap = 0, penalty = 0, K = Inf, a = 0)
 {
   allowed.types <- c("null", "std", "up", "down", "abs")
@@ -48,10 +55,17 @@ Edge <- function(state1, state2, type = "null", decay = 1, gap = 0, penalty = 0,
 #' @description Defining the beginning and ending states of a graph
 #' @param start a vector of states. The beginning nodes for the changepoint inference
 #' @param end a vector of states. The ending nodes for the changepoint inference
-#' @return dataframe with 9 variables with only `state1` and `type` = start or end defined.
+#' @return dataframe with 9 variables with only \code{state1} and \code{type = "start"} or \code{"end"} defined (not \code{NA}).
 #' @examples
 #' StartEnd(start = "A", end = c("A","B"))
-
+#'
+#' StartEnd(start = 0)
+#'
+#' StartEnd(start = 1, end = 1)
+#'
+#' StartEnd(start = "v0", end = "v3")
+#'
+#' StartEnd(end = "s0")
 StartEnd <- function(start = NULL, end = NULL)
 {
   ### delete repetitions if any
@@ -82,10 +96,15 @@ StartEnd <- function(start = NULL, end = NULL)
 #' @param state a string defining the state to constrain
 #' @param min minimal value for the inferred parameter
 #' @param max maximal value for the inferred parameter
-#' @return a dataframe with 9 variables with only `state1`, `min` and `max` defined.
+#' @return a dataframe with 9 variables with only \code{state1}, \code{min} and \code{max} defined (not \code{NA}).
 #' @examples
 #' Node(state = "s0", min = 0, max = 2)
-
+#'
+#' Node(state = 0, min = -1, max = 1)
+#'
+#' Node(state = "positive", min = 0)
+#'
+#' Node(state = "mu0", min = 0.5, max = 0.5)
 Node <- function(state = NULL, min = -Inf, max = Inf)
 {
   if(!is.double(min)){stop('min is not a double.')}
@@ -103,21 +122,32 @@ Node <- function(state = NULL, min = -Inf, max = Inf)
 
 #' Graph generation
 #'
-#' @description Graph creation using component functions "Edge", "StartEnd" and "Node"
-#' @param ... This is a list of edges definied by functions "Edge", "StartEnd" and "Node"
-#' @param type a string equal to "std", "isotonic", "updown", "relevant". to build a predefined classic graph
+#' @description Graph creation using component functions \code{Edge}, \code{StartEnd} and \code{Node}
+#' @param ... This is a list of edges definied by functions \code{Edge}, \code{StartEnd} and \code{Node}. See gfpop functions \code{\link[gfpop:Edge]{gfpop::Edge()}}, \code{\link[gfpop:StartEnd]{gfpop::StartEnd()}} and  \code{\link[gfpop:Node]{gfpop::Node()}}
+#' @param type a string equal to \code{"std"}, \code{"isotonic"}, \code{"updown"} or \code{"relevant"} to build a predefined classic graph
 #' @param decay a nonnegative number to give the strength of the exponential decay into the segment
 #' @param gap a nonnegative number to constrain the size of the gap in the change of state
 #' @param penalty a nonnegative number equals to the common penalty to use for all edges
 #' @param K a positive number. Threshold for the Biweight robust loss
 #' @param a a positive number. Slope for the Huber robust loss
 #' @param all.null.edges a boolean. Add null edges to all nodes automatically
-#' @return a dataframe with 9 variables (columns are named "state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max") with additional "graph" class.
+#' @return a dataframe with 9 variables (columns are named \code{"state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max"}) with additional \code{"graph"} class.
 #' @examples
-#' UpDownGraph <- graph(type = "updown", gap = 1.3, penalty = 10)
-#' MyGraph <- graph(Edge("Dw","Dw"), Edge("Up","Up"), Edge("Dw","Up","up", gap = 0.5, penalty = 10),
-#' Edge("Up","Dw","down"), StartEnd("Dw","Dw"), Node("Dw",0,1), Node("Up",0,1))
-
+#' graph(type = "updown", gap = 1.3, penalty = 5)
+#'
+#' graph(Edge("Dw","Dw"),
+#'       Edge("Up","Up"),
+#'       Edge("Dw","Up","up", gap = 0.5, penalty = 10),
+#'       Edge("Up","Dw","down"),
+#'       StartEnd("Dw","Dw"),
+#'       Node("Dw",0,1),
+#'       Node("Up",0,1))
+#'
+#' graph(Edge("1", "2", type = "std"),
+#'       Edge("2", "3", type = "std"),
+#'       Edge("3", "4", type = "std"),
+#'       StartEnd(start = "1", end = "4"),
+#'       all.null.edges = TRUE)
 graph <- function(..., type = "empty", decay = 1, gap = 0, penalty = 0, K = Inf, a = 0, all.null.edges = FALSE)
 {
   #### build the graph with the collection ... of edges

@@ -1,5 +1,4 @@
-#include"Cost.h"
-
+#include "Cost.h"
 #include <vector>
 #include <iostream>
 #include <string>

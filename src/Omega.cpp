@@ -38,7 +38,7 @@ Omega::~Omega()
 std::vector< std::vector< int > > Omega::GetChangepoints() const{return(changepoints);}
 std::vector< std::vector< double > > Omega::GetParameters() const{return(parameters);}
 std::vector< std::vector< int > > Omega::GetStates() const{return(states);}
-std::vector< std::vector< int > > Omega::GetForced() const{return(forced);}
+std::vector< std::vector< bool > > Omega::GetForced() const{return(forced);}
 std::vector< double > Omega::GetGlobalCost() const{return(globalCost);}
 
 //####### initialize_LP_ts #######// //####### initialize_LP_ts #######// //####### initialize_LP_ts #######//
@@ -244,7 +244,7 @@ void Omega::backtracking()
   std::vector< int > changepoints1;
   std::vector< double > parameters1;
   std::vector< int > states1;
-  std::vector< int > forced1;
+  std::vector< bool > forced1;
 
   Interval constrainedInterval; // Interval to fit the constraints
 

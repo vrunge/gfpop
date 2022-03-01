@@ -21,7 +21,7 @@ class Omega
     std::vector< std::vector< int > > GetChangepoints() const;
     std::vector< std::vector< double > > GetParameters() const;
     std::vector< std::vector< int > > GetStates() const;
-    std::vector< std::vector< int > > GetForced() const;
+    std::vector< std::vector< bool > > GetForced() const;
     std::vector< double > GetGlobalCost() const;
 
     ///////////////
@@ -48,7 +48,7 @@ class Omega
     std::vector< std::vector< int > > changepoints; ///vector of changepoints build by fpop (first index of each segment). size c
     std::vector< std::vector< double > > parameters; ///vector of means build by fpop. size c
     std::vector< std::vector< int > > states; ///vector of states build by fpop. size c
-    std::vector< std::vector< int > > forced; ///vector of forced = 0 or 1. 1 = forced value. size c-1
+    std::vector< std::vector< bool > > forced; ///vector of forced = false or true. true = forced value. size c-1
     std::vector< double > globalCost;
 };
 

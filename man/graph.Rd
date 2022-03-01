@@ -16,9 +16,9 @@ graph(
 )
 }
 \arguments{
-\item{...}{This is a list of edges definied by functions "Edge", "StartEnd" and "Node"}
+\item{...}{This is a list of edges definied by functions \code{Edge}, \code{StartEnd} and \code{Node}. See gfpop functions \code{\link[gfpop:Edge]{gfpop::Edge()}}, \code{\link[gfpop:StartEnd]{gfpop::StartEnd()}} and  \code{\link[gfpop:Node]{gfpop::Node()}}}
 
-\item{type}{a string equal to "std", "isotonic", "updown", "relevant". to build a predefined classic graph}
+\item{type}{a string equal to \code{"std"}, \code{"isotonic"}, \code{"updown"} or \code{"relevant"} to build a predefined classic graph}
 
 \item{decay}{a nonnegative number to give the strength of the exponential decay into the segment}
 
@@ -33,13 +33,25 @@ graph(
 \item{all.null.edges}{a boolean. Add null edges to all nodes automatically}
 }
 \value{
-a dataframe with 9 variables (columns are named "state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max") with additional "graph" class.
+a dataframe with 9 variables (columns are named \code{"state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max"}) with additional \code{"graph"} class.
 }
 \description{
-Graph creation using component functions "Edge", "StartEnd" and "Node"
+Graph creation using component functions \code{Edge}, \code{StartEnd} and \code{Node}
 }
 \examples{
-UpDownGraph <- graph(type = "updown", gap = 1.3, penalty = 10)
-MyGraph <- graph(Edge("Dw","Dw"), Edge("Up","Up"), Edge("Dw","Up","up", gap = 0.5, penalty = 10),
-Edge("Up","Dw","down"), StartEnd("Dw","Dw"), Node("Dw",0,1), Node("Up",0,1))
+graph(type = "updown", gap = 1.3, penalty = 5)
+
+graph(Edge("Dw","Dw"),
+      Edge("Up","Up"),
+      Edge("Dw","Up","up", gap = 0.5, penalty = 10),
+      Edge("Up","Dw","down"),
+      StartEnd("Dw","Dw"),
+      Node("Dw",0,1),
+      Node("Up",0,1))
+
+graph(Edge("1", "2", type = "std"),
+      Edge("2", "3", type = "std"),
+      Edge("3", "4", type = "std"),
+      StartEnd(start = "1", end = "4"),
+      all.null.edges = TRUE)
 }

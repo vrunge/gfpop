@@ -10,6 +10,4 @@ export(paperGraph)
 
 importFrom(Rcpp, evalCpp)
 importFrom("stats", "rnorm", "rexp", "rpois", "rnbinom", "mad", "sd")
-importFrom("graphics", "plot", "segments")
-
-
+importFrom("graphics", "plot", "segments", "par", "abline")

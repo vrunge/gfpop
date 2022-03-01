@@ -20,7 +20,8 @@ Edge(
 
 \item{state2}{a string defining the ending state of the edge}
 
-\item{type}{a string equal to "null", "std", "up", "down" or "abs"}
+\item{type}{a string equal to \code{"null"}, \code{"std"}, \code{"up"}, \code{"down"} or \code{"abs"}. Default type is \code{"null"},
+the transition to stay on the same segment.}
 
 \item{decay}{a nonnegative number to give the strength of the exponential decay into the segment}
 
@@ -36,8 +37,14 @@ Edge(
 a one-row dataframe with 9 variables
 }
 \description{
-Edge creation for graph
+Edge creation for gfpop-R-Package graph
 }
 \examples{
 Edge("Dw", "Up", "up", gap = 1, penalty = 10, K = 3)
+
+Edge(0, 1, "abs", penalty = 2, gap = 1)
+
+Edge(0, 0, "null", penalty = 0, K = 2, a = 1)
+
+Edge("Dw", "Dw", type = "null", decay = 0.997)
 }

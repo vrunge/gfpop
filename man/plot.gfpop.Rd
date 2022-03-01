@@ -4,7 +4,7 @@
 \alias{plot.gfpop}
 \title{plot.gfpop}
 \usage{
-\method{plot}{gfpop}(x, ..., data)
+\method{plot}{gfpop}(x, ..., data, multiple = TRUE)
 }
 \arguments{
 \item{x}{a gfpop class object}
@@ -12,10 +12,30 @@
 \item{...}{Other parameters}
 
 \item{data}{the data from which we get the gfpop result}
+
+\item{multiple}{if \code{TRUE} we plot data and the model on different graphs.
+Only with \code{"mean"} and \code{"poisson"} cost functions (as in that case the parameter
+values represent the data mean value over each segment) we allow the User
+to plot signal and data on a single graph.}
 }
 \value{
 plot data and the inferred gfpop segments
 }
 \description{
-Plot the result of the gfpop function with the data-points
+Plotting inferred segment parameters (the result of gfpop) and data.
+}
+\examples{
+n <- 1000 #data length
+data <- dataGenerator(n, c(0.3, 0.4, 0.7, 0.95, 1), c(1, 3, 1, -1, 4), "mean", sigma = 3)
+myGraph <- graph(type = "relevant", gap = 0.5, penalty = 2 * sdDiff(data) ^ 2 * log(n))
+g <- gfpop(data, myGraph, type = "mean")
+plot(x = g, data = data, multiple = FALSE)
+
+data <- dataGenerator(n, c(0.4, 0.8, 1), c(1, 1.7, 2.3), "exp")
+g <- gfpop(data,graph(type = "isotonic", penalty = 2 * sdDiff(data) ^ 2 * log(n)), type = "exp")
+plot(x = g, data = data, multiple = TRUE)
+
+data <- dataGenerator(n, c(0.22, 0.75, 1), c(1.4,1,0.8), "poisson")
+g <- gfpop(data, paperGraph(8), type = "poisson")
+plot(x = g, data = data, multiple = TRUE)
 }

@@ -7,26 +7,85 @@
 gfpop(data, mygraph, type = "mean", weights = NULL, testMode = FALSE)
 }
 \arguments{
-\item{data}{vector of data to segment}
+\item{data}{vector of data to segment. For simulation studies, Data can be generated using gfpop package function \code{\link[gfpop:dataGenerator]{gfpop::dataGenerator()}}}
 
-\item{mygraph}{dataframe of class "graph" to constrain the changepoint inference}
+\item{mygraph}{dataframe of class "graph" to constrain the changepoint inference, see \code{\link[gfpop:graph]{gfpop::graph()}}}
 
-\item{type}{a string defining the cost model to use: "mean", "variance", "poisson", "exp", "negbin"}
+\item{type}{a string defining the cost model to use: \code{"mean"}, \code{"variance"}, \code{"poisson"}, \code{"exp"}, \code{"negbin"}}
 
 \item{weights}{vector of weights (positive numbers), same size as data}
 
-\item{testMode}{boolean. False by default. Used to debug the code}
+\item{testMode}{boolean. \code{FALSE} by default. Used to debug the code}
 }
 \value{
-a gfpop object = (changepoints, states, forced, parameters, globalCost)
+a gfpop object = (\code{changepoints, states, forced, parameters, globalCost})
 \describe{
 \item{\code{changepoints}}{is the vector of changepoints (we give the last element of each segment)}
 \item{\code{states}}{is the vector giving the state of each segment}
-\item{\code{forced}}{is the vector specifying whether the constraints of the graph are active (=1) or not (=0)}
+\item{\code{forced}}{is the vector specifying whether the constraints of the graph are active (\code{= TRUE}) or not (\code{= FALSE})}
 \item{\code{parameters}}{is the vector of successive parameters of each segment}
 \item{\code{globalCost}}{is a number equal to the total loss: the minimal cost for the optimization problem with all penalty values excluded}
  }
 }
 \description{
-Functional pruning optimal partitioning with a graph structure to take into account constraints on consecutive segment parameters. The user has to specify the graph he wants to use (see the graph function) and a type of cost function. This is the main function of the gfpop package.
+Functional pruning optimal partitioning with a graph structure to take
+into account constraints on consecutive segment parameters. The user has to specify
+the graph he wants to use (see the graph function) and a type of cost function.
+This is the main function of the gfpop package. Its result can be plotted using
+the S3 gfpop function \code{\link[gfpop:plot.gfpop]{gfpop::plot()}}
+}
+\details{
+The constrained optimization problem for n data points takes the following general form:
+\deqn{Q_n = min (with constraints) (\sum_{t=1}^n (\gamma(e[t])(y[t], \mu[t]) + \beta(e[t]))}
+with data points \eqn{y[t]}, edges \eqn{e[t]}, edge-dependent penalties \eqn{\beta(e[t])} and cost functions \eqn{\gamma}.
+The cost function can take three different forms for parameter x and constants (A, B, C):
+\itemize{
+  \item \emph{quadratic}, with representation \eqn{Ax^2 + Bx +C} with  \eqn{x} in R
+  \item \emph{log-linear}, with representation \eqn{Ax  - B log(x) +C} with  \eqn{x \ge 0}
+  \item \emph{log-log}, with representation \eqn{- A log(x) - B log(1-x) +C} with  \eqn{0 \le x \le 1}
+}
+For each optimization problem, we consider a unique cost representation.
+However, the User can define robustness values (K and a) specific to each edge, making the cost function edge-dependent.
+We give the atomic form of each of the five available types (for one data point of value y with weight w)
+\itemize{
+  \item \code{"mean"} :  \eqn{A = w}, \eqn{B = -2wy}, \eqn{C = wy^2}
+  \item \code{"variance"} : \eqn{A = wy^2}, \eqn{B = w}, \eqn{C = 0}
+  \item \code{"poisson"} : \eqn{A = w}, \eqn{B = wy}, \eqn{C = 0}
+  \item \code{"exp"} : \eqn{A = wy}, \eqn{B = w}, \eqn{C = 0}
+  \item \code{"negbin"} : \eqn{A = w}, \eqn{B = wy}, \eqn{C = 0}
+}
+}
+\examples{
+n <- 1000 #data length
+### EXAMPLE 1 ### updown graph + poisson loss
+ myData <- dataGenerator(n, c(0.1, 0.3, 0.5, 0.8, 1), c(1, 2, 1, 3, 1), type = "poisson")
+ myGraph <- graph(penalty = 2 * sdDiff(myData)^2 * log(n), type = "updown")
+ gfpop(data = myData, mygraph = myGraph, type = "poisson")
+
+### EXAMPLE 2 ### relevant graph with min gap = 2 + poisson loss
+ myData <- dataGenerator(n, c(0.1, 0.3, 0.5, 0.8, 1), c(1, 2, 3, 5, 3), type = "poisson")
+ myGraph <- graph(type = "relevant", penalty = 2 * log(n), gap = 2)
+ gfpop(data =  myData, mygraph = myGraph, type = "poisson")
+
+### EXAMPLE 3 ### std graph with robust loss + variance loss
+ myData <- dataGenerator(n, c(0.1, 0.3, 0.5, 0.8, 1), c(1, 5, 1, 5, 1), type = "variance")
+ outliers <- 5 * rbinom(n, 1, 0.05) - 5 * rbinom(n, 1, 0.05)
+### with robust parameter K
+ myGraph <- graph(type = "std", penalty = 2 * log(n), K = 10)
+ gfpop(data =  myData + outliers, mygraph = myGraph, type = "variance")
+### no K
+ myGraph <- graph(type = "std", penalty = 2 * log(n))
+ gfpop(data =  myData, mygraph = myGraph, type = "variance")
+
+### EXAMPLE 4 ###  3-segment graph with mean (Gaussian) loss
+ myData <- dataGenerator(n, c(0.12, 0.31, 0.53, 0.88, 1), c(1, 2, 0, 1, 2), type = "mean")
+ outliers <- 5 * rbinom(n, 1, 0.05) - 5 * rbinom(n, 1, 0.05)
+ gfpop(data =  myData + outliers, mygraph = paperGraph(8, penalty = 2 * log(n)), type = "mean")
+}
+\seealso{
+\itemize{
+  \item \code{\link[gfpop:dataGenerator]{gfpop::dataGenerator()}} to generate data for multiple change-point simulations
+  \item \code{\link[gfpop:graph]{gfpop::graph()}} to create graphs complying with the gfpop function
+  \item \code{\link[gfpop:plot.gfpop]{gfpop::plot()}} to plot the gfpop object and visualize inferred changepoints and parameters
+}
 }

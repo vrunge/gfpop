@@ -12,11 +12,19 @@ StartEnd(start = NULL, end = NULL)
 \item{end}{a vector of states. The ending nodes for the changepoint inference}
 }
 \value{
-dataframe with 9 variables with only `state1` and `type` = start or end defined.
+dataframe with 9 variables with only \code{state1} and \code{type = "start"} or \code{"end"} defined (not \code{NA}).
 }
 \description{
 Defining the beginning and ending states of a graph
 }
 \examples{
 StartEnd(start = "A", end = c("A","B"))
+
+StartEnd(start = 0)
+
+StartEnd(start = 1, end = 1)
+
+StartEnd(start = "v0", end = "v3")
+
+StartEnd(end = "s0")
 }

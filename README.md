@@ -8,14 +8,10 @@
 %\VignetteIndexEntry{An Introduction to gfpop}
 --> 
 
-
-A previous version with only Gaussian cost function is available [here](https://github.com/vrunge/gfpop/tree/747862d953dd9fed0cea01c4f3ea806e12ea9ca4).
-
-
 # gfpop Vignette
 ### Vincent Runge
 #### LaMME, Evry University
-### August 22, 2019 (version 2)
+### February 21, 2022
 
 > [The Graph-constrained Change-point problem](#intro)
 

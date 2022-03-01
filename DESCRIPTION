@@ -1,7 +1,7 @@
 Package: gfpop
 Type: Package
 Title: Graph-Constrained Functional Pruning Optimal Partitioning 
-Version: 1.0.3
+Version: 1.1.0
 Authors@R: c(
 	person("Vincent", "Runge", email = "vincent.runge@univ-evry.fr", role = c("aut", "cre")),
 	person("Toby", "Hocking", role = c("aut")),
@@ -14,14 +14,21 @@ Authors@R: c(
 	person("Arnaud", "Liehrmann", role = c("ctb")))
 Maintainer: Vincent Runge <vincent.runge@univ-evry.fr>
 Description: Penalized parametric change-point detection by functional pruning dynamic programming algorithm. 
-  The successive means are constrained using a graph structure with edges of types null, up, down, std or abs. To each edge we can associate some additional properties: a minimal gap size, a penalty, some robust parameters (K,a). The user can also constrain the inferred means to lie between some minimal and maximal values. Data is modeled by a quadratic cost with possible use of a robust loss, biweight and Huber (see edge parameters K and a). Other losses are also available with log-linear representation or a log-log representation. 
+  The successive means are constrained using a graph structure with edges defining the nature of the changes.
+  These changes can be unconstrained (type std), up or down constrainted (type up and down) or constrained by a minimal size jump (type abs).
+  The type null means that the graph allows us to stay on the same segment.
+  To each edge we can associate some additional properties: a minimal gap size, a penalty, some robust parameters (K,a) for biweight (K) and Huber losses (K and a). 
+  The user can also constrain the inferred means to lie between some minimal and maximal values. 
+  Data is modeled by a cost with possible use of a robust loss, biweight and Huber (see edge parameters K and a). 
+  These costs should have a quadratic, log-linear or a log-log representation. 
+  This includes quadratic Gaussian cost (type = "mean"), log-linear cost (type = "variance", "poisson" or "exp") and log-log cost (type = "negbin").
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: Rcpp (>= 1.0.0)
 SystemRequirements: C++11
 LinkingTo: Rcpp
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests: devtools, gfpop.data, knitr, data.table, testthat, rmarkdown, ggplot2, penaltyLearning
 Remotes: vrunge/gfpop.data
 VignetteBuilder: knitr
