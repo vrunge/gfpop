@@ -1,3 +1,9 @@
+---
+output: md_document
+---
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+
 <a id="top"></a>
 
 [![Build Status](https://travis-ci.com/vrunge/gfpop.svg?branch=master)](https://travis-ci.com/vrunge/gfpop)
@@ -8,14 +14,10 @@
 %\VignetteIndexEntry{An Introduction to gfpop}
 --> 
 
-
-A previous version with only Gaussian cost function is available [here](https://github.com/vrunge/gfpop/tree/747862d953dd9fed0cea01c4f3ea806e12ea9ca4).
-
-
 # gfpop Vignette
 ### Vincent Runge
 #### LaMME, Evry University
-### August 22, 2019 (version 2)
+### February 22, 2022
 
 > [The Graph-constrained Change-point problem](#intro)
 
@@ -142,12 +144,14 @@ we present a basic use of the main functions of the `gfpop` package. More detail
 
 We install the package from Github:
 
+
 ```r
 #devtools::install_github("vrunge/gfpop")
 library(gfpop)
 ```
 
 We simulate some univariate gaussian data (`n = 1000` points) with relative change-point positions `0.1, 0.3, 0.5, 0.8, 1` and means `1, 2, 1, 3, 1` with a variance equal to `1`.
+
 
 ```r
 n <- 1000
@@ -156,11 +160,13 @@ myData <- dataGenerator(n, c(0.1,0.3,0.5,0.8,1), c(1,2,1,3,1), sigma = 1)
 
 We define the graph of constraints to use for the dynamic programming algorithm. A simple case is the up-down constraint with a penalty here equal to a classic `2 log(n)`.
 
+
 ```r
 myGraph <- graph(penalty = 2*log(n), type = "updown")
 ```
 
 The gfpop function gives the result of the segmentation using `myData` and `myGraph` as parameters. We choose a gaussian cost.
+
 
 ```r
 gfpop(data = myData, mygraph = myGraph, type = "mean")
@@ -168,22 +174,22 @@ gfpop(data = myData, mygraph = myGraph, type = "mean")
 
 ```
 ## changepoints
-## [1]  100  300  500  799 1000
+## [1]  100  299  500  801 1000
 ## 
 ## states
 ## [1] "Dw" "Up" "Dw" "Up" "Dw"
 ## 
 ## forced
-## [1] 0 0 0 0
+## [1] FALSE FALSE FALSE FALSE
 ## 
 ## parameters
-## [1] 1.031384 2.130883 1.047181 2.961262 1.005459
+## [1] 0.9767950 1.8985302 0.9593281 3.0247773 1.0370582
 ## 
 ## globalCost
-## [1] 984.3485
+## [1] 958.077
 ## 
 ## attr(,"class")
-## [1] "gfpop"
+## [1] "gfpop" "mean"
 ```
 
 The vector `changepoints` gives the last index of each segment. It always ends with the length of the vector `vectData`.
@@ -206,6 +212,7 @@ The number `globalCost` is equal to $Q_n(\mathcal{G})$, the overall cost of the 
 The isotonic regression infers a sequence of nondecreasing means. 
 
 
+
 ```r
 n <- 1000
 mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1), c(0, 0.5, 1, 1.5, 2, 2.5, 3), sigma = 1)
@@ -215,30 +222,30 @@ gfpop(data =  mydata, mygraph = myGraphIso, type = "mean")
 
 ```
 ## changepoints
-## [1]  211  383  713 1000
+## [1]   58  235  400  762 1000
 ## 
 ## states
-## [1] "Iso" "Iso" "Iso" "Iso"
+## [1] "Iso" "Iso" "Iso" "Iso" "Iso"
 ## 
 ## forced
-## [1] 0 0 0
+## [1] FALSE FALSE FALSE FALSE
 ## 
 ## parameters
-## [1] 0.2898816 1.2191021 2.1403436 2.8936415
+## [1] -0.1822423  0.3884548  1.2961028  2.2785127  2.8569659
 ## 
 ## globalCost
-## [1] 1025.616
+## [1] 996.0674
 ## 
 ## attr(,"class")
-## [1] "gfpop"
+## [1] "gfpop" "mean"
 ```
-
 
 In this example, we use in `gfpop` function a robust biweight gaussian cost with `K = 1` and the `min` parameter in order to infer means greater than `0.5`.
 
 ### Fixed number of change-points
 
 This algorithm is called segment neighborhood in the change-point litterature. In this example, we fixed the number of segments at $3$ with an isotonic constraint. The graph contains two "up" edges with no cycling.
+
 
 
 ```r
@@ -258,22 +265,22 @@ gfpop(data =  mydata, mygraph = myGraph, type = "mean")
 
 ```
 ## changepoints
-## [1]  298  600 1000
+## [1]  301  609 1000
 ## 
 ## states
 ## [1] "0" "1" "2"
 ## 
 ## forced
-## [1] 0 0
+## [1] FALSE FALSE
 ## 
 ## parameters
-## [1] 0.5195712 1.7562499 2.6745127
+## [1] 0.5214622 1.7950420 2.7039511
 ## 
 ## globalCost
-## [1] 1061.791
+## [1] 1087.774
 ## 
 ## attr(,"class")
-## [1] "gfpop"
+## [1] "gfpop" "mean"
 ```
 
 
@@ -281,116 +288,137 @@ gfpop(data =  mydata, mygraph = myGraph, type = "mean")
 
 In presence of outliers we need a robust loss (biweight). We can also force the starting and ending state and a minimal gap between the means (here equal to `1`)
 
+
 ```r
 n <- 1000
-mydata <- dataGenerator(n, c(0.1,0.3,0.5,0.8,1), c(0,1,0,1,0), sigma = 1) + 5*(rbinom(n, 1, 0.05)) - 5*(rbinom(n, 1, 0.05))
-beta <- 2*log(n)
+chgtpt <- c(0.1, 0.3, 0.5, 0.8, 1)
+myData <- dataGenerator(n, chgtpt, c(0, 1, 0, 1, 0), sigma = 1)
+myData <- myData + 5 * rbinom(n, 1, 0.05) - 5 * rbinom(n, 1, 0.05)
+beta <- 2 * log(n)
 myGraph <- graph(
-  Edge(0, 1, "up", penalty = beta, gap = 1, K = 3),
-  Edge(1, 0, "down", penalty = beta, gap = 1, K = 3),
-  Edge(0, 0, "null"),
-  Edge(1, 1, "null"),
-  StartEnd(start = 0, end = 0))
-gfpop(data =  mydata, mygraph = myGraph, type = "mean")
+         Edge("Dw", "Up", type = "up", penalty = beta, gap = 1, K = 3),
+         Edge("Up", "Dw", type = "down", penalty = beta, gap = 1, K = 3),
+         Edge("Dw", "Dw", type = "null", K = 3),
+         Edge("Up", "Up", type = "null", K = 3),
+         StartEnd(start = "Dw", end = "Dw"))
+gfpop(data =  myData, mygraph = myGraph, type = "mean")
 ```
 
 ```
 ## changepoints
-## [1]  138  305  493  818 1000
+## [1]  100  297  493  798 1000
 ## 
 ## states
-## [1] "0" "1" "0" "1" "0"
+## [1] "Dw" "Up" "Dw" "Up" "Dw"
 ## 
 ## forced
-## [1] 1 1 0 1
+## [1] FALSE FALSE FALSE  TRUE
 ## 
 ## parameters
-## [1] 0.01850678 1.01850678 0.01850678 1.02272647 0.02272647
+## [1] -0.24757635  1.18202359 -0.02892791  1.04627242  0.04627242
 ## 
 ## globalCost
-## [1] 1079.697
+## [1] 1076.384
 ## 
 ## attr(,"class")
-## [1] "gfpop"
+## [1] "gfpop" "mean"
 ```
 
 If we skip all these constraints and use a standard fpop algorithm, the result is the following
 
 
+
 ```r
 myGraphStd <- graph(penalty = 2*log(n), type = "std")
-gfpop(data =  mydata, mygraph = myGraphStd, type = "mean")
+gfpop(data =  myData, mygraph = myGraphStd, type = "mean")
 ```
 
 ```
 ## changepoints
-##  [1]   17   18   31   32   33   48   51   52   65   66   88   89  111  112  129  130  149  150  174  176  194  195  205  206  220  221  227  229
-## [29]  284  285  340  341  358  359  407  408  424  425  428  442  449  450  473  474  479  480  486  487  510  512  549  550  551  565  566  570
-## [57]  571  574  590  591  595  596  613  614  627  629  639  640  701  702  778  779  796  797  818  847  848  873  875  878  882  928  929  933
-## [85]  934  953  955  957  958  962  963 1000
-
+##  [1]   24   26   73   74   83   84  101  102  115  119  129  147  148  171  172
+## [16]  216  219  220  238  239  288  289  297  305  306  307  334  335  340  341
+## [31]  393  394  396  397  398  419  420  441  442  496  497  541  543  544  585
+## [46]  586  603  604  628  629  663  664  696  697  706  707  718  719  747  748
+## [61]  756  761  772  773  792  793  814  815  844  845  848  849  867  869  874
+## [76]  875  888  889  950  952  955 1000
+## 
 ## states
-##  [1] "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std"
-## [24] "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std"
-## [47] "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std"
-## [70] "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std"
+##  [1] "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std"
+## [14] "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std"
+## [27] "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std"
+## [40] "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std"
+## [53] "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std"
+## [66] "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std"
+## [79] "Std" "Std" "Std" "Std"
 ## 
 ## forced
-## [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ## 0 0
-## [72] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+##  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [14] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [27] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [40] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [53] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [66] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [79] FALSE FALSE FALSE
 ## 
 ## parameters
-##  [1]  0.37883666 -5.60737627  0.14265729 -4.92600986  5.76837573  0.46081049 -2.07025038  6.85184085 -0.08186373  6.07962475  0.16536163
-## [12] -6.72115878  0.11779333 -6.03851292  0.38897505  6.36318506  1.22328631 -4.84795400  1.37996121  4.93788071  0.28409636  6.30089144
-## [23]  0.79739606 -5.77855389  1.43330020  6.66018030  0.79843808 -4.43936467  1.17189869  7.11750913  0.30445508  5.63498352  0.07145084
-## [34] -6.13223532 -0.10524605  6.53335020  0.29761434  4.42059093 -3.52301587 -0.41869828  1.60922633 -6.59086009  0.07051877  4.87531990
-## [45] -2.14802188  7.64909748 -0.03687840 -7.05437136  0.62557676  5.83147112  1.26743138  6.64006018 -4.30260774  0.94530626 -4.62237889
-## [56]  1.24394216  8.62245556 -1.51272772  1.14038368  6.62490433  0.97797273  6.91505783  0.45741709 -5.00510212  0.94368809 -4.22010595
-## [67]  0.82243663  6.88636862  1.06272055 -4.38864051  0.97078589 -4.92447920  1.46891367 -3.97447863  1.27138347 -0.25178268  6.50770084
-## [78]  0.66843446  4.86486110 -0.36798139 -3.52991185  0.28266676 -5.37296951  1.26764318  6.32132912 -0.29253887  5.10483206 -0.24247171
-## [89]  7.11097890 -0.62541613 -5.62987116  0.27378843
+##  [1]  0.09531845 -3.85703556 -0.13019394  5.16267205  0.44447672  5.20321468
+##  [7] -0.39426869 -5.08788196  1.17547781 -1.61382166  2.51844573  0.66099190
+## [13] -6.13502552  1.16677323 -5.25144245  1.19790595 -1.10033854  7.66759284
+## [19]  1.47574267 -3.98368417  1.05260128 -5.38083210  1.73201851 -0.26765007
+## [25] -5.61166029  6.06497166 -0.05299352  4.45206610 -1.49900686 -6.24316215
+## [31]  0.15086007  5.61934257  0.52500592 -4.51976413  5.24207543 -0.54093753
+## [37] -5.42663094  0.03931173 -6.71419815  0.13592288  5.56618535  0.66407336
+## [43]  4.20858670 -3.97925015  1.24780049  6.59153592  0.77567253  7.12261221
+## [49]  1.46381318  6.31997462  0.79516336  6.14695385  0.55942101 -4.40451015
+## [55]  1.21243384 -5.01827488  1.94092687  6.15208912  0.71233302  6.82105479
+## [61]  1.18033057  4.03182114  0.35281200  7.50141174  1.54135300 -4.28366480
+## [67]  0.33847303 -5.35427462 -0.22562237  5.23822258  0.56197995 -5.59772017
+## [73]  0.36645125 -4.80571764  1.81510038  7.04674283  0.60538203  6.12114295
+## [79] -0.17145432  5.19794411 -3.11723378  0.37162072
 ## 
 ## globalCost
-## [1] 1747.779
+## [1] 1824.284
 ## 
 ## attr(,"class")
-## [1] "gfpop"
+## [1] "gfpop" "mean"
 ```
+
 
 
 ### abs edge
 
 With a unique "abs" edge, we impose a difference between the means of size at least 1.  
 
+
 ```r
 n <- 10000
-mydata <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), c(0, 1, 0, 2, 1, 2, 0, 1, 0, 1), sigma = 0.5)
+myData <- dataGenerator(n, c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), c(0, 1, 0, 2, 1, 2, 0, 1, 0, 1), sigma = 0.5)
 beta <- 2*log(n)
 myGraph <- graph(
   Edge(0, 0,"abs", penalty = beta, gap = 1),
   Edge(0, 0,"null"))
-gfpop(data =  mydata, mygraph = myGraph, type = "mean")
+gfpop(data =  myData, mygraph = myGraph, type = "mean")
 ```
 
 ```
 ## changepoints
-##  [1]  1000  1999  3000  4000  5000  6000  7000  8002  9000 10000
+##  [1]  1000  2000  3000  3999  5000  6000  6999  8000  8998 10000
 ## 
 ## states
-## [1] "0" "0" "0" "0" "0" "0" "0" "0" "0" "0"
+##  [1] "0" "0" "0" "0" "0" "0" "0" "0" "0" "0"
 ## 
 ## forced
-## [1] 0 1 0 0 1 0 1 1 0
+## [1] FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE
 ## 
 ## parameters
-## [1] 0.008077166 1.023073852 0.023073852 1.994958839 0.990916305 1.990916305 0.001495140 1.001495140 0.001495140 1.024786144
+##  [1] -0.008507931  0.993648981 -0.006351019  1.998147387  0.978719714  2.017369226
+##  [7]  0.005955304  1.006008367 -0.005573578  0.994426422
 ## 
 ## globalCost
-## [1] 2494.115
+## [1] 2492.677
 ## 
 ## attr(,"class")
-## [1] "gfpop"
-
+## [1] "gfpop" "mean"
 ```
 
 Notice that some of the edges are forced, the vector `forced` contains non-zero values.
@@ -399,6 +427,7 @@ Notice that some of the edges are forced, the vector `forced` contains non-zero 
 ### Exponential decay
 
 The null edge corresponds to an exponential decay state if its parameter is not equal to 1. 
+
 
 
 ```r
@@ -421,19 +450,20 @@ g
 ## [1] "0" "0" "0" "0"
 ## 
 ## forced
-## [1] 0 0 0
+## [1] FALSE FALSE FALSE
 ## 
 ## parameters
-## [1] 0.0052340381 0.0003157659 0.0004575503 0.0198921241
+## [1] 0.0049237269 0.0003130684 0.0004639405 0.0201732198
 ## 
 ## globalCost
-## [1] 935.4619
+## [1] 981.2278
 ## 
 ## attr(,"class")
-## [1] "gfpop"
+## [1] "gfpop" "mean"
 ```
 
 and we plot the result 
+
 
 ```r
 gamma <- 0.966
@@ -449,6 +479,8 @@ par(new = TRUE)
 plot(signal, type ='l', col = 4, ylim = ylimits, lwd = 3)
 ```
 
+![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15-1.png)
+
 ![plot](figure/expDecay.png)
 
 
@@ -459,19 +491,22 @@ plot(signal, type ='l', col = 4, ylim = ylimits, lwd = 3)
 In the `gfpop` package, graphs are represented by a dataframe with 9 features and build with the R functions `Edge`, `Node`, `StartEnd` and `graph`.
 
 
+
 ```r
 emptyGraph <- graph()
 emptyGraph
 ```
 
 ```
-## [1] state1    state2    type      penalty   parameter K         a         min       max
-## <0 rows> (or 0-length row.names)
+## [1] state1    state2    type      parameter penalty   K         a        
+## [8] min       max      
+## <0 lignes> (ou 'row.names' de longueur nulle)
 ```
 
 `state1` is the starting node of an edge, `state2` its ending node. `type` is one of the available edge type ("null", "std", "up", "down", "abs"). `penalty` is a nonnegative parameter: the additional cost $\beta_i$ to consider when we move within the graph using a edge (or stay on the same node). `parameter` is annother nonnegative parameter, a characteristics of the edge, depending of its type (it is a decay if type is "null" and a gap otherwise). `K` and `a` are robust parameters. `min` and `max` are used to constrain the rang of value for the node parameter.
 
 We add edges into a graph as follows
+
 
 ```r
 myGraph <- graph(
@@ -482,14 +517,15 @@ myGraph
 ```
 
 ```
-##  state1 state2 type parameter penalty   K   a min max
-## 1     E1     E1 null       1.0       0 Inf Inf  NA  NA
-## 2     E1     E2 down       1.5       0 Inf Inf  NA  NA
+##   state1 state2 type parameter penalty   K a min max
+## 1     E1     E1 null       1.0       0 Inf 0  NA  NA
+## 2     E1     E2 down       1.5       0 Inf 0  NA  NA
 ```
 
 we can only add edges to this dataframe using the object `Edge`.
 
 The graph can contain information on the starting and/or ending edge to use with the `StartEnd` function. 
+
 
 
 ```r
@@ -505,18 +541,19 @@ myGraph
 ```
 
 ```
-## state1 state2  type parameter  penalty   K   a min max
-## 1     Dw     Dw  null         1  0.00000 Inf Inf  NA  NA
-## 2     Up     Up  null         1  0.00000 Inf Inf  NA  NA
-## 3     Dw     Up    up         1 13.81551 Inf Inf  NA  NA
-## 4     Dw     Dw  down         0 13.81551 Inf Inf  NA  NA
-## 5     Up     Dw  down         0 13.81551 Inf Inf  NA  NA
-## 6     Dw   <NA> start        NA       NA  NA  NA  NA  NA
-## 7     Dw   <NA>   end        NA       NA  NA  NA  NA  NA
+##   state1 state2  type parameter  penalty   K  a min max
+## 1     Dw     Dw  null         1  0.00000 Inf  0  NA  NA
+## 2     Up     Up  null         1  0.00000 Inf  0  NA  NA
+## 3     Dw     Up    up         1 13.81551 Inf  0  NA  NA
+## 4     Dw     Dw  down         0 13.81551 Inf  0  NA  NA
+## 5     Up     Dw  down         0 13.81551 Inf  0  NA  NA
+## 6     Dw   <NA> start        NA       NA  NA NA  NA  NA
+## 7     Dw   <NA>   end        NA       NA  NA NA  NA  NA
 ```
 
 Some graphs are often used: they are defined by default in the `graph` function. To use these graphs, we specify a string `type` equal to "std", "isotonic", "updown" or "relevant".
 For example,
+
 
 
 ```r
@@ -525,12 +562,13 @@ myGraphIso
 ```
 
 ```
-##   state1 state2 type parameter penalty   K   a min max
-## 1    Iso    Iso null         1       0 Inf Inf  NA  NA
-## 2    Iso    Iso   up         0      12 Inf Inf  NA  NA
+##   state1 state2 type parameter penalty   K a min max
+## 1    Iso    Iso null         1       0 Inf 0  NA  NA
+## 2    Iso    Iso   up         0      12 Inf 0  NA  NA
 ```
 
 The function `Node` can be used to restrict the range of value for parameter associated to a node (called also a vertex). For example the following graph is an isotonic graph with inferred parameters between 0 et 1 only.
+
 
 ```r
 myGraph <- graph(
@@ -542,10 +580,10 @@ myGraph
 ```
 
 ```
-##   state1 state2 type parameter penalty   K   a min max
-## 1     Up     Up   up         0  3.1415 Inf Inf  NA  NA
-## 2     Up     Up null         1  0.0000 Inf Inf  NA  NA
-## 3     Up     Up node        NA      NA  NA  NA   0   1
+##   state1 state2 type parameter penalty   K  a min max
+## 1     Up     Up   up         0  3.1415 Inf  0  NA  NA
+## 2     Up     Up null         1  0.0000 Inf  0  NA  NA
+## 3     Up     Up node        NA      NA  NA NA   0   1
 ```
 
 <a id="suppl"></a>
