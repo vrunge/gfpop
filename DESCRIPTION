@@ -13,15 +13,7 @@ Authors@R: c(
 	person("Michel", "Koskas", role = c("ctb")),
 	person("Arnaud", "Liehrmann", role = c("ctb")))
 Maintainer: Vincent Runge <vincent.runge@univ-evry.fr>
-Description: Penalized parametric change-point detection by functional pruning dynamic programming algorithm. 
-  The successive means are constrained using a graph structure with edges defining the nature of the changes.
-  These changes can be unconstrained (type std), up or down constrainted (type up and down) or constrained by a minimal size jump (type abs).
-  The type null means that the graph allows us to stay on the same segment.
-  To each edge we can associate some additional properties: a minimal gap size, a penalty, some robust parameters (K,a) for biweight (K) and Huber losses (K and a). 
-  The user can also constrain the inferred means to lie between some minimal and maximal values. 
-  Data is modeled by a cost with possible use of a robust loss, biweight and Huber (see edge parameters K and a). 
-  These costs should have a quadratic, log-linear or a log-log representation. 
-  This includes quadratic Gaussian cost (type = "mean"), log-linear cost (type = "variance", "poisson" or "exp") and log-log cost (type = "negbin").
+Description: Penalized parametric change-point detection by functional pruning dynamic programming algorithm.  The successive means are constrained using a graph structure with edges defining the nature of the changes. These changes can be unconstrained (type std), up or down constrainted (type up and down) or constrained by a minimal size jump (type abs). The type null means that the graph allows us to stay on the same segment. To each edge we can associate some additional properties: a minimal gap size, a penalty, some robust parameters (K,a) for biweight (K) and Huber losses (K and a). The user can also constrain the inferred means to lie between some minimal and maximal values. Data is modeled by a cost with possible use of a robust loss, biweight and Huber (see edge parameters K and a). These costs should have a quadratic, log-linear or a log-log representation. This includes quadratic Gaussian cost (type = "mean"), log-linear cost (type = "variance", "poisson" or "exp") and log-log cost (type = "negbin").
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
