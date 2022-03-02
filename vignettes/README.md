@@ -1,9 +1,3 @@
----
-output: md_document
----
-
-\DeclareMathOperator*{\argmin}{arg\,min}
-
 <a id="top"></a>
 
 [![Build Status](https://travis-ci.com/vrunge/gfpop.svg?branch=master)](https://travis-ci.com/vrunge/gfpop)
@@ -64,7 +58,7 @@ gfpop(data = myData, mygraph = myGraph, type = "mean")
 
 ```
 ## $changepoints
-## [1]  100  298  500  800 1000
+## [1]  100  301  500  803 1000
 ## 
 ## $states
 ## [1] "Dw" "Up" "Dw" "Up" "Dw"
@@ -73,10 +67,10 @@ gfpop(data = myData, mygraph = myGraph, type = "mean")
 ## [1] FALSE FALSE FALSE FALSE
 ## 
 ## $parameters
-## [1] 1.0317856 1.9865414 0.9697470 3.0359938 0.8527903
+## [1] 1.0521929 1.8369729 0.9596474 3.0272542 0.8839396
 ## 
 ## $globalCost
-## [1] 1010.133
+## [1] 998.0868
 ## 
 ## attr(,"class")
 ## [1] "gfpop" "mean"
@@ -111,19 +105,19 @@ gfpop(data =  mydata, mygraph = myGraphIso, type = "mean")
 
 ```
 ## $changepoints
-## [1]  186  361  713 1000
+## [1]  175  353  606  810 1000
 ## 
 ## $states
-## [1] "Iso" "Iso" "Iso" "Iso"
+## [1] "Iso" "Iso" "Iso" "Iso" "Iso"
 ## 
 ## $forced
-## [1] FALSE FALSE FALSE
+## [1] FALSE FALSE FALSE FALSE
 ## 
 ## $parameters
-## [1] 0.1250638 1.2483475 2.1161519 2.8636266
+## [1] 0.3007753 1.0935178 1.9430410 2.5804569 3.0192673
 ## 
 ## $globalCost
-## [1] 992.7441
+## [1] 933.5254
 ## 
 ## attr(,"class")
 ## [1] "gfpop" "mean"
@@ -154,7 +148,7 @@ gfpop(data =  mydata, mygraph = myGraph, type = "mean")
 
 ```
 ## $changepoints
-## [1]  323  705 1000
+## [1]  304  797 1000
 ## 
 ## $states
 ## [1] "0" "1" "2"
@@ -163,15 +157,14 @@ gfpop(data =  mydata, mygraph = myGraph, type = "mean")
 ## [1] FALSE FALSE
 ## 
 ## $parameters
-## [1] 0.5031993 2.1549691 2.9441510
+## [1] 0.5015381 2.1475851 3.0267732
 ## 
 ## $globalCost
-## [1] 1102.695
+## [1] 1046.291
 ## 
 ## attr(,"class")
 ## [1] "gfpop" "mean"
 ```
-
 
 ### Robust up-down with constrained starting and ending states
 
@@ -195,69 +188,25 @@ gfpop(data =  myData, mygraph = myGraph, type = "mean")
 
 ```
 ## $changepoints
-## [1]  100  312  500  800 1000
+## [1]  108  309  498  802 1000
 ## 
 ## $states
 ## [1] "Dw" "Up" "Dw" "Up" "Dw"
 ## 
 ## $forced
-## [1]  TRUE FALSE FALSE FALSE
+## [1]  TRUE FALSE  TRUE  TRUE
 ## 
 ## $parameters
-## [1]  0.0456763883  1.0456763883 -0.0603308658  1.0383495117 -0.0003792976
+## [1] -0.01193667  0.98806333 -0.03766739  0.96233261 -0.03766739
 ## 
 ## $globalCost
-## [1] 1110.176
+## [1] 1067.88
 ## 
 ## attr(,"class")
 ## [1] "gfpop" "mean"
 ```
-
-
-
-### Robust up-down with constrained starting and ending states
-
-In presence of outliers we need a robust loss (biweight). We can also force the starting and ending state and a minimal gap between the means (here equal to `1`)
-
-
-```r
-n <- 1000
-chgtpt <- c(0.1, 0.3, 0.5, 0.8, 1)
-myData <- dataGenerator(n, chgtpt, c(0, 1, 0, 1, 0), sigma = 1)
-myData <- myData + 5 * rbinom(n, 1, 0.05) - 5 * rbinom(n, 1, 0.05)
-beta <- 2 * log(n)
-myGraph <- graph(
-         Edge("Dw", "Up", type = "up", penalty = beta, gap = 1, K = 3),
-         Edge("Up", "Dw", type = "down", penalty = beta, gap = 1, K = 3),
-         Edge("Dw", "Dw", type = "null", K = 3),
-         Edge("Up", "Up", type = "null", K = 3),
-         StartEnd(start = "Dw", end = "Dw"))
-gfpop(data =  myData, mygraph = myGraph, type = "mean")
-```
-
-```
-## $changepoints
-## [1]  113  300  500  796 1000
-## 
-## $states
-## [1] "Dw" "Up" "Dw" "Up" "Dw"
-## 
-## $forced
-## [1] FALSE FALSE  TRUE FALSE
-## 
-## $parameters
-## [1] -0.17825898  1.09464865  0.00177342  1.00177342 -0.20725183
-## 
-## $globalCost
-## [1] 1065.075
-## 
-## attr(,"class")
-## [1] "gfpop" "mean"
-```
-
 
 If we skip all these constraints and use a standard fpop algorithm, the result is the following
-
 
 
 ```r
@@ -267,12 +216,12 @@ gfpop(data =  myData, mygraph = myGraphStd, type = "mean")
 
 ```
 ## $changepoints
-##  [1]   29   30   51   56   58   65   66   99  101  143  144  145  197  199  207
-## [16]  208  242  245  246  282  283  306  307  350  351  356  357  378  379  392
-## [31]  393  426  427  429  430  446  447  494  496  509  510  529  530  556  557
-## [46]  570  571  575  577  605  606  616  617  620  621  676  677  718  722  723
-## [61]  746  747  769  770  780  781  821  822  829  830  892  893  898  899  908
-## [76]  909  912  913  914  921  926  930  931  975  977  998 1000
+##  [1]    2    8    9   20   21   48   49   92   94   98  108  109  149  150  171
+## [16]  172  191  192  206  207  257  259  260  261  305  306  307  312  314  329
+## [31]  330  398  406  431  432  452  453  458  462  475  476  494  495  536  537
+## [46]  541  543  544  552  553  558  559  568  570  592  593  619  620  625  626
+## [61]  695  696  727  728  734  735  756  757  774  775  779  782  784  810  813
+## [76]  823  831  852  853  854  857  858  859  895  896  935  936  993  994 1000
 ## 
 ## $states
 ##  [1] "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std"
@@ -281,7 +230,7 @@ gfpop(data =  myData, mygraph = myGraphStd, type = "mean")
 ## [40] "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std"
 ## [53] "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std"
 ## [66] "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std"
-## [79] "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std"
+## [79] "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std" "Std"
 ## 
 ## $forced
 ##  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
@@ -290,32 +239,31 @@ gfpop(data =  myData, mygraph = myGraphStd, type = "mean")
 ## [40] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
 ## [53] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
 ## [66] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
-## [79] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [79] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
 ## 
 ## $parameters
-##  [1]  0.013157272  5.852235983  0.397219746 -2.487036978  4.306750060 -0.459086261
-##  [7] -6.020547264 -0.580351710  5.041691711  0.767738682  5.961869168 -4.888515188
-## [13]  1.104751718  6.573977997  0.319794566 -4.738167431  0.833793130 -2.899282191
-## [19]  6.688410838  1.228639284 -4.269924074  0.404707460 -6.793861272  0.003291056
-## [25]  6.506591287  0.629007228 -5.756058094 -0.259927168 -5.736196028  0.362430172
-## [31]  5.983851635 -0.083938587 -6.728110389 -0.201933380 -5.596212715  0.515240779
-## [37] -5.724921497 -0.233094949 -3.954707046  1.376006649  6.850232664  0.807237359
-## [43] -4.772661389  1.572871812  7.044477776  0.419697210  6.576539303  0.668004319
-## [49] -4.089779401  1.165036227  6.569345168  0.950959210  6.681891964  1.106775879
-## [55]  7.174884098  0.932498620  7.593847560  0.593401906  3.024204730 -4.575301756
-## [61]  1.347643390 -4.167946713  0.779419604  6.188344490  1.295509948  6.468646144
-## [67]  0.008155765  5.288100272 -0.317542994  5.547977558  0.073240269  5.784884068
-## [73]  0.018864107 -5.515696794  0.218333250 -6.987266782  0.513760015 -5.093780701
-## [79]  5.643352084 -0.154778961 -4.128204915 -0.544777860  5.729519458 -0.404145572
-## [85]  3.440665204  0.088765491  2.860110512
+##  [1]  1.36279545 -1.74339905  5.34554026  0.50520284 -6.37290639  0.20723008
+##  [7]  4.50917300 -0.43925974  4.63956377 -3.53360841  0.04296051 -4.06154149
+## [13]  1.07936761  6.29813959  0.82735263  6.86349288  0.75747821  6.88785100
+## [19]  1.19814260  7.20841439  0.60564366 -3.75320657  0.89107584  6.57828607
+## [25]  1.14664991 -3.80474528  4.94246032 -0.18602209 -6.07397662 -0.48329887
+## [31] -7.46945073  0.42058923 -2.22988971  0.25357573  5.59869925 -0.18537678
+## [37]  6.25833253 -0.61726582  2.45138777 -0.54037567 -7.44798015  0.10966744
+## [43] -4.67110127  0.87643562  7.53403854  1.35543649 -2.63053575  6.31122270
+## [49]  0.64112734 -5.65952409  0.40526204 -6.50814952  0.99806285 -3.26024489
+## [55]  0.64232718 -4.74557440  1.32881979  5.48998766 -0.33028505  6.12547441
+## [61]  0.72813543 -5.11065887  0.61758417  6.06059329  0.73494335 -5.40902777
+## [67]  0.54970868 -4.89871230  0.78192206  6.63650093  1.99403210 -2.48950878
+## [73]  4.86845490  0.42877928 -3.54515124  0.27709739 -2.09998172  0.03829753
+## [79] -4.63676873  5.85591421  0.97536242 -4.17660677  6.18037733  0.05789482
+## [85]  5.66238275  0.22079251 -5.12646353  0.19913805 -7.53428934  0.32529376
 ## 
 ## $globalCost
-## [1] 1467.21
+## [1] 1531.253
 ## 
 ## attr(,"class")
 ## [1] "gfpop" "mean"
 ```
-
 
 ### abs edge
 
@@ -335,20 +283,20 @@ gfpop(data =  myData, mygraph = myGraph, type = "mean")
 
 ```
 ## $changepoints
-##  [1]   999  2000  3000  4000  4999  6000  7000  8000  8999 10000
+##  [1]  1000  2001  3000  4001  5001  6000  7002  7998  9000 10000
 ## 
 ## $states
 ##  [1] "0" "0" "0" "0" "0" "0" "0" "0" "0" "0"
 ## 
 ## $forced
-## [1]  TRUE  TRUE FALSE FALSE  TRUE FALSE FALSE FALSE  TRUE
+## [1]  TRUE  TRUE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE
 ## 
 ## $parameters
-##  [1] -0.001621797  0.998378203 -0.001621797  2.018687659  1.000371240  2.000371240
-##  [7]  0.007557667  1.039364965 -0.007114006  0.992885994
+##  [1] 0.0148537593 1.0148537593 0.0148537593 2.0048952752 1.0048952752 2.0059944122
+##  [7] 0.0092369785 1.0232259852 0.0008577806 1.0364847358
 ## 
 ## $globalCost
-## [1] 2417.046
+## [1] 2548.417
 ## 
 ## attr(,"class")
 ## [1] "gfpop" "mean"
@@ -376,19 +324,19 @@ g
 
 ```
 ## $changepoints
-## [1]  200  322  500  800 1000
+## [1]  200  500  800 1000
 ## 
 ## $states
-## [1] "0" "0" "0" "0" "0"
+## [1] "0" "0" "0" "0"
 ## 
 ## $forced
-## [1] FALSE FALSE FALSE FALSE
+## [1] FALSE FALSE FALSE
 ## 
 ## $parameters
-## [1] 0.0049454559 0.1510457319 0.0028802127 0.0004721947 0.0194129929
+## [1] 0.0046031590 0.0003127344 0.0004575298 0.0192687263
 ## 
 ## $globalCost
-## [1] 976.4308
+## [1] 955.8429
 ## 
 ## attr(,"class")
 ## [1] "gfpop" "mean"
@@ -412,7 +360,7 @@ par(new = TRUE)
 plot(signal, type ='l', col = 4, ylim = ylimits, lwd = 3)
 ```
 
-![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png)
+![plot of chunk expdecay](figure/expdecay-1.png)
 
 
 <a id="gc"></a>

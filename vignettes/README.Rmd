@@ -1,9 +1,3 @@
----
-output: md_document
----
-
-\DeclareMathOperator*{\argmin}{arg\,min}
-
 <a id="top"></a>
 
 [![Build Status](https://travis-ci.com/vrunge/gfpop.svg?branch=master)](https://travis-ci.com/vrunge/gfpop)
@@ -106,7 +100,6 @@ myGraph <- graph(
 gfpop(data =  mydata, mygraph = myGraph, type = "mean")
 ```
 
-
 ### Robust up-down with constrained starting and ending states
 
 In presence of outliers we need a robust loss (biweight). We can also force the starting and ending state and a minimal gap between the means (here equal to `1`)
@@ -125,37 +118,13 @@ myGraph <- graph(
          StartEnd(start = "Dw", end = "Dw"))
 gfpop(data =  myData, mygraph = myGraph, type = "mean")
 ```
-
-
-
-### Robust up-down with constrained starting and ending states
-
-In presence of outliers we need a robust loss (biweight). We can also force the starting and ending state and a minimal gap between the means (here equal to `1`)
-
-```{r}
-n <- 1000
-chgtpt <- c(0.1, 0.3, 0.5, 0.8, 1)
-myData <- dataGenerator(n, chgtpt, c(0, 1, 0, 1, 0), sigma = 1)
-myData <- myData + 5 * rbinom(n, 1, 0.05) - 5 * rbinom(n, 1, 0.05)
-beta <- 2 * log(n)
-myGraph <- graph(
-         Edge("Dw", "Up", type = "up", penalty = beta, gap = 1, K = 3),
-         Edge("Up", "Dw", type = "down", penalty = beta, gap = 1, K = 3),
-         Edge("Dw", "Dw", type = "null", K = 3),
-         Edge("Up", "Up", type = "null", K = 3),
-         StartEnd(start = "Dw", end = "Dw"))
-gfpop(data =  myData, mygraph = myGraph, type = "mean")
-```
-
 
 If we skip all these constraints and use a standard fpop algorithm, the result is the following
-
 
 ```{r}
 myGraphStd <- graph(penalty = 2*log(n), type = "std")
 gfpop(data =  myData, mygraph = myGraphStd, type = "mean")
 ```
-
 
 ### abs edge
 
