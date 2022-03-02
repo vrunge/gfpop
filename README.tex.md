@@ -1,9 +1,3 @@
----
-output: md_document
----
-
-\DeclareMathOperator*{\argmin}{arg\,min}
-
 <a id="top"></a>
 
 [![Build Status](https://travis-ci.com/vrunge/gfpop.svg?branch=master)](https://travis-ci.com/vrunge/gfpop)
@@ -17,7 +11,7 @@ output: md_document
 # gfpop Vignette
 ### Vincent Runge
 #### LaMME, Evry University
-### February 22, 2022
+### March 2, 2022
 
 > [The Graph-constrained Change-point problem](#intro)
 
