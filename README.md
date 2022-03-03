@@ -25,10 +25,9 @@
 
 ## Quick Start
 
-we present a basic use of the main functions of the `gfpop` package. More details about optional arguments are given in later sections.
+we present a basic use of the main functions of the `gfpop` package. More details about the theory of graph-cosntrained multiple change-point detection can be found [here](https://arxiv.org/abs/2002.03646)
 
 We install the package from Github:
-
 
 ```r
 #devtools::install_github("vrunge/gfpop")
