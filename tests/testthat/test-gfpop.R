@@ -1,5 +1,7 @@
 library(testthat)
 library(gfpop)
+library(devtools)
+devtools::install_github("vrunge/gfpop.data")
 library(gfpop.data)
 context("graph")
 

@@ -1,12 +1,7 @@
----
-output: md_document
----
-
-\DeclareMathOperator*{\argmin}{arg\,min}
-
 <a id="top"></a>
 
-[![Build Status](https://travis-ci.com/vrunge/gfpop.svg?branch=master)](https://travis-ci.com/vrunge/gfpop)
+<!--[![Build Status](https://travis-ci.com/vrunge/gfpop.svg?branch=master)](https://travis-ci.com/vrunge/gfpop)
+--> 
 [![](https://img.shields.io/badge/docs-vignettes-blue.svg)](https://github.com/vrunge/gfpop)
 
 <!-- 

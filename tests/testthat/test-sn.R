@@ -1,9 +1,13 @@
 library(gfpop)
+library(devtools)
+devtools::install_github("vrunge/gfpop.data")
 library(gfpop.data)
+
 library(testthat)
 context("sn")
 
 library(data.table)
+
 data(profile614chr2, package="gfpop.data")
 
 ### reduce data size

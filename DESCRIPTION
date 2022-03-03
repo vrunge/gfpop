@@ -22,6 +22,5 @@ SystemRequirements: C++11
 LinkingTo: Rcpp
 RoxygenNote: 7.1.2
 Suggests: devtools, gfpop.data, knitr, data.table, testthat, rmarkdown, ggplot2, penaltyLearning
-Remotes: vrunge/gfpop.data
 VignetteBuilder: knitr
 Depends: R (>= 3.5.0)

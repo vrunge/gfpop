@@ -5,9 +5,8 @@ knitr::opts_chunk$set(
 )
 
 ## -----------------------------------------------------------------------------
-devtools::install_github("vrunge/gfpop")
+library(devtools)
 devtools::install_github("vrunge/gfpop.data")
-
 library(gfpop.data)
 library(gfpop)
 
