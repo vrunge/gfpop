@@ -1,4 +1,4 @@
-#(method 1) ON GITHUB 
+#(method 1) ON GITHUB
 #devtools::install_github("vrunge/gfpop", force = TRUE)
 
 #(method 2) ON CRAN
@@ -15,9 +15,9 @@ library(penaltyLearning)
 library(data.table)
 library(ggplot2)
 
-## ----------------------------------------------- ## 
+## ----------------------------------------------- ##
 ## Relevant changes model for DNA copy number data ##
-## ----------------------------------------------- ## 
+## ----------------------------------------------- ##
 
 profile614chr2$probes[, change.after := floor(
   c(diff(position)/2+position[-.N], NA)) ]
@@ -176,9 +176,9 @@ pdf( "figure11.pdf" )
 print(gg.out)
 dev.off()
 
-## ----------------------------------------------------- ## 
+## ----------------------------------------------------- ##
 ## Multi-modal regression for neuro spike train data set ##
-## ----------------------------------------------------- ## 
+## ----------------------------------------------------- ##
 
 fps <- 100
 seconds.between.data <- 1/fps
@@ -267,7 +267,7 @@ gg.out <- ggplot()+
     data=err.list$label.errors)+
   scale_linetype_manual(
     "error type",
-    limits=c("correct", 
+    limits=c("correct",
              "false negative",
              "false positive"),
     values=c(correct=0,
@@ -312,9 +312,9 @@ print(gg.out)
 dev.off()
 
 
-## -------------------------------------------------------------------------- ## 
-## Nine-state model for QRS complex detection in electrocardiogram (ECG) data ## 
-## -------------------------------------------------------------------------- ## 
+## -------------------------------------------------------------------------- ##
+## Nine-state model for QRS complex detection in electrocardiogram (ECG) data ##
+## -------------------------------------------------------------------------- ##
 
 myGraph <- gfpop::graph(
   gfpop::Edge(0, 1, "down", penalty = 8e7, gap=0),

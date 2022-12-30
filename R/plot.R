@@ -58,5 +58,3 @@ plot.gfpop <- function(x, ..., data, multiple = TRUE)
   }
   par(mar = myMAR)
 }
-
-

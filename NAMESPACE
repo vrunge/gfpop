@@ -3,8 +3,15 @@ useDynLib(gfpop, .registration = TRUE)
 export(gfpop)
 export(Edge, StartEnd, Node, graph)
 export(dataGenerator, sdDiff)
+
 export(plot.gfpop)
 S3method(plot, gfpop)
+
+export(print.gfpop)
+S3method(print, gfpop)
+
+export(summary.gfpop)
+S3method(summary, gfpop)
 
 export(paperGraph)
 

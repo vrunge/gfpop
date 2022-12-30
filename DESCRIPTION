@@ -1,7 +1,7 @@
 Package: gfpop
 Type: Package
 Title: Graph-Constrained Functional Pruning Optimal Partitioning 
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: c(
 	person("Vincent", "Runge", email = "vincent.runge@univ-evry.fr", role = c("aut", "cre")),
 	person("Toby", "Hocking", role = c("aut")),
@@ -20,7 +20,7 @@ LazyData: true
 Imports: Rcpp (>= 1.0.0)
 SystemRequirements: C++11
 LinkingTo: Rcpp
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Suggests: devtools, gfpop.data, knitr, data.table, testthat, rmarkdown, ggplot2, penaltyLearning
 Remotes: vrunge/gfpop.data
 VignetteBuilder: knitr

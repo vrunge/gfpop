@@ -203,7 +203,7 @@ graph <- function(..., type = "empty", decay = 1, gap = 0, penalty = 0, K = Inf,
       myNewGraph[2, ] <- Edge("Abs", "Abs", "abs", gap = gap, penalty = penalty, K = K, a = a)
     }
   }
-  class(myNewGraph) <- c("data.frame", "graph")
+  class(myNewGraph) <- c("graph", "data.frame")
   return(myNewGraph)
 }
 

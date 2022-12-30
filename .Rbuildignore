@@ -3,6 +3,8 @@ build.sh
 ^\.Rproj\.user$
 .travis.yml
 figure
-gfpop.pdf
+gfpop_1.1.1.pdf
 tex
 README.tex.md
+gfpop_manuel.pdf
+simulations
