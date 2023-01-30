@@ -27,8 +27,10 @@
 #' plot(x = g, data = data, multiple = TRUE)
 plot.gfpop <- function(x, ..., data, multiple = TRUE)
 {
-  myMAR <- par("mar")
+  oparops <- par(no.readonly = TRUE)
+  on.exit(par(oparops))
   par(mar = c(3, 3, 2, 2))
+
   n <- 1:length(data)
   p <- length(x$changepoints)
   xbis <- c(1, x$changepoints)
@@ -36,19 +38,19 @@ plot.gfpop <- function(x, ..., data, multiple = TRUE)
   limParam <- c(min(x$parameters), max(x$parameters))
   limData <- c(min(data), max(data))
 
-  if(!any(c("mean","poisson") %in% attributes(x)$class) && (multiple == FALSE))
-    {stop('Only with mean and poisson cost functions can the User plot signal and data on a unique graph.')}
+  type <- attributes(x)$type
 
-  if(!any(c("mean","poisson") %in% attributes(x)$class) || (multiple == TRUE))
+  if(!any(c("mean","poisson") %in% type) && (multiple == FALSE))
+    {stop('Only with "mean" and "poisson" cost type functions can the User plot signal and data on a unique graph.')}
+
+  if(!any(c("mean","poisson") %in% type) || (multiple == TRUE))
   {
-    myMFROW <- par("mfrow")
     par(mfrow = c(2,1))
     plot(1:length(data), data, pch = '+', ylim = limData, xlab = "", ylab = "", main = "data & changepoints")
     for(i in 1:p){abline(v = xbis[i+1], col= "#3514B3", lty = 1, lwd = 2)}
     plot(1:length(data), ylim =limParam, xlab = "", ylab = "", col = "white", main = "parameters & changepoints")
     for(i in 1:p){segments(xbis[i], y[i], xbis[i+1], y[i], col= "#C73617", lty = 1, lwd = 4)}
     for(i in 1:p){abline(v = xbis[i+1], col= "#3514B3", lty = 1, lwd = 2)}
-    par(mfrow = myMFROW)
    }
   else
   {
@@ -56,5 +58,5 @@ plot.gfpop <- function(x, ..., data, multiple = TRUE)
     for(i in 1:p){segments(xbis[i], y[i], xbis[i+1], y[i], col= "#C73617", lty = 1, lwd = 4)}
     for(i in 1:p){abline(v = xbis[i+1], col= "#3514B3", lty = 1, lwd = 2)}
   }
-  par(mar = myMAR)
+
 }

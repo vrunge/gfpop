@@ -20,6 +20,8 @@ print.gfpop <- function(x,...)
   print(x$states)
   cat("$forced \n")
   print(x$forced)
+  cat("$parameters \n")
+  print(x$parameters)
   cat("$globalCost \n")
   print(x$globalCost)
 }
