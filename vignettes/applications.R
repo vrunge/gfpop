@@ -31,7 +31,7 @@ select.dt <- rbind(
 seg.dt.list <- list()
 for(model.i in 1:nrow(select.dt)){
   model.info <- select.dt[model.i]
-  cat(sprintf("%4d / %4d models\n", model.i, nrow(select.dt)))
+  cat(model.i, " / ", nrow(select.dt), "models\n")
   g <- model.info[, sngraph(as.integer(n.segments), graph.name, gap=gap)]
   fit <- gfpop::gfpop(
     profile614chr2$probes$logratio,
@@ -161,10 +161,8 @@ gg.out <- ggplot()+
     linetype="dashed",
     size=0.75,
     data=join.list$changes)+
-  geom_text(aes(
-    14.8, -3, label=sprintf(
-      " %d label error%s for %d segment %s model",
-      errors, ifelse(errors==1, "", "s"), n.segments, graph.name)),
+    geom_text(aes(
+      14.8, -3, label=cat(errors,"label error", ifelse(errors==1, "", "s")," for ", n.segments, " segment", graph.name, "model")),
     hjust=0,
     vjust=0,
     data=data.table(show.err, window=wfac("14.8-17.1")))
@@ -463,7 +461,7 @@ for(pen.i in seq_along(pen.vec)){
     }
   }, by=list(chrom, chromStart, chromEnd, annotation)]
   l <- function(pname){
-    sprintf("penalty=%s\n%s", pen.vec[pname], pname)
+    cat("penalty=",  pen.vec[pname],"\n", pname)
   }
   peaks.int <- max(state.dt$peak.i+1)
   lab.err.list[[paste(peaks.int)]] <- data.table(
