@@ -6,3 +6,5 @@ inst/doc
 *.dll
 *.so
 library
+renv/
+docs/
