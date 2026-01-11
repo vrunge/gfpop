@@ -3,8 +3,18 @@
 
 Edge::Edge(){};
 Edge::Edge(unsigned int s1, unsigned int s2, Rcpp::String cstt, double param, double b, double K, double a, double mini, double maxi) :
-    state1(s1), state2(s2), constraint(cstt), parameter(fabs(param)), beta(fabs(b)), KK(K), aa(a), minn(mini), maxx(maxi){}
-
+  state1(s1),
+  state2(s2),
+  constraint(cstt),
+  parameter(fabs(param)),
+  beta(fabs(b)),
+  KK(K),
+  aa(a),
+  minn(mini),
+  maxx(maxi),
+  start_time(0),
+  end_time(UINT_MAX)
+{}
 unsigned int Edge::getState1() const {return(state1);}
 unsigned int Edge::getState2() const {return(state2);}
 std::string Edge::getConstraint() const {return(constraint);}
@@ -19,4 +29,9 @@ void Edge::show() const
 {
   //std::cout << "- s1: " << state1 << " s2: " << state2 << " cstt: " << constraint << " param: " << parameter << " beta: " << beta;
   //std::cout << " K  " << KK << " a: " << aa << " min: " << minn << " max: " << maxx << std::endl;
+}
+
+bool Edge::isActive(unsigned int t) const
+{
+  return (t >= start_time && t <= end_time);
 }

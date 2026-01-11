@@ -1,0 +1,21 @@
+* using log directory ‘/Users/Dell/Desktop/gsoc-r/gfpop/gfpop.Rcheck’
+* using R version 4.2.3 (2023-03-15)
+* using platform: x86_64-apple-darwin17.0 (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-build-vignettes’
+* checking for file ‘gfpop/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘gfpop’ version ‘0.2.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages suggested but not available: 'testthat', 'rmarkdown'
+
+The suggested packages are required for a complete check.
+Checking can be attempted without them by setting the environment
+variable _R_CHECK_FORCE_SUGGESTS_ to a false value.
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR

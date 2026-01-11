@@ -22,6 +22,7 @@ class Edge
     double getMaxx() const;
 
     void show() const;
+    bool isActive(unsigned int t) const;
 
   private:
     unsigned int state1;
@@ -33,6 +34,8 @@ class Edge
     double aa;
     double minn;
     double maxx;
+    unsigned int start_time;
+    unsigned int end_time;
 };
 
 #endif // EDGE_H
