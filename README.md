@@ -2,6 +2,7 @@
 
 <!--[![Build Status](http://travis-ci.com/vrunge/gfpop.svg?branch=master)](http://travis-ci.com/vrunge/gfpop)
 --> 
+[![R-CMD-check](https://github.com/vrunge/gfpop/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/vrunge/gfpop/actions/workflows/R-CMD-check.yaml)
 [![](https://img.shields.io/badge/docs-vignettes-blue.svg)](https://github.com/vrunge/gfpop)
 
 <!-- 
