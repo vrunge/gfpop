@@ -12,7 +12,8 @@ Edge(
   gap = 0,
   penalty = 0,
   K = Inf,
-  a = 0
+  a = 0,
+  rule = NA
 )
 }
 \arguments{
@@ -32,9 +33,11 @@ the transition to stay on the same segment.}
 \item{K}{a positive number. Threshold for the Biweight robust loss}
 
 \item{a}{a positive number. Slope for the Huber robust loss}
+
+\item{rule}{an integer (or \code{NA}) giving the rule identifier under which the edge is active for time-dependent constraints. Default \code{NA} means the edge is active for all rules (backward compatible).}
 }
 \value{
-a one-row dataframe with 9 variables
+a one-row dataframe with 10 variables (the last being \code{rule})
 }
 \description{
 Edge creation for gfpop-R-Package graph

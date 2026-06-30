@@ -13,7 +13,8 @@
 #' @param penalty a nonnegative number. The penality associated to this state transition
 #' @param K a positive number. Threshold for the Biweight robust loss
 #' @param a a positive number. Slope for the Huber robust loss
-#' @return a one-row dataframe with 9 variables
+#' @param rule an integer (or \code{NA}) giving the rule identifier under which the edge is active for time-dependent constraints. Default \code{NA} means the edge is active for all rules (backward compatible).
+#' @return a one-row dataframe with 10 variables (the last being \code{rule})
 #' @examples
 #' Edge("Dw", "Up", "up", gap = 1, penalty = 10, K = 3)
 #'
@@ -22,7 +23,7 @@
 #' Edge(0, 0, "null", penalty = 0, K = 2, a = 1)
 #'
 #' Edge("Dw", "Dw", type = "null", decay = 0.997)
-Edge <- function(state1, state2, type = "null", decay = 1, gap = 0, penalty = 0, K = Inf, a = 0)
+Edge <- function(state1, state2, type = "null", decay = 1, gap = 0, penalty = 0, K = Inf, a = 0, rule = NA)
 {
   allowed.types <- c("null", "std", "up", "down", "abs")
   if(!type %in% allowed.types){stop('type must be one of: ', paste(allowed.types, collapse=", "))}
@@ -38,12 +39,13 @@ Edge <- function(state1, state2, type = "null", decay = 1, gap = 0, penalty = 0,
   if(any(penalty < 0, na.rm=TRUE)){stop('penalty must be nonnegative')}
   if(any(K <= 0, na.rm=TRUE)){stop('K must be positive')}
   if(any(a < 0, na.rm=TRUE)){stop('a must be nonnegative')}
+  if(any(rule < 1, na.rm=TRUE)){stop('rule must be a positive integer')}
 
   #fill parameter variable
 
   if(type == "null"){parameter <- decay}else{parameter <- gap}
 
-  data.frame(state1, state2, type, parameter, penalty, K, a, min=NA, max=NA, stringsAsFactors = FALSE)
+  data.frame(state1, state2, type, parameter, penalty, K, a, min=NA, max=NA, rule = as.integer(rule), stringsAsFactors = FALSE)
 
 }
 
@@ -55,7 +57,7 @@ Edge <- function(state1, state2, type = "null", decay = 1, gap = 0, penalty = 0,
 #' @description Defining the beginning and ending states of a graph
 #' @param start a vector of states. The beginning nodes for the changepoint inference
 #' @param end a vector of states. The ending nodes for the changepoint inference
-#' @return dataframe with 9 variables with only \code{state1} and \code{type = "start"} or \code{"end"} defined (not \code{NA}).
+#' @return dataframe with 10 variables with only \code{state1} and \code{type = "start"} or \code{"end"} defined (not \code{NA}).
 #' @examples
 #' StartEnd(start = "A", end = c("A","B"))
 #'
@@ -72,17 +74,17 @@ StartEnd <- function(start = NULL, end = NULL)
   start <- unique(start)
   end <- unique(end)
 
-  df <- data.frame(character(), character(), character(), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), stringsAsFactors = FALSE)
-  colnames(df) <- c("state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max")
+  df <- data.frame(character(), character(), character(), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), integer(0), stringsAsFactors = FALSE)
+  colnames(df) <- c("state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max", "rule")
   if(length(start) != 0)
   {
     for(i in 1:length(start))
-      {df[i,] <- list(start[i], NA, "start", NA, NA, NA, NA, NA, NA)}
+      {df[i,] <- list(start[i], NA, "start", NA, NA, NA, NA, NA, NA, NA)}
   }
   if(length(end) != 0)
   {
     for(i in 1:length(end))
-      {df[i + length(start),] <- list(end[i], NA, "end", NA, NA, NA, NA, NA, NA)}
+      {df[i + length(start),] <- list(end[i], NA, "end", NA, NA, NA, NA, NA, NA, NA)}
   }
   return(df)
 }
@@ -96,7 +98,7 @@ StartEnd <- function(start = NULL, end = NULL)
 #' @param state a string defining the state to constrain
 #' @param min minimal value for the inferred parameter
 #' @param max maximal value for the inferred parameter
-#' @return a dataframe with 9 variables with only \code{state1}, \code{min} and \code{max} defined (not \code{NA}).
+#' @return a dataframe with 10 variables with only \code{state1}, \code{min} and \code{max} defined (not \code{NA}).
 #' @examples
 #' Node(state = "s0", min = 0, max = 2)
 #'
@@ -111,9 +113,9 @@ Node <- function(state = NULL, min = -Inf, max = Inf)
   if(!is.double(max)){stop('max is not a double.')}
   if(min > max){stop('min is greater than max')}
 
-  df <- data.frame(character(), character(), character(), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), stringsAsFactors = FALSE)
-  colnames(df) <- c("state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max")
-  df [1,] <- data.frame(state, state, "node", NA, NA, NA, NA, min, max, stringsAsFactors = FALSE)
+  df <- data.frame(character(), character(), character(), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), integer(0), stringsAsFactors = FALSE)
+  colnames(df) <- c("state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max", "rule")
+  df [1,] <- data.frame(state, state, "node", NA, NA, NA, NA, min, max, NA, stringsAsFactors = FALSE)
   return(df)
 }
 
@@ -131,8 +133,8 @@ Node <- function(state = NULL, min = -Inf, max = Inf)
 #' @param K a positive number. Threshold for the Biweight robust loss
 #' @param a a positive number. Slope for the Huber robust loss
 #' @param all.null.edges a boolean. Add null edges to all nodes automatically
-#' @return a dataframe with 9 variables :
-#' columns are named \code{"state1"}, \code{"state2"}, \code{"type"}, \code{"parameter"}, \code{"penalty"}, \code{"K"}, \code{"a"}, \code{"min"}, \code{"max"} with additional \code{"graph"} class.
+#' @return a dataframe with 10 variables :
+#' columns are named \code{"state1"}, \code{"state2"}, \code{"type"}, \code{"parameter"}, \code{"penalty"}, \code{"K"}, \code{"a"}, \code{"min"}, \code{"max"}, \code{"rule"} with additional \code{"graph"} class.
 #' @examples
 #' graph(type = "updown", gap = 1.3, penalty = 5)
 #'
@@ -177,8 +179,8 @@ graph <- function(..., type = "empty", decay = 1, gap = 0, penalty = 0, K = Inf,
     if(!is.double(penalty)){stop('penalty is not a double.')}
     if(penalty < 0){stop('penalty must be nonnegative')}
 
-    myNewGraph <- data.frame(character(), character(), character(), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), stringsAsFactors = FALSE)
-    names(myNewGraph) <- c("state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max")
+    myNewGraph <- data.frame(character(), character(), character(), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), numeric(0), integer(0), stringsAsFactors = FALSE)
+    names(myNewGraph) <- c("state1", "state2", "type", "parameter", "penalty", "K", "a", "min", "max", "rule")
 
     if(type == "std")
     {

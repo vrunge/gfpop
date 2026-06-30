@@ -1,17 +1,22 @@
 library(gfpop)
-library(devtools)
-devtools::install_github("vrunge/gfpop.data")
-library(gfpop.data)
-
 library(testthat)
 context("sn")
 
-library(data.table)
+## The sn tests rely on the gfpop.data package (GitHub only:
+## vrunge/gfpop.data) and data.table. Skip gracefully when unavailable
+## instead of installing packages at test time.
+have.sn.deps <- requireNamespace("gfpop.data", quietly = TRUE) &&
+  requireNamespace("data.table", quietly = TRUE)
 
-data(profile614chr2, package="gfpop.data")
+if (have.sn.deps) {
+  library(gfpop.data)
+  library(data.table)
 
-### reduce data size
-profile614chr2$probes <- profile614chr2$probes[1:10000,]
+  data(profile614chr2, package = "gfpop.data")
+
+  ### reduce data size
+  profile614chr2$probes <- profile614chr2$probes[1:10000, ]
+}
 
 g <- gfpop::graph(type="std")
 x <- rnorm(10)
@@ -40,6 +45,7 @@ sngraph <- function(n.segs, type, gap)
 ######
 
 test_that("abs model with 1 segment returned", {
+  skip_if_not(have.sn.deps, "gfpop.data/data.table not installed")
   g1 <- sngraph(1L, "abs", 1)
   fit1 <- gfpop::gfpop(
     profile614chr2$probes$logratio,
@@ -50,6 +56,7 @@ test_that("abs model with 1 segment returned", {
 })
 
 test_that("abs model with 2 segments returned", {
+  skip_if_not(have.sn.deps, "gfpop.data/data.table not installed")
   g2 <- sngraph(2L, "abs", 1)
   fit2 <- gfpop::gfpop(
     profile614chr2$probes$logratio,
@@ -61,6 +68,7 @@ test_that("abs model with 2 segments returned", {
 })
 
 test_that("abs model with 3 segments returned", {
+  skip_if_not(have.sn.deps, "gfpop.data/data.table not installed")
   g3 <- sngraph(3L, "abs", 1)
   fit3 <- gfpop::gfpop(
     profile614chr2$probes$logratio,
@@ -76,6 +84,7 @@ test_that("abs model with 3 segments returned", {
 ######
 
 test_that("std model with 1 segment returned", {
+  skip_if_not(have.sn.deps, "gfpop.data/data.table not installed")
   g1 <- sngraph(1L, "std", 0)
   fit1 <- gfpop::gfpop(
     profile614chr2$probes$logratio,
@@ -86,6 +95,7 @@ test_that("std model with 1 segment returned", {
 })
 
 test_that("std model with 2 segments returned", {
+  skip_if_not(have.sn.deps, "gfpop.data/data.table not installed")
   g2 <- sngraph(2L, "std", 0)
   fit2 <- gfpop::gfpop(
     profile614chr2$probes$logratio,
@@ -97,6 +107,7 @@ test_that("std model with 2 segments returned", {
 })
 
 test_that("std model with 3 segments returned", {
+  skip_if_not(have.sn.deps, "gfpop.data/data.table not installed")
   g3 <- sngraph(3L, "std", 0)
   fit3 <- gfpop::gfpop(
     profile614chr2$probes$logratio,

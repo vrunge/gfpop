@@ -17,8 +17,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r}
-library(devtools)
-devtools::install_github("vrunge/gfpop.data")
+## gfpop.data is available on GitHub (vrunge/gfpop.data). Install it once with
+## remotes::install_github("vrunge/gfpop.data") if you do not already have it.
 library(gfpop.data)
 library(gfpop)
 

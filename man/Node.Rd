@@ -14,7 +14,7 @@ Node(state = NULL, min = -Inf, max = Inf)
 \item{max}{maximal value for the inferred parameter}
 }
 \value{
-a dataframe with 9 variables with only \code{state1}, \code{min} and \code{max} defined (not \code{NA}).
+a dataframe with 10 variables with only \code{state1}, \code{min} and \code{max} defined (not \code{NA}).
 }
 \description{
 Constrain the range of values to consider at a node

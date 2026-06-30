@@ -2,6 +2,7 @@ build.sh
 ^.*\.Rproj$
 ^\.Rproj\.user$
 .travis.yml
+^\.github$
 figure
 gfpop_1.1.1.pdf
 tex
